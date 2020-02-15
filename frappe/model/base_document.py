@@ -14,7 +14,7 @@ from frappe.modules import load_doctype_module
 from frappe.model import display_fieldtypes, data_fieldtypes
 from frappe.utils.password import get_decrypted_password, set_encrypted_password
 from frappe.utils import (cint, flt, now, cstr, strip_html, getdate, get_datetime, to_timedelta,
-	sanitize_html, sanitize_email, cast_fieldtype)
+	sanitize_html, sanitize_email, cast_fieldtype, round_half_away_from_zero)
 
 max_positive_value = {
 	'smallint': 2 ** 15,
@@ -615,6 +615,9 @@ class BaseDocument(object):
 
 				else:
 					self_value = self.get_value(key)
+
+				if df.fieldtype in ("Currency", "Float", "Percent"):
+					self_value = round_half_away_from_zero(self_value, 6 if cint(df.precision) <= 6 else 9)
 
 				if self_value != db_value:
 					frappe.throw(_("Not allowed to change {0} after submission").format(df.label),

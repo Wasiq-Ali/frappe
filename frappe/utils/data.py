@@ -376,6 +376,18 @@ def rounded(num, precision=0):
 
 	return (num / multiplier) if precision else num
 
+def round_half_up(num, precision=0):
+	multiplier = 10 ** precision
+	return math.floor(num * multiplier + 0.5) / multiplier
+
+def round_half_down(num, precision=0):
+	multiplier = 10 ** precision
+	return math.ceil(num * multiplier - 0.5) / multiplier
+
+def round_half_away_from_zero(num, precision=0):
+	rounded_abs = round_half_up(abs(num), precision)
+	return math.copysign(rounded_abs, num)
+
 def remainder(numerator, denominator, precision=2):
 	precision = cint(precision)
 	multiplier = 10 ** precision
