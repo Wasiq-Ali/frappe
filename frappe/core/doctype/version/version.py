@@ -75,9 +75,9 @@ def get_diff(old, new, for_child=False):
 					out.removed.append([df.fieldname, d.as_dict()])
 
 		elif (old_value != new_value):
-			# Check for None values
-			old_data = old.get_formatted(df.fieldname) if old_value else old_value
-			new_data = new.get_formatted(df.fieldname) if new_value else new_value
+			# Do not check for None values
+			old_data = old.get_formatted(df.fieldname)
+			new_data = new.get_formatted(df.fieldname)
 
 			if old_data != new_data:
 				out.changed.append((df.fieldname, old_data, new_data))
