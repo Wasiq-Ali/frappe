@@ -178,7 +178,7 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 						let filter_string = me.get_filter_description(args.filters);
 						if (filter_string) {
 							r.results.push({
-								html: `<span class="text-muted">${filter_string}</span>`,
+								label: `<span class="text-muted">${filter_string}</span>`,
 								value: '',
 								action: () => {}
 							});
