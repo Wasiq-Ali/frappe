@@ -7,7 +7,7 @@ frappe.ui.form.ControlText = frappe.ui.form.ControlData.extend({
 	},
 	make_input: function() {
 		this._super();
-		this.$input.css({'height': '300px'});
+		this.$input.css({'height': '168px'});
 	}
 });
 
@@ -15,6 +15,6 @@ frappe.ui.form.ControlLongText = frappe.ui.form.ControlText;
 frappe.ui.form.ControlSmallText = frappe.ui.form.ControlText.extend({
 	make_input: function() {
 		this._super();
-		this.$input.css({'height': '150px'});
+		this.$input.css({'height': '100px'});
 	}
 });
