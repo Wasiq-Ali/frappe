@@ -608,6 +608,7 @@ class FilterArea {
 		}
 
 		const doctype_fields = this.list_view.meta.fields.slice(0);
+		const title_field = this.list_view.meta.title_field;
 		const child_tables = this.list_view.meta.fields.filter(df => df.fieldtype === "Table");
 		child_tables.forEach(df => {
 			const child_meta = frappe.get_meta(df.options);
