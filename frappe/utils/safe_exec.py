@@ -77,6 +77,8 @@ def get_safe_globals():
 			),
 			socketio_port = frappe.conf.socketio_port,
 			get_hooks = frappe.get_hooks,
+
+			original_name = frappe.utils.original_name
 		),
 		style = frappe._dict(
 			border_color = '#d1d8dd'
