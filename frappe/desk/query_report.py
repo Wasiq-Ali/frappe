@@ -52,7 +52,7 @@ def generate_report_result(report, filters=None, user=None):
 
 	if filters and isinstance(filters, string_types):
 		filters = json.loads(filters)
-	columns, result, message, chart, data_to_be_printed = [], [], None, None, None
+	columns, result, message, chart, data_to_be_printed, skip_total_row = [], [], None, None, None, 0
 	if report.report_type == "Query Report":
 		if not report.query:
 			status = "error"
@@ -75,6 +75,8 @@ def generate_report_result(report, filters=None, user=None):
 			chart = res[3]
 		if len(res) > 4:
 			data_to_be_printed = res[4]
+		if len(res) > 5:
+			skip_total_row = cint(res[5])
 
 		if report.custom_columns:
 			columns = json.loads(report.custom_columns)
@@ -83,7 +85,7 @@ def generate_report_result(report, filters=None, user=None):
 	if result:
 		result = get_filtered_data(report.ref_doctype, columns, result, user)
 
-	if cint(report.add_total_row) and result:
+	if cint(report.add_total_row) and result and not skip_total_row:
 		result = add_total_row(result, columns)
 
 	return {
@@ -92,6 +94,7 @@ def generate_report_result(report, filters=None, user=None):
 		"message": message,
 		"chart": chart,
 		"data_to_be_printed": data_to_be_printed,
+		"skip_total_row": skip_total_row,
 		"status": status,
 		"execution_time": frappe.cache().hget('report_execution_time', report.name) or 0
 	}
@@ -159,7 +162,7 @@ def get_script(report_name):
 
 @frappe.whitelist()
 @frappe.read_only()
-def run(report_name, filters=None, user=None):
+def run(report_name, filters=None, user=None, ignore_prepared_report=False):
 
 	report = get_report_doc(report_name)
 	if not user:
@@ -170,7 +173,7 @@ def run(report_name, filters=None, user=None):
 
 	result = None
 
-	if report.prepared_report and not report.disable_prepared_report:
+	if report.prepared_report and not report.disable_prepared_report and not ignore_prepared_report:
 		if filters:
 			if isinstance(filters, string_types):
 				filters = json.loads(filters)
@@ -183,7 +186,7 @@ def run(report_name, filters=None, user=None):
 	else:
 		result = generate_report_result(report, filters, user)
 
-	result["add_total_row"] = report.add_total_row
+	result["add_total_row"] = report.add_total_row and not result.get('skip_total_row', False)
 
 	return result
 
