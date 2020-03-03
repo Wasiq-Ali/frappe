@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "Prompt",
  "creation": "2019-09-30 11:56:57.943241",
  "doctype": "DocType",
@@ -74,8 +73,7 @@
    "fieldtype": "Section Break"
   }
  ],
- "links": [],
- "modified": "2019-12-17 12:55:07.389775",
+ "modified": "2020-03-03 15:34:49.660902",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Server Script",

@@ -4,6 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
+from frappe.utils import cstr
 from frappe.model.document import Document
 from os.path import join as join_path, exists as path_exists
 
@@ -78,7 +79,7 @@ class WebsiteTheme(Document):
 
 	def generate_theme_if_not_exist(self):
 		bench_path = frappe.utils.get_bench_path()
-		theme_path = join_path(bench_path, 'sites', self.theme_url[1:])
+		theme_path = join_path(bench_path, 'sites', cstr(self.theme_url[1:]))
 		if not path_exists(theme_path):
 			self.generate_bootstrap_theme()
 

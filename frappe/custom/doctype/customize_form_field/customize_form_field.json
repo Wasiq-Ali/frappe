@@ -4,6 +4,7 @@
  "doctype": "DocType",
  "document_type": "Setup",
  "editable_grid": 1,
+ "engine": "InnoDB",
  "field_order": [
   "label_and_type",
   "label",
@@ -357,11 +358,12 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2019-12-27 13:00:31.959525",
+ "modified": "2020-03-03 15:34:50.847893",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Customize Form Field",
  "owner": "Administrator",
  "permissions": [],
+ "sort_field": "modified",
  "sort_order": "ASC"
 }

@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "format:{reference_doctype} Import on {creation}",
  "beta": 1,
  "creation": "2019-08-04 14:16:08.318714",
@@ -144,9 +143,8 @@
   }
  ],
  "hide_toolbar": 1,
- "links": [],
- "modified": "2020-02-17 15:35:04.386098",
- "modified_by": "faris@erpnext.com",
+ "modified": "2020-03-03 15:35:08.952545",
+ "modified_by": "Administrator",
  "module": "Core",
  "name": "Data Import Beta",
  "owner": "Administrator",
