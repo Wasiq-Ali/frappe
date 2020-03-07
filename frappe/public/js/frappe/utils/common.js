@@ -112,8 +112,8 @@ window.strip_html = function(txt) {
 }
 
 window.strip = function(s, chars) {
-	if (s) {
-		var s= lstrip(s, chars)
+	if (typeof s === 'string') {
+		var s = lstrip(s, chars);
 		s = rstrip(s, chars);
 		return s;
 	}
