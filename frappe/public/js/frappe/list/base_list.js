@@ -541,7 +541,7 @@ class FilterArea {
 			out.promise = out.promise || Promise.resolve();
 			out.non_standard_filters = out.non_standard_filters || [];
 
-			if (fields_dict[fieldname] && (condition === '=' || condition === "like")) {
+			if (fields_dict[fieldname] && (condition === '=' || condition === "like" || condition === "subtree of")) {
 				// standard filter
 				out.promise = out.promise.then(
 					() => fields_dict[fieldname].set_value(value)
