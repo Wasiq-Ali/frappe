@@ -2,8 +2,11 @@
 // MIT License. See license.txt
 
 frappe.defaults = {
-	get_user_default: function(key) {
-		var defaults = frappe.boot.user.defaults;
+	get_user_default: function(key, without_global_defaults) {
+		var defaults = without_global_defaults ? frappe.boot.user.defaults_user_only : frappe.boot.user.defaults;
+		if (!defaults) {
+			return;
+		}
 		var d = defaults[key];
 		if(!d && frappe.defaults.is_a_user_permission_key(key))
 			d = defaults[frappe.model.scrub(key)];
@@ -15,8 +18,12 @@ frappe.defaults = {
 
 		return d;
 	},
-	get_user_defaults: function(key) {
-		var defaults = frappe.boot.user.defaults;
+	get_user_defaults: function(key, without_global_defaults) {
+		var defaults = without_global_defaults ? frappe.boot.user.defaults_user_only : frappe.boot.user.defaults;
+		if (!defaults) {
+			return [undefined];
+		}
+
 		var d = defaults[key];
 
 		if (frappe.defaults.is_a_user_permission_key(key)) {

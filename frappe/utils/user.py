@@ -17,6 +17,7 @@ class UserPermissions:
 	"""
 	def __init__(self, name=''):
 		self.defaults = None
+		self.defaults_user_only = None
 		self.name = name or frappe.session.get('user')
 		self.roles = []
 
@@ -168,7 +169,8 @@ class UserPermissions:
 	def get_defaults(self):
 		import frappe.defaults
 		self.defaults = frappe.defaults.get_defaults(self.name)
-		return self.defaults
+		self.defaults_user_only = frappe.defaults.get_defaults_for(self.name)
+		return self.defaults, self.defaults_user_only
 
 	def _get(self, key):
 		if not self.can_read:
@@ -192,7 +194,7 @@ class UserPermissions:
 
 		d.name = self.name
 		d.roles = self.get_roles()
-		d.defaults = self.get_defaults()
+		d.defaults, d.defaults_user_only = self.get_defaults()
 
 		for key in ("can_create", "can_write", "can_read", "can_cancel", "can_delete",
 			"can_get_report", "allow_modules", "all_read", "can_search",

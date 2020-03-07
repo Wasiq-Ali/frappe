@@ -637,7 +637,7 @@ class FilterArea {
 			if (df.fieldtype === "Link" && frappe.boot.nested_set_doctypes.includes(df.options)) {
 				condition = 'subtree of';
 			}
-			let default_value = (fieldtype === 'Link') ? frappe.defaults.get_user_default(options) : null;
+			let default_value = (fieldtype === 'Link') ? frappe.defaults.get_user_default(options, true) : null;
 			if (['__default', '__global'].includes(default_value)) {
 				default_value = null;
 			}
