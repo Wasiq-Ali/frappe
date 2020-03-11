@@ -414,7 +414,8 @@ frappe.ui.form.Layout = Class.extend({
 						field.grid.add_new_row();
 					}
 					// show grid row (if exists)
-					field.grid.grid_rows[0].show_form();
+					field.grid.grid_rows[0].toggle_editable_row();
+					field.grid.set_focus_on_row(0);
 					return true;
 
 				} else if(!in_list(frappe.model.no_value_type, field.df.fieldtype)) {

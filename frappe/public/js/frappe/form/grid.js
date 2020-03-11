@@ -546,7 +546,7 @@ export default class Grid {
 
 	set_focus_on_row(idx) {
 		var me = this;
-		if(!idx) {
+		if(idx == null) {
 			idx = me.grid_rows.length - 1;
 		}
 		me.grid_rows[idx].row
