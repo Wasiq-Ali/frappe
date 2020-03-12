@@ -60,8 +60,8 @@ def apply_auto_value_setters(doc, parent=None):
 			continue
 		if is_submitted and not df.allow_on_submit:
 			continue
-		if not doc.get("__islocal") and df.set_only_once and doc.get("_doc_before_save", {}).get(auto_value_setter.field_name):
-			continue
+		# if not doc.get("__islocal") and df.set_only_once and doc.get("_doc_before_save", {}).get(auto_value_setter.field_name):
+		# 	continue
 
 		for d in auto_value_setter.conditions:
 			if not d.condition or frappe.safe_eval(d.condition, None, context):  # if condition is met
