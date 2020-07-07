@@ -434,6 +434,9 @@ export default class GridRow {
 						return false;
 					}
 
+					if (e.target) {
+						e.target.blur();
+					}
 					base.toggle_editable_row();
 					var input = base.columns[fieldname].field.$input;
 					if (input) {
