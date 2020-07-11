@@ -345,7 +345,8 @@ frappe.views.BaseList = class BaseList {
 			order_by: this.sort_selector.get_sql_string(),
 			group_by: frappe.model.get_full_column_name('name', this.doctype),
 			start: this.start,
-			page_length: this.page_length
+			page_length: this.page_length,
+			view: this.view
 		};
 	}
 

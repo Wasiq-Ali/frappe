@@ -28,6 +28,8 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	show() {
+		this.parent.disable_scroll_to_top = true;
+
 		if (!this.has_permissions()) {
 			frappe.set_route('');
 			frappe.msgprint(__(`Not permitted to view ${this.doctype}`));
@@ -48,6 +50,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	setup_defaults() {
 		super.setup_defaults();
 
+		this.view = 'List';
 		// initialize with saved order by
 		this.sort_by = this.view_user_settings.sort_by || 'modified';
 		this.sort_order = this.view_user_settings.sort_order || 'desc';
@@ -557,7 +560,13 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			if (this.settings.formatters && this.settings.formatters[fieldname]) {
 				_value = this.settings.formatters[fieldname](value, df, doc);
 			} else {
-				_value = typeof value === 'string' ? frappe.utils.escape_html(value) : value;
+				let strip_html_required = df.fieldtype == 'Text Editor'
+					|| (df.fetch_from && ['Text', 'Small Text'].includes(df.fieldtype));
+				if (strip_html_required) {
+					_value = strip_html(value);
+				} else {
+					_value = typeof value === 'string' ? frappe.utils.escape_html(value) : value;
+				}
 			}
 
 			if (df.fieldtype === 'Image') {

@@ -8,17 +8,17 @@
 <hr>
 {% endif %}
 <table class="table table-bordered">
-    <!-- heading -->
-    <thead>
-        <tr>
-        {% for col in columns %}
-            {% if col.name && col._id !== "_check" %}
+	<!-- heading -->
+	<thead>
+		<tr>
+		{% for col in columns %}
+			{% if col.name && col._id !== "_check" %}
 			<th
 				{% if col.minWidth %}
 					style="min-width: {{ col.minWidth }}px"
 				{% endif %}
-                {% if col.docfield && frappe.model.is_numeric_field(col.docfield) %}
-                    class="text-right"
+				{% if col.docfield && frappe.model.is_numeric_field(col.docfield) %}
+					class="text-right"
 				{% endif %}
 			>
 				{{ __(col.name) }}</th>
