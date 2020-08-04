@@ -204,7 +204,10 @@ def check_release_on_github(app):
 	r = requests.get('https://api.github.com/repos/{}/{}/releases'.format(org_name, app))
 	if r.ok:
 		lastest_non_beta_release = parse_latest_non_beta_release(r.json())
-		return Version(lastest_non_beta_release), org_name
+		if lastest_non_beta_release:
+			return Version(lastest_non_beta_release), org_name
+		else:
+			return None
 	# In case of an improper response or if there are no releases
 	return None
 
