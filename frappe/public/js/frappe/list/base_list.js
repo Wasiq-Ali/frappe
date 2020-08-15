@@ -595,7 +595,7 @@ class FilterArea {
 		let fields = [
 			{
 				fieldtype: 'Data',
-				label: 'Name',
+				label: 'ID',
 				condition: 'like',
 				doctype: this.list_view.doctype,
 				fieldname: 'name',
@@ -612,7 +612,7 @@ class FilterArea {
 		}
 
 		const doctype_fields = this.list_view.meta.fields.slice(0);
-		const title_field = this.list_view.meta.title_field;
+		// const title_field = this.list_view.meta.title_field;
 		const child_tables = this.list_view.meta.fields.filter(df => df.fieldtype === "Table");
 		child_tables.forEach(df => {
 			const child_meta = frappe.get_meta(df.options);
@@ -622,7 +622,7 @@ class FilterArea {
 		});
 
 		fields = fields.concat(doctype_fields.filter(
-			df => (df.fieldname === title_field) || (df.in_standard_filter && frappe.model.is_value_type(df.fieldtype))
+			df => df.in_standard_filter && frappe.model.is_value_type(df.fieldtype)
 		).map(df => {
 			let options = df.options;
 			let condition = '=';
