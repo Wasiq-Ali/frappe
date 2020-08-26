@@ -1058,7 +1058,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				.slice(standard_column_count)
 				.map((cell, i) => {
 					if (include_indentation && i===0) {
-						cell.content = '   '.repeat(row.meta.indent) + (cell.content || '');
+						cell.content = '   '.repeat(row.meta ? row.meta.indent : 0) + (cell.content || '');
 					}
 					return cell.content || '';
 				});

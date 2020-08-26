@@ -306,19 +306,25 @@ def export_query():
 			frappe.get_cached_value('Report', report_name, 'ref_doctype'),
 			raise_exception=True
 		)
+
+	file_format_type = "Excel"
 	if isinstance(data.get("file_format_type"), string_types):
 		file_format_type = data["file_format_type"]
 
 	custom_columns = frappe.parse_json(data["custom_columns"])
 
-	include_indentation = data["include_indentation"]
+	include_indentation = data.get("include_indentation")
 	if isinstance(data.get("visible_idx"), string_types):
 		visible_idx = json.loads(data.get("visible_idx"))
 	else:
 		visible_idx = None
 
 	if file_format_type == "Excel":
-		columns = json.loads(data.columns) if isinstance(data.columns, string_types) else data.columns
+		if custom_columns:
+			columns = custom_columns
+		else:
+			columns = json.loads(data.columns) if isinstance(data.columns, string_types) else data.columns
+
 		report_data = json.loads(data.data) if isinstance(data.data, string_types) else data.data
 
 		from frappe.utils.xlsxutils import make_xlsx
