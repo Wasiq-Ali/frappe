@@ -631,6 +631,7 @@ class FilterArea {
 				fieldtype = 'Data';
 				condition = 'like';
 			}
+
 			if (df.fieldtype == "Select" && df.options) {
 				options = df.options.split("\n");
 				if (options.length > 0 && options[0] != "") {
@@ -638,13 +639,25 @@ class FilterArea {
 					options = options.join("\n");
 				}
 			}
+
+			if (df.fieldtype == "Check") {
+				fieldtype = 'Select';
+				options = [
+					'',
+					{label: `${__('Yes')}: ${__(df.label)}`, value: 1},
+					{label: `${__('No')}: ${__(df.label)}`, value: 0}
+				];
+			}
+
 			if (df.fieldtype === "Link" && frappe.boot.nested_set_doctypes.includes(df.options)) {
 				condition = 'subtree of';
 			}
+
 			let default_value = (fieldtype === 'Link') ? frappe.defaults.get_user_default(options, true) : null;
 			if (['__default', '__global'].includes(default_value)) {
 				default_value = null;
 			}
+
 			return {
 				fieldtype: fieldtype,
 				label: __(df.label),
