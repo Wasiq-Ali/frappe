@@ -1,7 +1,7 @@
 <div class="form-documents">
+    <div class="flex flex-wrap flex">
 	{% for (var i=0; i < transactions.length; i++) { %}
-		{% if((i % 2)===0) { %}<div class="row">{% } %}
-		<div class="col-xs-6">
+		<div class="flex-column col-xs-6 col-md-3">
 			<h6>{{ transactions[i].label }}</h6>
 			{% for (var j=0; j < transactions[i].items.length; j++) {
 				var doctype = transactions[i].items[j]; %}
@@ -19,8 +19,6 @@
 			</div>
 			{% } %}
 		</div>
-		{% if((i % 2)===1) { %}</div>{% } %}
 	{% } %}
-	<!-- finally, close one-column row -->
-	{% if((i % 2)===0) { %}</div>{% } %}
+    </div>
 </div>

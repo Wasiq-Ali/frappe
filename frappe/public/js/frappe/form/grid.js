@@ -67,12 +67,12 @@ export default class Grid {
 						<button class="btn btn-xs btn-danger grid-remove-rows hidden"
 							style="margin-right: 4px;">
 							${__("Delete")}</button>
-						<button class="grid-add-multiple-rows btn btn-xs btn-default hidden"
-							style="margin-right: 4px;">
-							${__("Add Multiple")}</a>
 						<!-- hack to allow firefox include this in tabs -->
 						<button class="btn btn-xs btn-default grid-add-row">
 							${__("Add Row")}</button>
+						<button class="grid-add-multiple-rows btn btn-xs btn-default hidden"
+							style="margin-right: 4px;">
+							${__("Add Multiple")}</a>
 					</div>
 					<div class="col-sm-6 text-right">
 						<a href="#" class="grid-download btn btn-xs btn-default hidden"
