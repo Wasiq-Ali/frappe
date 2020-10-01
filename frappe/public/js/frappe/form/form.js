@@ -1325,6 +1325,7 @@ frappe.ui.form.Form = class FrappeForm {
 			});
 		}
 
+		var me = this;
 		frappe.meta.docfield_map[doctype][fieldname].formatter =
 			function(value, df, options, doc) {
 				if(value) {
@@ -1339,12 +1340,17 @@ frappe.ui.form.Form = class FrappeForm {
 
 					const escaped_name = encodeURIComponent(value);
 
-					return repl('<a class="indicator %(color)s" href="#Form/%(doctype)s/%(name)s">%(label)s</a>', {
-						color: get_color(doc || {}),
-						doctype: df.options,
-						name: escaped_name,
-						label: label
-					});
+					var color = get_color(doc || {}, me.doc);
+					if (color) {
+						return repl('<a class="indicator %(color)s" href="#Form/%(doctype)s/%(name)s">%(label)s</a>', {
+							color: get_color(doc || {}, me.doc),
+							doctype: df.options,
+							name: escaped_name,
+							label: label
+						});
+					} else {
+						return label;
+					}
 				} else {
 					return '';
 				}
