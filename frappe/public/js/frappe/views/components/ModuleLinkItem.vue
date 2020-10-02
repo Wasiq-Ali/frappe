@@ -1,5 +1,5 @@
 <template>
-	<div class="link-item flush-top small"
+	<div class="link-item flush-top"
 		:class="{'onboard-spotlight': onboard, 'disabled-link': disabled_dependent}"
 		@mouseover="mouseover" @mouseleave="mouseleave"
 	>
