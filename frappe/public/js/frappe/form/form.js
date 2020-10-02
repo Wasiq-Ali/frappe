@@ -1341,16 +1341,14 @@ frappe.ui.form.Form = class FrappeForm {
 					const escaped_name = encodeURIComponent(value);
 
 					var color = get_color(doc || {}, me.doc);
-					if (color) {
-						return repl('<a class="indicator %(color)s" href="#Form/%(doctype)s/%(name)s">%(label)s</a>', {
-							color: get_color(doc || {}, me.doc),
-							doctype: df.options,
-							name: escaped_name,
-							label: label
-						});
-					} else {
-						return label;
-					}
+					var css_class = color ? `indicator ${color}` : "";
+					return repl('<a class="%(css_class)s" href="#Form/%(doctype)s/%(name)s">%(label)s</a>', {
+						color: color,
+						css_class: css_class,
+						doctype: df.options,
+						name: escaped_name,
+						label: label
+					});
 				} else {
 					return '';
 				}

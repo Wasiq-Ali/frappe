@@ -580,7 +580,7 @@ export default class GridRow {
 
 		if(txt===undefined && this.frm) {
 			var txt = frappe.format(this.doc[fieldname], df,
-				null, this.frm.doc);
+				null, this.doc);
 		}
 
 		// reset static value
