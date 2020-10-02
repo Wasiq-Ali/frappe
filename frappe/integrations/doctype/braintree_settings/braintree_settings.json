@@ -58,7 +58,7 @@
    "label": "Header Image"
   }
  ],
- "modified": "2020-03-03 15:42:19.547615",
+ "modified": "2020-10-02 22:25:23.831049",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Braintree Settings",
@@ -77,5 +77,6 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "track_changes": 1
 }
