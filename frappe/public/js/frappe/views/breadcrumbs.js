@@ -9,6 +9,10 @@ frappe.breadcrumbs = {
 		"Dashboard": "Customization",
 		"Dashboard Chart": "Customization",
 		"Dashboard Chart Source": "Customization",
+		"User": "Users and Permissions",
+		"Role": "Users and Permissions",
+		"Role Profile": "Users and Permissions",
+		"Role Permissions Manager": "Users and Permissions"
 	},
 
 	module_map: {
