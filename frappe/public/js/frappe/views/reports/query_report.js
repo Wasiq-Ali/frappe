@@ -1152,13 +1152,15 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_data_for_print() {
-		if (!this.data.length) {
+		const data = this.datatable.datamanager.flatData;
+
+		if (!data.length) {
 			return [];
 		}
 
 		const rows = this.datatable.datamanager.rowViewOrder.map(index => {
 			if (this.datatable.bodyRenderer.visibleRowIndices.includes(index)) {
-				return this.data[index];
+				return data[index];
 			}
 		}).filter(Boolean);
 

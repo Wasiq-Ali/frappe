@@ -35,8 +35,8 @@
 
 					{% var value = col.fieldname ? row[col.fieldname] : row[col.id]; %}
 
-					<td {% if row.bold == 1 %} style="font-weight: bold" {% endif %}>
-						<span {% if col._index == 0 %} style="padding-left: {%= cint(row.indent) * 2 %}em" {% endif %}>
+					<td style="{% if row.bold == 1 %}font-weight: bold{% endif %}">
+						<div style="{% if col._index == 0 %}padding-left: {%= cint(row.indent) %}em !important{% endif %}">
 							{% format_data = row.is_total_row && ["Currency", "Float"].includes(col.fieldtype) ? data[0] : row %}
 							{% if (row.is_total_row && col._index == 0) { %}
 								{{ __("Total") }}
@@ -51,7 +51,7 @@
 												: value
 								}}
 							{% } %}
-						</span>
+						</div>
 					</td>
 				{% endif %}
 			{% endfor %}
