@@ -266,21 +266,24 @@ frappe.search.AwesomeBar = Class.extend({
 			if(first==="=") {
 				txt = txt.substr(1);
 			}
-			try {
-				var val = eval(txt);
-				var formatted_value = __('{0} = {1}', [txt, (val + '').bold()]);
-				this.options.push({
-					label: formatted_value,
-					value: __('{0} = {1}', [txt, val]),
-					match: val,
-					index: 80,
-					default: "Calculator",
-					onclick: function() {
-						frappe.msgprint(formatted_value, "Result");
-					}
-				});
-			} catch(e) {
-				// pass
+			if (txt.match(/^[0-9+\-/* .,()]+$/)) {
+				var formatted_txt = txt.replace(',', '');
+				try {
+					var val = eval(formatted_txt);
+					var formatted_value = __('{0} = {1}', [txt, (frappe.format(val, {fieldtype: "Float"}, {only_value: 1})).bold()]);
+					this.options.push({
+						label: formatted_value,
+						value: __('{0} = {1}', [txt, val]),
+						match: val,
+						index: 80,
+						default: "Calculator",
+						onclick: function () {
+							frappe.msgprint(formatted_value, "Result");
+						}
+					});
+				} catch (e) {
+					// pass
+				}
 			}
 		}
 	},
