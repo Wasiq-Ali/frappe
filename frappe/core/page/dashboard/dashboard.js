@@ -249,6 +249,17 @@ class DashboardChart {
 					shortenYAxisNumbers: 1
 				}
 			};
+
+			var me = this;
+			if (this.data.fieldtype) {
+				chart_args.tooltipOptions = {
+					formatTooltipY: d => frappe.format(d, {
+						fieldtype: me.data.fieldtype,
+						options: me.data.options
+					}, {only_value: 1})
+				};
+			}
+
 			if (!this.chart) {
 				this.chart = new frappe.Chart(this.chart_container.find(".chart-wrapper")[0], chart_args);
 			} else {

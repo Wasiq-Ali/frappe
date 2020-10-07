@@ -79,6 +79,12 @@ def get_chart_config(chart, filters, timespan, timegrain, from_date, to_date):
 		}]
 	}
 
+	if chart.value_based_on:
+		meta = frappe.get_meta(chart.document_type)
+		df = meta.get_field(chart.value_based_on)
+		if df:
+			chart_config["fieldtype"] = df.fieldtype
+
 	return chart_config
 
 
@@ -116,6 +122,13 @@ def get_group_by_chart_config(chart, filters):
 				"values": [item['count'] for item in data]
 			}]
 		}
+
+		if chart.aggregate_function_based_on:
+			meta = frappe.get_meta(chart.document_type)
+			df = meta.get_field(chart.aggregate_function_based_on)
+			if df:
+				chart_config["fieldtype"] = df.fieldtype
+
 		return chart_config
 	else:
 		return None
