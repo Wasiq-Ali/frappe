@@ -249,6 +249,9 @@ def formatdate(string_date=None, format_string=None):
 	return formatted_date
 
 def format_time(txt):
+	if not txt:
+		return ''
+
 	try:
 		formatted_time = babel.dates.format_time(get_time(txt), locale=(frappe.local.lang or "").replace("-", "_"))
 	except UnknownLocaleError:
