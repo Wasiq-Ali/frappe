@@ -223,7 +223,7 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 				return;
 			}
 			var value = me.get_input_value();
-			if(value!==me.last_value) {
+			if(cstr(value) !== cstr(me.last_value)) {
 				me.parse_validate_and_set_in_model(value);
 			}
 		});

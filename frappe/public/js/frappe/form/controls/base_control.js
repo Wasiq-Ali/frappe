@@ -188,6 +188,7 @@ frappe.ui.form.Control = Class.extend({
 			if(this.doc) {
 				this.doc[this.df.fieldname] = value;
 			}
+			this.last_value = value;
 			this.set_input(value);
 			return Promise.resolve();
 		}

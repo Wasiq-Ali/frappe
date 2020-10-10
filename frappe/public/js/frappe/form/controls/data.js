@@ -71,7 +71,7 @@ frappe.ui.form.ControlData = frappe.ui.form.ControlInput.extend({
 		}
 	},
 	set_input: function(value) {
-		this.last_value = this.value;
+		this.last_value = value;
 		this.value = value;
 		this.set_formatted_input(value);
 		this.set_disp_area(value);
