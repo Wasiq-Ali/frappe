@@ -18,6 +18,14 @@ window.cint = function(v, def) {
 	return v;
 };
 
+window.remove_wrapping_quotes = function(str) {
+	str = cstr(str);
+	if (str.length && str.substr(0, 1) === "'" && str.substr(str.length - 1, 1) === "'") {
+		str = str.substr(1, str.length-2);
+	}
+	return str;
+}
+
 // to title case
 window.toTitle = function(str){
 	var word_in = str.split(" ");
