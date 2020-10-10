@@ -1,5 +1,6 @@
 frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 	get_options: function() {
+		const route = frappe.get_route();
 		let options = '';
 		if(this.df.get_options) {
 			options = this.df.get_options();
@@ -8,7 +9,9 @@ frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 			//for dialog box
 			options = cur_dialog.get_value(this.df.options);
 		}
-		else if (!cur_frm) {
+		else if (cur_frm && route && route[0] === 'Form') {
+			options = frappe.model.get_value(this.df.parent, this.docname, this.df.options);
+		} else {
 			const selector = `input[data-fieldname="${this.df.options}"]`;
 			let input = null;
 			if (cur_list) {
@@ -21,9 +24,6 @@ frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 			if (input) {
 				options = input.val();
 			}
-		}
-		else {
-			options = frappe.model.get_value(this.df.parent, this.docname, this.df.options);
 		}
 
 		if (frappe.model.is_single(options)) {
