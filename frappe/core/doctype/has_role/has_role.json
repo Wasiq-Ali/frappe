@@ -12,7 +12,8 @@
    "fieldname": "role",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Role",
+   "in_standard_filter": 1,
+   "label": "Has Role",
    "oldfieldname": "role",
    "oldfieldtype": "Link",
    "options": "Role"
@@ -20,7 +21,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-03-03 15:44:51.700714",
+ "modified": "2020-10-10 21:39:02.471472",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Has Role",
