@@ -31,6 +31,4 @@ def execute():
 				print("({0}, {1}, {2}) has {3} non existent parents".format(parenttype, dt, parentfield,
 					len(parent_list)))
 
-				print(parent_list)
-
 				frappe.db.sql("delete from `tab{0}` where name in %s".format(dt), [name_list])
