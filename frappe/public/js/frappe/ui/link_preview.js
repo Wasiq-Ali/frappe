@@ -57,7 +57,7 @@ frappe.ui.LinkPreview = class {
 					return;
 				}
 				this.show_popover(e);
-			}, 1000);
+			}, 500);
 		}
 	}
 
@@ -90,7 +90,7 @@ frappe.ui.LinkPreview = class {
 	show_popover(e) {
 		this.default_timeout = setTimeout(() => {
 			this.clear_all_popovers();
-		}, 10000);
+		}, 30000);
 
 		if (!this.is_link) {
 			var left = e.pageX;
