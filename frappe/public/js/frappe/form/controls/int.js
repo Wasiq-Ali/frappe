@@ -21,7 +21,7 @@ frappe.ui.form.ControlInt = frappe.ui.form.ControlData.extend({
 		if (typeof value === 'string') {
 			value = strip(value);
 			if (value.match(/^[0-9+\-/* .,()]+$/)) {
-				value = value.replace(',', '');
+				value = strip_number_groups(value);
 				// If it is a string containing operators
 				try {
 					return eval(value);

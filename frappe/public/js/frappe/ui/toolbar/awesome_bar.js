@@ -267,7 +267,7 @@ frappe.search.AwesomeBar = Class.extend({
 				txt = txt.substr(1);
 			}
 			if (txt.match(/^[0-9+\-/* .,()]+$/)) {
-				var formatted_txt = txt.replace(',', '');
+				var formatted_txt = strip_number_groups(txt);
 				try {
 					var val = eval(formatted_txt);
 					var formatted_value = __('{0} = {1}', [txt, (frappe.format(val, {fieldtype: "Float"}, {only_value: 1})).bold()]);
