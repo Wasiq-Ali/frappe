@@ -29,12 +29,17 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 			var cur_row_docname =$(e.target).closest('div .grid-row').data('name');
 			var row_idx = locals[cur_doctype][cur_row_docname].idx;
 			var clipboardData, pastedData;
+
 			// Get pasted data via clipboard API
 			clipboardData = e.clipboardData || window.clipboardData || e.originalEvent.clipboardData;
 			pastedData = clipboardData.getData('Text');
+			if (typeof pastedData === "string") {
+				pastedData = strip(pastedData);
+			}
 			if (!pastedData) return;
+
 			var data = frappe.utils.csv_to_array(pastedData,'\t');
-			if (data.length === 1 & data[0].length === 1) return;
+			if (data.length === 1 && (typeof data[0] == 'string' || data[0].length === 1)) return;
 			if (data.length > 100){
 				data = data.slice(0, 100);
 				frappe.msgprint(__('For performance, only the first 100 rows were processed.'));
@@ -79,10 +84,19 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 					var cur_row = cur_grid_rows[row_idx - 1];
 					row_idx ++;
 					var row_name = cur_row.doc.name;
-					$.each(row, function(ci, value) {
-						if (fieldnames[ci]) frappe.model.set_value(cur_doctype, row_name, fieldnames[ci], value);
-					});
 					frappe.show_progress(__('Processing'), i, data.length);
+					$.each(row, function(ci, value) {
+						if (fieldnames[ci]) {
+							var fieldtype = cur_grid.get_docfield(fieldnames[ci]).fieldtype;
+							var parsed_value = value;
+							if (['Check', 'Int'].includes(fieldtype)) {
+								parsed_value = cint(value);
+							} else if (frappe.model.numeric_fieldtypes.includes(fieldtype)) {
+								parsed_value = flt(value);
+							}
+							frappe.model.set_value(cur_doctype, row_name, fieldnames[ci], parsed_value);
+						}
+					});
 				}
 			});
 			frappe.hide_progress();
