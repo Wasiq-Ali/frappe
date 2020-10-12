@@ -23,6 +23,7 @@
    "fieldname": "deleted_doctype",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Deleted DocType"
   },
   {
@@ -53,8 +54,8 @@
   }
  ],
  "in_create": 1,
- "modified": "2020-03-03 15:44:55.391701",
- "modified_by": "Administrator",
+ "modified": "2020-10-09 19:17:28.574604",
+ "modified_by": "furqan.790@outlook.com",
  "module": "Core",
  "name": "Deleted Document",
  "owner": "Administrator",
