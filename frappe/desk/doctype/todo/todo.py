@@ -7,6 +7,7 @@ import json
 
 from frappe.model.document import Document
 from frappe.utils import get_fullname
+from frappe.utils import strip_html_tags
 
 subject_field = "description"
 sender_field = "sender"
@@ -35,6 +36,8 @@ class ToDo(Document):
 					"comment_type": "Assignment Completed"
 				}
 
+		self.set_title()
+
 	def on_update(self):
 		if self._assignment:
 			self.add_assign_comment(**self._assignment)
@@ -56,6 +59,10 @@ class ToDo(Document):
 			return
 
 		frappe.get_doc(self.reference_type, self.reference_name).add_comment(comment_type, text)
+
+	def set_title(self):
+		if not self.title:
+			self.title = strip_html_tags(self.description)
 
 	def update_in_reference(self):
 		if not (self.reference_type and self.reference_name):
