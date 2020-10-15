@@ -19,7 +19,7 @@ def get(args=None):
 	if not args:
 		args = frappe.local.form_dict
 
-	return frappe.get_all('ToDo', fields = ['owner', 'description'], filters = dict(
+	return frappe.get_all('ToDo', fields = ['name', 'owner', 'description'], filters = dict(
 		reference_type = args.get('doctype'),
 		reference_name = args.get('name'),
 		status = ('!=', 'Cancelled')
@@ -58,6 +58,7 @@ def add(args=None):
 			"owner": args['assign_to'],
 			"reference_type": args['doctype'],
 			"reference_name": args['name'],
+			"title": args.get('title'),
 			"description": args.get('description'),
 			"priority": args.get("priority", "Medium"),
 			"status": "Open",

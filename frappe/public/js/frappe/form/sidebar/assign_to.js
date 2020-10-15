@@ -98,9 +98,11 @@ frappe.ui.form.AssignTo = Class.extend({
 		}
 		me.assign_to.dialog.clear();
 
-		if(me.frm.meta.title_field) {
-			me.assign_to.dialog.set_value("description", me.frm.doc[me.frm.meta.title_field])
+		var default_title = me.frm.doc.name;
+		if(me.frm.meta.title_field && me.frm.doc[me.frm.meta.title_field]) {
+			default_title += ": " + me.frm.doc[me.frm.meta.title_field];
 		}
+		me.assign_to.dialog.set_value("title", default_title);
 
 		me.assign_to.dialog.show();
 		me.assign_to = null;
@@ -136,6 +138,7 @@ frappe.ui.form.AssignToDialog = Class.extend({
 			fields: [
 				{ fieldtype: 'Link', fieldname: 'assign_to', options: 'User', label: __("Assign To"), reqd: true, filters: { 'user_type': 'System User' }},
 				{ fieldtype: 'Check', fieldname: 'myself', label: __("Assign to me"), "default": 0 },
+				{ fieldtype: 'Data', fieldname: 'title', label: __("Title")},
 				{ fieldtype: 'Small Text', fieldname: 'description', label: __("Comment") },
 				{ fieldtype: 'Section Break' },
 				{ fieldtype: 'Column Break' },
@@ -170,7 +173,7 @@ frappe.ui.form.AssignToDialog = Class.extend({
 		var me = this;
 		if($(myself).prop("checked")) {
 			me.dialog.set_value("assign_to", frappe.session.user);
-			me.dialog.get_field("notify").$wrapper.toggle(false);
+			me.dialog.get_field("notify") && me.dialog.get_field("notify").$wrapper.toggle(false);
 			me.dialog.get_field("assign_to").$wrapper.toggle(false);
 		} else {
 			me.dialog.set_value("assign_to", "");
