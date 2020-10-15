@@ -62,7 +62,7 @@ class ToDo(Document):
 
 	def set_title(self):
 		if not self.title:
-			self.title = strip_html_tags(self.description)
+			self.title = strip_html_tags(self.description)[:frappe.db.VARCHAR_LEN]
 
 	def update_in_reference(self):
 		if not (self.reference_type and self.reference_name):
