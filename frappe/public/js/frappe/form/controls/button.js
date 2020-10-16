@@ -5,7 +5,7 @@ frappe.ui.form.ControlButton = frappe.ui.form.ControlData.extend({
 	},
 	make_input: function() {
 		var me = this;
-		this.$input = $('<button class="btn btn-default btn-xs">')
+		this.$input = $('<button type="button" class="btn btn-default btn-xs">')
 			.prependTo(me.input_area)
 			.on("click", function() {
 				me.onclick();
