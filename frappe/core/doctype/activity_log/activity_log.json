@@ -88,12 +88,14 @@
   {
    "fieldname": "reference_doctype",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Reference Document Type",
    "options": "DocType"
   },
   {
    "fieldname": "reference_name",
    "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
    "label": "Reference Name",
    "options": "reference_doctype"
   },
@@ -117,6 +119,7 @@
   {
    "fieldname": "timeline_name",
    "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
    "label": "Timeline Name",
    "options": "timeline_doctype"
   },
@@ -139,6 +142,7 @@
    "fieldname": "user",
    "fieldtype": "Link",
    "ignore_user_permissions": 1,
+   "in_standard_filter": 1,
    "label": "User",
    "options": "User",
    "read_only": 1
@@ -151,7 +155,7 @@
   }
  ],
  "icon": "fa fa-comment",
- "modified": "2020-03-03 15:36:46.146025",
+ "modified": "2020-10-18 12:46:52.087109",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Activity Log",

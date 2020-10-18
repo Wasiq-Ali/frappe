@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 import frappe.permissions
-from frappe.utils import get_fullname
+from frappe.utils import get_fullname, cstr
 from frappe import _
 from frappe.core.doctype.activity_log.activity_log import add_authentication_log
 from six import string_types
@@ -34,7 +34,7 @@ def update_feed(doc, method=None):
 			frappe.db.sql("""delete from `tabActivity Log`
 				where
 					reference_doctype=%s and reference_name=%s
-					and link_doctype=%s""", (doctype, name,feed.link_doctype))
+					and ifnull(link_doctype, '') = %s""", (doctype, name, cstr(feed.link_doctype)))
 			frappe.get_doc({
 				"doctype": "Activity Log",
 				"reference_doctype": doctype,
@@ -43,7 +43,9 @@ def update_feed(doc, method=None):
 				"full_name": get_fullname(doc.owner),
 				"reference_owner": frappe.db.get_value(doctype, name, "owner"),
 				"link_doctype": feed.link_doctype,
-				"link_name": feed.link_name
+				"link_name": feed.link_name,
+				"timeline_doctype": feed.timeline_doctype,
+				"timeline_name": feed.timeline_name,
 			}).insert(ignore_permissions=True)
 
 def login_feed(login_manager):
