@@ -596,7 +596,7 @@ class FilterArea {
 			{
 				fieldtype: 'Data',
 				label: 'ID',
-				condition: 'like',
+				filter_condition: 'like',
 				doctype: this.list_view.doctype,
 				fieldname: 'name',
 				onchange: () => this.refresh_list_view()
@@ -611,21 +611,21 @@ class FilterArea {
 			fields = fields.concat(this.list_view.custom_filter_configs);
 		}
 
-		const doctype_fields = this.list_view.meta.fields.slice(0);
+		let doctype_fields = this.list_view.meta.fields.slice(0);
 		// const title_field = this.list_view.meta.title_field;
 		const child_tables = this.list_view.meta.fields.filter(df => ["Table", "Table MultiSelect"].includes(df.fieldtype));
 		child_tables.forEach(df => {
 			const child_meta = frappe.get_meta(df.options);
 			if (child_meta) {
-				doctype_fields.push(...child_meta.fields);
+				doctype_fields.push(...child_meta.fields.slice(0));
 			}
 		});
+		doctype_fields = doctype_fields.filter(df => df.in_standard_filter && frappe.model.is_value_type(df.fieldtype));
 
-		fields = fields.concat(doctype_fields.filter(
-			df => df.in_standard_filter && frappe.model.is_value_type(df.fieldtype)
-		).map(df => {
+
+		fields = fields.map(df => {
 			let options = df.options;
-			let condition = '=';
+			let condition = df.filter_condition || '=';
 			let fieldtype = df.fieldtype;
 			if (['Text', 'Small Text', 'Text Editor', 'HTML Editor', 'Data', 'Code', 'Read Only'].includes(fieldtype)) {
 				fieldtype = 'Data';
@@ -640,7 +640,7 @@ class FilterArea {
 				}
 			}
 
-			if (df.fieldtype == "Check") {
+			if (df.fieldtype == "Check" && !df.force_checkbox_filter) {
 				fieldtype = 'Select';
 				options = [
 					'',
@@ -661,7 +661,7 @@ class FilterArea {
 			return {
 				fieldtype: fieldtype,
 				label: __(df.label),
-				doctype: df.parent,
+				doctype: df.parent || df.doctype,
 				options: options,
 				fieldname: df.fieldname,
 				condition: condition,
@@ -670,7 +670,7 @@ class FilterArea {
 				ignore_link_validation: fieldtype === 'Dynamic Link',
 				is_filter: 1,
 			};
-		}));
+		});
 
 		fields.map(df => this.list_view.page.add_field(df));
 	}
