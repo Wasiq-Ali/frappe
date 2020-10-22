@@ -622,6 +622,19 @@ class FilterArea {
 		});
 		doctype_fields = doctype_fields.filter(df => df.in_standard_filter && frappe.model.is_value_type(df.fieldtype));
 
+		let submittable_doctype_fields = [{
+			fieldtype: 'Check',
+			label: 'Hide Cancelled',
+			filter_condition: '<=',
+			doctype: this.list_view.doctype,
+			fieldname: 'docstatus',
+			force_checkbox_filter: 1
+		}];
+
+		fields = fields.concat(doctype_fields);
+		if (this.list_view.meta.is_submittable) {
+			fields = fields.concat(submittable_doctype_fields);
+		}
 
 		fields = fields.map(df => {
 			let options = df.options;
