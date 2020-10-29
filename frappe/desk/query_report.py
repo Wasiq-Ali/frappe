@@ -670,7 +670,7 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 			group_totals.setdefault(group_value, {})
 			for total_field in total_fields:
 				group_totals[group_value].setdefault(total_field, 0)
-				group_totals[group_value][total_field] += row[total_field]
+				group_totals[group_value][total_field] += flt(row.get(total_field))
 
 	if calculate_totals and callable(calculate_totals):
 		for group_value in group_rows.keys():
