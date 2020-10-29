@@ -10,6 +10,7 @@ function flt(v, decimals, number_format) {
 
 	if (typeof v !== "number") {
 		v = v + "";
+		v = strip(v);
 
 		// strip currency symbol if exists
 		if (v.indexOf(" ") != -1) {
