@@ -240,10 +240,13 @@ def get_print_format(doctype, print_format):
 			frappe.DoesNotExistError)
 
 	# server, find template
-	module = frappe.db.get_value("Print Format", print_format.name, "module")
-	path = os.path.join(get_doc_path(module, "Print Format", print_format.name), frappe.scrub(print_format.name) + ".html")
+	path = None
 
-	if not os.path.exists(path):
+	module = frappe.db.get_value("Print Format", print_format.name, "module")
+	if module:
+		path = os.path.join(get_doc_path(module, "Print Format", print_format.name), frappe.scrub(print_format.name) + ".html")
+
+	if not path or not os.path.exists(path):
 		module = frappe.db.get_value("DocType", doctype, "module")
 		path = os.path.join(get_doc_path(module, "Print Format", print_format.name), frappe.scrub(print_format.name) + ".html")
 
@@ -414,6 +417,11 @@ def get_print_style(style=None, print_format=None, for_legacy=False):
 
 	if print_format and print_format.css:
 		css += "\n\n" + print_format.css
+
+	hooks = frappe.get_hooks()
+	if hooks.get('print_include_css'):
+		for hook_css_file_path in hooks['print_include_css']:
+			css += '\n' + frappe.get_template(hook_css_file_path).render(context)
 
 	return css
 
