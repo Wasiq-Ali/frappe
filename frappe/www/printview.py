@@ -240,8 +240,12 @@ def get_print_format(doctype, print_format):
 			frappe.DoesNotExistError)
 
 	# server, find template
-	path = os.path.join(get_doc_path(frappe.db.get_value("DocType", doctype, "module"),
-		"Print Format", print_format.name), frappe.scrub(print_format.name) + ".html")
+	module = frappe.db.get_value("Print Format", print_format.name, "module")
+	path = os.path.join(get_doc_path(module, "Print Format", print_format.name), frappe.scrub(print_format.name) + ".html")
+
+	if not os.path.exists(path):
+		module = frappe.db.get_value("DocType", doctype, "module")
+		path = os.path.join(get_doc_path(module, "Print Format", print_format.name), frappe.scrub(print_format.name) + ".html")
 
 	if os.path.exists(path):
 		with open(path, "r") as pffile:
