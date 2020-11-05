@@ -11,6 +11,7 @@ from frappe.website.utils import (get_shade, get_toc, get_next_link)
 from frappe.modules import scrub
 from frappe.www.printview import get_visible_columns
 import frappe.exceptions
+from collections import OrderedDict
 
 class ServerScriptNotEnabled(frappe.PermissionError): pass
 
@@ -46,6 +47,8 @@ def get_safe_globals():
 		# make available limited methods of frappe
 		json = json,
 		dict = dict,
+		enumerate = enumerate,
+		OrderedDict = OrderedDict,
 		frappe =  frappe._dict(
 			flags = frappe._dict(),
 
