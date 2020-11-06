@@ -79,7 +79,11 @@ def format_value(value, df=None, doc=None, currency=None, translated=False):
 		return fmt_money(value, precision=0)
 
 	elif df.get("fieldtype") == "Percent":
-		return "{}%".format(flt(value, 2))
+		precision = 2
+		temp = cstr(flt(value, precision)).split(".")
+		if len(temp)==1 or cint(temp[1])==0:
+			precision = 0
+		return "{}%".format(flt(value, precision))
 
 	elif df.get("fieldtype") in ("Text", "Small Text"):
 		if not re.search("(\<br|\<div|\<p)", value):
