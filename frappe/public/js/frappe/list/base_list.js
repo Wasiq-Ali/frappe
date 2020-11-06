@@ -623,12 +623,19 @@ class FilterArea {
 		doctype_fields = doctype_fields.filter(df => df.in_standard_filter && frappe.model.is_value_type(df.fieldtype));
 
 		let submittable_doctype_fields = [{
-			fieldtype: 'Check',
-			label: 'Hide Cancelled',
-			filter_condition: '<=',
+			fieldtype: 'Select',
+			label: 'Document Status',
 			doctype: this.list_view.doctype,
 			fieldname: 'docstatus',
-			force_checkbox_filter: 1
+			filter_condition: 'in',
+			default: __('Hide Cancelled'),
+			options: [
+				'',
+				{label: `${__('Draft Only')}`, value: [0]},
+				{label: `${__('Submitted Only')}`, value: [1]},
+				{label: `${__('Cancelled Only')}`, value: [2]},
+				{label: `${__('Hide Cancelled')}`, value: [0, 1]},
+			]
 		}];
 
 		fields = fields.concat(doctype_fields);
@@ -646,7 +653,7 @@ class FilterArea {
 			}
 
 			if (df.fieldtype == "Select" && df.options) {
-				options = df.options.split("\n");
+				options = Array.isArray(df.options) ? df.options : df.options.split("\n");
 				if (options.length > 0 && options[0] != "") {
 					options.unshift("");
 					options = options.join("\n");
