@@ -15,7 +15,13 @@ import './footer/footer';
 frappe.ui.form.Controller = Class.extend({
 	init: function(opts) {
 		$.extend(this, opts);
-	}
+	},
+
+	remove_sidebar: function() {
+		this.frm.page.sidebar.remove(); // this removes the sidebar
+		this.frm.page.wrapper.find(".layout-main-section-wrapper").removeClass("col-md-10");
+		this.frm.page.wrapper.find(".layout-main-section-wrapper").addClass("col-md-12");
+	},
 });
 
 frappe.ui.form.Form = class FrappeForm {
