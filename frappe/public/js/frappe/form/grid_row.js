@@ -334,6 +334,9 @@ export default class GridRow {
 			});
 
 			frappe.ui.form.editable_row = this;
+			if (this.frm) {
+				this.frm.script_manager.trigger(this.doc.parentfield + "_row_focused", this.doc.doctype, this.doc.name);
+			}
 			return false;
 		} else {
 			this.row.toggleClass('editable-row', false);
@@ -357,6 +360,9 @@ export default class GridRow {
 				column.field_area && column.field_area.toggle(false);
 			});
 			frappe.ui.form.editable_row = null;
+			if (this.frm) {
+				this.frm.script_manager.trigger(this.doc.parentfield + "_row_blurred", this.doc.doctype, this.doc.name);
+			}
 		}
 	}
 
@@ -621,7 +627,7 @@ export default class GridRow {
 	get_visible_columns(blacklist=[]) {
 		var me = this;
 		var visible_columns = $.map(this.docfields, function(df) {
-			var visible = !df.hidden && df.in_list_view && me.grid.frm.get_perm(df.permlevel, "read")
+			var visible = !df.hidden && df.in_list_view && (!me.grid.frm || me.grid.frm.get_perm(df.permlevel, "read"))
 				&& !in_list(frappe.model.layout_fields, df.fieldtype) && !in_list(blacklist, df.fieldname);
 
 			return visible ? df : null;

@@ -81,18 +81,22 @@ frappe.ui.Dialog = class Dialog extends frappe.ui.FieldGroup {
 					} else {
 						window.cur_dialog = null;
 					}
+				} else {
+					window.cur_dialog = frappe.ui.open_dialogs[frappe.ui.open_dialogs.length-1];
 				}
 				me.onhide && me.onhide();
 				me.on_hide && me.on_hide();
 			})
 			.on("shown.bs.modal", function() {
 				// focus on first input
-				me.display = true;
-				window.cur_dialog = me;
-				frappe.ui.open_dialogs.push(me);
-				me.focus_on_first_input();
-				me.on_page_show && me.on_page_show();
-				$(document).trigger('frappe.ui.Dialog:shown');
+				if (me.is_visible) {
+					me.display = true;
+					window.cur_dialog = me;
+					frappe.ui.open_dialogs.push(me);
+					me.focus_on_first_input();
+					me.on_page_show && me.on_page_show();
+					$(document).trigger('frappe.ui.Dialog:shown');
+				}
 			})
 			.on('scroll', function() {
 				var $input = $('input:focus');
