@@ -90,6 +90,7 @@ frappe.ui.form.MultiSelectDialog = Class.extend({
 		this.dialog = new frappe.ui.Dialog({
 			title: __("Select {0}", [(this.doctype=='[Select]') ? __("value") : __(doctype_plural)]),
 			fields: fields,
+			size: "large",
 			primary_action_label: __("Get Items"),
 			secondary_action_label: __("Make {0}", [me.doctype]),
 			primary_action: function() {
@@ -192,9 +193,9 @@ frappe.ui.form.MultiSelectDialog = Class.extend({
 				${
 					head ? `<span class="ellipsis">${__(frappe.model.unscrub(column))}</span>`
 
-					: (column !== "name" ? `<span class="ellipsis">${__(result[column])}</span>`
+					: (column !== "name" ? `<span class="ellipsis">${__(cstr(result[column]))}</span>`
 						: `<a href="${"#Form/"+ me.doctype + "/" + result[column]}" class="list-id ellipsis">
-							${__(result[column])}</a>`)
+							${__(cstr(result[column]))}</a>`)
 				}
 			</div>`;
 		})
