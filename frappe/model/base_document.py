@@ -128,7 +128,8 @@ class BaseDocument(object):
 			return self.__dict__
 
 	def getone(self, key, filters=None):
-		return self.get(key, filters=filters, limit=1)[0]
+		rows = self.get(key, filters=filters, limit=1)
+		return rows[0] if rows else None
 
 	def set(self, key, value, as_value=False):
 		if isinstance(value, list) and not as_value:
