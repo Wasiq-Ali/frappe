@@ -360,7 +360,7 @@ export default class GridRow {
 				column.field_area && column.field_area.toggle(false);
 			});
 			frappe.ui.form.editable_row = null;
-			if (this.frm) {
+			if (this.frm && this.doc) {
 				this.frm.script_manager.trigger(this.doc.parentfield + "_row_blurred", this.doc.doctype, this.doc.name);
 			}
 		}
