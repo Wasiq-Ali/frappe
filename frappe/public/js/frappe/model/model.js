@@ -585,13 +585,16 @@ $.extend(frappe.model, {
 		d.show();
 	},
 
-	round_floats_in: function(doc, fieldnames) {
+	round_floats_in: function(doc, fieldnames, excluding) {
 		if(!fieldnames) {
 			fieldnames = frappe.meta.get_fieldnames(doc.doctype, doc.parent,
 				{"fieldtype": ["in", ["Currency", "Float"]]});
 		}
 		for(var i=0, j=fieldnames.length; i < j; i++) {
 			var fieldname = fieldnames[i];
+			if (excluding && excluding.includes(fieldname)) {
+				continue;
+			}
 			doc[fieldname] = flt(doc[fieldname], precision(fieldname, doc));
 		}
 	},

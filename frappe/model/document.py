@@ -769,6 +769,9 @@ class Document(BaseDocument):
 		if self.flags.ignore_links or self._action == "cancel":
 			return
 
+		if self._action != "submit":
+			self.run_method('before_validate_links')
+
 		invalid_links, cancelled_links = self.get_invalid_links()
 
 		for d in self.get_all_children():
@@ -1131,7 +1134,7 @@ class Document(BaseDocument):
 			label = self.meta.get_label(parentfield)
 			frappe.throw(_("Table {0} cannot be empty").format(label), raise_exception or frappe.EmptyTableError)
 
-	def round_floats_in(self, doc, fieldnames=None):
+	def round_floats_in(self, doc, fieldnames=None, excluding=None):
 		"""Round floats for all `Currency`, `Float`, `Percent` fields for the given doc.
 
 		:param doc: Document whose numeric properties are to be rounded.
@@ -1141,6 +1144,9 @@ class Document(BaseDocument):
 				doc.meta.get("fields", {"fieldtype": ["in", ["Currency", "Float", "Percent"]]}))
 
 		for fieldname in fieldnames:
+			if excluding and fieldname in excluding:
+				continue
+
 			doc.set(fieldname, flt(doc.get(fieldname), self.precision(fieldname, doc.parentfield)))
 
 	def get_url(self):
