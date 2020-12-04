@@ -45,6 +45,22 @@ class Contact(Document):
 
 		deduplicate_dynamic_links(self)
 
+	def on_update(self):
+		self.update_primary_address_in_linked_docs()
+
+	def update_primary_address_in_linked_docs(self):
+		from frappe.model.base_document import get_controller
+
+		for d in self.links:
+			if d.link_doctype and self.flags.from_linked_document != (d.link_doctype, d.link_name):
+				try:
+					if hasattr(get_controller(d.link_doctype), "update_primary_contact"):
+						doc = frappe.get_doc(d.link_doctype, d.link_name)
+						doc.flags.pull_contact = True
+						doc.update_primary_contact()
+				except ImportError:
+					pass
+
 	def set_user(self):
 		if not self.user and self.email_id:
 			self.user = frappe.db.get_value("User", {"email": self.email_id})
@@ -92,8 +108,12 @@ class Contact(Document):
 			self.email_id = ""
 			return
 
-		if len([email.email_id for email in self.email_ids if email.is_primary]) > 1:
+		primary_email_ids = [email.email_id for email in self.email_ids if email.is_primary]
+
+		if len(primary_email_ids) > 1:
 			frappe.throw(_("Only one {0} can be set as primary.").format(frappe.bold("Email ID")))
+		elif len(primary_email_ids) == 0 and self.email_ids:
+			self.email_ids[0].is_primary = 1
 
 		for d in self.email_ids:
 			if d.is_primary == 1:
@@ -101,12 +121,12 @@ class Contact(Document):
 				break
 
 	def set_primary(self, fieldname):
+		field_name = "is_primary_" + fieldname
+
 		# Used to set primary mobile and phone no.
-		if len(self.phone_nos) == 0:
+		if len([d for d in self.phone_nos if d.get(field_name)]) == 0:
 			setattr(self, fieldname, "")
 			return
-
-		field_name = "is_primary_" + fieldname
 
 		is_primary = [phone.phone for phone in self.phone_nos if phone.get(field_name)]
 

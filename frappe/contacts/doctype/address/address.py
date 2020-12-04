@@ -43,6 +43,22 @@ class Address(Document):
 		set_link_title(self)
 		deduplicate_dynamic_links(self)
 
+	def on_update(self):
+		self.update_primary_address_in_linked_docs()
+
+	def update_primary_address_in_linked_docs(self):
+		from frappe.model.base_document import get_controller
+
+		for d in self.links:
+			if d.link_doctype and self.flags.from_linked_document != (d.link_doctype, d.link_name):
+				try:
+					if hasattr(get_controller(d.link_doctype), "update_primary_address"):
+						doc = frappe.get_doc(d.link_doctype, d.link_name)
+						doc.flags.pull_address = True
+						doc.update_primary_address()
+				except ImportError:
+					pass
+
 	def link_address(self):
 		"""Link address based on owner"""
 		if not self.links and not self.is_your_company_address:

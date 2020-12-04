@@ -11,18 +11,17 @@
   "first_name",
   "middle_name",
   "last_name",
-  "email_id",
-  "user",
-  "address",
   "sync_with_google_contacts",
+  "column_break_6",
+  "salutation",
+  "gender",
+  "user",
   "cb00",
   "status",
-  "salutation",
-  "designation",
-  "gender",
+  "email_id",
   "phone",
   "mobile_no",
-  "company_name",
+  "unsubscribed",
   "image",
   "sb_00",
   "google_contacts",
@@ -36,8 +35,11 @@
   "is_primary_contact",
   "links",
   "more_info",
+  "company_name",
+  "designation",
   "department",
-  "unsubscribed"
+  "column_break_31",
+  "address"
  ],
  "fields": [
   {
@@ -145,6 +147,7 @@
    "options": "Dynamic Link"
   },
   {
+   "collapsible": 1,
    "fieldname": "more_info",
    "fieldtype": "Section Break",
    "label": "More Information",
@@ -240,12 +243,20 @@
    "fieldname": "company_name",
    "fieldtype": "Data",
    "label": "Company Name"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_31",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-user",
  "idx": 1,
  "image_field": "image",
- "modified": "2020-08-15 13:08:45.470046",
+ "modified": "2020-12-04 00:32:04.737845",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
