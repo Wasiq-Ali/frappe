@@ -256,7 +256,7 @@
  "icon": "fa fa-user",
  "idx": 1,
  "image_field": "image",
- "modified": "2020-12-04 00:32:04.737845",
+ "modified": "2020-12-09 15:12:01.044738",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
@@ -348,6 +348,13 @@
    "role": "Sales User",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User (Read Only)"
   },
   {
    "create": 1,
