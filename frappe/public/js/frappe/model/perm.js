@@ -34,7 +34,7 @@ $.extend(frappe.perm, {
 
 		if (permlevel === 0 && perm && doc) {
 			let docinfo = frappe.model.get_docinfo(doctype, doc.name);
-			if (docinfo && !docinfo.permissions[ptype])
+			if (docinfo && docinfo.permissions && !docinfo.permissions[ptype])
 				perm = false;
 		}
 
