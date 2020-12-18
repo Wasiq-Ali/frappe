@@ -50,7 +50,7 @@ frappe.ui.form.QuickEntryForm = Class.extend({
 
 		// prepare a list of mandatory, bold and allow in quick entry fields
 		this.mandatory = $.map(fields, function(d) {
-			return ((d.reqd || d.bold || d.allow_in_quick_entry) && !d.read_only) ? $.extend({}, d) : null;
+			return ((d.reqd || d.bold || d.allow_in_quick_entry) && (!d.read_only || d.allow_in_quick_entry)) ? $.extend({}, d) : null;
 		});
 	},
 
