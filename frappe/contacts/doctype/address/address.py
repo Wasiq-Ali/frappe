@@ -56,6 +56,7 @@ class Address(Document):
 						doc = frappe.get_doc(d.link_doctype, d.link_name)
 						doc.flags.pull_address = True
 						doc.update_primary_address()
+						doc.notify_update()
 				except ImportError:
 					pass
 
