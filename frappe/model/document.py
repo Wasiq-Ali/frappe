@@ -979,18 +979,7 @@ class Document(BaseDocument):
 			frappe.db.set_value(self.doctype, self.name, "_seen", json.dumps([frappe.session.user]), update_modified=False)
 
 	def notify_update(self):
-		"""Publish realtime that the current document is modified"""
-		frappe.publish_realtime("doc_update", {"modified": self.modified, "doctype": self.doctype, "name": self.name},
-			doctype=self.doctype, docname=self.name, after_commit=True)
-
-		if not self.meta.get("read_only") and not self.meta.get("issingle") and \
-			not self.meta.get("istable"):
-			data = {
-				"doctype": self.doctype,
-				"name": self.name,
-				"user": frappe.session.user
-			}
-			frappe.publish_realtime("list_update", data, after_commit=True)
+		notify_doc_update(self.doctype, self.name, self.modified)
 
 	def db_set(self, fieldname, value=None, update_modified=True, notify=False, commit=False):
 		'''Set a value in the document object, update the timestamp and update the database.
@@ -1300,3 +1289,20 @@ def execute_action(doctype, name, action, **kwargs):
 
 		doc.add_comment('Comment', _('Action Failed') + '<br><br>' + msg)
 		doc.notify_update()
+
+
+def notify_doc_update(doctype, name, modified):
+	"""Publish realtime that the current document is modified"""
+	meta = frappe.get_meta(doctype)
+
+	frappe.publish_realtime("doc_update", {"modified": modified, "doctype": doctype, "name": name},
+		doctype=doctype, docname=name, after_commit=True)
+
+	if not meta.get("read_only") and not meta.get("issingle") and \
+			not meta.get("istable"):
+		data = {
+			"doctype": doctype,
+			"name": name,
+			"user": frappe.session.user
+		}
+		frappe.publish_realtime("list_update", data, after_commit=True)

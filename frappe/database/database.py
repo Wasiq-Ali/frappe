@@ -609,7 +609,7 @@ class Database(object):
 		return self.set_value(*args, **kwargs)
 
 	def set_value(self, dt, dn, field, val=None, modified=None, modified_by=None,
-		update_modified=True, debug=False):
+		update_modified=True, debug=False, notify=False):
 		"""Set a single value in the database, do not call the ORM triggers
 		but update the modified timestamp (unless specified not to).
 
@@ -663,6 +663,10 @@ class Database(object):
 			for key, value in iteritems(to_update):
 				self.sql('''insert into `tabSingles` (doctype, field, value) values (%s, %s, %s)''',
 					(dt, key, value), debug=debug)
+
+		if notify:
+			from frappe.model.document import notify_doc_update
+			notify_doc_update(dt, dn, modified)
 
 		if dt in self.value_cache:
 			del self.value_cache[dt]
