@@ -362,10 +362,12 @@ frappe.ui.form.Layout = Class.extend({
 		}
 
 		for(var i=0, len=fields.length; i < len; i++) {
-			if(fields[i].df.fieldname==fieldname) {
+			var field = fields[i];
+			if(field.df.fieldname === fieldname) {
 				if(shift) {
 					if(prev) {
 						this.set_focus(prev);
+						focused = true;
 					} else {
 						$(this.primary_button).focus();
 					}
@@ -379,7 +381,7 @@ frappe.ui.form.Layout = Class.extend({
 					break;
 				}
 			}
-			if(this.is_visible(fields[i]))
+			if(this.is_visible(field) && !in_list(frappe.model.no_value_type, field.df.fieldtype) && field.df.fieldtype !== 'Check')
 				prev = fields[i];
 		}
 
@@ -419,7 +421,7 @@ frappe.ui.form.Layout = Class.extend({
 					field.grid.set_focus_on_row(0);
 					return true;
 
-				} else if(!in_list(frappe.model.no_value_type, field.df.fieldtype)) {
+				} else if(!in_list(frappe.model.no_value_type, field.df.fieldtype) && field.df.fieldtype !== 'Check') {
 					this.set_focus(field);
 					return true;
 				}
