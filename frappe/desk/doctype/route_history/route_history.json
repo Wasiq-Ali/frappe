@@ -22,7 +22,7 @@
    "options": "User"
   }
  ],
- "modified": "2020-03-03 15:41:07.220425",
+ "modified": "2021-01-31 20:29:42.921648",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Route History",
@@ -43,6 +43,5 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC",
- "track_changes": 1
+ "sort_order": "DESC"
 }

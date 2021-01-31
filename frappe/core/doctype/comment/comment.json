@@ -104,7 +104,7 @@
    "label": "Content"
   }
  ],
- "modified": "2020-03-03 15:36:49.473978",
+ "modified": "2021-01-31 20:36:06.439854",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Comment",
@@ -138,6 +138,5 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "title_field": "comment_type",
- "track_changes": 1
+ "title_field": "comment_type"
 }

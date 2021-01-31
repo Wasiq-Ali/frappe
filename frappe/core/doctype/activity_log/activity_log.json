@@ -155,7 +155,7 @@
   }
  ],
  "icon": "fa fa-comment",
- "modified": "2020-10-18 12:46:52.087109",
+ "modified": "2021-01-31 20:36:08.977880",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Activity Log",
@@ -193,6 +193,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "title_field": "subject",
- "track_changes": 1,
  "track_seen": 1
 }

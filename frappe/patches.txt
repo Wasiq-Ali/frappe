@@ -276,3 +276,4 @@ frappe.patches.v12_0.fix_email_id_formatting
 frappe.patches.v12_0.enable_auto_value_setter_for_existing
 frappe.patches.v12_0.delete_orphaned_child_table_rows
 frappe.patches.v12_0.set_todo_title
+frappe.patches.v12_0.delete_useless_versions
