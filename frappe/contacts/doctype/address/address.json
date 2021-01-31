@@ -174,7 +174,7 @@
  ],
  "icon": "fa fa-map-marker",
  "idx": 5,
- "modified": "2020-12-09 15:14:02.904266",
+ "modified": "2021-01-31 21:19:43.300287",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Address",
@@ -245,5 +245,6 @@
  ],
  "search_fields": "country, state",
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "track_changes": 1
 }
