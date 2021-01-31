@@ -122,22 +122,19 @@ class Contact(Document):
 				break
 
 	def set_primary(self, fieldname):
-		field_name = "is_primary_" + fieldname
+		is_primary_fieldname = "is_primary_" + fieldname
+		secondary_fieldname = fieldname + "_2"
 
 		# Used to set primary mobile and phone no.
-		if len([d for d in self.phone_nos if d.get(field_name)]) == 0:
+		primary_rows = [d for d in self.phone_nos if d.get(is_primary_fieldname)]
+
+		if not primary_rows:
 			setattr(self, fieldname, "")
+			setattr(self, secondary_fieldname, "")
 			return
 
-		is_primary = [phone.phone for phone in self.phone_nos if phone.get(field_name)]
-
-		if len(is_primary) > 1:
-			frappe.throw(_("Only one {0} can be set as primary.").format(frappe.bold(frappe.unscrub(fieldname))))
-
-		for d in self.phone_nos:
-			if d.get(field_name) == 1:
-				setattr(self, fieldname, d.phone)
-				break
+		setattr(self, fieldname, primary_rows[0].phone)
+		setattr(self, secondary_fieldname, primary_rows[1].phone if len(primary_rows) > 1 else "")
 
 def get_default_contact(doctype, name):
 	'''Returns default contact for the given doctype, name'''

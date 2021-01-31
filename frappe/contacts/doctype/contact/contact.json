@@ -19,8 +19,9 @@
   "cb00",
   "status",
   "email_id",
-  "phone",
   "mobile_no",
+  "mobile_no_2",
+  "phone",
   "unsubscribed",
   "image",
   "sb_00",
@@ -36,10 +37,10 @@
   "links",
   "more_info",
   "company_name",
-  "designation",
-  "department",
+  "address",
   "column_break_31",
-  "address"
+  "designation",
+  "department"
  ],
  "fields": [
   {
@@ -68,7 +69,6 @@
    "bold": 1,
    "fieldname": "email_id",
    "fieldtype": "Data",
-   "in_global_search": 1,
    "in_list_view": 1,
    "label": "Email Address",
    "oldfieldname": "email_id",
@@ -202,7 +202,8 @@
   {
    "fieldname": "mobile_no",
    "fieldtype": "Data",
-   "label": "Mobile No",
+   "in_list_view": 1,
+   "label": "Primary Mobile No",
    "read_only": 1
   },
   {
@@ -251,12 +252,19 @@
   {
    "fieldname": "column_break_31",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mobile_no_2",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Secondary Mobile No",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-user",
  "idx": 1,
  "image_field": "image",
- "modified": "2020-12-09 15:12:01.044738",
+ "modified": "2021-01-31 12:22:33.321736",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
