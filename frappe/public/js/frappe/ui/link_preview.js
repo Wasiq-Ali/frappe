@@ -187,7 +187,7 @@ frappe.ui.LinkPreview = class {
 		Object.keys(preview_data).forEach(key => {
 			if (!['preview_image', 'preview_title', 'name'].includes(key)) {
 				let value = frappe.ellipsis(preview_data[key], 280);
-				let label = key;
+				let label = __(key);
 				content_html += `
 					<div class="preview-field">
 						<div class='small preview-label text-muted bold'>${label}</div>
