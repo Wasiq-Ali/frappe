@@ -7,6 +7,10 @@ def get_data():
 			{
 				'label': _('References'),
 				'items': ['Contact']
+			},
+			{
+				'label': _('Permissions'),
+				'items': ['User Permission']
 			}
 		]
 	}
