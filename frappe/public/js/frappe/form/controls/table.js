@@ -21,9 +21,12 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 				.appendTo(this.wrapper);
 		}
 		this.$wrapper.on('paste',':text', function(e) {
+			var dialog = cur_dialog;
+			var frm = cur_frm;
+
 			var cur_table_field =$(e.target).closest('div [data-fieldtype="Table"]').data('fieldname');
 			var cur_field = $(e.target).data('fieldname');
-			var cur_grid = (cur_dialog || cur_frm).get_field(cur_table_field).grid;
+			var cur_grid = (dialog || frm).get_field(cur_table_field).grid;
 			var cur_grid_rows = cur_grid.grid_rows;
 			var cur_doctype = cur_grid.doctype;
 			var row_idx = $(e.target).closest('div .grid-row').data('idx');
@@ -39,10 +42,7 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 
 			var data = frappe.utils.csv_to_array(pastedData,'\t');
 			if (data.length === 1 && (typeof data[0] == 'string' || data[0].length === 1)) return;
-			if (data.length > 100){
-				data = data.slice(0, 100);
-				frappe.msgprint(__('For performance, only the first 100 rows were processed.'));
-			}
+
 			var fieldnames = [];
 			var get_field = function(name_or_label){
 				var fieldname;
@@ -56,6 +56,7 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 				});
 				return fieldname;
 			}
+
 			if (get_field(data[0][0])){ // for raw data with column header
 				$.each(data[0], (ci, column)=>{fieldnames.push(get_field(column));});
 				data.shift();
@@ -68,6 +69,7 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 					find && fieldnames.push(column.fieldname);
 				})
 			}
+
 			$.each(data, function(i, row) {
 				var blank_row = true;
 				$.each(row, function(ci, value) {
@@ -77,7 +79,7 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 					}
 				});
 				if(!blank_row) {
-					if (row_idx > cur_frm.doc[cur_table_field].length){
+					if (row_idx > cur_grid_rows.length){
 						cur_grid.add_new_row();
 					}
 					var cur_row = cur_grid_rows[row_idx - 1];
@@ -94,8 +96,8 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 								parsed_value = flt(value);
 							}
 
-							if (cur_dialog) {
-								cur_dialog.get_field(cur_table_field).df.get_data()[cur_row.doc.idx-1][fieldnames[ci]] = parsed_value;
+							if (dialog) {
+								dialog.get_field(cur_table_field).df.get_data()[cur_row.doc.idx-1][fieldnames[ci]] = parsed_value;
 							} else {
 								frappe.model.set_value(cur_doctype, row_name, fieldnames[ci], parsed_value);
 							}
@@ -104,8 +106,8 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 				}
 			});
 
-			if (cur_dialog) {
-				cur_dialog.get_field(cur_table_field).grid.refresh();
+			if (dialog) {
+				dialog.get_field(cur_table_field).grid.refresh();
 			}
 			frappe.hide_progress();
 			return false; // Prevent the default handler from running.
