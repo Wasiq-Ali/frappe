@@ -63,7 +63,7 @@ export default class Grid {
 			</div>
 			<div class="small form-clickable-section grid-footer">
 				<div class="row">
-					<div class="col-sm-6 grid-buttons">
+					<div class="col-sm-8 grid-buttons">
 						<button class="btn btn-xs btn-danger grid-remove-rows hidden"
 							style="margin-right: 4px;">
 							${__("Delete")}</button>
@@ -74,7 +74,7 @@ export default class Grid {
 							style="margin-right: 4px;">
 							${__("Add Multiple")}</a>
 					</div>
-					<div class="col-sm-6 text-right">
+					<div class="col-sm-4 text-right">
 						<a href="#" class="grid-download btn btn-xs btn-default hidden"
 							style="margin-left: 10px;">
 							${__("Download")}</a>
@@ -773,8 +773,8 @@ export default class Grid {
 		var btn = this.custom_buttons[label];
 		if(!btn) {
 			btn = $('<button class="btn btn-default btn-xs btn-custom">' + label + '</button>')
-				.css('margin-right', '4px')
-				.prependTo(this.grid_buttons)
+				.css('margin-left', '2px')
+				.appendTo(this.grid_buttons)
 				.on('click', click);
 			this.custom_buttons[label] = btn;
 		} else {
