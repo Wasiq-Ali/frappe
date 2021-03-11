@@ -581,16 +581,16 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 					${__(_value)}
 				</span>`;
 			} else if (df.fieldtype === 'Link') {
-				html = `<a class="filterable text-muted ellipsis"
+				html = `<a class="filterable text-light ellipsis"
 					data-filter="${fieldname},=,${value}">
 					${_value}
 				</a>`;
 			} else if (['Text Editor', 'Text', 'Small Text', 'HTML Editor'].includes(df.fieldtype)) {
-				html = `<span class="text-muted ellipsis">
+				html = `<span class="text-light ellipsis">
 					${_value}
 				</span>`;
 			} else {
-				html = `<a class="filterable text-muted ellipsis"
+				html = `<a class="filterable text-light ellipsis"
 					data-filter="${fieldname},=,${value}">
 					${format()}
 				</a>`;
@@ -630,7 +630,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		if (!this.settings.hide_name_column && doc[this.meta.title_field || ''] !== doc.name) {
 			html += `
 				<div class="level-item hidden-xs hidden-sm ellipsis">
-					<a class="text-muted ellipsis" href="${this.get_form_link(doc)}">
+					<a class="text-light ellipsis" href="${this.get_form_link(doc)}">
 						${doc.name}
 					</a>
 				</div>
