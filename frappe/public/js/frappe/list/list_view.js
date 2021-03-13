@@ -160,6 +160,10 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			if (df && df.fieldtype === 'Currency' && df.options && !df.options.includes(':')) {
 				this._add_field(df.options);
 			}
+
+			if (df && df.fieldtype === 'Dynamic Link' && df.options) {
+				this._add_field(df.options);
+			}
 		});
 	}
 
