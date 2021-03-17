@@ -15,7 +15,7 @@
   "column_break_6",
   "salutation",
   "gender",
-  "user",
+  "tax_cnic",
   "cb00",
   "status",
   "email_id",
@@ -36,6 +36,8 @@
   "is_primary_contact",
   "links",
   "more_info",
+  "user",
+  "col_break_31",
   "company_name",
   "address",
   "column_break_31",
@@ -259,12 +261,21 @@
    "in_list_view": 1,
    "label": "Secondary Mobile No",
    "read_only": 1
+  },
+  {
+   "fieldname": "tax_cnic",
+   "fieldtype": "Data",
+   "label": "CNIC"
+  },
+  {
+   "fieldname": "col_break_31",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-user",
  "idx": 1,
  "image_field": "image",
- "modified": "2021-01-31 21:19:47.931309",
+ "modified": "2021-03-17 21:22:58.375966",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",

@@ -25,7 +25,7 @@
    "fieldname": "is_primary_phone",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "label": "Is Primary Phone"
+   "label": "Is Phone"
   },
   {
    "columns": 2,
@@ -33,11 +33,11 @@
    "fieldname": "is_primary_mobile_no",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "label": "Is Primary Mobile"
+   "label": "Is Mobile"
   }
  ],
  "istable": 1,
- "modified": "2021-01-31 11:56:00.800768",
+ "modified": "2021-03-17 21:23:15.653871",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact Phone",

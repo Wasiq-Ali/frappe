@@ -29,6 +29,7 @@ class Contact(Document):
 			break
 
 	def validate(self):
+		self.validate_phone_nos()
 		self.set_primary_email()
 		self.set_primary("phone")
 		self.set_primary("mobile_no")
@@ -84,6 +85,12 @@ class Contact(Document):
 		for link in self.links:
 			if (link.link_doctype, link.link_name) in reference_links:
 				return True
+
+	def validate_phone_nos(self):
+		for d in self.phone_nos:
+			if not d.get('is_primary_phone') and not d.get('is_primary_mobile_no'):
+				frappe.throw(_("Row #{0}: Please mark contact number {1} as either a Mobile Number or Phone Number")
+					.format(d.idx, frappe.bold(d.phone)))
 
 	def add_email(self, email_id, is_primary=0, autosave=False):
 		self.append("email_ids", {
