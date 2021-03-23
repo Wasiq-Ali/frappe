@@ -219,7 +219,8 @@ def contact_query(doctype, txt, searchfield, start, page_len, filters):
 	link_name = filters.pop('link_name')
 
 	return frappe.db.sql("""select
-			`tabContact`.name, `tabContact`.first_name, `tabContact`.last_name
+			`tabContact`.name, `tabContact`.first_name, `tabContact`.last_name,
+			`tabContact`.email_id, `tabContact`.mobile_no, `tabContact`.mobile_no_2, `tabContact`.phone
 		from
 			`tabContact`, `tabDynamic Link`
 		where
