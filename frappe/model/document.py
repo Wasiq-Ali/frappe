@@ -631,7 +631,7 @@ class Document(BaseDocument):
 				for d in value:
 					d.update_if_missing(new_doc)
 
-	def check_if_latest(self):
+	def check_if_latest(self, check_docstatus_transition=True):
 		"""Checks if `modified` timestamp provided by document being updated is same as the
 		`modified` timestamp in the database. If there is a different, the document has been
 		updated in the database after the current copy was read. Will throw an error if
@@ -662,7 +662,8 @@ class Document(BaseDocument):
 				if modified and modified != cstr(self._original_modified):
 					conflict = True
 
-				self.check_docstatus_transition(tmp.docstatus)
+				if check_docstatus_transition:
+					self.check_docstatus_transition(tmp.docstatus)
 
 			if conflict:
 				frappe.msgprint(_("Error: Document has been modified after you have opened it") \
@@ -670,7 +671,8 @@ class Document(BaseDocument):
 				+ _("Please refresh to get the latest document."),
 					raise_exception=frappe.TimestampMismatchError)
 		else:
-			self.check_docstatus_transition(0)
+			if check_docstatus_transition:
+				self.check_docstatus_transition(0)
 
 	def check_docstatus_transition(self, docstatus):
 		"""Ensures valid `docstatus` transition.
