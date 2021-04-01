@@ -20,7 +20,7 @@ def runserverobj(method, docs=None, dt=None, dn=None, arg=None, args=None):
 	else:
 		doc = frappe.get_doc(json.loads(docs))
 		doc._original_modified = doc.modified
-		doc.check_if_latest()
+		doc.check_if_latest(check_docstatus_transition=False)
 
 	if not doc.has_permission("read"):
 		frappe.msgprint(_("Not permitted"), raise_exception = True)
