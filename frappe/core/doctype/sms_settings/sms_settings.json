@@ -7,6 +7,7 @@
   "sms_gateway_url",
   "message_parameter",
   "receiver_parameter",
+  "response_validation",
   "static_parameters_section",
   "parameters",
   "use_post"
@@ -53,12 +54,17 @@
    "fieldname": "use_post",
    "fieldtype": "Check",
    "label": "Use POST"
+  },
+  {
+   "fieldname": "response_validation",
+   "fieldtype": "Code",
+   "label": "Response Validation Expression"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-10-02 22:25:25.177793",
+ "modified": "2021-04-16 00:06:42.000250",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Settings",

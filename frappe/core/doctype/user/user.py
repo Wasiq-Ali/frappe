@@ -935,7 +935,7 @@ def update_gravatar(name):
 @frappe.whitelist(allow_guest=True)
 def send_token_via_sms(tmp_id,phone_no=None,user=None):
 	try:
-		from frappe.core.doctype.sms_settings.sms_settings import send_request
+		from frappe.core.doctype.sms_settings.sms_settings import send_request, validate_response
 	except:
 		return False
 
@@ -963,9 +963,9 @@ def send_token_via_sms(tmp_id,phone_no=None,user=None):
 			return False
 
 	args[ss.receiver_parameter] = usr_phone
-	status = send_request(ss.sms_gateway_url, args, use_post=ss.use_post)
+	response = send_request(ss.sms_gateway_url, args, use_post=ss.use_post)
 
-	if 200 <= status < 300:
+	if validate_response(response, ss):
 		frappe.cache().delete(tmp_id + '_token')
 		return True
 	else:
