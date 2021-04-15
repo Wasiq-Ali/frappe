@@ -1542,6 +1542,7 @@ def bold(text):
 def safe_eval(code, eval_globals=None, eval_locals=None):
 	'''A safer `eval`'''
 	whitelisted_globals = {
+		"str": str,
 		"int": int,
 		"float": float,
 		"long": int,
