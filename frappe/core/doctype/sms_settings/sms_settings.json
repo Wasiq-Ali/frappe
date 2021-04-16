@@ -7,10 +7,13 @@
   "sms_gateway_url",
   "message_parameter",
   "receiver_parameter",
-  "response_validation",
   "static_parameters_section",
   "parameters",
-  "use_post"
+  "use_post",
+  "section_break_7",
+  "response_validation",
+  "column_break_9",
+  "error_message"
  ],
  "fields": [
   {
@@ -59,12 +62,25 @@
    "fieldname": "response_validation",
    "fieldtype": "Code",
    "label": "Response Validation Expression"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Code",
+   "label": "Error Message Expression"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2021-04-16 00:06:42.000250",
+ "modified": "2021-04-16 11:55:43.452065",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Settings",

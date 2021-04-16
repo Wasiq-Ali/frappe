@@ -96,17 +96,19 @@ def send_via_gateway(arg):
 		if validate_response(response, ss):
 			success_list.append(d)
 		else:
-			fail_list.append(d)
+			fail_list.append({'number': d, 'error': get_error_message(response, ss)})
+
+	fail_message_list = ["{0} ({1})".format(d.get('number'), d.get('error') or 'Unknown Error') for d in fail_list]
 
 	if len(success_list) > 0:
 		args.update(arg)
 		create_sms_log(args, success_list)
 		if arg.get('success_msg'):
-			frappe.msgprint(_("SMS sent to the following numbers: {0}").format("<br><br>" + "<br>".join(success_list)))
-			if fail_list:
-				frappe.msgprint(_("SMS failed for the following numbers: {0}").format("<br><br>" + "<br>".join(fail_list)))
+			frappe.msgprint(_("SMS sent to the following numbers:<br>{0}").format("<br>".join(success_list)))
+			if fail_message_list:
+				frappe.msgprint(_("SMS failed for the following numbers:<br>{0}").format("<br>".join(fail_message_list)))
 	else:
-		frappe.throw(_("SMS could not be sent"))
+		frappe.throw(_("SMS could not be sent{0}").format("<br>{0}".format(fail_message_list[0]) if fail_message_list else ""))
 
 def validate_response(response, sms_settings=None):
 	if not sms_settings:
@@ -121,6 +123,14 @@ def validate_response(response, sms_settings=None):
 			return False
 
 	return True
+
+
+def get_error_message(response, sms_settings=None):
+	if not sms_settings:
+		sms_settings = frappe.get_doc('SMS Settings', 'SMS Settings')
+
+	if sms_settings.error_message:
+		return frappe.safe_eval(sms_settings.error_message, eval_locals={'response': response})
 
 
 def get_headers(sms_settings=None):
