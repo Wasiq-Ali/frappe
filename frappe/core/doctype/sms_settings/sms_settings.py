@@ -38,10 +38,11 @@ def get_contact_number(contact_name=None, ref_doctype=None, ref_name=None):
 
 	if not mobile_no and ref_doctype and ref_name:
 		number = frappe.db.sql_list("""
-			select mobile_no
-			from `tabContact`
-			where ifnull(mobile_no, '') != ''
-				and exists(select name from `tabDynamic Link` where link_doctype=%s and link_name=%s)
+			select c.mobile_no
+			from `tabContact` c
+			where ifnull(c.mobile_no, '') != ''
+				and exists(select dl.name from `tabDynamic Link` dl where dl.parenttype = 'Contact' and dl.parent = c.name
+					and link_doctype=%s and link_name=%s)
 			limit 1
 		""", (ref_doctype, ref_name))
 
