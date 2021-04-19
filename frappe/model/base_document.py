@@ -90,7 +90,7 @@ class BaseDocument(object):
 
 		return self
 
-	def update_if_missing(self, d):
+	def update_if_missing(self, d, force_fields=None):
 		if isinstance(d, BaseDocument):
 			d = d.get_valid_dict()
 
@@ -98,7 +98,7 @@ class BaseDocument(object):
 			self.set("doctype", d.get("doctype"))
 		for key, value in iteritems(d):
 			# dont_update_if_missing is a list of fieldnames, for which, you don't want to set default value
-			if (self.get(key) is None) and (value is not None) and (key not in self.dont_update_if_missing):
+			if (force_fields and key in force_fields) or ((self.get(key) is None) and (value is not None) and (key not in self.dont_update_if_missing)):
 				self.set(key, value)
 
 	def get_db_value(self, key):
