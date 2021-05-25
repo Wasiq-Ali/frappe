@@ -40,7 +40,7 @@ frappe.ui.FieldGroup = frappe.ui.form.Layout.extend({
 				this.catch_enter_as_submit();
 			}
 
-			$(this.wrapper).find('input, select').on('change', () => {
+			$(this.wrapper).find('input, select').on('change awesomplete-selectcomplete', () => {
 				this.dirty = true;
 
 				frappe.run_serially([
