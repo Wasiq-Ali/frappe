@@ -15,7 +15,7 @@
    "unique": 1
   }
  ],
- "modified": "2020-03-03 15:42:50.046528",
+ "modified": "2021-05-27 14:07:02.571446",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Gender",
@@ -38,7 +38,7 @@
    "role": "All"
   }
  ],
- "sort_field": "modified",
- "sort_order": "DESC",
+ "sort_field": "creation",
+ "sort_order": "ASC",
  "track_changes": 1
 }
