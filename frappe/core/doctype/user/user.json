@@ -200,6 +200,8 @@
   {
    "fieldname": "role_profile_name",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Role Profile",
    "options": "Role Profile"
   },
@@ -586,7 +588,7 @@
  "idx": 413,
  "image_field": "user_image",
  "max_attachments": 5,
- "modified": "2020-03-03 15:36:29.883504",
+ "modified": "2021-05-26 10:46:31.311336",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
