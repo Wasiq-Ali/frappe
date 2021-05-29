@@ -144,11 +144,17 @@ frappe.form.formatters = {
 		if(value[0] == "'" && value[value.length -1] == "'") {
 			return frappe.form.formatters._style(value.substring(1, value.length - 1), options);
 		}
+
+		var color_style = "";
+		if (options && options.css && typeof options.css === 'object' && options.css.color) {
+			color_style = `style="color: ${options.css.color}"`;
+		}
+
 		if(docfield && docfield.link_onclick) {
-			return frappe.form.formatters._style(repl('<a onclick="%(onclick)s">%(value)s</a>',
+			return frappe.form.formatters._style(repl(`<a onclick="%(onclick)s" ${color_style}>%(value)s</a>`,
 				{onclick: docfield.link_onclick.replace(/"/g, '&quot;'), value:value}), options);
 		} else if(docfield && doctype) {
-			return frappe.form.formatters._style(`<a class="grey"
+			return frappe.form.formatters._style(`<a class="grey" ${color_style}
 				href="#Form/${encodeURIComponent(doctype)}/${encodeURIComponent(original_value)}"
 				data-doctype="${doctype}"
 				data-name="${original_value}">
