@@ -651,14 +651,14 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 	if not parent_grouped_by:
 		parent_grouped_by = OrderedDict()
 
-	group_field = group_by[0]
+	group_field = group_by[0] or ''
 	group_label = group_by_labels.get(group_field) if group_by_labels.get(group_field) else frappe.unscrub(cstr(group_field))
 	group_rows = OrderedDict()
 	group_totals = OrderedDict()
 
 	for row in rows_to_group:
 		if not group_field:
-			group_value = None
+			group_value = ''
 		elif isinstance(group_field, (list, tuple)):
 			group_value = tuple(map(lambda f: row.get(f), group_field))
 		else:
@@ -695,7 +695,7 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 		})
 
 		for f, g in iteritems(grouped_by_map):
-			if f not in group_object:
+			if f not in group_object and f is not None:
 				group_object[f] = g
 
 		if group_totals.get(group_value):
