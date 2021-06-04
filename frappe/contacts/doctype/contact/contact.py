@@ -143,7 +143,7 @@ class Contact(Document):
 		setattr(self, fieldname, primary_rows[0].phone)
 		setattr(self, secondary_fieldname, primary_rows[1].phone if len(primary_rows) > 1 else "")
 
-def get_default_contact(doctype, name):
+def get_default_contact(doctype, name, is_primary=None):
 	'''Returns default contact for the given doctype, name'''
 	out = frappe.db.sql('''select parent,
 			IFNULL((select is_primary_contact from tabContact c where c.name = dl.parent), 0)
@@ -154,6 +154,9 @@ def get_default_contact(doctype, name):
 			dl.link_doctype=%s and
 			dl.link_name=%s and
 			dl.parenttype = "Contact"''', (doctype, name))
+
+	if is_primary is not None:
+		out = [d for d in out if d[1] == cint(is_primary)]
 
 	if out:
 		return sorted(out, key = functools.cmp_to_key(lambda x,y: cmp(cint(y[1]), cint(x[1]))))[0][0]
