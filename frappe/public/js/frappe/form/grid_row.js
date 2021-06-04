@@ -398,7 +398,7 @@ export default class GridRow {
 		var field_on_change_function = field.df.onchange;
 		field.df.onchange = function(e) {
 			field_on_change_function && field_on_change_function(e);
-			me.grid.grid_rows[field.doc.idx - 1].refresh_field(field.df.fieldname);
+			me.grid.grid_rows[field.doc.idx - 1] && me.grid.grid_rows[field.doc.idx - 1].refresh_field(field.df.fieldname);
 		};
 		field.refresh();
 		if(field.$input) {
