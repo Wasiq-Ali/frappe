@@ -384,18 +384,18 @@ export default class Grid {
 			for(var i=0, l=fieldname.length; i<l; i++) {
 				var fname = fieldname[i];
 				me.get_docfield(fname).hidden = show ? 0 : 1;
-				this.set_editable_grid_column_disp(fname, show);
+				this.set_editable_grid_column_disp(fname, show, do_not_refresh);
 			}
 		} else {
 			this.get_docfield(fieldname).hidden = show ? 0 : 1;
-			this.set_editable_grid_column_disp(fieldname, show);
+			this.set_editable_grid_column_disp(fieldname, show, do_not_refresh);
 		}
 
 		if (!do_not_refresh) {
 			this.refresh(true);
 		}
 	}
-	set_editable_grid_column_disp(fieldname, show) {
+	set_editable_grid_column_disp(fieldname, show, do_not_refresh) {
 		//Hide columns for editable grids
 		if (this.meta.editable_grid && this.grid_rows) {
 			this.grid_rows.forEach(function(row) {
@@ -431,7 +431,9 @@ export default class Grid {
 			});
 		}
 
-		this.refresh();
+		if (!do_not_refresh) {
+			this.refresh();
+		}
 	}
 	toggle_reqd(fieldname, reqd) {
 		this.get_docfield(fieldname).reqd = reqd;
