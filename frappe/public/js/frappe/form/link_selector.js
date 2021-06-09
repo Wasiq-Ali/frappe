@@ -152,9 +152,9 @@ frappe.ui.form.LinkSelector = Class.extend({
 							d = me.target.add_new_row();
 						},
 						() => frappe.timeout(0.1),
-						() => frappe.model.set_value(d.doctype, d.name, me.fieldname, value),
-						() => frappe.timeout(0.5),
 						() => frappe.model.set_value(d.doctype, d.name, me.qty_fieldname, data.qty),
+						() => frappe.timeout(0.1),
+						() => frappe.model.set_value(d.doctype, d.name, me.fieldname, value),
 						() => frappe.show_alert(__("Added {0} ({1})", [value, data.qty]))
 					]);
 				}
