@@ -9,8 +9,6 @@ frappe.pages['recorder'].on_page_load = function(wrapper) {
 	$(wrapper).bind('show', function() {
 		frappe.recorder.show();
 	});
-
-	frappe.require('/assets/js/frappe-recorder.min.js');
 };
 
 class Recorder {
@@ -21,6 +19,6 @@ class Recorder {
 	}
 
 	show() {
-
+		frappe.require('/assets/js/frappe-recorder.min.js');
 	}
 }
