@@ -335,10 +335,7 @@ def export_query():
 		visible_idx = None
 
 	if file_format_type == "Excel":
-		if custom_columns:
-			columns = custom_columns
-		else:
-			columns = json.loads(data.columns) if isinstance(data.columns, string_types) else data.columns
+		columns = json.loads(data.columns) if isinstance(data.columns, string_types) else data.columns
 
 		report_data = json.loads(data.data) if isinstance(data.data, string_types) else data.data
 
