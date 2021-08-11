@@ -1138,9 +1138,9 @@ class Document(BaseDocument):
 
 		for fieldname in fieldnames:
 			if excluding and fieldname in excluding:
-				continue
-
-			doc.set(fieldname, flt(doc.get(fieldname), self.precision(fieldname, doc.parentfield)))
+				doc.set(fieldname, flt(doc.get(fieldname)))
+			else:
+				doc.set(fieldname, flt(doc.get(fieldname), self.precision(fieldname, doc.parentfield)))
 
 	def get_url(self):
 		"""Returns Desk URL for this document. `/desk#Form/{doctype}/{name}`"""
