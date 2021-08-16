@@ -1401,13 +1401,12 @@ frappe.ui.form.Form = class FrappeForm {
 				var new_doc = frappe.model.get_new_doc(doctype);
 
 				// set link fields (if found)
-				frappe.get_meta(doctype).fields.forEach(function(df) {
-					if(df.fieldtype==='Link' && df.options===me.doctype) {
-						new_doc[df.fieldname] = me.doc.name;
-					} else if (['Link', 'Dynamic Link'].includes(df.fieldtype) && me.doc[df.fieldname]) {
-						new_doc[df.fieldname] = me.doc[df.fieldname];
-					}
-				});
+				var to_set = frappe.get_meta(doctype).fields
+					.filter(df => df.fieldtype==='Link' && df.options===me.doctype && !df.hidden && !df.read_only);
+				if (to_set.length) {
+					var df = to_set[0];
+					new_doc[df.fieldname] = me.doc.name;
+				}
 
 				frappe.ui.form.make_quick_entry(doctype, null, null, new_doc);
 				// frappe.set_route('Form', doctype, new_doc.name);
