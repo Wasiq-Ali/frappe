@@ -240,7 +240,7 @@ frappe.ui.form.Toolbar = Class.extend({
 			});
 		}
 
-		if (frappe.user_roles.includes("System Manager") && me.frm.meta.issingle === 0) {
+		if (frappe.user_roles.includes("System Manager")) {
 			let is_doctype_form = me.frm.doctype === 'DocType';
 			let doctype = is_doctype_form ? me.frm.docname : me.frm.doctype;
 			let is_doctype_custom = is_doctype_form ? me.frm.doc.custom : false;
