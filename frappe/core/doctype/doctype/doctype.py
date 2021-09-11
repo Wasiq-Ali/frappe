@@ -1051,8 +1051,8 @@ def validate_permissions(doctype, for_remove=False):
 					has_zero_perm = True
 					break
 
-			if not has_zero_perm:
-				frappe.throw(_("{0}: Permission at level 0 must be set before higher levels are set").format(get_txt(d)))
+			# if not has_zero_perm:
+			# 	frappe.throw(_("{0}: Permission at level 0 must be set before higher levels are set").format(get_txt(d)))
 
 			for invalid in ("create", "submit", "cancel", "amend"):
 				if d.get(invalid): d.set(invalid, 0)
