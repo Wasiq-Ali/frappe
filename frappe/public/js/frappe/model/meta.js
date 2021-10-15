@@ -127,6 +127,31 @@ $.extend(frappe.meta, {
 		return frappe.meta.docfield_copy[doctype][name];
 	},
 
+	remove_docfield_copy: function (doctype, name, remove_children) {
+		var me = this;
+
+		if (name && remove_children) {
+			if (locals[doctype] && locals[doctype][name]) {
+				var doc = locals[doctype][name];
+				var table_fields = me.get_table_fields(doctype);
+				$.each(table_fields || [], function (i, df) {
+					me.remove_docfield_copy(df.options, doc.name);
+					$.each(doc[df.fieldname] || [], function (i, d) {
+						me.remove_docfield_copy(d.doctype, d.name);
+					});
+				});
+			}
+		}
+
+		if (name) {
+			if (frappe.meta.docfield_copy[doctype]) {
+				delete frappe.meta.docfield_copy[doctype][name];
+			}
+		} else {
+			delete frappe.meta.docfield_copy[doctype];
+		}
+	},
+
 	get_fieldnames: function(doctype, name, filters) {
 		return $.map(frappe.utils.filter_dict(frappe.meta.docfield_map[doctype], filters),
 			function(df) { return df.fieldname; });

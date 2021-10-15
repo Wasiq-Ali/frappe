@@ -409,6 +409,9 @@ frappe.ui.form.Form = class FrappeForm {
 				// header must be refreshed before client methods
 				// because add_custom_button
 				() => this.refresh_header(switched),
+				// remove docfield copies
+				// so that set_df_property is reversed
+				() => frappe.meta.remove_docfield_copy(this.doctype, this.docname, true),
 				// trigger global trigger
 				// to use this
 				() => $(document).trigger('form-refresh', [this]),
@@ -917,6 +920,7 @@ frappe.ui.form.Form = class FrappeForm {
 		this.check_doctype_conflict(this.docname);
 
 		if(!this.doc.__islocal) {
+			frappe.meta.remove_docfield_copy(this.doctype, this.docname, true);
 			frappe.model.remove_from_locals(this.doctype, this.docname);
 			frappe.model.with_doc(this.doctype, this.docname, () => {
 				this.refresh();
