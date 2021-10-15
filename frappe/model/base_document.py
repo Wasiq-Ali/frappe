@@ -629,7 +629,7 @@ class BaseDocument(object):
 			df = self.meta.get_field(key)
 			db_value = db_values.get(key)
 
-			if df and not df.allow_on_submit and (self.get(key) or db_value):
+			if df and (not df.allow_on_submit or self.is_disallowed_on_submit(df.fieldname)) and (self.get(key) or db_value):
 				if df.fieldtype in table_fields:
 					# just check if the table size has changed
 					# individual fields will be checked in the loop for children
@@ -643,8 +643,14 @@ class BaseDocument(object):
 					self_value = round_half_away_from_zero(self_value, 6 if cint(df.precision) <= 6 else 9)
 
 				if self_value != db_value:
-					frappe.throw(_("Not allowed to change {0} after submission").format(df.label),
+					frappe.throw(_("Not allowed to change {0} after submission<br><br><b>Old Value:</b> {1}<br><b>New Value:</b> {2}")
+						.format(frappe.bold(df.label), frappe.format(db_value, df=df), frappe.format(self_value, df=df)),
 						frappe.UpdateAfterSubmitError)
+
+	def is_disallowed_on_submit(self, fieldname):
+		doc = getattr(self, "parent_doc", None) or self
+		disallowed_fields = doc.flags.disallow_on_submit or []
+		return (fieldname, self.parentfield or None) in disallowed_fields
 
 	def _sanitize_content(self):
 		"""Sanitize HTML and Email in field values. Used to prevent XSS.
