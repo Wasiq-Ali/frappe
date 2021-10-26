@@ -409,9 +409,6 @@ frappe.ui.form.Form = class FrappeForm {
 				// header must be refreshed before client methods
 				// because add_custom_button
 				() => this.refresh_header(switched),
-				// remove docfield copies
-				// so that set_df_property is reversed
-				() => frappe.meta.remove_docfield_copy(this.doctype, this.docname, true),
 				// trigger global trigger
 				// to use this
 				() => $(document).trigger('form-refresh', [this]),
