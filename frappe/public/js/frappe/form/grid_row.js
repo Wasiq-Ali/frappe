@@ -371,7 +371,9 @@ export default class GridRow {
 
 		var me = this,
 			parent = column.field_area,
-			df = column.df;
+			_df = column.df;
+
+		var df = this.grid.get_docfield(_df.fieldname);
 
 		// no text editor in grid
 		if (df.fieldtype=='Text Editor') {
@@ -394,12 +396,7 @@ export default class GridRow {
 
 		// sync get_query
 		field.get_query = this.grid.get_field(df.fieldname).get_query;
-
-		var field_on_change_function = field.df.onchange;
-		field.df.onchange = function(e) {
-			field_on_change_function && field_on_change_function(e);
-			me.grid.grid_rows[field.doc.idx - 1] && me.grid.grid_rows[field.doc.idx - 1].refresh_field(field.df.fieldname);
-		};
+		this.bind_onchange(df);
 		field.refresh();
 		if(field.$input) {
 			field.$input
@@ -605,6 +602,8 @@ export default class GridRow {
 		var field = this.on_grid_fields_dict[fieldname];
 		if(field) {
 			field.docname = this.doc.name;
+			field.df = df;
+			this.bind_onchange(field.df);
 			field.refresh();
 		}
 
@@ -613,6 +612,17 @@ export default class GridRow {
 			this.grid_form.refresh_field(fieldname);
 		}
 	}
+
+	bind_onchange(df) {
+		var me = this;
+
+		var field_on_change_function = df.onchange;
+		df.onchange = function(e) {
+			field_on_change_function && field_on_change_function(e);
+			me.refresh_field(df.fieldname);
+		};
+	}
+
 	get_field(fieldname) {
 		let field = this.on_grid_fields_dict[fieldname];
 		if (field) {
