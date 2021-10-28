@@ -207,7 +207,7 @@ def get_fullnames():
 	"""map of user fullnames"""
 	ret = frappe.db.sql("""select `name`, full_name as fullname,
 		user_image as image, gender, email, username, bio, location, interest, banner_image, allowed_in_mentions
-		from tabUser where enabled=1 and user_type!='Website User'""", as_dict=1)
+		from tabUser where user_type!='Website User'""", as_dict=1)
 
 	d = {}
 	for r in ret:
