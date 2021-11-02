@@ -275,7 +275,7 @@
  "icon": "fa fa-user",
  "idx": 1,
  "image_field": "image",
- "modified": "2021-03-23 15:01:40.891973",
+ "modified": "2021-11-02 16:57:08.819030",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
@@ -412,7 +412,7 @@
    "role": "All"
   }
  ],
- "search_fields": "first_name, middle_name, last_name, email_id, mobile_no, mobile_no_2, phone",
+ "search_fields": "first_name, middle_name, last_name, email_id, mobile_no, mobile_no_2, phone, tax_cnic",
  "sort_field": "modified",
  "sort_order": "ASC",
  "track_changes": 1
