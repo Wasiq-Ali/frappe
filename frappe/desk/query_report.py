@@ -169,7 +169,7 @@ def run(report_name, filters=None, user=None, ignore_prepared_report=False, cust
 
 	result = None
 
-	if report.prepared_report and not report.disable_prepared_report and not ignore_prepared_report:
+	if report.prepared_report and not report.disable_prepared_report and not cint(ignore_prepared_report):
 		if filters:
 			if isinstance(filters, string_types):
 				filters = json.loads(filters)
