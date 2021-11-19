@@ -248,7 +248,8 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 			search_condition += ' or `tabAddress`.`{field}` like %(txt)s'.format(field=field)
 
 	return frappe.db.sql("""select
-			`tabAddress`.name, `tabAddress`.city, `tabAddress`.country
+			`tabAddress`.name, `tabAddress`.address_line1, `tabAddress`.address_line2,
+			`tabAddress`.city, `tabAddress`.country
 		from
 			`tabAddress`, `tabDynamic Link`
 		where
