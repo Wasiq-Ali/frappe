@@ -48,6 +48,7 @@ def get_safe_globals():
 		json = json,
 		dict = dict,
 		len = len,
+		abs = abs,
 		enumerate = enumerate,
 		OrderedDict = OrderedDict,
 		frappe =  frappe._dict(
