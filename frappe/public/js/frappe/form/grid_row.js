@@ -373,7 +373,7 @@ export default class GridRow {
 			parent = column.field_area,
 			_df = column.df;
 
-		var df = this.grid.get_docfield(_df.fieldname);
+		var df = this.grid.get_docfield(_df.fieldname) || _df;
 
 		// no text editor in grid
 		if (df.fieldtype=='Text Editor') {
@@ -578,8 +578,11 @@ export default class GridRow {
 			df = this.grid.visible_columns.find((col) => {
 				return col[0].fieldname === fieldname;
 			});
+			if (df) {
+				df = df[0];
+			}
 			if(df && this.doc) {
-				var txt = frappe.format(this.doc[fieldname], df[0],
+				var txt = frappe.format(this.doc[fieldname], df,
 					null, this.doc);
 			}
 		}
@@ -618,7 +621,7 @@ export default class GridRow {
 
 		var field_on_change_function = df.onchange;
 		df.onchange = function(e) {
-			field_on_change_function && field_on_change_function(e);
+			field_on_change_function && field_on_change_function.apply(this, [e]);
 			me.refresh_field(df.fieldname);
 		};
 	}
