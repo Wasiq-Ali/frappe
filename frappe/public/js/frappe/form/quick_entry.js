@@ -104,6 +104,7 @@ frappe.ui.form.QuickEntryForm = Class.extend({
 			title: __("New {0}", [__(this.doctype)]),
 			fields: this.mandatory,
 			size: "large",
+			static: 1,
 			doc: this.doc
 		});
 

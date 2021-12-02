@@ -26,7 +26,7 @@ frappe.ui.Dialog = class Dialog extends frappe.ui.FieldGroup {
 				backdrop: 'static',
 				keyboard: false
 			});
-			this.get_close_btn().hide();
+			// this.get_close_btn().hide();
 		}
 
 		this.wrapper = this.$wrapper.find('.modal-dialog')
