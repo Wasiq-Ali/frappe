@@ -179,7 +179,9 @@ frappe.ui.form.MultiSelectDialog = Class.extend({
 		let contents = ``;
 		let columns = ["name"];
 
-		if($.isArray(this.setters)) {
+		if(this.columns) {
+			columns = columns.concat(this.columns);
+		} else if($.isArray(this.setters)) {
 			for (let df of this.setters) {
 				columns.push(df.fieldname);
 			}
@@ -256,6 +258,10 @@ frappe.ui.form.MultiSelectDialog = Class.extend({
 				me.args[setter] = filters[setter];
 				filter_fields.push(setter);
 			});
+		}
+
+		if(this.columns) {
+			filter_fields = filter_fields.concat(this.columns);
 		}
 
 		let date_val = this.dialog.fields_dict["date_range"].get_value();
