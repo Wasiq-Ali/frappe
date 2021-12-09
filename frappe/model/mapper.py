@@ -85,7 +85,7 @@ def get_mapped_doc(from_doctype, from_docname, table_maps, target_doc=None,
 			if table_map:
 				for source_d in source_doc.get(df.fieldname):
 					if "condition" in table_map:
-						if not table_map["condition"](source_d):
+						if not table_map["condition"](source_d, source_doc, target_doc):
 							continue
 
 					# if children are selected (checked from UI) for this table type,
@@ -107,7 +107,7 @@ def get_mapped_doc(from_doctype, from_docname, table_maps, target_doc=None,
 						row_exists_for_parentfield.get(target_parentfield):
 						continue
 
-					if table_map.get("filter") and table_map.get("filter")(source_d):
+					if table_map.get("filter") and table_map.get("filter")(source_d, source_doc, target_doc):
 						continue
 
 					map_child_doc(source_d, target_doc, table_map, source_doc)
