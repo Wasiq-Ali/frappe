@@ -94,7 +94,7 @@ $.extend(frappe.model, {
 				if(v) {
 					if(in_list(["Int", "Check"], f.fieldtype))
 						v = cint(v);
-					else if(in_list(["Currency", "Float"], f.fieldtype))
+					else if(in_list(["Currency", "Float", "Percent"], f.fieldtype))
 						v = flt(v);
 
 					doc[f.fieldname] = v;
