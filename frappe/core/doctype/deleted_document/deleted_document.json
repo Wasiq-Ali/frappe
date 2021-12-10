@@ -17,6 +17,7 @@
    "fieldname": "deleted_name",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Deleted Name"
   },
   {
@@ -54,8 +55,8 @@
   }
  ],
  "in_create": 1,
- "modified": "2020-10-09 19:17:28.574604",
- "modified_by": "furqan.790@outlook.com",
+ "modified": "2021-12-10 12:13:43.687443",
+ "modified_by": "Administrator",
  "module": "Core",
  "name": "Deleted Document",
  "owner": "Administrator",
