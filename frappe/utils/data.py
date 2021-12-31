@@ -416,8 +416,8 @@ def safe_div(numerator, denominator, precision=2):
 	return flt(_res, precision)
 
 def round_based_on_smallest_currency_fraction(value, currency, precision=2):
-	smallest_currency_fraction_value = flt(frappe.db.get_value("Currency",
-		currency, "smallest_currency_fraction_value", cache=True))
+	smallest_currency_fraction_value = flt(frappe.get_cached_value("Currency",
+		currency, "smallest_currency_fraction_value"))
 
 	if smallest_currency_fraction_value:
 		remainder_val = remainder(value, smallest_currency_fraction_value, precision)
