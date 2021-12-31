@@ -12,22 +12,15 @@ frappe.ui.FilterGroup = class {
 		this.set_events();
 	}
 
-	toggle_clear_filter() {
-		let clear_filter_button = this.wrapper.find('.clear-filters');
-
-		if (this.filters.length == 0) {
-			clear_filter_button.hide();
-		} else {
-			clear_filter_button.show();
-		}
-	}
 	set_events() {
 		this.wrapper.find('.add-filter').on('click', () => {
-			this.add_filter(this.doctype, 'name')
-				.then(this.toggle_clear_filter());
+			this.add_filter(this.doctype, 'name');
 
 		});
 		this.wrapper.find('.clear-filters').on('click', () => {
+			if (this.base_list && this.base_list.filter_area) {
+				this.base_list.filter_area.clear();
+			}
 			this.clear_filters();
 		});
 	}
@@ -38,8 +31,6 @@ frappe.ui.FilterGroup = class {
 		for (const filter of filters) {
 			promises.push(() => this.add_filter(...filter));
 		}
-
-		promises.push(() => this.toggle_clear_filter());
 
 		return frappe.run_serially(promises);
 	}
@@ -139,7 +130,6 @@ frappe.ui.FilterGroup = class {
 
 	update_filters() {
 		this.filters = this.filters.filter(f => f.field); // remove hidden filters
-		this.toggle_clear_filter();
 	}
 
 	clear_filters() {
@@ -159,7 +149,7 @@ frappe.ui.FilterGroup = class {
 			<div class="active-tag-filters">
 				<button class="btn btn-default btn-xs filter-button text-muted add-filter">
 					${__("Add Filter")}
-				</button><button class="btn btn-default btn-xs filter-button text-muted clear-filters" style="display: none;">
+				</button><button class="btn btn-default btn-xs filter-button text-muted clear-filters">
 					${__("Clear Filters")}
 				</button>
 			</div>
