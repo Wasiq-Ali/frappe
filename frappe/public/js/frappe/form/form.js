@@ -958,6 +958,12 @@ frappe.ui.form.Form = class FrappeForm {
 		return this.doc.__unsaved;
 	}
 
+	check_if_unsaved() {
+		if (this.doc.__unsaved) {
+			frappe.throw(__("You have unsaved changes in this form. Please save before you continue."));
+		}
+	}
+
 	is_new() {
 		return this.doc.__islocal;
 	}
