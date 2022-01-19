@@ -672,6 +672,8 @@ class Database(object):
 			del self.value_cache[dt]
 
 		frappe.clear_document_cache(dt, dn)
+		if dt == dn:
+			frappe.clear_document_cache(dt, None)
 
 	@staticmethod
 	def set(doc, field, val):

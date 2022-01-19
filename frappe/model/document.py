@@ -975,6 +975,8 @@ class Document(BaseDocument):
 
 	def clear_cache(self):
 		frappe.clear_document_cache(self.doctype, self.name)
+		if self.meta.issingle:
+			frappe.clear_document_cache(self.doctype, None)
 
 	def reset_seen(self):
 		'''Clear _seen property and set current user as seen'''
