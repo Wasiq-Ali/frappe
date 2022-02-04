@@ -796,10 +796,12 @@ def url_contains_port(url):
 def get_host_name():
 	return get_url().rsplit("//", 1)[-1]
 
-def get_link_to_form(doctype, name, label=None):
+def get_link_to_form(doctype, name, label=None, target=None):
 	if not label: label = name
 
-	return """<a href="{0}">{1}</a>""".format(get_url_to_form(doctype, name), label)
+	target_str = ' target="{0}"'.format(target) if target else ""
+
+	return """<a href="{0}"{1}>{2}</a>""".format(get_url_to_form(doctype, name), target_str, label)
 
 def get_link_to_report(name, label=None, report_type=None, doctype=None, filters=None):
 	if not label: label = name
