@@ -184,7 +184,7 @@ def invite_user(contact):
 
 @frappe.whitelist()
 def get_contact_details(contact):
-	contact = frappe.get_doc("Contact", contact)
+	contact = frappe.get_doc("Contact", contact) if contact else frappe._dict()
 	out = {
 		"contact_person": contact.get("name"),
 		"contact_display": " ".join(filter(None,
