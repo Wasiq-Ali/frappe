@@ -3,9 +3,13 @@ frappe.ui.form.ControlDatetime = frappe.ui.form.ControlDate.extend({
 		this._super();
 		this.today_text = __("Now");
 		this.date_format = frappe.defaultDatetimeFormat;
+
+		var time_hour_format = frappe.datetime.get_time_hour_format();
+		var time_format = time_hour_format == "12 Hour" ? "hh:ii:ss AA" : "hh:ii:ss";
+
 		$.extend(this.datepicker_options, {
 			timepicker: true,
-			timeFormat: "hh:ii:ss"
+			timeFormat: time_format,
 		});
 	},
 	get_now_date: function() {

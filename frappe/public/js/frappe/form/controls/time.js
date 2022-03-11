@@ -2,15 +2,20 @@ frappe.ui.form.ControlTime = frappe.ui.form.ControlData.extend({
 	make_input: function() {
 		var me = this;
 		this._super();
+
+		var time_format = frappe.datetime.get_time_format()
+		var time_hour_format = frappe.datetime.get_time_hour_format();
+		var timepicker_format = time_hour_format == "12 Hour" ? "hh:ii:ss AA" : "hh:ii:ss";
+
 		this.$input.datepicker({
 			language: "en",
 			timepicker: true,
 			onlyTimepicker: true,
-			timeFormat: "hh:ii:ss",
+			timeFormat: timepicker_format,
 			startDate: frappe.datetime.now_time(true),
 			onSelect: function() {
 				// ignore micro seconds
-				if (moment(me.get_value(), 'hh:mm:ss').format('HH:mm:ss') != moment(me.value, 'hh:mm:ss').format('HH:mm:ss')) {
+				if (moment(me.get_value(), time_format).format('HH:mm:ss') != moment(me.value, time_format).format('HH:mm:ss')) {
 					me.$input.trigger('change');
 				}				
 			},
@@ -28,7 +33,7 @@ frappe.ui.form.ControlTime = frappe.ui.form.ControlData.extend({
 			});
 		this.refresh();
 	},
-	set_input: function(value) {
+	set_formatted_input: function(value) {
 		this._super(value);
 		if(value
 			&& ((this.last_value && this.last_value !== this.value)
@@ -49,5 +54,16 @@ frappe.ui.form.ControlTime = frappe.ui.form.ControlData.extend({
 			}
 		}
 		this._super();
-	}
+	},
+	parse: function(value) {
+		if(value) {
+			return frappe.datetime.user_to_str(value, true);
+		}
+	},
+	format_for_input: function(value) {
+		if(value) {
+			return frappe.datetime.str_to_user(value, true);
+		}
+		return "";
+	},
 });

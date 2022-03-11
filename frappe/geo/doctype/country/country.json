@@ -9,6 +9,7 @@
  "field_order": [
   "country_name",
   "date_format",
+  "time_format",
   "time_zones",
   "code"
  ],
@@ -40,11 +41,16 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Code"
+  },
+  {
+   "fieldname": "time_format",
+   "fieldtype": "Data",
+   "label": "Time Format"
   }
  ],
  "icon": "fa fa-globe",
  "idx": 1,
- "modified": "2020-03-03 15:41:13.845054",
+ "modified": "2022-03-10 13:29:30.392093",
  "modified_by": "Administrator",
  "module": "Geo",
  "name": "Country",

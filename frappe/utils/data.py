@@ -222,6 +222,16 @@ def get_user_format():
 
 	return frappe.local.user_format or "yyyy-mm-dd"
 
+def get_time_format():
+	if getattr(frappe.local, "time_format", None) is None:
+		frappe.local.time_format = frappe.db.get_default("time_format")
+
+	if frappe.local.time_format == "12 Hour":
+		return "hh:mm:ss a"
+	else:
+		return "HH:mm:ss"
+
+
 def formatdate(string_date=None, format_string=None):
 	"""
 		Converts the given string date to :data:`user_format`
@@ -253,7 +263,8 @@ def format_time(txt):
 		return ''
 
 	try:
-		formatted_time = babel.dates.format_time(get_time(txt), locale=(frappe.local.lang or "").replace("-", "_"))
+		formatted_time = babel.dates.format_time(get_time(txt), get_time_format(),
+			locale=(frappe.local.lang or "").replace("-", "_"))
 	except UnknownLocaleError:
 		formatted_time = get_time(txt).strftime("%H:%M:%S")
 	return formatted_time
@@ -264,7 +275,7 @@ def format_datetime(datetime_string, format_string=None):
 
 	datetime = get_datetime(datetime_string)
 	if not format_string:
-		format_string = get_user_format().replace("mm", "MM") + " HH:mm:ss"
+		format_string = get_user_format().replace("mm", "MM") + " " + get_time_format()
 
 	try:
 		formatted_datetime = babel.dates.format_datetime(datetime, format_string, locale=(frappe.local.lang or "").replace("-", "_"))

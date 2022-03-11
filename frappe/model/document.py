@@ -975,7 +975,7 @@ class Document(BaseDocument):
 
 	def clear_cache(self):
 		frappe.clear_document_cache(self.doctype, self.name)
-		if self.meta.issingle:
+		if self.meta.get('issingle'):
 			frappe.clear_document_cache(self.doctype, None)
 
 	def reset_seen(self):

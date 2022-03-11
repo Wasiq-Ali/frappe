@@ -102,19 +102,32 @@ $.extend(frappe.datetime, {
 		return frappe.sys_defaults && frappe.sys_defaults.date_format || "yyyy-mm-dd";
 	},
 
+	get_time_hour_format: function () {
+		return frappe.sys_defaults && frappe.sys_defaults.time_format == "12 Hour" ? "12 Hour" : "24 Hour";
+	},
+
+	get_time_format: function () {
+		if (frappe.datetime.get_time_hour_format() == "12 Hour") {
+			return 'hh:mm:ss A';
+		} else {
+			return 'HH:mm:ss';
+		}
+	},
+
 	str_to_user: function(val, only_time = false) {
 		if(!val) return "";
 
+		var user_date_format = frappe.datetime.get_user_fmt().toUpperCase();
+		var user_time_format = frappe.datetime.get_time_format();
+
 		if(only_time) {
 			return moment(val, frappe.defaultTimeFormat)
-				.format(frappe.defaultTimeFormat);
+				.format(user_time_format);
 		}
-
-		var user_fmt = frappe.datetime.get_user_fmt().toUpperCase();
 		if(typeof val !== "string" || val.indexOf(" ")===-1) {
-			return moment(val).format(user_fmt);
+			return moment(val).format(user_date_format);
 		} else {
-			return moment(val, "YYYY-MM-DD HH:mm:ss").format(user_fmt + " HH:mm:ss");
+			return moment(val, "YYYY-MM-DD HH:mm:ss").format(user_date_format + " " + user_time_format);
 		}
 	},
 
@@ -123,9 +136,10 @@ $.extend(frappe.datetime, {
 	},
 
 	user_to_str: function(val, only_time = false) {
+		var user_time_format = frappe.datetime.get_time_format();
 
 		if(only_time) {
-			return moment(val, frappe.defaultTimeFormat)
+			return moment(val, user_time_format)
 				.format(frappe.defaultTimeFormat);
 		}
 
@@ -133,7 +147,7 @@ $.extend(frappe.datetime, {
 		var system_fmt = "YYYY-MM-DD";
 
 		if(val.indexOf(" ")!==-1) {
-			user_fmt += " HH:mm:ss";
+			user_fmt += " " + user_time_format;
 			system_fmt += " HH:mm:ss";
 		}
 

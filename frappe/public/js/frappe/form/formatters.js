@@ -193,7 +193,14 @@ frappe.form.formatters = {
 			if(frappe.boot.sysdefaults.time_zone) {
 				m = m.tz(frappe.boot.sysdefaults.time_zone);
 			}
-			return m.format(frappe.boot.sysdefaults.date_format.toUpperCase() + ', h:mm a z');
+			return m.format(frappe.boot.sysdefaults.date_format.toUpperCase() + ', ' + frappe.datetime.get_time_format());
+		} else {
+			return "";
+		}
+	},
+	Time: function (value) {
+		if(value) {
+			return frappe.datetime.str_to_user(value, true);
 		} else {
 			return "";
 		}
