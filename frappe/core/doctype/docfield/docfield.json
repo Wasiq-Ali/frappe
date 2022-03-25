@@ -205,6 +205,7 @@
    "fieldname": "options",
    "fieldtype": "Small Text",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Options",
    "oldfieldname": "options",
    "oldfieldtype": "Text"
@@ -437,7 +438,7 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2021-12-18 18:18:23.245250",
+ "modified": "2022-03-23 17:41:47.388369",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocField",
