@@ -9,7 +9,7 @@ from frappe.model.meta import get_field_currency, get_field_precision
 import re
 from six import string_types
 
-def format_value(value, df=None, doc=None, currency=None, translated=False):
+def format_value(value, df=None, doc=None, currency=None, translated=False, precision=None):
 	'''Format value based on given fieldtype, document reference, currency reference.
 	If docfield info (df) is not given, it will try and guess based on the datatype of the value'''
 	if isinstance(df, string_types):
@@ -58,11 +58,11 @@ def format_value(value, df=None, doc=None, currency=None, translated=False):
 	elif df.get("fieldtype") == "Currency":
 		default_currency = frappe.db.get_default("currency")
 		currency = currency or get_field_currency(df, doc) or default_currency
-		return fmt_money(value, precision=get_field_precision(df, doc), currency=currency,
+		return fmt_money(value, precision=cint(precision) or get_field_precision(df, doc), currency=currency,
 			force_symbol=cint(df.get("force_currency_symbol")))
 
 	elif df.get("fieldtype") == "Float":
-		precision = get_field_precision(df, doc)
+		precision = cint(precision) or get_field_precision(df, doc)
 		# I don't know why we support currency option for float
 		currency = currency or get_field_currency(df, doc)
 
@@ -79,7 +79,7 @@ def format_value(value, df=None, doc=None, currency=None, translated=False):
 		return fmt_money(value, precision=0)
 
 	elif df.get("fieldtype") == "Percent":
-		precision = 2
+		precision = cint(precision) or 2
 		temp = cstr(flt(value, precision)).split(".")
 		if len(temp)==1 or cint(temp[1])==0:
 			precision = 0
