@@ -12,15 +12,17 @@ frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 		else if (cur_frm && route && route[0] === 'Form') {
 			options = frappe.model.get_value(this.df.parent, this.docname, this.df.options);
 		} else {
-			const selector = `input[data-fieldname="${this.df.options}"]`;
+			const selector = `input[data-fieldname="${this.df.options}"], select[data-fieldname="${this.df.options}"]`;
 			let input = null;
 			if (cur_list) {
 				// for list page
 				input = cur_list.filter_area.standard_filters_wrapper.find(selector);
 			}
-			if (cur_page) {
+
+			if (cur_page && !input) {
 				input = $(cur_page.page).find(selector);
 			}
+
 			if (input) {
 				options = input.val();
 			}
