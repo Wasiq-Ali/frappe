@@ -12,6 +12,7 @@ from frappe.modules import scrub
 from frappe.www.printview import get_visible_columns
 import frappe.exceptions
 from collections import OrderedDict
+import datetime
 
 class ServerScriptNotEnabled(frappe.PermissionError): pass
 
@@ -50,6 +51,7 @@ def get_safe_globals():
 		tuple = tuple,
 		len = len,
 		abs = abs,
+		datetime = datetime,
 		enumerate = enumerate,
 		isinstance = isinstance,
 		OrderedDict = OrderedDict,

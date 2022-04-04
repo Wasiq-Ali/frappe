@@ -70,6 +70,11 @@ def get_datetime(datetime_str=None):
 	except ValueError:
 		return parser.parse(datetime_str)
 
+def combine_datetime(date, time):
+	date = getdate(date)
+	time = get_time(time)
+	return datetime.datetime.combine(date, time)
+
 def to_timedelta(time_str):
 	if isinstance(time_str, string_types):
 		t = parser.parse(time_str)
