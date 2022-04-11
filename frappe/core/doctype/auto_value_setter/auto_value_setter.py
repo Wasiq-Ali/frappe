@@ -15,6 +15,9 @@ class AutoValueSetter(Document):
 		self.validate_conditions()
 		frappe.cache().hdel('auto_value_setters', self.document_type)
 
+	def on_change(self):
+		frappe.cache().hdel('auto_value_setters', self.document_type)
+
 	def validate_doctype(self):
 		prohibited_doctypes = [self.doctype, 'DocType', 'DocField']
 		prohibited_doctypes += [d.options for d in self.meta.get_table_fields()]
