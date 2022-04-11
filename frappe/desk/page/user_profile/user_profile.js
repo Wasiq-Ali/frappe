@@ -93,7 +93,7 @@ class UserProfile {
 			type: 'heatmap',
 			countLabel: 'Energy Points',
 			data: {},
-			discreteDomains: 0,
+			discreteDomains: 1,
 		});
 		this.update_heatmap_data();
 		this.create_heatmap_chart_filters();

@@ -152,7 +152,7 @@ frappe.activity.render_heatmap = function(page) {
 					type: 'heatmap',
 					start: new Date(moment().subtract(1, 'year').toDate()),
 					countLabel: "actions",
-					discreteDomains: 0,
+					discreteDomains: 1,
 					data: {
 						'dataPoints': r.message
 					}
