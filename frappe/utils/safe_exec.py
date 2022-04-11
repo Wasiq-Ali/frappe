@@ -93,7 +93,10 @@ def get_safe_globals():
 			get_hooks = frappe.get_hooks,
 
 			original_name = frappe.utils.original_name,
-			list_original_names = frappe.utils.list_original_names
+			list_original_names = frappe.utils.list_original_names,
+
+			throw = frappe.throw,
+			bold = frappe.bold,
 		),
 		style = frappe._dict(
 			border_color = '#d1d8dd'
@@ -132,6 +135,7 @@ def get_safe_globals():
 	# default writer allows write access
 	out._write_ = _write
 	out._getitem_ = _getitem
+	out._getattr_ = getattr
 
 	# allow iterators and list comprehension
 	out._getiter_ = iter
