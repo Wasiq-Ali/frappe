@@ -506,6 +506,8 @@ class BaseDocument(object):
 						and cint(frappe.db.get_value(doctype, docname, "docstatus"))==2):
 
 						cancelled_links.append((df.fieldname, docname, get_msg(df, docname)))
+				else:
+					invalid_links.append((df.fieldname, docname, get_msg(df, docname)))
 
 		return invalid_links, cancelled_links
 
