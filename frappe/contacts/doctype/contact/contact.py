@@ -29,10 +29,11 @@ class Contact(Document):
 			break
 
 	def validate(self):
-		self.validate_phone_nos()
+		self.clean_numbers_and_emails()
+		self.remove_duplicates()
 		self.set_primary_email()
-		self.set_primary("phone")
-		self.set_primary("mobile_no")
+		self.set_primary_phone()
+		self.validate_phone_nos()
 
 		self.set_user()
 
@@ -63,6 +64,128 @@ class Contact(Document):
 				except ImportError:
 					pass
 
+	def clean_numbers_and_emails(self):
+		self.mobile_no = cstr(self.mobile_no).strip()
+		self.mobile_no_2 = cstr(self.mobile_no_2).strip()
+		self.phone = cstr(self.phone).strip()
+		self.email_id = cstr(self.email_id).strip()
+
+		for d in self.email_ids:
+			d.email_id = cstr(d.email_id).strip()
+		for d in self.phone_nos:
+			d.phone = cstr(d.phone).strip()
+
+	def remove_duplicates(self):
+		email_ids_visited = []
+		phone_nos_visited = []
+		to_remove = []
+
+		for d in self.email_ids:
+			if d.email_id in email_ids_visited:
+				to_remove.append(d)
+			else:
+				email_ids_visited.append(d.email_id)
+
+		for d in self.phone_nos:
+			if d.phone in phone_nos_visited:
+				to_remove.append(d)
+			else:
+				phone_nos_visited.append(d.phone)
+
+		for d in to_remove:
+			self.remove(d)
+
+		for i, d in enumerate(self.email_ids):
+			d.idx = i + 1
+		for i, d in enumerate(self.phone_nos):
+			d.idx = i + 1
+
+	def validate_phone_nos(self):
+		for d in self.phone_nos:
+			if not d.get('is_primary_phone') and not d.get('is_primary_mobile_no'):
+				frappe.throw(_("Row #{0}: Please mark contact number {1} as either a Mobile Number or a Phone Number")
+					.format(d.idx, frappe.bold(d.phone)))
+
+	def set_primary_email(self):
+		if self.email_id:
+			if self.email_id not in [d.email_id for d in self.email_ids]:
+				self.append('email_ids', {'email_id': self.email_id})
+		else:
+			if self.email_ids:
+				self.email_id = self.email_ids[0].email_id
+
+		for d in self.email_ids:
+			d.is_primary = 1 if d.email_id == self.email_id else 0
+
+	def set_primary_phone(self):
+		# secondary without primary
+		if not self.mobile_no and self.mobile_no_2:
+			self.mobile_no = self.mobile_no_2
+			self.mobile_no_2 = ""
+
+		# no duplicate
+		if self.mobile_no == self.mobile_no_2:
+			self.mobile_no_2 = ""
+
+		all_nos = [d.phone for d in self.phone_nos]
+		mobile_nos = [d.phone for d in self.phone_nos if d.is_primary_mobile_no]
+		phone_nos = [d.phone for d in self.phone_nos if d.is_primary_phone]
+
+		if self.mobile_no:
+			if self.mobile_no not in all_nos:
+				self.append('phone_nos', {'phone': self.mobile_no, 'is_primary_mobile_no': 1})
+		else:
+			if mobile_nos:
+				self.mobile_no = mobile_nos[0]
+
+		non_primary_mobile_nos = [d.phone for d in self.phone_nos if d.is_primary_mobile_no and d.phone != self.mobile_no]
+		if self.mobile_no_2:
+			if self.mobile_no_2 not in all_nos:
+				self.append('phone_nos', {'phone': self.mobile_no_2, 'is_primary_mobile_no': 1})
+		else:
+			if non_primary_mobile_nos:
+				self.mobile_no_2 = non_primary_mobile_nos[0]
+
+		if self.phone:
+			if self.phone not in all_nos:
+				self.append('phone_nos', {'phone': self.phone, 'is_primary_phone': 1})
+		else:
+			if phone_nos:
+				self.phone = phone_nos[0]
+
+		for d in self.phone_nos:
+			if d.phone in (self.mobile_no, self.mobile_no_2):
+				d.is_primary_mobile_no = 1
+			if d.phone == self.phone:
+				d.is_primary_phone = 1
+
+	def add_email(self, email_id, is_primary=0, autosave=False):
+		if is_primary:
+			self.email_id = email_id
+
+		self.append("email_ids", {
+			"email_id": email_id,
+			"is_primary": is_primary
+		})
+
+		if autosave:
+			self.save(ignore_permissions=True)
+
+	def add_phone(self, phone, is_primary_phone=0, is_primary_mobile_no=0, autosave=False):
+		if is_primary_mobile_no:
+			self.mobile_no = phone
+		if is_primary_phone:
+			self.phone = phone
+
+		self.append("phone_nos", {
+			"phone": phone,
+			"is_primary_phone": is_primary_phone,
+			"is_primary_mobile_no": is_primary_mobile_no
+		})
+
+		if autosave:
+			self.save(ignore_permissions=True)
+
 	def set_user(self):
 		if not self.user and self.email_id:
 			self.user = frappe.db.get_value("User", {"email": self.email_id})
@@ -86,62 +209,6 @@ class Contact(Document):
 			if (link.link_doctype, link.link_name) in reference_links:
 				return True
 
-	def validate_phone_nos(self):
-		for d in self.phone_nos:
-			if not d.get('is_primary_phone') and not d.get('is_primary_mobile_no'):
-				frappe.throw(_("Row #{0}: Please mark contact number {1} as either a Mobile Number or Phone Number")
-					.format(d.idx, frappe.bold(d.phone)))
-
-	def add_email(self, email_id, is_primary=0, autosave=False):
-		self.append("email_ids", {
-			"email_id": email_id,
-			"is_primary": is_primary
-		})
-
-		if autosave:
-			self.save(ignore_permissions=True)
-
-	def add_phone(self, phone, is_primary_phone=0, is_primary_mobile_no=0, autosave=False):
-		self.append("phone_nos", {
-			"phone": phone,
-			"is_primary_phone": is_primary_phone,
-			"is_primary_mobile_no": is_primary_mobile_no
-		})
-
-		if autosave:
-			self.save(ignore_permissions=True)
-
-	def set_primary_email(self):
-		if not self.email_ids:
-			self.email_id = ""
-			return
-
-		primary_email_ids = [email.email_id for email in self.email_ids if email.is_primary]
-
-		if len(primary_email_ids) > 1:
-			frappe.throw(_("Only one {0} can be set as primary.").format(frappe.bold("Email ID")))
-		elif len(primary_email_ids) == 0 and self.email_ids:
-			self.email_ids[0].is_primary = 1
-
-		for d in self.email_ids:
-			if d.is_primary == 1:
-				self.email_id = d.email_id.strip()
-				break
-
-	def set_primary(self, fieldname):
-		is_primary_fieldname = "is_primary_" + fieldname
-		secondary_fieldname = fieldname + "_2"
-
-		# Used to set primary mobile and phone no.
-		primary_rows = [d for d in self.phone_nos if d.get(is_primary_fieldname)]
-
-		if not primary_rows:
-			setattr(self, fieldname, "")
-			setattr(self, secondary_fieldname, "")
-			return
-
-		setattr(self, fieldname, primary_rows[0].phone)
-		setattr(self, secondary_fieldname, primary_rows[1].phone if len(primary_rows) > 1 else "")
 
 def get_default_contact(doctype, name, is_primary=None):
 	'''Returns default contact for the given doctype, name'''
@@ -163,6 +230,7 @@ def get_default_contact(doctype, name, is_primary=None):
 	else:
 		return None
 
+
 @frappe.whitelist()
 def invite_user(contact):
 	contact = frappe.get_doc("Contact", contact)
@@ -182,6 +250,7 @@ def invite_user(contact):
 
 		return user.name
 
+
 @frappe.whitelist()
 def get_contact_details(contact):
 	contact = frappe.get_doc("Contact", contact) if contact else frappe._dict()
@@ -191,12 +260,14 @@ def get_contact_details(contact):
 			[contact.get("salutation"), contact.get("first_name"), contact.get("last_name")])),
 		"contact_email": contact.get("email_id"),
 		"contact_mobile": contact.get("mobile_no"),
+		"contact_mobile_2": contact.get("mobile_no_2"),
 		"contact_phone": contact.get("phone"),
 		"contact_designation": contact.get("designation"),
 		"contact_department": contact.get("department"),
 		"contact_cnic": contact.get("tax_cnic")
 	}
 	return out
+
 
 def update_contact(doc, method):
 	'''Update contact when user is updated, if contact is found. Called via hooks'''
@@ -208,6 +279,7 @@ def update_contact(doc, method):
 				contact.set(key, doc.get(key))
 		contact.flags.ignore_mandatory = True
 		contact.save(ignore_permissions=True)
+
 
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
@@ -245,6 +317,7 @@ def contact_query(doctype, txt, searchfield, start, page_len, filters):
 			'link_doctype': link_doctype
 		})
 
+
 @frappe.whitelist()
 def address_query(links):
 	import json
@@ -272,6 +345,7 @@ def address_query(links):
 
 	return result
 
+
 def get_contact_with_phone_number(number):
 	if not number: return
 
@@ -280,6 +354,7 @@ def get_contact_with_phone_number(number):
 	], fields=["parent"], limit=1)
 
 	return contacts[0].parent if contacts else None
+
 
 def get_contact_name(email_id):
 	contact = frappe.get_list("Contact Email", filters={"email_id": email_id}, fields=["parent"], limit=1)

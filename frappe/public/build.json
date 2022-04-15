@@ -245,7 +245,9 @@
 		"public/js/frappe/form/controls/control.js",
 		"public/js/frappe/views/formview.js",
 		"public/js/frappe/form/form.js",
-		"public/js/frappe/meta_tag.js"
+		"public/js/frappe/meta_tag.js",
+		"public/js/frappe/utils/address_quick_entry.js",
+		"public/js/frappe/utils/contact_quick_entry.js"
 	],
 	"css/list.min.css": [
 		"public/less/list.less",

@@ -43,6 +43,7 @@
    "label": "Address Title"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "address_type",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -52,17 +53,20 @@
    "reqd": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "address_line1",
    "fieldtype": "Data",
    "label": "Address Line 1",
    "reqd": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "address_line2",
    "fieldtype": "Data",
    "label": "Address Line 2"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "city",
    "fieldtype": "Data",
    "in_global_search": 1,
@@ -78,11 +82,13 @@
    "label": "County"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "state",
    "fieldtype": "Data",
    "label": "Province"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "country",
    "fieldtype": "Link",
    "in_global_search": 1,
@@ -95,6 +101,7 @@
   {
    "fieldname": "pincode",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Postal Code",
    "search_index": 1
   },
@@ -120,12 +127,14 @@
    "label": "Fax"
   },
   {
+   "allow_in_quick_entry": 1,
    "default": "0",
    "fieldname": "is_primary_address",
    "fieldtype": "Check",
    "label": "Preferred Billing Address"
   },
   {
+   "allow_in_quick_entry": 1,
    "default": "0",
    "fieldname": "is_shipping_address",
    "fieldtype": "Check",
@@ -174,7 +183,7 @@
  ],
  "icon": "fa fa-map-marker",
  "idx": 5,
- "modified": "2021-11-26 16:37:18.360755",
+ "modified": "2022-04-15 18:08:47.605960",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Address",
@@ -267,6 +276,7 @@
    "write": 1
   }
  ],
+ "quick_entry": 1,
  "search_fields": "address_line1, address_line2, city, country",
  "sort_field": "modified",
  "sort_order": "DESC",
