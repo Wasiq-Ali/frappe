@@ -359,3 +359,27 @@ def get_contact_with_phone_number(number):
 def get_contact_name(email_id):
 	contact = frappe.get_list("Contact Email", filters={"email_id": email_id}, fields=["parent"], limit=1)
 	return contact[0].parent if contact else None
+
+
+@frappe.whitelist()
+def get_all_phone_numbers(link_doctype, link_name):
+	if not link_doctype or not link_name:
+		return []
+
+	numbers = frappe.db.sql("""
+		select p.phone, p.is_primary_mobile_no, p.is_primary_phone, c.name as contact
+		from `tabContact Phone` p
+		inner join `tabContact` c on c.name = p.parent
+		where exists(select dl.name from `tabDynamic Link` dl
+			where dl.parenttype = 'Contact' and dl.parent = c.name and dl.link_doctype = %s and dl.link_name = %s)
+		order by c.is_primary_contact desc, c.creation, p.idx
+	""", (link_doctype, link_name), as_dict=1)
+
+	out = []
+	phone_nos_visited = []
+	for d in numbers:
+		if d.phone and d.phone not in phone_nos_visited:
+			out.append(d)
+			phone_nos_visited.append(d.phone)
+
+	return out
