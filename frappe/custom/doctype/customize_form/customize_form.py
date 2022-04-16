@@ -70,7 +70,8 @@ docfield_properties = {
 	'remember_last_selected_value': 'Check',
 	'allow_bulk_edit': 'Check',
 	'auto_repeat': 'Link',
-	'allow_in_quick_entry': 'Check'
+	'allow_in_quick_entry': 'Check',
+	'no_copy': 'Check',
 }
 
 allowed_fieldtype_change = (('Currency', 'Float', 'Percent'), ('Small Text', 'Data'),

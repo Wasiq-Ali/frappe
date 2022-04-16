@@ -40,6 +40,7 @@
   "display",
   "default",
   "in_filter",
+  "no_copy",
   "column_break_21",
   "description",
   "print_hide",
@@ -354,11 +355,21 @@
    "fieldname": "allow_in_quick_entry",
    "fieldtype": "Check",
    "label": " Allow in Quick Entry "
+  },
+  {
+   "default": "0",
+   "fieldname": "no_copy",
+   "fieldtype": "Check",
+   "label": "No Copy",
+   "oldfieldname": "in_filter",
+   "oldfieldtype": "Check",
+   "print_width": "50px",
+   "width": "50px"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-03-17 21:31:35.714416",
+ "modified": "2022-04-16 16:46:32.873053",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Customize Form Field",
