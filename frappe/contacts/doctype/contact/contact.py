@@ -172,11 +172,6 @@ class Contact(Document):
 			self.save(ignore_permissions=True)
 
 	def add_phone(self, phone, is_primary_phone=0, is_primary_mobile_no=0, autosave=False):
-		if is_primary_mobile_no:
-			self.mobile_no = phone
-		if is_primary_phone:
-			self.phone = phone
-
 		self.append("phone_nos", {
 			"phone": phone,
 			"is_primary_phone": is_primary_phone,
@@ -311,7 +306,7 @@ def contact_query(doctype, txt, searchfield, start, page_len, filters):
 			{mcond}
 		order by
 			if(locate(%(_txt)s, `tabContact`.name), locate(%(_txt)s, `tabContact`.name), 99999),
-			`tabContact`.idx desc, `tabContact`.name
+			`tabContact`.is_primary_contact desc, `tabContact`.idx desc, `tabContact`.name
 		limit %(start)s, %(page_len)s """.format(mcond=get_match_cond(doctype), key=searchfield), {
 			'txt': '%' + txt + '%',
 			'_txt': txt.replace("%", ""),
@@ -380,3 +375,10 @@ def get_all_contact_nos(link_doctype, link_name):
 	""", (link_doctype, link_name), as_dict=1)
 
 	return numbers
+
+
+@frappe.whitelist()
+def add_phone_no_to_contact(contact, phone, is_primary_mobile_no=0, is_primary_phone=0):
+	doc = frappe.get_doc("Contact", contact)
+	doc.add_phone(phone, is_primary_mobile_no=cint(is_primary_mobile_no), is_primary_phone=cint(is_primary_phone))
+	doc.save()

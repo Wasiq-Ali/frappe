@@ -69,13 +69,13 @@ $.extend(frappe.contacts, {
 		}
 	},
 
-	set_contact_no_select_options: function (frm, fieldname, checkbox_field) {
+	set_contact_no_select_options: function (frm, fieldname, number_type, allow_add) {
 		var all_contact_nos = [];
 		if (frm.doc.__onload && frm.doc.__onload.contact_nos) {
 			all_contact_nos = frm.doc.__onload.contact_nos;
 		}
 
-		var filtered_contact_nos = checkbox_field ? all_contact_nos.filter(d => d[checkbox_field]) : all_contact_nos;
+		var filtered_contact_nos = number_type ? all_contact_nos.filter(d => d[number_type]) : all_contact_nos;
 
 		var contact_nos = [];
 		$.each(filtered_contact_nos, function (i, d) {
@@ -89,7 +89,114 @@ $.extend(frappe.contacts, {
 			 contact_nos.push(already_set);
 		}
 
-		frm.set_df_property(fieldname, 'options', [''].concat(contact_nos));
+		var options = [''].concat(contact_nos);
+		if (allow_add) {
+			options.push(__('[Add New Number]'));
+		}
+
+		frm.set_df_property(fieldname, 'options', options);
+	},
+
+	add_new_number_dialog: function(frm, number_field, contact_field, contact_name_field, number_type, callback) {
+		var html = `
+<div class="text-center">
+<button type="button" class="btn btn-primary btn-new-contact">${__("Create a New Contact")}</button>
+<br/><br/>
+<button type="button" class="btn btn-primary btn-existing-contact">${__("Add Number To Existing Contact")}</button>
+</div>
+`;
+
+		var dialog = new frappe.ui.Dialog({
+			title: __("Add New Contact Number"),
+			fields: [
+				{fieldtype: "HTML", options: html}
+			],
+		});
+
+		dialog.show();
+
+		$('.btn-new-contact', dialog.$wrapper).click(function () {
+			dialog.hide();
+			frappe.contacts.create_new_contact(frm, number_field, contact_field);
+		});
+
+		$('.btn-existing-contact', dialog.$wrapper).click(function () {
+			dialog.hide();
+			frappe.contacts.add_number_to_existing_contact_dialog(frm, number_field, contact_field, contact_name_field,
+				number_type, callback);
+		});
+	},
+
+	create_new_contact: function (frm, number_field, contact_field) {
+		var field = frm.get_field(contact_field);
+		if (field) {
+			field.new_doc();
+		}
+	},
+
+	add_number_to_existing_contact_dialog: function (frm, number_field, contact_field, contact_name_field, number_type, callback) {
+		var dialog = new frappe.ui.Dialog({
+			title: __("Add Number to Existing Contact"),
+			fields: [
+				{
+					label: __("Contact"),
+					fieldname: "contact",
+					fieldtype: "Link",
+					reqd: 1,
+					default: frm.doc[contact_field], get_query: erpnext.queries.contact_query(frm.doc),
+					onchange: () => {
+						var contact = dialog.get_value('contact');
+						if (contact) {
+							frappe.call({
+								method: "frappe.contacts.doctype.contact.contact.get_contact_details",
+								args: {contact: contact},
+								callback: function (r) {
+									if (r.message) {
+										dialog.set_value('contact_display', r.message.contact_display);
+									}
+								}
+							});
+						} else {
+							dialog.set_value('contact_display', "");
+						}
+					}
+				},
+				{
+					label: __("Contact Name"),
+					fieldname: "contact_display",
+					fieldtype: "Data",
+					read_only: 1,
+					default: frm.doc[contact_name_field]
+				},
+				{
+					fieldtype: "Data",
+					label: __("New Number"),
+					fieldname: "phone",
+					reqd: 1
+				},
+			]
+		});
+
+		dialog.set_primary_action(__("Add"), function () {
+			var values = dialog.get_values();
+			return frappe.call({
+				method: "frappe.contacts.doctype.contact.contact.add_phone_no_to_contact",
+				args: {
+					"contact": values.contact,
+					"phone": values.phone,
+					"is_primary_mobile_no": cint(number_type == 'is_primary_mobile_no'),
+					"is_primary_phone": cint(number_type == 'is_primary_phone'),
+				},
+				callback: function (r) {
+					if (!r.exc) {
+						dialog.hide();
+						callback && callback(values.phone);
+					}
+				}
+			});
+		});
+
+		dialog.show();
 	},
 
 	get_contacts_from_number: function (frm, phone_no) {
