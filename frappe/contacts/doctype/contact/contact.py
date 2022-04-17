@@ -252,9 +252,9 @@ def invite_user(contact):
 
 
 @frappe.whitelist()
-def get_contact_details(contact):
+def get_contact_details(contact, get_contact_no_list=False, link_doctype=None, link_name=None):
 	contact = frappe.get_doc("Contact", contact) if contact else frappe._dict()
-	out = {
+	out = frappe._dict({
 		"contact_person": contact.get("name"),
 		"contact_display": " ".join(filter(None,
 			[contact.get("salutation"), contact.get("first_name"), contact.get("last_name")])),
@@ -265,7 +265,11 @@ def get_contact_details(contact):
 		"contact_designation": contact.get("designation"),
 		"contact_department": contact.get("department"),
 		"contact_cnic": contact.get("tax_cnic")
-	}
+	})
+
+	if cint(get_contact_no_list) and link_doctype and link_name:
+		out.contact_nos = get_all_contact_nos(link_doctype, link_name)
+
 	return out
 
 
@@ -362,7 +366,7 @@ def get_contact_name(email_id):
 
 
 @frappe.whitelist()
-def get_all_phone_numbers(link_doctype, link_name):
+def get_all_contact_nos(link_doctype, link_name):
 	if not link_doctype or not link_name:
 		return []
 
@@ -375,11 +379,4 @@ def get_all_phone_numbers(link_doctype, link_name):
 		order by c.is_primary_contact desc, c.creation, p.idx
 	""", (link_doctype, link_name), as_dict=1)
 
-	out = []
-	phone_nos_visited = []
-	for d in numbers:
-		if d.phone and d.phone not in phone_nos_visited:
-			out.append(d)
-			phone_nos_visited.append(d.phone)
-
-	return out
+	return numbers
