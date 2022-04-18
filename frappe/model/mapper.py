@@ -123,7 +123,7 @@ def get_mapped_doc(from_doctype, from_docname, table_maps, target_doc=None,
 
 	return target_doc
 
-def map_doc(source_doc, target_doc, table_map, source_parent=None):
+def map_doc(source_doc, target_doc, table_map, source_parent=None, target_parent=None):
 	if table_map.get("validation"):
 		for key, condition in table_map["validation"].items():
 			if condition[0]=="=":
@@ -134,7 +134,7 @@ def map_doc(source_doc, target_doc, table_map, source_parent=None):
 	map_fields(source_doc, target_doc, table_map, source_parent)
 
 	if "postprocess" in table_map:
-		table_map["postprocess"](source_doc, target_doc, source_parent)
+		table_map["postprocess"](source_doc, target_doc, source_parent, target_parent)
 
 def map_fields(source_doc, target_doc, table_map, source_parent):
 	no_copy_fields = set([d.fieldname for d in source_doc.meta.get("fields") if (d.no_copy==1 or d.fieldtype in table_fields)]
@@ -210,7 +210,7 @@ def map_child_doc(source_d, target_parent, table_map, source_parent=None):
 	target_parentfield = target_parent.get_parentfield_of_doctype(target_child_doctype)
 	target_d = frappe.new_doc(target_child_doctype, target_parent, target_parentfield)
 
-	map_doc(source_d, target_d, table_map, source_parent)
+	map_doc(source_d, target_d, table_map, source_parent, target_parent)
 
 	target_d.idx = None
 	target_parent.append(target_parentfield, target_d)
