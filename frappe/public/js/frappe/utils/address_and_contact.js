@@ -143,7 +143,8 @@ $.extend(frappe.contacts, {
 					fieldname: "contact",
 					fieldtype: "Link",
 					reqd: 1,
-					default: frm.doc[contact_field], get_query: erpnext.queries.contact_query(frm.doc),
+					default: frm.doc[contact_field],
+					get_query: erpnext.queries.contact_query(frm.doc),
 					onchange: () => {
 						var contact = dialog.get_value('contact');
 						if (contact) {
@@ -172,13 +173,24 @@ $.extend(frappe.contacts, {
 					fieldtype: "Data",
 					label: __("New Number"),
 					fieldname: "phone",
-					reqd: 1
+					reqd: 1,
+					onchange: () => {
+						if (number_type == "is_primary_mobile_no") {
+							var value = dialog.get_value('phone');
+							value = erpnext.utils.get_formatted_mobile_pakistan(value);
+							dialog.fields_dict.phone.value = value;
+							dialog.fields_dict.phone.refresh();
+						}
+					},
 				},
 			]
 		});
 
 		dialog.set_primary_action(__("Add"), function () {
 			var values = dialog.get_values();
+			if (number_type == "is_primary_mobile_no") {
+				values.phone = erpnext.utils.get_formatted_mobile_pakistan(values.phone);
+			}
 			return frappe.call({
 				method: "frappe.contacts.doctype.contact.contact.add_phone_no_to_contact",
 				args: {
