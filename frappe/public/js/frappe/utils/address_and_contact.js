@@ -142,9 +142,10 @@ $.extend(frappe.contacts, {
 					label: __("Contact"),
 					fieldname: "contact",
 					fieldtype: "Link",
+					options: "Contact",
 					reqd: 1,
 					default: frm.doc[contact_field],
-					get_query: erpnext.queries.contact_query(frm.doc),
+					get_query: () => erpnext.queries.contact_query(frm.doc),
 					onchange: () => {
 						var contact = dialog.get_value('contact');
 						if (contact) {
