@@ -177,6 +177,7 @@ VALID_UTILS = (
 "DATETIME_FORMAT",
 "is_invalid_date_string",
 "getdate",
+"combine_datetime",
 "get_datetime",
 "to_timedelta",
 "add_to_date",
