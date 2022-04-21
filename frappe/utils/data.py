@@ -263,12 +263,15 @@ def formatdate(string_date=None, format_string=None):
 		formatted_date = date.strftime(format_string)
 	return formatted_date
 
-def format_time(txt):
+def format_time(txt, format_string=None):
 	if not txt:
 		return ''
 
+	if not format_string:
+		format_string = get_time_format()
+
 	try:
-		formatted_time = babel.dates.format_time(get_time(txt), get_time_format(),
+		formatted_time = babel.dates.format_time(get_time(txt), format_string,
 			locale=(frappe.local.lang or "").replace("-", "_"))
 	except UnknownLocaleError:
 		formatted_time = get_time(txt).strftime("%H:%M:%S")
