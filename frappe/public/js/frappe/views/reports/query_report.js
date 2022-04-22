@@ -1003,9 +1003,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	set_breadcrumbs() {
-		if (!this.report_doc || !this.report_doc.ref_doctype) return;
-		const ref_doctype = frappe.get_meta(this.report_doc.ref_doctype);
-		frappe.breadcrumbs.add(ref_doctype.module);
+		if (!this.report_doc) return;
+		const ref_doctype = this.report_doc.ref_doctype ? frappe.get_meta(this.report_doc.ref_doctype) : {};
+		const module = this.report_doc.module || ref_doctype.module;
+		if (module) {
+			frappe.breadcrumbs.add(module);
+		}
 	}
 
 	make_access_log (method, file_format) {
