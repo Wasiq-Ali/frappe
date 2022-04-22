@@ -326,8 +326,7 @@
    "default": "0",
    "fieldname": "search_index",
    "fieldtype": "Check",
-   "hidden": 1,
-   "label": "Index",
+   "label": "Search Index",
    "no_copy": 1,
    "print_hide": 1
   },
@@ -360,7 +359,7 @@
  ],
  "icon": "fa fa-glass",
  "idx": 1,
- "modified": "2020-03-17 21:30:18.102333",
+ "modified": "2022-04-22 14:51:15.979963",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Custom Field",
