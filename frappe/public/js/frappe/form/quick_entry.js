@@ -250,6 +250,7 @@ frappe.ui.form.QuickEntryForm = Class.extend({
 	open_doc: function(){
 		this.dialog.hide();
 		this.update_doc();
+		frappe.meta.remove_docfield_copy(this.doctype, this.doc.name, true);
 		frappe.set_route('Form', this.doctype, this.doc.name);
 	},
 
