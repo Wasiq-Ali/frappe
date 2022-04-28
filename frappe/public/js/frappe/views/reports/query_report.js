@@ -872,10 +872,14 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				return resolve;
 			} else {
 				return res.then(r => {
-					if (r.message) {
-						resolve(r.message);
+					if (r && typeof r == "object") {
+						if (r.exc) {
+							reject(r.exc);
+						} else {
+							resolve(r.message);
+						}
 					} else {
-						reject();
+						resolve(r);
 					}
 				}).fail(reject);
 			}
