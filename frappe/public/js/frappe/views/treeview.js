@@ -258,6 +258,12 @@ frappe.views.TreeView = Class.extend({
 		args["parent_"+me.doctype.toLowerCase().replace(/ /g,'_')] = me.args["parent"];
 
 		d.set_value("is_group", 0);
+
+		var add_child_args = me.opts.get_add_child_args && me.opts.get_add_child_args(node);
+		if (!add_child_args) {
+			add_child_args = {};
+		}
+		args = $.extend(add_child_args, args)
 		d.set_values(args);
 
 		// create
