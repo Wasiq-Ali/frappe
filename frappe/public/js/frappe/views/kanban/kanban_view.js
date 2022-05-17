@@ -59,6 +59,7 @@ frappe.views.KanbanView = class KanbanView extends frappe.views.ListView {
 
 	setup_view() {
 		this.setup_realtime_updates();
+		this.settings.onload && this.settings.onload(this);
 	}
 
 	set_fields() {

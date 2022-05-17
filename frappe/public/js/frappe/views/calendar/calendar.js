@@ -34,7 +34,7 @@ frappe.views.CalendarView = class CalendarView extends frappe.views.ListView {
 	}
 
 	setup_view() {
-
+		this.settings.onload && this.settings.onload(this);
 	}
 
 	before_render() {
