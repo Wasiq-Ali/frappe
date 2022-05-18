@@ -99,7 +99,7 @@ frappe.provide("frappe.views");
 				doc_fields[field.fieldname] = card_title;
 				doc_fields[this.board.field_name] = column_title;
 				this.cur_list.filter_area.get().forEach(function(f) {
-					if (f[2] !== "=") return;
+					if (!["=", "subtree of"].includes(f[2])) return;
 					doc_fields[f[1]] = f[3];
 				});
 

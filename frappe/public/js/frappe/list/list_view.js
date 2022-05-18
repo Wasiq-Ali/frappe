@@ -206,7 +206,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		const doctype = this.doctype;
 		const options = {};
 		this.filter_area.get().forEach(f => {
-			if (f[2] === "=" && frappe.model.is_non_std_field(f[1])) {
+			if (["=", "subtree of"].includes(f[2]) && frappe.model.is_non_std_field(f[1])) {
 				options[f[1]] = f[3];
 			}
 		});
