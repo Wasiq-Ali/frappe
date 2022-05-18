@@ -44,8 +44,8 @@ frappe.ui.form.AssignTo = Class.extend({
 				info.description = d[i].description || "";
 
 				info._fullname = info.fullname;
-				if(info.fullname.length > 10) {
-					info._fullname = info.fullname.substr(0, 10) + '...';
+				if(info.fullname.length > 15) {
+					info._fullname = info.fullname.substr(0, 15) + '...';
 				}
 
 				$(repl('<li class="assignment-row">\
