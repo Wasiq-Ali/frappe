@@ -11,6 +11,8 @@ frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 		}
 		else if (cur_frm && route && route[0] === 'Form') {
 			options = frappe.model.get_value(this.df.parent, this.docname, this.df.options);
+		} else if (frappe.query_report && route && route[0] == 'query-report') {
+			options = frappe.query_report.get_filter_value(this.df.options);
 		} else {
 			const selector = `input[data-fieldname="${this.df.options}"], select[data-fieldname="${this.df.options}"]`;
 			let input = null;
