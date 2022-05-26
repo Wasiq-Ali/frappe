@@ -232,7 +232,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				setTimeout(() => this.previous_filters = null, 10000);
 
 				if (f.on_change) {
-					f.on_change(this);
+					return f.on_change(this);
 				} else {
 					if (this.prepared_report) {
 						this.reset_report_view();
@@ -993,17 +993,22 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			field_value_map = fieldname;
 		}
 
-		this._no_refresh = true;
+		var promises = [];
+		promises.push(() => this._no_refresh = true);
+
 		Object.keys(field_value_map)
 			.forEach((fieldname, i, arr) => {
 				const value = field_value_map[fieldname];
 
 				if (i === arr.length - 1) {
-					this._no_refresh = false;
+					promises.push(() => this._no_refresh = false);
 				}
 
-				this.get_filter(fieldname).set_value(value);
+				promises.push(() => {
+					return this.get_filter(fieldname).set_value(value)
+				});
 			});
+		return frappe.run_serially(promises);
 	}
 
 	set_breadcrumbs() {
