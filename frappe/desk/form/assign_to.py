@@ -68,7 +68,8 @@ def add(args=None):
 		}).insert(ignore_permissions=True)
 
 		# set assigned_to if field exists
-		if frappe.get_meta(args['doctype']).get_field("assigned_to"):
+		assigned_to_df = frappe.get_meta(args['doctype']).get_field("assigned_to")
+		if assigned_to_df and assigned_to_df.fieldtype == "Link" and assigned_to_df.options == "User":
 			frappe.db.set_value(args['doctype'], args['name'], "assigned_to", args['assign_to'])
 
 		doc = frappe.get_doc(args['doctype'], args['name'])
@@ -130,7 +131,8 @@ def set_status(doctype, name, assign_to, status="Cancelled"):
 		pass
 
 	# clear assigned_to if field exists
-	if frappe.get_meta(doctype).get_field("assigned_to") and status=="Cancelled":
+	assigned_to_df = frappe.get_meta(doctype).get_field("assigned_to")
+	if status == "Cancelled" and assigned_to_df and assigned_to_df.fieldtype == "Link" and assigned_to_df.options == "User":
 		frappe.db.set_value(doctype, name, "assigned_to", None)
 
 	return get({"doctype": doctype, "name": name})
