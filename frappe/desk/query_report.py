@@ -674,7 +674,7 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 			grouped_by_map = get_grouped_by_map(group_value)
 			group_totals[group_value] = calculate_totals(group_rows[group_value], group_field, group_value, grouped_by_map)
 
-	if totals_only:
+	if totals_only and len(group_by) == 1:
 		return list(group_totals.values())
 
 	out = []
