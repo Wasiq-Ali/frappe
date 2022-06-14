@@ -82,6 +82,9 @@ def update_add_node(doc, parent, parent_field):
 
 	frappe.db.sql("update `tab{0}` set lft=%s, rgt=%s, modified=%s where name=%s".format(doctype),
 		(right,right+1, n, name))
+
+	frappe.clear_cache(doctype=doctype)
+
 	return right
 
 
@@ -137,6 +140,8 @@ def update_move_node(doc, parent_field):
 	frappe.db.sql("""update `tab{0}` set lft = -lft + %s, rgt = -rgt + %s, modified=%s
 		where lft < 0""".format(doc.doctype), (new_diff, new_diff, n))
 
+	frappe.clear_cache(doctype=doc.doctype)
+
 def rebuild_tree(doctype, parent_field):
 	"""
 		call rebuild_node for all root nodes
@@ -171,6 +176,8 @@ def rebuild_node(doctype, parent, left, parent_field):
 	# the children of this node we also know the right value
 	frappe.db.sql("""UPDATE `tab{0}` SET lft=%s, rgt=%s, modified=%s
 		WHERE name=%s""".format(doctype), (left,right,n,parent))
+
+	frappe.clear_cache(doctype=doctype)
 
 	#return the right value of this node + 1
 	return right+1
