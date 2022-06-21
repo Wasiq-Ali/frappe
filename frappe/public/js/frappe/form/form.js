@@ -1351,17 +1351,17 @@ frappe.ui.form.Form = class FrappeForm {
 						label = value;
 					}
 
-					const escaped_name = encodeURIComponent(value);
-
 					var color = get_color(doc || {}, me.doc);
-					var css_class = color ? `indicator ${color}` : "";
-					return repl('<a class="%(css_class)s" href="#Form/%(doctype)s/%(name)s">%(label)s</a>', {
-						color: color,
-						css_class: css_class,
-						doctype: df.options,
-						name: escaped_name,
-						label: label
-					});
+
+					if (!options) {
+						options = {};
+					}
+					options.label = label;
+					if (color) {
+						options.indicator = color;
+					}
+
+					return frappe.form.formatters['Link'](value, df, options, doc);
 				} else {
 					return '';
 				}
