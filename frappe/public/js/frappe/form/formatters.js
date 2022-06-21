@@ -78,7 +78,11 @@ frappe.form.formatters = {
 				: format_number(value, null, 0)), options, true);
 	},
 	Percent: function(value, docfield, options) {
-		return frappe.form.formatters._style(flt(value, 2) + "%", options, true)
+		if (value == null || value === "")
+			return frappe.form.formatters._style("", options, true);
+		else {
+			return frappe.form.formatters._style(flt(value, 2) + "%", options, true);
+		}
 	},
 	Rating: function(value) {
 		return `<span class="rating">
