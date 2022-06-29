@@ -59,6 +59,7 @@
   {
    "fieldname": "module",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Module",
    "options": "Module Def"
   },
@@ -150,7 +151,7 @@
   }
  ],
  "idx": 1,
- "modified": "2020-03-03 15:36:33.356916",
+ "modified": "2022-06-29 13:41:32.967040",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Report",
