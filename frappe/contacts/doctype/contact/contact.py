@@ -101,10 +101,11 @@ class Contact(Document):
 			d.idx = i + 1
 
 	def validate_phone_nos(self):
-		for d in self.phone_nos:
-			if not d.get('is_primary_phone') and not d.get('is_primary_mobile_no'):
-				frappe.throw(_("Row #{0}: Please mark contact number {1} as either a Mobile Number or a Phone Number")
-					.format(d.idx, frappe.bold(d.phone)))
+		pass
+		# for d in self.phone_nos:
+		# 	if not d.get('is_primary_phone') and not d.get('is_primary_mobile_no'):
+		# 		frappe.throw(_("Row #{0}: Please mark contact number {1} as either a Mobile Number or a Phone Number")
+		# 			.format(d.idx, frappe.bold(d.phone)))
 
 	def set_primary_email(self):
 		if self.email_id:
