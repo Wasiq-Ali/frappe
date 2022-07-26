@@ -178,6 +178,10 @@ def search_widget(doctype, txt, query=None, searchfield=None, start=0,
 			else:
 				frappe.response["values"] = [r[:-1] for r in values]
 
+				for i, r in enumerate(frappe.response["values"]):
+					formatted_row = [frappe.format(v) if v else v for v in r]
+					frappe.response["values"][i] = formatted_row
+
 def get_std_fields_list(meta, key):
 	# get additional search fields
 	sflist = ["name"]
