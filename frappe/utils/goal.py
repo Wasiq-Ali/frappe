@@ -57,6 +57,9 @@ def get_monthly_goal_graph_data(title, doctype, docname, goal_value_field, goal_
 	from frappe.utils.formatters import format_value
 	import json
 
+	if not frappe.has_permission(goal_doctype):
+		return None
+
 	meta = frappe.get_meta(doctype)
 	doc = frappe.get_doc(doctype, docname)
 
