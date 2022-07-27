@@ -22,6 +22,20 @@ frappe.ui.form.Controller = Class.extend({
 		this.frm.page.wrapper.find(".layout-main-section-wrapper").removeClass("col-md-10");
 		this.frm.page.wrapper.find(".layout-main-section-wrapper").addClass("col-md-12");
 	},
+
+	set_disallow_on_submit_fields_read_only: function (doc, cdt, cdn) {
+		var me = this;
+
+		if (!me.frm.doc.__onload || !me.frm.doc.__onload.disallow_on_submit || me.frm.doc.docstatus != 1) {
+			return;
+		}
+
+		$.each(me.frm.doc.__onload.disallow_on_submit, function (i, d) {
+			var fieldname = d[0];
+			var parentfield = d[1];
+			me.frm.set_df_property(fieldname, 'allow_on_submit', 0, parentfield ? cdn : null, parentfield);
+		});
+	},
 });
 
 frappe.ui.form.Form = class FrappeForm {

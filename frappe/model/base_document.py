@@ -654,6 +654,21 @@ class BaseDocument(object):
 		disallowed_fields = doc.flags.disallow_on_submit or []
 		return (fieldname, self.parentfield or None) in disallowed_fields
 
+	def get_fields_for_disallow_on_submit(self, excluding_fields=None):
+		if not excluding_fields:
+			excluding_fields = []
+
+		disallowed_fields = [(df.fieldname, None) for df in self.meta.fields if df.allow_on_submit
+			and df.fieldname not in excluding_fields]
+
+		table_fields = self.meta.get_table_fields()
+		for table_df in table_fields:
+			table_meta = frappe.get_meta(table_df.options)
+			disallowed_fields += [(df.fieldname, table_df.fieldname) for df in table_meta.fields if
+				df.get('allow_on_submit')]
+
+		return disallowed_fields
+
 	def _sanitize_content(self):
 		"""Sanitize HTML and Email in field values. Used to prevent XSS.
 
