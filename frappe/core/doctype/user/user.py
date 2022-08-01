@@ -323,6 +323,9 @@ class User(Document):
 		# delete shares
 		frappe.db.sql("""delete from `tabDocShare` where user=%s""", self.name)
 
+		# route history
+		frappe.db.sql("""delete from `tabRoute History` where user=%s""", self.name)
+
 		# delete messages
 		frappe.db.sql("""delete from `tabCommunication`
 			where communication_type in ('Chat', 'Notification')
