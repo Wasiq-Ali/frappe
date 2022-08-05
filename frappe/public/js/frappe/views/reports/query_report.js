@@ -231,16 +231,20 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				this.previous_filters = current_filters;
 				setTimeout(() => this.previous_filters = null, 10000);
 
+				var tasks = [];
+
 				if (f.on_change) {
-					return f.on_change(this);
-				} else {
-					if (this.prepared_report) {
-						this.reset_report_view();
-					}
-					else if (!this._no_refresh) {
-						this.refresh();
-					}
+					tasks.push(() => f.on_change(this));
 				}
+
+				if (this.prepared_report) {
+					tasks.push(() => this.reset_report_view());
+				}
+				else if (!this._no_refresh) {
+					tasks.push(() => this.refresh());
+				}
+
+				return frappe.run_serially(tasks);
 			};
 
 			f = Object.assign(f, df);
