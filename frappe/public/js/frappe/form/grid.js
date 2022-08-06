@@ -681,7 +681,7 @@ export default class Grid {
 						}
 						var data = frappe.utils.csv_to_array(frappe.utils.get_decoded_string(file.dataurl));
 						// row #2 contains fieldnames;
-						var fieldnames = data[2];
+						var fieldnames = data[4];
 
 						me.frm.clear_table(me.df.fieldname);
 						$.each(data, function(i, row) {
@@ -709,12 +709,16 @@ export default class Grid {
 											value = cint(value);
 										}
 
+										if(df.fieldtype==="Float" || df.fieldtype==="Currency") {
+											value = flt(value);
+										}
+
 										d[fieldnames[ci]] = value;
 									});
 								}
 							}
 						});
-
+						me.frm.trigger(me.df.fieldname + '_after_bulk_upload');
 						me.frm.refresh_field(me.df.fieldname);
 						frappe.msgprint({message:__('Table updated'), title:__('Success'), indicator:'green'})
 					}
@@ -730,22 +734,22 @@ export default class Grid {
 			var data = [];
 			var docfields = [];
 			data.push([__("Bulk Edit {0}", [title])]);
-			data.push([]);
-			data.push([]);
-			data.push([]);
 			data.push([__("The CSV format is case sensitive")]);
 			data.push([__("Do not edit headers which are preset in the template")]);
-			data.push(["------"]);
+			data.push([]);
+			data.push([]);
+			data.push([]);
+			data.push(["----- Insert After This Line -----"]);
 			$.each(frappe.get_meta(me.df.options).fields, function(i, df) {
 				// don't include the read-only field in the template
-				if(frappe.model.is_value_type(df.fieldtype)) {
-					data[1].push(df.label);
-					data[2].push(df.fieldname);
+				if(frappe.model.is_value_type(df.fieldtype) && !df.read_only) {
+					data[3].push(df.label);
+					data[4].push(df.fieldname);
 					let description = (df.description || "") + ' ';
 					if (df.fieldtype === "Date") {
 						description += frappe.boot.sysdefaults.date_format;
 					}
-					data[3].push(description);
+					data[5].push(description);
 					docfields.push(df);
 				}
 			});
@@ -753,7 +757,7 @@ export default class Grid {
 			// add data
 			$.each(me.frm.doc[me.df.fieldname] || [], function(i, d) {
 				var row = [];
-				$.each(data[2], function(i, fieldname) {
+				$.each(data[4], function(i, fieldname) {
 					var value = d[fieldname];
 
 					// format date
