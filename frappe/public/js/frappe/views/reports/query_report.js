@@ -237,11 +237,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					tasks.push(() => f.on_change(this));
 				}
 
-				if (this.prepared_report) {
-					tasks.push(() => this.reset_report_view());
-				}
-				else if (!this._no_refresh) {
-					tasks.push(() => this.refresh());
+				if (!this._no_refresh) {
+					if (this.prepared_report) {
+						tasks.push(() => this.reset_report_view());
+					} else {
+						tasks.push(() => this.refresh());
+					}
 				}
 
 				return frappe.run_serially(tasks);
@@ -273,14 +274,20 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 			const filters_to_set = this.filters.filter(f => fields.includes(f.df.fieldname));
 
-			const promises = filters_to_set.map(f => {
-				return () => {
+			var promises = [];
+
+			promises.push(() => this._no_refresh = true);
+
+			$.each(filters_to_set, (i, f) => {
+				promises.push(() => {
 					const value = frappe.route_options[f.df.fieldname];
 					return f.set_value(value);
-				};
+				});
 			});
+
 			promises.push(() => {
 				frappe.route_options = null;
+				this._no_refresh = false;
 			});
 
 			return frappe.run_serially(promises);
