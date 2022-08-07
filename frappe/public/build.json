@@ -180,6 +180,7 @@
 		"public/js/frappe/utils/help.js",
 		"public/js/frappe/utils/help_links.js",
 		"public/js/frappe/utils/address_and_contact.js",
+		"public/js/frappe/utils/sms_manager.js",
 		"public/js/frappe/utils/preview_email.js",
 		"public/js/frappe/utils/file_manager.js",
 

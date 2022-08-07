@@ -9,11 +9,12 @@ from frappe import _, throw, msgprint
 from frappe.utils import nowdate
 
 from frappe.model.document import Document
-import six
 from six import string_types
+
 
 class SMSSettings(Document):
 	pass
+
 
 def validate_receiver_nos(receiver_list):
 	validated_receiver_list = []
@@ -28,6 +29,7 @@ def validate_receiver_nos(receiver_list):
 		throw(_("Please enter valid mobile nos"))
 
 	return validated_receiver_list
+
 
 @frappe.whitelist()
 def get_contact_number(contact_name=None, ref_doctype=None, ref_name=None):
@@ -50,6 +52,7 @@ def get_contact_number(contact_name=None, ref_doctype=None, ref_name=None):
 			mobile_no = number[0]
 	
 	return mobile_no or ''
+
 
 @frappe.whitelist()
 def send_sms(receiver_list, msg, success_msg=True, type=None,
@@ -78,6 +81,7 @@ def send_sms(receiver_list, msg, success_msg=True, type=None,
 		send_via_gateway(arg)
 	else:
 		msgprint(_("Please Update SMS Settings"))
+
 
 def send_via_gateway(arg):
 	ss = frappe.get_doc('SMS Settings', 'SMS Settings')
@@ -110,6 +114,7 @@ def send_via_gateway(arg):
 				frappe.msgprint(_("SMS failed for the following numbers:<br>{0}").format("<br>".join(fail_message_list)))
 	else:
 		frappe.throw(_("SMS could not be sent{0}").format("<br>{0}".format(fail_message_list[0]) if fail_message_list else ""))
+
 
 def validate_response(response, sms_settings=None):
 	if not sms_settings:
@@ -144,6 +149,7 @@ def get_headers(sms_settings=None):
 			headers.update({d.parameter: d.value})
 
 	return headers
+
 
 def send_request(gateway_url, params, headers=None, use_post=False):
 	import requests
