@@ -12,32 +12,53 @@ from frappe.utils import cstr
 class SMSTemplate(Document):
 	def autoname(self):
 		self.name = self.reference_doctype
-		if self.type:
-			self.name += "-" + self.type
+		if self.notification_type:
+			self.name += "-" + self.notification_type
 
 
 @frappe.whitelist()
-def get_sms_defaults(dt, dn, type=None, contact=None, mobile_no=None, party_doctype=None, party_name=None):
+def get_sms_defaults(dt, dn, notification_type=None, contact=None, mobile_no=None, party_doctype=None, party_name=None):
 	if not mobile_no and (contact or party_doctype or party_name):
 		mobile_no = get_contact_number(contact, party_doctype, party_name)
 
-	type = cstr(type)
-
-	template = frappe.db.sql_list("""
-		select message
-		from `tabSMS Template`
-		where reference_doctype = %s and ifnull(type, '') = %s
-		limit 1
-	""", [dt, type])
-	template = template[0] if template else ""
+	sms_template = get_sms_template(dt, notification_type)
 
 	message = ""
-	if template:
+	if sms_template:
 		doc = frappe.get_doc(dt, dn)
-		context = {"doc": doc}
-		message = frappe.render_template(template, context)
+		message = render_sms_template(sms_template, doc)
 
 	return {
 		"mobile_no": mobile_no,
 		"message": message
 	}
+
+
+def get_sms_template_message(doc, notification_type=None):
+	if not doc:
+		return ""
+
+	sms_template = get_sms_template(doc.doctype, notification_type)
+	if not sms_template:
+		return ""
+
+	return render_sms_template(sms_template, doc)
+
+
+def get_sms_template(reference_doctype, notification_type=None):
+	notification_type = cstr(notification_type)
+
+	template = frappe.db.sql_list("""
+		select message
+		from `tabSMS Template`
+		where reference_doctype = %s and ifnull(notification_type, '') = %s
+		limit 1
+	""", [reference_doctype, notification_type])
+
+	return template[0] if template else ""
+
+
+def render_sms_template(sms_template, doc):
+	context = {"doc": doc}
+	message = frappe.render_template(sms_template, context)
+	return message

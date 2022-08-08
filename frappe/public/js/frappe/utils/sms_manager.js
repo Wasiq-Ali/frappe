@@ -24,7 +24,7 @@ frappe.SMSManager = function SMSManager(doc, options) {
 		}
 
 		me.message = options.message;
-		me.type = options.type;
+		me.notification_type = options.notification_type;
 		me.contact = options.contact;
 		me.mobile_no = options.mobile_no;
 		me.party_doctype = options.party_doctype;
@@ -39,7 +39,7 @@ frappe.SMSManager = function SMSManager(doc, options) {
 			args: {
 				dt: me.doctype,
 				dn: me.name,
-				type: me.type,
+				notification_type: me.notification_type,
 				contact: me.contact,
 				mobile_no: me.mobile_no,
 				party_doctype: me.party_doctype,
@@ -69,7 +69,7 @@ frappe.SMSManager = function SMSManager(doc, options) {
 
 	this.make_dialog = function() {
 		var d = new frappe.ui.Dialog({
-			title: __('Send {0} SMS', [me.type || '']),
+			title: __('Send {0} SMS', [me.notification_type || '']),
 			width: 400,
 			fields: [
 				{label: __('Mobile Number'), fieldname: 'mobile_no', fieldtype: 'Data', reqd: 1},
@@ -87,8 +87,8 @@ frappe.SMSManager = function SMSManager(doc, options) {
 					method: options.method || "frappe.core.doctype.sms_settings.sms_settings.send_sms",
 					args: {
 						receiver_list: [v.mobile_no],
-						msg: v.message,
-						type: me.type,
+						message: v.message,
+						notification_type: me.notification_type,
 						reference_doctype: me.reference_doctype,
 						reference_name: me.reference_name,
 						party_doctype: me.party_doctype,

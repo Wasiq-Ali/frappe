@@ -5,7 +5,7 @@
  "engine": "InnoDB",
  "field_order": [
   "reference_doctype",
-  "type",
+  "notification_type",
   "column_break_3",
   "message"
  ],
@@ -21,14 +21,6 @@
    "set_only_once": 1
   },
   {
-   "fieldname": "type",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Type",
-   "set_only_once": 1
-  },
-  {
    "fieldname": "column_break_3",
    "fieldtype": "Column Break"
   },
@@ -37,9 +29,17 @@
    "fieldtype": "Text",
    "label": "Message",
    "reqd": 1
+  },
+  {
+   "fieldname": "notification_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Notification Type",
+   "set_only_once": 1
   }
  ],
- "modified": "2022-08-07 13:52:59.573561",
+ "modified": "2022-08-07 22:33:56.767982",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Template",
