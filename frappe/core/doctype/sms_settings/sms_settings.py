@@ -46,15 +46,15 @@ def send_sms(receiver_list,
 	process_and_send(args)
 
 
-def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=False, context=None):
+def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=False, context=None, send_after=None):
 	from frappe.core.doctype.sms_queue.sms_queue import queue_sms
 
 	notification_type = cstr(notification_type)
 
-	if not cint(frappe.conf.get('enable_automated_sms')):
+	if not is_sms_enabled():
 		return False
 
-	if not frappe.get_cached_value('SMS Settings', None, 'sms_gateway_url'):
+	if not is_automated_sms_enabled():
 		return False
 
 	validation = run_validate_notification(doc, notification_type, throw=False)
@@ -73,6 +73,9 @@ def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=Fals
 	args['receiver_list'] = clean_receiver_nos(args.get('receiver_list'))
 	if not args.get('receiver_list'):
 		return False
+
+	if send_after:
+		args['send_after'] = send_after
 
 	create_communication(args)
 	queue_sms(args)
@@ -223,7 +226,9 @@ def run_before_send_methods(args):
 	notification_type = cstr(args.get('notification_type'))
 
 	if doc:
-		run_validate_notification(doc, notification_type, throw=True)
+		validation = run_validate_notification(doc, notification_type, throw=True)
+		if not validation:
+			frappe.throw(_("{0} Notification Validation Failed").format(notification_type))
 		add_notification_count(doc, notification_type, 'SMS', update=True)
 
 
@@ -344,6 +349,17 @@ def get_error_message(response, sms_settings=None):
 
 	if sms_settings.error_message:
 		return frappe.safe_eval(sms_settings.error_message, eval_locals={'response': response})
+
+
+def is_sms_enabled():
+	return True if frappe.get_cached_value('SMS Settings', None, 'sms_gateway_url') else False
+
+
+def is_automated_sms_enabled():
+	if not is_sms_enabled():
+		return False
+
+	return cint(frappe.conf.get('enable_automated_sms'))
 
 
 # Create SMS Log

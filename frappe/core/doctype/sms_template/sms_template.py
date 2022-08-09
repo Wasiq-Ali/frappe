@@ -65,6 +65,20 @@ def get_sms_template(reference_doctype, notification_type=None):
 		return None
 
 
+def has_automated_sms_template(reference_doctype, notification_type=None):
+	notification_type = cstr(notification_type)
+
+	template = frappe.db.sql_list("""
+		select name
+		from `tabSMS Template`
+		where reference_doctype = %s and ifnull(notification_type, '') = %s
+			and enabled = 1 and allow_automated_sms = 1
+		limit 1
+	""", [reference_doctype, notification_type])
+
+	return len(template)
+
+
 def get_context(context=None, doc=None):
 	if not context:
 		context = {'doc': {}}
