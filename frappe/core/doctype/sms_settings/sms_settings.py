@@ -52,6 +52,9 @@ def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=Fals
 	if not cint(frappe.conf.get('enable_automated_sms')):
 		return False
 
+	if not frappe.get_cached_value('SMS Settings', None, 'sms_gateway_url'):
+		return False
+
 	validation = run_validate_notification(doc, notification_type, throw=False)
 	if not validation:
 		return False
@@ -71,6 +74,8 @@ def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=Fals
 
 	create_communication(args)
 	queue_sms(args)
+
+	return True
 
 
 def send_template_sms(notification_type, reference_doctype=None, reference_name=None, doc=None, receiver_list=None):
