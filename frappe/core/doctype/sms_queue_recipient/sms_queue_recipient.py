@@ -3,12 +3,8 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe
-from frappe import _
+# import frappe
 from frappe.model.document import Document
 
-
-class SMSLog(Document):
-	def on_trash(self):
-		if frappe.session.user != 'Administrator':
-			frappe.throw(_('Only Administrator can delete SMS Log'))
+class SMSQueueRecipient(Document):
+	pass

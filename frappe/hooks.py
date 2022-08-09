@@ -163,6 +163,7 @@ doc_events = {
 scheduler_events = {
 	"all": [
 		"frappe.email.queue.flush",
+		"frappe.core.doctype.sms_queue.sms_queue.flush",
 		"frappe.email.doctype.email_account.email_account.pull",
 		"frappe.email.doctype.email_account.email_account.notify_unreplied",
 		"frappe.oauth.delete_oauth2_data",
@@ -183,6 +184,7 @@ scheduler_events = {
 	],
 	"daily": [
 		"frappe.email.queue.clear_outbox",
+		"frappe.core.doctype.sms_queue.sms_queue.clear_queue",
 		"frappe.desk.notifications.clear_notifications",
 		"frappe.core.doctype.error_log.error_log.set_old_logs_as_seen",
 		"frappe.desk.doctype.event.event.send_event_digest",

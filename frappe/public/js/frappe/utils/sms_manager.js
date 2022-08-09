@@ -28,7 +28,7 @@ frappe.SMSManager = function SMSManager(doc, options) {
 		me.contact = options.contact;
 		me.mobile_no = options.mobile_no;
 		me.party_doctype = options.party_doctype;
-		me.party_name = options.party_name;
+		me.party = options.party;
 
 		this.get_sms_defaults();
 	};
@@ -43,7 +43,7 @@ frappe.SMSManager = function SMSManager(doc, options) {
 				contact: me.contact,
 				mobile_no: me.mobile_no,
 				party_doctype: me.party_doctype,
-				party_name: me.party_name
+				party: me.party
 			},
 			callback: function(r) {
 				if(!r.exc) {
@@ -92,7 +92,7 @@ frappe.SMSManager = function SMSManager(doc, options) {
 						reference_doctype: me.reference_doctype,
 						reference_name: me.reference_name,
 						party_doctype: me.party_doctype,
-						party_name: me.party_name
+						party: me.party
 					},
 					callback: function(r) {
 						if(!r.exc) {

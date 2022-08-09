@@ -1348,6 +1348,14 @@ def are_emails_muted():
 	from frappe.utils import cint
 	return flags.mute_emails or cint(conf.get("mute_emails") or 0) or False
 
+def are_sms_muted():
+	from frappe.utils import cint
+
+	if not cint(conf.get('enable_automated_sms')):
+		return False
+
+	return flags.mute_sms or cint(conf.get("mute_sms") or 0) or False
+
 def get_test_records(doctype):
 	"""Returns list of objects from `test_records.json` in the given doctype's folder."""
 	from frappe.modules import get_doctype_module, get_module_path

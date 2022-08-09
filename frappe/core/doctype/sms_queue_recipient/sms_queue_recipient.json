@@ -1,0 +1,37 @@
+{
+ "creation": "2022-08-08 17:16:02.831927",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "recipient",
+  "status"
+ ],
+ "fields": [
+  {
+   "default": "Not Sent",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Not Sent\nSent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "recipient",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Recipient",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2022-08-08 18:19:31.734516",
+ "modified_by": "Administrator",
+ "module": "Core",
+ "name": "SMS Queue Recipient",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

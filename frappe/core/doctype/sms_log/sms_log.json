@@ -1,10 +1,10 @@
 {
- "autoname": "SYS-SMS-.#####",
+ "autoname": "hash",
  "creation": "2012-03-27 14:36:47",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "sender_name",
+  "sender",
   "sent_on",
   "column_break0",
   "message",
@@ -13,18 +13,17 @@
   "requested_numbers",
   "column_break1",
   "no_of_sent_sms",
-  "sent_to"
+  "sent_to",
+  "section_break_11",
+  "reference_doctype",
+  "reference_name",
+  "column_break_13",
+  "communication"
  ],
  "fields": [
   {
-   "fieldname": "sender_name",
-   "fieldtype": "Data",
-   "label": "Sender Name",
-   "read_only": 1
-  },
-  {
    "fieldname": "sent_on",
-   "fieldtype": "Date",
+   "fieldtype": "Datetime",
    "label": "Sent On",
    "read_only": 1
   },
@@ -69,20 +68,57 @@
   },
   {
    "fieldname": "sent_to",
-   "fieldtype": "Code",
+   "fieldtype": "Small Text",
    "label": "Sent To",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "Reference DocType",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Data",
+   "label": "Reference Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sender",
+   "fieldtype": "Data",
+   "label": "Sender",
+   "read_only": 1
+  },
+  {
+   "fieldname": "communication",
+   "fieldtype": "Link",
+   "label": "Communication",
+   "options": "Communication",
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "icon": "fa fa-mobile-phone",
  "idx": 1,
- "modified": "2022-08-07 14:35:38.832745",
+ "in_create": 1,
+ "modified": "2022-08-09 13:30:30.547434",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Log",
  "owner": "Administrator",
  "permissions": [
   {
+   "delete": 1,
    "email": 1,
    "print": 1,
    "read": 1,

@@ -1068,6 +1068,7 @@ class Document(BaseDocument):
 
 		def compose(fn, *hooks):
 			def runner(self, method, *args, **kwargs):
+				self._return_value = None
 				add_to_return_value(self, fn(self, *args, **kwargs))
 				for f in hooks:
 					add_to_return_value(self, f(self, method, *args, **kwargs))

@@ -225,7 +225,18 @@ class Communication(Document):
 	def set_delivery_status(self, commit=False):
 		'''Look into the status of Email Queue linked to this Communication and set the Delivery Status of this Communication'''
 		delivery_status = None
-		status_counts = Counter(frappe.db.sql_list('''select status from `tabEmail Queue` where communication=%s''', self.name))
+
+		if self.communication_medium == "SMS":
+			status_counts = Counter(frappe.db.sql_list('''select status from `tabSMS Queue` where communication=%s''', self.name))
+			if not status_counts:
+				status_counts = Counter(frappe.db.sql_list("""
+					select 'Sent' as status
+					from `tabSMS Log`
+					where communication=%s and no_of_sent_sms > 0 and no_of_sent_sms >= no_of_requested_sms
+				"""))
+		else:
+			status_counts = Counter(frappe.db.sql_list('''select status from `tabEmail Queue` where communication=%s''', self.name))
+
 		if self.sent_or_received == "Received":
 			return
 
