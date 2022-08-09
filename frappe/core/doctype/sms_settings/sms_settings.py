@@ -29,6 +29,8 @@ def send_sms(receiver_list,
 
 	notification_type = cstr(notification_type)
 
+	receiver_list = clean_receiver_nos(receiver_list)
+
 	args = frappe._dict({
 		'receiver_list': receiver_list,
 		'message': message,
@@ -44,7 +46,7 @@ def send_sms(receiver_list,
 	process_and_send(args)
 
 
-def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=False):
+def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=False, context=None):
 	from frappe.core.doctype.sms_queue.sms_queue import queue_sms
 
 	notification_type = cstr(notification_type)
@@ -64,7 +66,7 @@ def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=Fals
 		if notification_count:
 			return False
 
-	args = get_template_sms_args(notification_type, doc=doc, throw=False)
+	args = get_template_sms_args(notification_type, doc=doc, context=context, throw=False)
 	if not args:
 		return False
 
@@ -78,20 +80,24 @@ def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=Fals
 	return True
 
 
-def send_template_sms(notification_type, reference_doctype=None, reference_name=None, doc=None, receiver_list=None):
+def send_template_sms(notification_type, reference_doctype=None, reference_name=None, doc=None, context=None, receiver_list=None):
 	args = get_template_sms_args(notification_type, reference_doctype=reference_doctype, reference_name=reference_name,
-		doc=doc, get_doc=True, throw=True)
+		doc=doc, context=context, get_doc=True, throw=True)
 
 	if receiver_list:
-		args['receiver_list'] = receiver_list
+		args['receiver_list'] = clean_receiver_nos(receiver_list)
 
 	create_communication(args)
 	process_and_send(args)
 
 
-def get_template_sms_args(notification_type, reference_doctype=None, reference_name=None, doc=None, get_doc=False,
-		is_automated_sms=True, throw=True):
-	from frappe.core.doctype.sms_template.sms_template import get_sms_template, render_sms_template
+def get_template_sms_args(notification_type,
+		reference_doctype=None, reference_name=None,
+		doc=None, get_doc=False,
+		context=None,
+		is_automated_sms=True, throw=True
+):
+	from frappe.core.doctype.sms_template.sms_template import get_sms_template
 
 	if not doc and reference_doctype and reference_name:
 		doc = frappe.get_doc(reference_doctype, reference_name)
@@ -127,7 +133,7 @@ def get_template_sms_args(notification_type, reference_doctype=None, reference_n
 		else:
 			return None
 
-	message = render_sms_template(sms_template.message, doc)
+	message = sms_template.get_rendered_message(doc=doc, context=context)
 	if not message:
 		if throw:
 			frappe.throw(_("SMS Message empty for {0} {1}{2}")
@@ -259,7 +265,10 @@ def send_via_gateway(args):
 	ss = frappe.get_cached_doc('SMS Settings', None)
 	headers = get_headers(ss)
 
-	request_params = {ss.message_parameter: args.get('message')}
+	request_params = {
+		ss.message_parameter: args.get('message')
+	}
+
 	for d in ss.get("parameters"):
 		if not d.header:
 			request_params[d.parameter] = d.value

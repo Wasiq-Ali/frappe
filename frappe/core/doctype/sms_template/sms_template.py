@@ -15,6 +15,11 @@ class SMSTemplate(Document):
 		if self.notification_type:
 			self.name += "-" + self.notification_type
 
+	def get_rendered_message(self, context=None, doc=None):
+		context = get_context(context, doc)
+		message = frappe.render_template(self.message, context)
+		return message
+
 
 @frappe.whitelist()
 def get_sms_defaults(dt, dn, notification_type=None, contact=None, mobile_no=None, party_doctype=None, party=None):
@@ -26,39 +31,45 @@ def get_sms_defaults(dt, dn, notification_type=None, contact=None, mobile_no=Non
 	message = ""
 	if sms_template:
 		doc = frappe.get_doc(dt, dn)
-		message = render_sms_template(sms_template.message, doc)
+		message = sms_template.get_rendered_message(doc=doc)
 
 	return {
 		"mobile_no": mobile_no,
-		"message": message
+		"message": message,
 	}
 
 
-def get_sms_template_message(doc, notification_type=None):
-	if not doc:
-		return ""
-
+def get_sms_template_message(notification_type=None, doc=None, context=None):
 	sms_template = get_sms_template(doc.doctype, notification_type)
 	if not sms_template:
 		return ""
 
-	return render_sms_template(sms_template.message, doc)
+	context = get_context(context, doc)
+	return sms_template.get_rendered_message(context=context)
 
 
 def get_sms_template(reference_doctype, notification_type=None):
 	notification_type = cstr(notification_type)
 
-	template = frappe.db.sql("""
-		select name, message, allow_automated_sms
+	template = frappe.db.sql_list("""
+		select name
 		from `tabSMS Template`
 		where reference_doctype = %s and ifnull(notification_type, '') = %s and enabled = 1
 		limit 1
-	""", [reference_doctype, notification_type], as_dict=1)
+	""", [reference_doctype, notification_type])
 
-	return template[0] if template else None
+	if template:
+		template_doc = frappe.get_cached_doc("SMS Template", template[0])
+		return template_doc
+	else:
+		return None
 
 
-def render_sms_template(sms_template, doc):
-	context = {"doc": doc}
-	message = frappe.render_template(sms_template, context)
-	return message
+def get_context(context=None, doc=None):
+	if not context:
+		context = {'doc': {}}
+
+	if doc:
+		context['doc'] = doc
+
+	return context
