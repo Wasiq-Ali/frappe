@@ -233,7 +233,7 @@ class Communication(Document):
 					select 'Sent' as status
 					from `tabSMS Log`
 					where communication=%s and no_of_sent_sms > 0 and no_of_sent_sms >= no_of_requested_sms
-				"""))
+				""", self.name))
 		else:
 			status_counts = Counter(frappe.db.sql_list('''select status from `tabEmail Queue` where communication=%s''', self.name))
 
