@@ -66,6 +66,7 @@
   {
    "fieldname": "notification_type",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Notification Type",
    "read_only": 1
@@ -107,6 +108,7 @@
   {
    "fieldname": "send_after",
    "fieldtype": "Datetime",
+   "in_list_view": 1,
    "label": "Send After",
    "read_only": 1
   },
@@ -162,7 +164,7 @@
  ],
  "icon": "fa fa-mobile-phone",
  "in_create": 1,
- "modified": "2022-08-09 15:34:35.573415",
+ "modified": "2022-08-10 09:35:32.066686",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Queue",
@@ -178,5 +180,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "title_field": "reference_name"
 }
