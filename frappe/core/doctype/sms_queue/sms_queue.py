@@ -36,7 +36,7 @@ def queue_sms(args, now=False):
 		if now:
 			send_one(doc.name, now=now, auto_commit=not now)
 		else:
-			frappe.enqueue("frappe.core.doctype.sms_queue.sms_queue.send_one", sms_queue=doc.name)
+			frappe.enqueue("frappe.core.doctype.sms_queue.sms_queue.send_one", sms_queue=doc.name, enqueue_after_commit=True)
 
 
 def flush(from_test=False):

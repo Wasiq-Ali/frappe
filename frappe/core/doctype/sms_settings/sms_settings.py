@@ -46,7 +46,7 @@ def send_sms(receiver_list,
 	process_and_send(args)
 
 
-def enqueue_template_sms(doc, notification_type=None, allow_if_already_sent=False, context=None, send_after=None):
+def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_already_sent=False, send_after=None):
 	from frappe.core.doctype.sms_queue.sms_queue import queue_sms
 
 	notification_type = cstr(notification_type)
@@ -391,14 +391,12 @@ def clean_receiver_nos(receiver_list):
 			receiver_list = [receiver_list]
 
 	cleaned_receiver_list = []
-	if not receiver_list:
-		return cleaned_receiver_list
 
 	invalid_characters = (' ', '\t', '-', '(', ')')
 
 	for d in receiver_list:
 		for char in invalid_characters:
-			d = d.replace(char, '')
+			d = cstr(d).replace(char, '')
 
 		if d:
 			cleaned_receiver_list.append(d)
