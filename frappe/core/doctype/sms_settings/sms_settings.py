@@ -5,10 +5,10 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils import nowdate, cint, cstr, getdate
+from frappe.utils import nowdate, cint, cstr
 from frappe.model.document import Document
 from frappe.core.doctype.notification_count.notification_count import add_notification_count, get_notification_count,\
-	set_notification_last_scheduled, get_notification_last_scheduled
+	set_notification_last_scheduled
 from six import string_types
 from frappe.model.base_document import get_controller
 import json

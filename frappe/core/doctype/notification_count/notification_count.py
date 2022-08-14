@@ -53,6 +53,17 @@ def get_notification_last_scheduled(doc, notification_type, notification_medium)
 	return get_datetime(row.get('last_scheduled_dt')) if row.get('last_scheduled_dt') else None
 
 
+def clear_notification_count(doc, update=False):
+	if not has_notification_count_field(doc):
+		return None
+
+	doc.set('notification_count', [])
+
+	if update:
+		frappe.db.sql("delete from `tabNotification Count` where parenttype = %s and parent = %s",
+			(doc.doctype, doc.name))
+
+
 def get_row(doc, notification_type, notification_medium, append_if_missing):
 	filters = {"notification_type": notification_type, "notification_medium": notification_medium}
 

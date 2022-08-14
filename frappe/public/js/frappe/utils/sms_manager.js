@@ -113,3 +113,14 @@ frappe.SMSManager = function SMSManager(doc, options) {
 
 	this.show();
 }
+
+frappe.get_notification_count = function (frm, notification_type, notification_medium) {
+	var row = (frm.doc.notification_count || [])
+		.filter(d => d.notification_type === notification_type && d.notification_medium === notification_medium);
+
+	if (row && row.length) {
+		return cint(row[0].notification_count);
+	} else {
+		return 0;
+	}
+};
