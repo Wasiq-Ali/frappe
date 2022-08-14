@@ -6,7 +6,9 @@
  "field_order": [
   "notification_type",
   "notification_medium",
-  "notification_count"
+  "notification_count",
+  "last_scheduled_dt",
+  "last_sent_dt"
  ],
  "fields": [
   {
@@ -27,11 +29,24 @@
    "default": "0",
    "fieldname": "notification_count",
    "fieldtype": "Int",
-   "label": "Notification Count"
+   "label": "Notification Count",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "last_scheduled_dt",
+   "fieldtype": "Datetime",
+   "label": "Last Scheduled Date/Time",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "last_sent_dt",
+   "fieldtype": "Datetime",
+   "label": "Last Sent Date/Time",
+   "no_copy": 1
   }
  ],
  "istable": 1,
- "modified": "2022-08-07 14:33:49.878841",
+ "modified": "2022-08-13 12:44:19.253805",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Notification Count",

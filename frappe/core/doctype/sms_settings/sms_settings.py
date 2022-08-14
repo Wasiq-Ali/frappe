@@ -5,9 +5,10 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from frappe.utils import nowdate, cint, cstr
+from frappe.utils import nowdate, cint, cstr, getdate
 from frappe.model.document import Document
-from frappe.core.doctype.notification_count.notification_count import add_notification_count, get_notification_count
+from frappe.core.doctype.notification_count.notification_count import add_notification_count, get_notification_count,\
+	set_notification_last_scheduled, get_notification_last_scheduled
 from six import string_types
 from frappe.model.base_document import get_controller
 import json
@@ -70,13 +71,13 @@ def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_alr
 	if not args:
 		return False
 
-	args['receiver_list'] = clean_receiver_nos(args.get('receiver_list'))
 	if not args.get('receiver_list'):
 		return False
 
 	if send_after:
 		args['send_after'] = send_after
 
+	set_notification_last_scheduled(doc, notification_type, "SMS", update=True)
 	create_communication(args)
 	queue_sms(args)
 
@@ -121,6 +122,8 @@ def get_template_sms_args(notification_type,
 				.format(args.reference_doctype, for_notification_type_str))
 		else:
 			return None
+
+	args['receiver_list'] = clean_receiver_nos(args.get('receiver_list'))
 
 	sms_template = get_sms_template(args.reference_doctype, notification_type)
 	if not sms_template:
@@ -391,6 +394,8 @@ def clean_receiver_nos(receiver_list):
 			receiver_list = [receiver_list]
 
 	cleaned_receiver_list = []
+	if not receiver_list:
+		return cleaned_receiver_list
 
 	invalid_characters = (' ', '\t', '-', '(', ')')
 

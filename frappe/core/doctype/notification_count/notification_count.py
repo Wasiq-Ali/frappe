@@ -3,8 +3,8 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-# import frappe
-from frappe.utils import cint
+import frappe
+from frappe.utils import cint, now_datetime, get_datetime
 from frappe.model.document import Document
 
 
@@ -12,33 +12,65 @@ class NotificationCount(Document):
 	pass
 
 
+def add_notification_count(doc, notification_type, notification_medium, count=1, update=False):
+	if not has_notification_count_field(doc):
+		return
+
+	count = cint(count) or 1
+
+	row = get_row(doc, notification_type, notification_medium, append_if_missing=True)
+	row.notification_count += count
+	row.last_sent_dt = now_datetime()
+
+	if update:
+		row.db_update()
+
+
 def get_notification_count(doc, notification_type, notification_medium):
-	if not doc.meta.has_field('notification_count'):
+	if not has_notification_count_field(doc):
 		return 0
 
-	row = doc.get('notification_count',
-		{"notification_type": notification_type, "notification_medium": notification_medium})
-
-	row = row[0] if row else {}
+	row = get_row(doc, notification_type, notification_medium, append_if_missing=False)
 	return cint(row.get('notification_count'))
 
 
-def add_notification_count(doc, notification_type, notification_medium, count=1, update=False):
-	df = doc.meta.get_field('notification_count')
-	if not df or df.options != "Notification Count" or df.fieldtype != 'Table':
+def set_notification_last_scheduled(doc, notification_type, notification_medium, update=False):
+	if not has_notification_count_field(doc):
 		return
 
+	row = get_row(doc, notification_type, notification_medium, append_if_missing=True)
+	row.last_scheduled_dt = now_datetime()
+
+	if update:
+		row.db_update()
+
+
+def get_notification_last_scheduled(doc, notification_type, notification_medium):
+	if not has_notification_count_field(doc):
+		return None
+
+	row = get_row(doc, notification_type, notification_medium, append_if_missing=False)
+	return get_datetime(row.get('last_scheduled_dt')) if row.get('last_scheduled_dt') else None
+
+
+def get_row(doc, notification_type, notification_medium, append_if_missing):
 	filters = {"notification_type": notification_type, "notification_medium": notification_medium}
 
 	row = doc.get('notification_count', filters)
 	if row:
 		row = row[0]
-	else:
+	elif append_if_missing:
 		row = doc.append('notification_count', filters)
 		row.notification_count = 0
+	else:
+		row = frappe._dict()
 
-	count = cint(count) or 1
-	row.notification_count += count
+	return row
 
-	if update:
-		row.db_update()
+
+def has_notification_count_field(doc):
+	df = doc.meta.get_field('notification_count')
+	if not df or df.options != "Notification Count" or df.fieldtype != 'Table':
+		return False
+
+	return True
