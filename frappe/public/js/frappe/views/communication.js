@@ -618,8 +618,7 @@ frappe.views.CommunicationComposer = Class.extend({
 		if (this.frm && $(this.frm.wrapper).find('.form-print-wrapper').is(':visible')){
 			return $(this.frm.wrapper).find('.print-letterhead').prop('checked') ? 1 : 0;
 		} else {
-			return (frappe.model.get_doc(":Print Settings", "Print Settings") ||
-				{ with_letterhead: 1 }).with_letterhead ? 1 : 0;
+			return 1;
 		}
 	},
 
