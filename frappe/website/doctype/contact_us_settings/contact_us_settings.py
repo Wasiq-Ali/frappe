@@ -13,3 +13,7 @@ class ContactUsSettings(Document):
 	def on_update(self):
 		from frappe.website.render import clear_cache
 		clear_cache("contact")
+
+
+def update_website_context(context):
+	context['contact_us_settings'] = frappe.get_cached_doc("Contact Us Settings", None).as_dict()
