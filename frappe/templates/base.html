@@ -2,13 +2,25 @@
 <!-- Built on Frappe. https://frappe.io/ -->
 <html lang="en">
 <head>
+	{% if google_analytics_id -%}
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', '{{ google_analytics_id }}');
+	</script>
+	{%- endif %}
+
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="generator" content="frappe">
 
-	{% block meta_block %}
+	{%- block meta_block -%}
 		{% include "templates/includes/meta_block.html" %}
-	{% endblock %}
+	{%- endblock %}
 
 	<title>{% block title %}{{ title | striptags }}{% endblock %}</title>
 
