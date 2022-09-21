@@ -12,7 +12,7 @@ class ContactUsSettings(Document):
 
 	def on_update(self):
 		from frappe.website.render import clear_cache
-		clear_cache("contact")
+		clear_cache()
 
 
 def update_website_context(context):
