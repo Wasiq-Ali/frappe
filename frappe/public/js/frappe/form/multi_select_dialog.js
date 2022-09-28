@@ -85,6 +85,12 @@ frappe.ui.form.MultiSelectDialog = Class.extend({
 			}
 		]);
 
+		$.each(fields, function(i, df) {
+			df.onchange = () => {
+				me.get_results();
+			}
+		});
+
 		let doctype_plural = !this.doctype.endsWith('y') ? this.doctype + 's'
 			: this.doctype.slice(0, -1) + 'ies';
 		this.dialog = new frappe.ui.Dialog({
