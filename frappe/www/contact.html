@@ -22,7 +22,7 @@
 			<div class="form-group">
 				<select name="subject" class="form-control">
 				{% if contact_us_settings.query_options -%}
-					{% for option in contact_us_settings.query_options.split("\n") -%}
+					{% for option in contact_us_settings.query_options -%}
 					<option value="{{ option }}">{{ option }}</option>
 					{%- endfor %}
 				{% else %}
