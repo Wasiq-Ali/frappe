@@ -4,26 +4,20 @@
 from __future__ import unicode_literals
 
 import frappe
-from frappe.utils import now
 from frappe import _
+from frappe.utils import now
+from frappe.website.doctype.contact_us_settings.contact_us_settings import update_website_context
 
 sitemap = 1
 
+
 def get_context(context):
-	doc = frappe.get_doc("Contact Us Settings", "Contact Us Settings")
-
-	if doc.query_options:
-		query_options = [opt.strip() for opt in doc.query_options.replace(",", "\n").split("\n") if opt]
-	else:
-		query_options = ["Sales", "Support", "General"]
-
 	out = {
-		"query_options": query_options,
 		"parents": [
 			{ "name": _("Home"), "route": "/" }
 		]
 	}
-	out.update(doc.as_dict())
+	context.update(out)
 
 	return out
 
