@@ -16,4 +16,13 @@ class ContactUsSettings(Document):
 
 
 def update_website_context(context):
-	context['contact_us_settings'] = frappe.get_cached_doc("Contact Us Settings", None).as_dict()
+	doc = frappe.get_cached_doc("Contact Us Settings", None).as_dict()
+
+	if doc.query_options:
+		doc.query_options = doc.query_options.replace(",", "\n").split("\n")
+		doc.query_options = [opt.strip() for opt in doc.query_options]
+		doc.query_options = [opt for i, opt in enumerate(doc.query_options) if opt or i == 0]
+	else:
+		doc.query_options = ["Sales", "Support", "General"]
+
+	context['contact_us_settings'] = doc
