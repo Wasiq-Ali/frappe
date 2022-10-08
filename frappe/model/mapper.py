@@ -30,19 +30,23 @@ def make_mapped_doc(method, source_name, selected_children=None, args=None):
 	return method(source_name)
 
 @frappe.whitelist()
-def map_docs(method, source_names, target_doc):
+def map_docs(method, source_names, target_doc, args=None):
 	'''Returns the mapped document calling the given mapper method
 	with each of the given source docs on the target doc'''
 	method = frappe.get_attr(method)
 	if method not in frappe.whitelisted:
 		raise frappe.PermissionError
 
+	if args:
+		frappe.flags.args = frappe._dict(json.loads(args))
+
 	for src in json.loads(source_names):
 		target_doc = method(src, target_doc)
+
 	return target_doc
 
 def get_mapped_doc(from_doctype, from_docname, table_maps, target_doc=None,
-		postprocess=None, ignore_permissions=False, ignore_child_tables=False):
+		postprocess=None, ignore_permissions=False, ignore_child_tables=False, explicit_child_tables=False):
 
 	apply_strict_user_permissions = frappe.get_system_settings("apply_strict_user_permissions")
 
@@ -62,7 +66,8 @@ def get_mapped_doc(from_doctype, from_docname, table_maps, target_doc=None,
 		if not source_doc.has_permission("read"):
 			source_doc.raise_no_permission_to("read")
 
-	map_doc(source_doc, target_doc, table_maps[source_doc.doctype])
+	if table_maps.get(source_doc.doctype):
+		map_doc(source_doc, target_doc, table_maps[source_doc.doctype])
 
 	row_exists_for_parentfield = {}
 
@@ -73,7 +78,7 @@ def get_mapped_doc(from_doctype, from_docname, table_maps, target_doc=None,
 			table_map = table_maps.get(source_child_doctype)
 
 			# if table_map isn't explicitly specified check if both source and target have the same fieldname and same table options and both of them don't have no_copy
-			if not table_map:
+			if not table_map and not explicit_child_tables:
 				target_df = target_doc.meta.get_field(df.fieldname)
 				if target_df:
 					target_child_doctype = target_df.options
