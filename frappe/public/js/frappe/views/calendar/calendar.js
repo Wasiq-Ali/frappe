@@ -204,7 +204,9 @@ frappe.views.Calendar = Class.extend({
 		"danger": "red",
 		"success": "green",
 		"warning": "orange",
-		"default": "blue"
+		"default": "blue",
+		"secondary": "white",
+		"info": "cyan",
 	},
 	get_system_datetime: function(date) {
 		date._offset = (moment(date).tz(frappe.sys_defaults.time_zone)._offset);
@@ -359,9 +361,12 @@ frappe.views.Calendar = Class.extend({
 	prepare_colors: function(d) {
 		let color, color_name;
 		if(this.get_css_class) {
-			color_name = this.color_map[this.get_css_class(d)];
-			color_name = frappe.ui.color.validate_hex(color_name) ?
-				color_name : 'blue';
+			color_name = this.color_map[this.get_css_class(d)] || "blue";
+
+			if (color_name.startsWith("#")) {
+				color_name = frappe.ui.color.validate_hex(color_name) ? color_name : "blue";
+			}
+
 			d.backgroundColor = frappe.ui.color.get(color_name, 'extra-light');
 			d.textColor = frappe.ui.color.get(color_name, 'dark');
 		} else {
