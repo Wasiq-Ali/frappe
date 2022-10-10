@@ -43,6 +43,9 @@ def map_docs(method, source_names, target_doc, args=None):
 	for src in json.loads(source_names):
 		target_doc = method(src, target_doc)
 
+	if frappe.flags.postprocess_after_mapping:
+		frappe.flags.postprocess_after_mapping(target_doc)
+
 	return target_doc
 
 def get_mapped_doc(from_doctype, from_docname, table_maps, target_doc=None,
