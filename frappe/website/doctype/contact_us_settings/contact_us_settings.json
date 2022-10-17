@@ -20,7 +20,9 @@
   "column_break_14",
   "phone",
   "email_id",
-  "skype"
+  "skype",
+  "map_iframe",
+  "map_url"
  ],
  "fields": [
   {
@@ -111,12 +113,22 @@
    "fieldname": "skype",
    "fieldtype": "Data",
    "label": "Skype"
+  },
+  {
+   "fieldname": "map_iframe",
+   "fieldtype": "Small Text",
+   "label": "Map Iframe"
+  },
+  {
+   "fieldname": "map_url",
+   "fieldtype": "Data",
+   "label": "Map URL"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-03-03 15:42:44.460028",
+ "modified": "2022-10-14 18:30:59.008243",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Contact Us Settings",
