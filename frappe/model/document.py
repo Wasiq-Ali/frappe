@@ -1064,7 +1064,7 @@ class Document(BaseDocument):
 					self._return_value = {}
 				self._return_value.update(new_return_value)
 			else:
-				self._return_value = new_return_value or self.get("_return_value")
+				self._return_value = new_return_value if new_return_value is not None else self.get("_return_value")
 
 		def compose(fn, *hooks):
 			def runner(self, method, *args, **kwargs):
