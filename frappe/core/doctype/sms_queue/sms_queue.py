@@ -30,7 +30,7 @@ def queue_sms(args, now=False):
 
 	del args['receiver_list']
 	doc.update(args)
-	doc.insert()
+	doc.insert(ignore_permissions=True)
 
 	if not doc.get('send_after'):
 		if now:
