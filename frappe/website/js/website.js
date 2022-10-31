@@ -193,7 +193,7 @@ $.extend(frappe, {
 			type: "POST",
 			method: "frappe.www.contact.send_message",
 			btn: btn,
-			args: opts,
+			args: opts.args,
 			callback: opts.callback
 		});
 	},
