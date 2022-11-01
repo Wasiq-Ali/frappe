@@ -219,17 +219,22 @@ def add_metatags(context):
 		if not "twitter:card" in tags:
 			tags["twitter:card"] = "summary_large_image"
 
-		if not "og:type" in tags:
+		if not tags.get("og:type"):
 			tags["og:type"] = "article"
 
-		if tags.get("name"):
-			tags["og:title"] = tags["twitter:title"] = tags["name"]
+		if tags.get("title") and not tags.get("og:title"):
+			tags["og:title"] = tags["title"]
+		if tags.get("name") and not tags.get("og:title"):
+			tags["og:title"] = tags["name"]
 
-		if tags.get("title"):
-			tags["og:title"] = tags["twitter:title"] = tags["title"]
+		if tags.get("og:title") and not tags.get("twitter:title"):
+			tags["twitter:title"] = tags["og:title"]
 
-		if tags.get("description"):
-			tags["og:description"] = tags["twitter:description"] = tags["description"]
+		if tags.get("description") and not tags.get("og:description"):
+			tags["og:description"] = tags["description"]
+
+		if tags.get("og:description") and not tags.get("twitter:description"):
+			tags["twitter:description"] = tags["og:description"]
 
 		image = tags.get('image', context.image or None)
 		if image:
