@@ -128,12 +128,22 @@
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
- "modified": "2022-10-14 18:30:59.008243",
- "modified_by": "Administrator",
+ "modified": "2022-11-01 13:40:59.668274",
+ "modified_by": "saif@paralogic.io",
  "module": "Website",
  "name": "Contact Us Settings",
  "owner": "Administrator",
  "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
   {
    "create": 1,
    "email": 1,

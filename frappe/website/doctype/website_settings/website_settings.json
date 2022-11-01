@@ -299,12 +299,21 @@
  "idx": 1,
  "issingle": 1,
  "max_attachments": 10,
- "modified": "2020-11-05 13:09:53.168399",
- "modified_by": "Administrator",
+ "modified": "2022-11-01 13:41:13.435581",
+ "modified_by": "saif@paralogic.io",
  "module": "Website",
  "name": "Website Settings",
  "owner": "Administrator",
  "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
   {
    "create": 1,
    "email": 1,
@@ -318,15 +327,6 @@
    "permlevel": 1,
    "read": 1,
    "role": "All"
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "print": 1,
-   "read": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
   }
  ],
  "sort_field": "modified",
