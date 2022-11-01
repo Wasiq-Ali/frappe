@@ -9,3 +9,7 @@ class WebsiteRouteMeta(Document):
 	def autoname(self):
 		if self.name and self.name.startswith('/'):
 			self.name = self.name[1:]
+
+	def on_update(self):
+		from frappe.website.render import clear_cache
+		clear_cache()
