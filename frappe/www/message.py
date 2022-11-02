@@ -13,6 +13,7 @@ def get_context(context):
 	if hasattr(frappe.local, "message"):
 		message_context["header"] = frappe.local.message_title
 		message_context["title"] = strip_html_tags(frappe.local.message_title)
+		message_context["no_title_prefix"] = True
 		message_context["message"] = frappe.local.message
 		if hasattr(frappe.local, "message_success"):
 			message_context["success"] = frappe.local.message_success
