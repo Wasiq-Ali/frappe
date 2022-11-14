@@ -35,7 +35,7 @@ def format_value(value, df=None, doc=None, currency=None, translated=False, form
 			df.fieldtype = "Datetime"
 		elif isinstance(value, datetime.date):
 			df.fieldtype = "Date"
-		elif isinstance(value, datetime.timedelta):
+		elif isinstance(value, (datetime.time, datetime.timedelta)):
 			df.fieldtype = "Time"
 		elif isinstance(value, int):
 			df.fieldtype = "Int"

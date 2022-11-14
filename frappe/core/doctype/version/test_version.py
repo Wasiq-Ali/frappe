@@ -21,7 +21,7 @@ class TestVersion(FrappeTestCase):
 		diff = get_diff(old_doc, new_doc)["changed"]
 
 		self.assertEqual(get_fieldnames(diff)[0], "color")
-		self.assertTrue(get_old_values(diff)[0] is None)
+		self.assertTrue(get_old_values(diff)[0] == "")
 		self.assertEqual(get_new_values(diff)[0], "#fafafa")
 
 		new_doc.starts_on = "2017-07-20"
