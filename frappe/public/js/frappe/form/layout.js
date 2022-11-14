@@ -489,7 +489,8 @@ frappe.ui.form.Layout = class Layout {
 		}
 
 		for (let i = 0, len = fields.length; i < len; i++) {
-			if (fields[i].df.fieldname == fieldname) {
+			let field = fields[i];
+			if (field.df.fieldname == fieldname) {
 				if (shift) {
 					if (prev) {
 						this.set_focus(prev);
@@ -572,8 +573,8 @@ frappe.ui.form.Layout = class Layout {
 
 			field.grid.grid_rows[0].toggle_editable_row();
 			field.grid.set_focus_on_row(0);
-		} else if (field.editor) {
-			field.editor.set_focus();
+		} else if (field.set_focus && typeof field.set_focus == "function") {
+			field.set_focus();
 		} else if (field.$input) {
 			field.$input.focus();
 		}

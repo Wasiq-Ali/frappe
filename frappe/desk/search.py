@@ -4,7 +4,6 @@
 import functools
 import json
 import re
-import wrapt
 
 import frappe
 from frappe import _, is_whitelisted

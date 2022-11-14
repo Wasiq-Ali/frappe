@@ -1,12 +1,12 @@
 frappe.provide('frappe.ui.form');
 
-frappe.ui.form._ContactQuickEntryForm = frappe.ui.form.QuickEntryForm.extend({
-	init: function(doctype, after_insert) {
+frappe.ui.form._ContactQuickEntryForm = class ContactQuickEntryForm extends frappe.ui.form.QuickEntryForm {
+	init(doctype, after_insert) {
 		this._super(doctype, after_insert);
-	},
+	}
 
-	render_dialog: function() {
-		this._super();
+	render_dialog() {
+		super.render_dialog();
 		const last_doc = frappe.contacts.get_last_doc(this.doc);
 		if(frappe.dynamic_link && frappe.dynamic_link.doc && frappe.dynamic_link.doc.name == last_doc.docname) {
 			this.doc.links = [
@@ -17,7 +17,7 @@ frappe.ui.form._ContactQuickEntryForm = frappe.ui.form.QuickEntryForm.extend({
 				}
 			]
 		}
-	},
-});
+	}
+}
 
 frappe.ui.form.ContactQuickEntryForm = frappe.ui.form._ContactQuickEntryForm;

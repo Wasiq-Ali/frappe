@@ -1152,7 +1152,7 @@ def fmt_money(
 	precision: int | None = None,
 	currency: str | None = None,
 	format: str | None = None,
-	force_symbol: str | False = False,
+	force_symbol: bool = False,
 ) -> str:
 	"""
 	Convert to string with commas for thousands, millions etc

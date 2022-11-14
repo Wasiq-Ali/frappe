@@ -215,7 +215,7 @@ $.extend(frappe.model, {
 					value = df["default"];
 				}
 			}
-
+		}
 		// set it here so we know it was set as a default
 		df.__default_value = value;
 

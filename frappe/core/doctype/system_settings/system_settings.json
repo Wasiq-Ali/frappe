@@ -479,11 +479,11 @@
    "label": "Disable System Update Notification"
   },
   {
-   "default": "Sunday",
+   "default": "Monday",
    "fieldname": "first_day_of_the_week",
    "fieldtype": "Select",
    "label": "First Day of the Week",
-   "options": "Sunday\nMonday\nTuesday\nWednesday\nThursday\nFriday\nSaturday"
+   "options": "Monday\nTuesday\nWednesday\nThursday\nFriday\nSaturday\nSunday"
   },
   {
    "default": "30",
@@ -538,7 +538,7 @@
  "icon": "fa fa-cog",
  "issingle": 1,
  "links": [],
- "modified": "2022-10-30 12:02:46.639170",
+ "modified": "2022-11-14 17:19:30.093549",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "System Settings",

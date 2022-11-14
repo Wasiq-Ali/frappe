@@ -10,7 +10,6 @@ from frappe.model.document import Document
 from frappe.core.doctype.sms_settings.sms_settings import process_and_send
 from requests.exceptions import ConnectionError, Timeout
 from rq.timeouts import JobTimeoutException
-from frappe.utils.scheduler import log
 from six import text_type
 
 
@@ -154,7 +153,7 @@ def send_one(sms_queue, auto_commit=True, now=False, from_test=False):
 
 		else:
 			# log to Error Log
-			log('frappe.core.doctype.sms_queue.sms_queue.flush', text_type(e))
+			frappe.log_error(reference_doctype="SMS Queue", reference_name=sms_queue.name)
 
 
 def get_queue():

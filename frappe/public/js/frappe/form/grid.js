@@ -837,7 +837,7 @@ export default class Grid {
 			) {
 				d[key] = value;
 			}
-		}
+		});
 
 		return d;
 	}
@@ -1074,11 +1074,12 @@ export default class Grid {
 							});
 					}
 				});
+			});
 		}
 	}
 
 	setup_download() {
-		var me = this;
+		let me = this;
 		let title = me.df.label || frappe.model.unscrub(me.df.fieldname);
 		$(this.wrapper).find(".grid-download").removeClass('hidden').on("click", function() {
 			var data = [];
@@ -1090,9 +1091,9 @@ export default class Grid {
 			data.push([]);
 			data.push([]);
 			data.push(["----- Insert After This Line -----"]);
-			$.each(frappe.get_meta(me.df.options).fields, function(i, df) {
+			$.each(frappe.get_meta(me.df.options).fields, function (i, df) {
 				// don't include the read-only field in the template
-				if(frappe.model.is_value_type(df.fieldtype) && !df.read_only) {
+				if (frappe.model.is_value_type(df.fieldtype) && !df.read_only) {
 					data[3].push(df.label);
 					data[4].push(df.fieldname);
 					let description = (df.description || "") + ' ';
@@ -1105,22 +1106,24 @@ export default class Grid {
 			});
 
 			// add data
-			$.each(me.frm.doc[me.df.fieldname] || [], function(i, d) {
-				var row = [];
-				$.each(data[4], function(i, fieldname) {
-					var value = d[fieldname];
+			$.each(me.frm.doc[me.df.fieldname] || [], function (i, d) {
+				let row = [];
+				$.each(data[4], function (i, fieldname) {
+					let value = d[fieldname];
 
 					// format date
-					if(docfields[i].fieldtype==="Date" && value) {
+					if (docfields[i].fieldtype === "Date" && value) {
 						value = frappe.datetime.str_to_user(value);
 					}
 
 					row.push(value || "");
 				});
-
-				frappe.tools.downloadify(data, null, title);
-				return false;
+				data.push(row);
 			});
+
+			frappe.tools.downloadify(data, null, title);
+			return false;
+		});
 	}
 
 	add_custom_button(label, click, position = "bottom") {

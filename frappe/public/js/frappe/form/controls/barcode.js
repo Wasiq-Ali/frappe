@@ -21,7 +21,7 @@ frappe.ui.form.ControlBarcode = class ControlBarcode extends frappe.ui.form.Cont
 				this.barcode_area.hide();
 			}
 		}
-	},
+	}
 
 	parse(value) {
 		// Parse raw value
