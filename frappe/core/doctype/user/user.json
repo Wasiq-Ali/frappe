@@ -10,12 +10,12 @@
   "enabled",
   "section_break_3",
   "email",
+  "username",
+  "full_name",
+  "column_break0",
   "first_name",
   "middle_name",
   "last_name",
-  "column_break0",
-  "full_name",
-  "username",
   "column_break_11",
   "language",
   "time_zone",
@@ -30,15 +30,15 @@
   "gender",
   "birth_date",
   "interest",
-  "banner_image",
-  "desk_theme",
   "column_break_26",
   "phone",
   "location",
   "bio",
-  "mute_sounds",
   "column_break_22",
   "mobile_no",
+  "desk_theme",
+  "banner_image",
+  "mute_sounds",
   "change_password",
   "new_password",
   "logout_all_sessions",
@@ -617,13 +617,13 @@
    "options": "Module Profile"
   },
   {
-    "description": "Stores the datetime when the last reset password key was generated.",
-    "fieldname": "last_reset_password_key_generated_on",
-    "fieldtype": "Datetime",
-    "hidden": 1,
-    "label": "Last Reset Password Key Generated On",
-    "read_only": 1
-   },
+   "description": "Stores the datetime when the last reset password key was generated.",
+   "fieldname": "last_reset_password_key_generated_on",
+   "fieldtype": "Datetime",
+   "hidden": 1,
+   "label": "Last Reset Password Key Generated On",
+   "read_only": 1
+  },
   {
    "fieldname": "column_break_75",
    "fieldtype": "Column Break"
@@ -650,12 +650,12 @@
    "label": "Auto follow documents that you Like"
   },
   {
-    "default": "0",
-    "depends_on": "eval:(doc.document_follow_notify== 1)",
-    "fieldname": "follow_shared_documents",
-    "fieldtype": "Check",
-    "label": "Auto follow documents that are shared with you"
-   },
+   "default": "0",
+   "depends_on": "eval:(doc.document_follow_notify== 1)",
+   "fieldname": "follow_shared_documents",
+   "fieldtype": "Check",
+   "label": "Auto follow documents that are shared with you"
+  },
   {
    "default": "0",
    "depends_on": "eval:(doc.document_follow_notify== 1)",
@@ -676,26 +676,6 @@
   {
    "group": "Profile",
    "link_doctype": "Blogger",
-   "link_fieldname": "user"
-  },
-  {
-   "group": "Logs",
-   "link_doctype": "Access Log",
-   "link_fieldname": "user"
-  },
-  {
-   "group": "Logs",
-   "link_doctype": "Activity Log",
-   "link_fieldname": "user"
-  },
-  {
-   "group": "Logs",
-   "link_doctype": "Energy Point Log",
-   "link_fieldname": "user"
-  },
-  {
-   "group": "Logs",
-   "link_doctype": "Route History",
    "link_fieldname": "user"
   },
   {
@@ -722,9 +702,29 @@
    "group": "Integrations",
    "link_doctype": "Token Cache",
    "link_fieldname": "user"
+  },
+  {
+   "group": "Logs",
+   "link_doctype": "Activity Log",
+   "link_fieldname": "user"
+  },
+  {
+   "group": "Logs",
+   "link_doctype": "Route History",
+   "link_fieldname": "user"
+  },
+  {
+   "group": "Logs",
+   "link_doctype": "Access Log",
+   "link_fieldname": "user"
+  },
+  {
+   "group": "Logs",
+   "link_doctype": "Energy Point Log",
+   "link_fieldname": "user"
   }
  ],
- "modified": "2022-09-19 16:05:46.485242",
+ "modified": "2022-11-14 18:36:45.931386",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
