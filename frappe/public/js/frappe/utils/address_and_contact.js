@@ -2,7 +2,7 @@ frappe.provide('frappe.contacts')
 
 $.extend(frappe.contacts, {
 	clear_address_and_contact: function(frm) {
-		$(frm.fields_dict['address_html'].wrapper).html("");
+		frm.fields_dict['address_html'] && $(frm.fields_dict['address_html'].wrapper).html("");
 		frm.fields_dict['contact_html'] && $(frm.fields_dict['contact_html'].wrapper).html("");
 	},
 
