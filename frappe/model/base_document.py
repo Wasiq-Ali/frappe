@@ -988,7 +988,7 @@ class BaseDocument:
 	def is_disallowed_on_submit(self, fieldname):
 		doc = getattr(self, "parent_doc", None) or self
 		disallowed_fields = doc.flags.disallow_on_submit or []
-		return (fieldname, self.parentfield or None) in disallowed_fields
+		return (fieldname, self.get('parentfield') or None) in disallowed_fields
 
 	def get_fields_for_disallow_on_submit(self, excluding_fields=None):
 		if not excluding_fields:

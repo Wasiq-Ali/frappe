@@ -127,7 +127,13 @@ class TestReport(FrappeTestCase):
 		self.assertListEqual(["email"], [column.get("fieldname") for column in columns])
 		admin_dict = frappe.core.utils.find(result, lambda d: d["name"] == "Administrator")
 		self.assertDictEqual(
-			{"name": "Administrator", "user_type": "System User", "email": "admin@example.com"}, admin_dict
+			{
+				"name": "Administrator",
+				"user_type": "System User",
+				"email": "admin@example.com",
+				"role_profile": None,
+			},
+			admin_dict
 		)
 
 	def test_report_with_custom_column(self):
@@ -153,11 +159,17 @@ class TestReport(FrappeTestCase):
 		result = response.get("result")
 		columns = response.get("columns")
 		self.assertListEqual(
-			["name", "email", "user_type"], [column.get("fieldname") for column in columns]
+			["name", "email", "role_profile", "user_type"], [column.get("fieldname") for column in columns]
 		)
 		admin_dict = frappe.core.utils.find(result, lambda d: d["name"] == "Administrator")
 		self.assertDictEqual(
-			{"name": "Administrator", "user_type": "System User", "email": "admin@example.com"}, admin_dict
+			{
+				"name": "Administrator",
+				"user_type": "System User",
+				"email": "admin@example.com",
+				"role_profile": None,
+			},
+			admin_dict
 		)
 
 	def test_report_permissions(self):

@@ -28,8 +28,12 @@ test_date_formats = {
 	"mm-dd-yyyy": test_date_obj.strftime("%m-%d-%Y"),
 }
 test_time_formats = {
-	"HH:mm:ss": test_date_obj.strftime("%H:%M:%S"),
-	"HH:mm": test_date_obj.strftime("%H:%M"),
+	"24 Hour": test_date_obj.strftime("%H:%M:%S"),
+	"12 Hour": test_date_obj.strftime("%I:%M:%S %p"),
+}
+test_time_format_strings = {
+	"24 Hour": "HH:mm:ss",
+	"12 Hour": "hh:mm:ss a",
 }
 
 
@@ -105,7 +109,7 @@ class TestFmtDatetime(FrappeTestCase):
 		for fmt, valid_fmt in test_time_formats.items():
 			frappe.db.set_default("time_format", fmt)
 			frappe.local.user_time_format = None
-			self.assertEqual(get_user_time_format(), fmt)
+			self.assertEqual(get_user_time_format(), test_time_format_strings[fmt])
 			self.assertEqual(format_time(test_time), valid_fmt)
 
 	# Test datetime formatters

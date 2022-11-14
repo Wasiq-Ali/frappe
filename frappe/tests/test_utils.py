@@ -406,6 +406,9 @@ class TestDiffUtils(FrappeTestCase):
 
 class TestDateUtils(FrappeTestCase):
 	def test_first_day_of_week(self):
+		frappe.db.set_value("System Settings", "System Settings", "first_day_of_the_week", "Sunday")
+		frappe.clear_cache()
+
 		# Monday as start of the week
 		with patch.object(frappe.utils.data, "get_first_day_of_the_week", return_value="Monday"):
 			self.assertEqual(
@@ -426,7 +429,6 @@ class TestDateUtils(FrappeTestCase):
 	def test_last_day_of_week(self):
 		frappe.db.set_value("System Settings", "System Settings", "first_day_of_the_week", "Sunday")
 		frappe.clear_cache()
-		frappe.db.commit()
 
 		self.assertEqual(
 			frappe.utils.get_last_day_of_week("2020-12-24"), frappe.utils.getdate("2020-12-26")

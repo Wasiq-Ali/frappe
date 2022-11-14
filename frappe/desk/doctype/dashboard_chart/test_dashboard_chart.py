@@ -234,6 +234,9 @@ class TestDashboardChart(FrappeTestCase):
 			self.assertEqual(result.get("datasets")[0].get("values"), [50.0, 150.0, 266.6666666666667, 0.0])
 
 	def test_user_date_label_dashboard_chart(self):
+		frappe.db.set_value("System Settings", "System Settings", "first_day_of_the_week", "Sunday")
+		frappe.clear_cache()
+
 		frappe.delete_doc_if_exists("Dashboard Chart", "Test Dashboard Chart Date Label")
 
 		frappe.get_doc(
