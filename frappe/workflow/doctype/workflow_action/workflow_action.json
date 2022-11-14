@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2018-05-17 18:29:03.923384",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -7,9 +8,12 @@
   "status",
   "reference_name",
   "reference_doctype",
-  "user",
   "workflow_state",
-  "completed_by"
+  "column_break_5",
+  "completed_by_role",
+  "completed_by",
+  "permitted_roles",
+  "user"
  ],
  "fields": [
   {
@@ -37,7 +41,8 @@
    "fieldtype": "Link",
    "hidden": 1,
    "label": "User",
-   "options": "User"
+   "options": "User",
+   "search_index": 1
   },
   {
    "fieldname": "workflow_state",
@@ -46,13 +51,35 @@
    "label": "Workflow State"
   },
   {
+   "depends_on": "eval: doc.completed_by",
    "fieldname": "completed_by",
    "fieldtype": "Link",
-   "label": "Completed By",
-   "options": "User"
+   "label": "Completed By User",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.completed_by_role",
+   "fieldname": "completed_by_role",
+   "fieldtype": "Link",
+   "label": "Completed By Role",
+   "options": "Role",
+   "read_only": 1
+  },
+  {
+   "fieldname": "permitted_roles",
+   "fieldtype": "Table MultiSelect",
+   "label": "Permitted Roles",
+   "options": "Workflow Action Permitted Role",
+   "read_only": 1
   }
  ],
- "modified": "2020-03-03 15:36:47.416078",
+ "links": [],
+ "modified": "2022-02-23 21:06:45.122258",
  "modified_by": "Administrator",
  "module": "Workflow",
  "name": "Workflow Action",
@@ -66,6 +93,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "reference_name",
  "track_changes": 1
 }

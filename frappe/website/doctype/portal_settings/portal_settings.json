@@ -1,9 +1,11 @@
 {
+ "actions": [],
  "creation": "2016-03-30 01:40:20.001775",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "default_role",
+  "default_portal_home",
   "standard_menu_items",
   "hide_standard_menu",
   "menu",
@@ -44,11 +46,18 @@
    "fieldtype": "Table",
    "label": "Custom Menu Items",
    "options": "Portal Menu Item"
+  },
+  {
+   "description": "Example: \"/desk\"",
+   "fieldname": "default_portal_home",
+   "fieldtype": "Data",
+   "label": "Default Portal Home"
   }
  ],
  "issingle": 1,
- "modified": "2022-11-01 13:40:49.577082",
- "modified_by": "saif@paralogic.io",
+ "links": [],
+ "modified": "2020-08-06 15:43:36.387050",
+ "modified_by": "Administrator",
  "module": "Website",
  "name": "Portal Settings",
  "owner": "Administrator",

@@ -1,67 +1,83 @@
-frappe.provide('frappe.ui.form');
+frappe.provide("frappe.ui.form");
 
-frappe.quick_edit = function(doctype, name) {
-	frappe.db.get_doc(doctype, name).then(doc => {
+frappe.quick_edit = function (doctype, name) {
+	frappe.db.get_doc(doctype, name).then((doc) => {
 		frappe.ui.form.make_quick_entry(doctype, null, null, doc);
 	});
 };
 
-frappe.ui.form.make_quick_entry = (doctype, after_insert, init_callback, doc) => {
-	var trimmed_doctype = doctype.replace(/ /g, '');
+frappe.ui.form.make_quick_entry = (doctype, after_insert, init_callback, doc, force) => {
+	var trimmed_doctype = doctype.replace(/ /g, "");
 	var controller_name = "QuickEntryForm";
 
-	if(frappe.ui.form[trimmed_doctype + "QuickEntryForm"]){
+	if (frappe.ui.form[trimmed_doctype + "QuickEntryForm"]) {
 		controller_name = trimmed_doctype + "QuickEntryForm";
 	}
 
-	frappe.quick_entry = new frappe.ui.form[controller_name](doctype, after_insert, init_callback, doc);
+	frappe.quick_entry = new frappe.ui.form[controller_name](
+		doctype,
+		after_insert,
+		init_callback,
+		doc,
+		force
+	);
 	return frappe.quick_entry.setup();
 };
 
-frappe.ui.form.QuickEntryForm = Class.extend({
-	init: function(doctype, after_insert, init_callback, doc) {
+frappe.ui.form.QuickEntryForm = class QuickEntryForm {
+	constructor(doctype, after_insert, init_callback, doc, force) {
 		this.doctype = doctype;
 		this.after_insert = after_insert;
 		this.init_callback = init_callback;
 		this.doc = doc;
-	},
+		this.force = force ? force : false;
+	}
 
-	setup: function() {
-		let me = this;
-		return new Promise(resolve => {
-			frappe.model.with_doctype(this.doctype, function() {
-				me.check_quick_entry_doc();
-				me.set_meta_and_mandatory_fields();
-				if(me.is_quick_entry()) {
-					me.render_dialog();
-					resolve(me);
+	setup() {
+		return new Promise((resolve) => {
+			frappe.model.with_doctype(this.doctype, () => {
+				this.check_quick_entry_doc();
+				this.set_meta_and_mandatory_fields();
+				if (this.is_quick_entry() || this.force) {
+					this.render_dialog();
+					resolve(this);
 				} else {
+					// no quick entry, open full form
 					frappe.quick_entry = null;
-					frappe.set_route('Form', me.doctype, me.doc.name)
-						.then(() => resolve(me));
+					frappe
+						.set_route("Form", this.doctype, this.doc.name)
+						.then(() => resolve(this));
+					// call init_callback for consistency
+					if (this.init_callback) {
+						this.init_callback(this.doc);
+					}
 				}
 			});
 		});
-	},
+	}
 
-	set_meta_and_mandatory_fields: function(){
+	set_meta_and_mandatory_fields() {
 		this.meta = frappe.get_meta(this.doctype);
 		let fields = this.meta.fields;
 
 		// prepare a list of mandatory, bold and allow in quick entry fields
-		this.mandatory = $.map(fields, function(d) {
-			return ((d.reqd || d.bold || d.allow_in_quick_entry) && (!d.read_only || d.allow_in_quick_entry)) ? $.extend({}, d) : null;
+		this.mandatory = fields.filter((df) => {
+			return (
+				(df.reqd || df.bold || df.allow_in_quick_entry)
+				&& (!df.read_only || df.allow_in_quick_entry)
+				&& !df.is_virtual
+			);
 		});
-	},
+	}
 
-	check_quick_entry_doc: function() {
+	check_quick_entry_doc() {
 		if (!this.doc) {
 			this.doc = frappe.model.get_new_doc(this.doctype, null, null, true);
 		}
-	},
+	}
 
-	is_quick_entry: function(){
-		if(this.meta.quick_entry != 1) {
+	is_quick_entry() {
+		if (this.meta.quick_entry != 1) {
 			return false;
 		}
 
@@ -72,48 +88,57 @@ frappe.ui.form.QuickEntryForm = Class.extend({
 		}
 
 		return true;
-	},
+	}
 
-	too_many_mandatory_fields: function(){
-		if(this.mandatory.length > 7) {
+	too_many_mandatory_fields() {
+		if (this.mandatory.length > 7) {
 			// too many fields, show form
 			return true;
 		}
 		return false;
-	},
+	}
 
-	has_child_table: function(){
-		if($.map(this.mandatory, function(d) {
-			return d.fieldtype==='Table' ? d : null; }).length) {
+	has_child_table() {
+		if (
+			$.map(this.mandatory, function (d) {
+				return d.fieldtype === "Table" ? d : null;
+			}).length
+		) {
 			// has mandatory table, quit!
 			return true;
 		}
 		return false;
-	},
+	}
 
-	validate_for_prompt_autoname: function(){
-		if(this.meta.autoname && this.meta.autoname.toLowerCase()==='prompt') {
-			this.mandatory = [{fieldname:'__newname', label:__('{0} Name', [this.meta.name]),
-				reqd: 1, fieldtype:'Data'}].concat(this.mandatory);
+	validate_for_prompt_autoname() {
+		if (this.meta.autoname && this.meta.autoname.toLowerCase() === "prompt") {
+			this.mandatory = [
+				{
+					fieldname: "__newname",
+					label: __("{0} Name", [this.meta.name]),
+					reqd: 1,
+					fieldtype: "Data",
+				},
+			].concat(this.mandatory);
 		}
-	},
+	}
 
-	render_dialog: function(){
+	render_dialog() {
 		var me = this;
 		this.dialog = new frappe.ui.Dialog({
 			title: __("New {0}", [__(this.doctype)]),
 			fields: this.mandatory,
 			size: "large",
 			static: 1,
-			doc: this.doc
+			doc: this.doc,
 		});
 
 		this.register_primary_action();
-		this.render_edit_in_full_page_link();
+		!this.force && this.render_edit_in_full_page_link();
 		// ctrl+enter to save
-		this.dialog.wrapper.keydown(function(e) {
-			if((e.ctrlKey || e.metaKey) && e.which==13) {
-				if(!frappe.request.ajax_count) {
+		this.dialog.wrapper.keydown(function (e) {
+			if ((e.ctrlKey || e.metaKey) && e.which == 13) {
+				if (!frappe.request.ajax_count) {
 					// not already working -- double entry
 					me.dialog.get_primary_btn().trigger("click");
 					e.preventDefault();
@@ -122,7 +147,7 @@ frappe.ui.form.QuickEntryForm = Class.extend({
 			}
 		});
 
-		this.dialog.onhide = () => frappe.quick_entry = null;
+		this.dialog.onhide = () => (frappe.quick_entry = null);
 		this.dialog.show();
 
 		this.dialog.refresh_dependency();
@@ -131,55 +156,54 @@ frappe.ui.form.QuickEntryForm = Class.extend({
 		if (this.init_callback) {
 			this.init_callback(this.dialog);
 		}
-	},
+	}
 
-	register_primary_action: function(){
+	register_primary_action() {
 		var me = this;
-		this.dialog.set_primary_action(__('Save'), function() {
-			if(me.dialog.working) {
+		this.dialog.set_primary_action(__("Save"), function () {
+			if (me.dialog.working) {
 				return;
 			}
 			var data = me.dialog.get_values();
 
-			if(data) {
+			if (data) {
 				me.dialog.working = true;
-				me.dialog.set_message(__('Saving...'));
+				me.dialog.set_message(__("Saving..."));
 				me.insert().then(() => {
 					me.dialog.clear_message();
 				});
 			}
 		});
-	},
+	}
 
-	insert: function() {
+	insert() {
 		let me = this;
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			me.update_doc();
 			frappe.call({
 				method: "frappe.client.save",
 				args: {
-					doc: me.dialog.doc
+					doc: me.dialog.doc,
 				},
-				callback: function(r) {
-
+				callback: function (r) {
 					if (frappe.model.is_submittable(me.doctype)) {
 						frappe.run_serially([
-							() => me.dialog.working = true,
+							() => (me.dialog.working = true),
 							() => {
-								me.dialog.set_primary_action(__('Submit'), function() {
+								me.dialog.set_primary_action(__("Submit"), function () {
 									me.submit(r.message);
 								});
-							}
+							},
 						]);
 					} else {
 						me.dialog.hide();
 						// delete the old doc
 						frappe.model.clear_doc(me.dialog.doc.doctype, me.dialog.doc.name);
 						me.dialog.doc = r.message;
-						if(frappe._from_link) {
+						if (frappe._from_link) {
 							frappe.ui.form.update_calling_link(me.dialog.doc);
 						} else {
-							if(me.after_insert) {
+							if (me.after_insert) {
 								me.after_insert(me.dialog.doc);
 							} else {
 								me.open_form_if_not_list();
@@ -187,94 +211,94 @@ frappe.ui.form.QuickEntryForm = Class.extend({
 						}
 					}
 				},
-				error: function() {
+				error: function () {
 					if (!me.skip_redirect_on_error) {
-						me.open_doc();
+						me.open_doc(true);
 					}
 				},
-				always: function() {
+				always: function () {
 					me.dialog.working = false;
 					resolve(me.dialog.doc);
 				},
-				freeze: true
+				freeze: true,
 			});
 		});
-	},
+	}
 
-	submit: function(doc) {
+	submit(doc) {
 		var me = this;
 		frappe.call({
 			method: "frappe.client.submit",
-			args : {
-				doc: doc
+			args: {
+				doc: doc,
 			},
-			callback: function(r) {
+			callback: function (r) {
 				me.dialog.hide();
 				// delete the old doc
 				frappe.model.clear_doc(me.dialog.doc.doctype, me.dialog.doc.name);
 				me.dialog.doc = r.message;
 				if (frappe._from_link) {
 					frappe.ui.form.update_calling_link(me.dialog.doc);
+				} else {
+					if (me.after_insert) {
+						me.after_insert(me.dialog.doc);
+					} else {
+						me.open_form_if_not_list();
+					}
 				}
-				cur_frm.reload_doc();
-			}
-		});
-	},
 
-	open_form_if_not_list: function() {
+				cur_frm && cur_frm.reload_doc();
+			},
+		});
+	}
+
+	open_form_if_not_list() {
 		let route = frappe.get_route();
 		let doc = this.dialog.doc;
-		if (route && !(route[0]==='List' && route[1]===doc.doctype)) {
-			frappe.run_serially([
-				() => frappe.set_route('Form', doc.doctype, doc.name)
-			]);
+		if (route && !(route[0] === "List" && route[1] === doc.doctype)) {
+			frappe.run_serially([() => frappe.set_route("Form", doc.doctype, doc.name)]);
 		}
-	},
+	}
 
-	update_doc: function(){
+	update_doc() {
 		var me = this;
 		var data = this.dialog.get_values(true);
-		$.each(data, function(key, value) {
-			if(key==='__newname') {
-				me.dialog.doc.name = value;
-			}
-			else {
-				if(!is_null(value)) {
-					me.dialog.doc[key] = value;
-				}
+		$.each(data, function (key, value) {
+			if (!is_null(value)) {
+				me.dialog.doc[key] = value;
 			}
 		});
 		return this.dialog.doc;
-	},
+	}
 
-	open_doc: function(){
+	open_doc(set_hooks) {
 		this.dialog.hide();
 		this.update_doc();
 		frappe.meta.remove_docfield_copy(this.doctype, this.doc.name, true);
-		frappe.set_route('Form', this.doctype, this.doc.name);
-	},
+		if (set_hooks && this.after_insert) {
+			frappe.route_options = frappe.route_options || {};
+			frappe.route_options.after_save = (frm) => {
+				this.after_insert(frm);
+			};
+		}
+		frappe.set_route("Form", this.doctype, this.doc.name);
+	}
 
-	render_edit_in_full_page_link: function(){
+	render_edit_in_full_page_link() {
 		var me = this;
-		var $link = $('<div style="padding-left: 7px; padding-top: 30px; padding-bottom: 10px;">' +
-			'<button class="edit-full btn-default btn-sm">' + __("Edit in full page") + '</button></div>').appendTo(this.dialog.body);
+		this.dialog.add_custom_action(__("Edit Full Form"), () => me.open_doc(true));
+	}
 
-		$link.find('.edit-full').on('click', function() {
-			// edit in form
-			me.open_doc();
-		});
-	},
-
-	set_defaults: function(){
+	set_defaults() {
 		var me = this;
 		// set defaults
-		$.each(this.dialog.fields_dict, function(fieldname, field) {
+		$.each(this.dialog.fields_dict, function (fieldname, field) {
 			field.doctype = me.doc.doctype;
 			field.docname = me.doc.name;
 
-			if(!is_null(me.doc[fieldname])) {
+			if (!is_null(me.doc[fieldname])) {
 				field.set_input(me.doc[fieldname]);
 			}
 		});
 	}
-});
+};

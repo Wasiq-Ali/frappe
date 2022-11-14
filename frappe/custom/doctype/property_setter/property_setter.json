@@ -1,19 +1,24 @@
 {
+ "actions": [],
  "creation": "2013-01-10 16:34:04",
  "description": "Property Setter overrides a standard DocType or Field property",
  "doctype": "DocType",
  "document_type": "Setup",
  "engine": "InnoDB",
  "field_order": [
+  "is_system_generated",
   "help",
   "sb0",
   "doctype_or_field",
-  "value",
-  "column_break0",
   "doc_type",
   "field_name",
+  "row_name",
+  "column_break0",
+  "module",
+  "section_break_9",
   "property",
   "property_type",
+  "value",
   "default_value"
  ],
  "fields": [
@@ -28,19 +33,19 @@
    "fieldtype": "Section Break"
   },
   {
-   "depends_on": "eval:doc.__islocal",
    "fieldname": "doctype_or_field",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "DocType or Field",
-   "options": "\nDocField\nDocType",
+   "label": "Applied On",
+   "options": "\nDocField\nDocType\nDocType Link\nDocType Action\nDocType State",
+   "read_only_depends_on": "eval:!doc.__islocal",
    "reqd": 1
   },
   {
    "description": "New value to be set",
    "fieldname": "value",
-   "fieldtype": "Text",
+   "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Set Value"
   },
@@ -83,11 +88,36 @@
    "fieldname": "default_value",
    "fieldtype": "Data",
    "label": "Default Value"
+  },
+  {
+   "description": "For DocType Link / DocType Action",
+   "fieldname": "row_name",
+   "fieldtype": "Data",
+   "label": "Row Name"
+  },
+  {
+   "fieldname": "module",
+   "fieldtype": "Link",
+   "label": "Module (for export)",
+   "options": "Module Def"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_system_generated",
+   "fieldtype": "Check",
+   "label": "Is System Generated",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-glass",
  "idx": 1,
- "modified": "2021-01-31 20:38:27.790594",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-02-28 22:24:12.377693",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Property Setter",
@@ -118,5 +148,7 @@
  ],
  "search_fields": "doc_type,property",
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }

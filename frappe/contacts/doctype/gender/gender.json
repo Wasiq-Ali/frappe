@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "field:gender",
  "creation": "2017-04-10 12:11:36.526508",
  "doctype": "DocType",
@@ -15,7 +16,8 @@
    "unique": 1
   }
  ],
- "modified": "2021-05-27 14:07:02.571446",
+ "links": [],
+ "modified": "2022-08-05 18:33:28.043370",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Gender",
@@ -38,7 +40,9 @@
    "role": "All"
   }
  ],
- "sort_field": "creation",
- "sort_order": "ASC",
- "track_changes": 1
+ "sort_field": "idx",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "translated_doctype": 1
 }

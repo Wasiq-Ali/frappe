@@ -1,5 +1,7 @@
 {
+ "actions": [],
  "allow_import": 1,
+ "allow_rename": 1,
  "autoname": "field:title",
  "creation": "2015-03-18 06:08:32.729800",
  "doctype": "DocType",
@@ -7,7 +9,9 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "total_subscribers"
+  "total_subscribers",
+  "confirmation_email_template",
+  "welcome_email_template"
  ],
  "fields": [
   {
@@ -25,9 +29,29 @@
    "in_list_view": 1,
    "label": "Total Subscribers",
    "read_only": 1
+  },
+  {
+   "fieldname": "confirmation_email_template",
+   "fieldtype": "Link",
+   "label": "Confirmation Email Template",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "welcome_email_template",
+   "fieldtype": "Link",
+   "label": "Welcome Email Template",
+   "options": "Email Template"
   }
  ],
- "modified": "2020-03-03 15:44:50.120841",
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "group": "Members",
+   "link_doctype": "Email Group Member",
+   "link_fieldname": "email_group"
+  }
+ ],
+ "modified": "2021-06-15 11:25:13.556201",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Email Group",

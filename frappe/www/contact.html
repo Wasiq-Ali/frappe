@@ -67,7 +67,14 @@
 				<i class='fa fa-phone'></i> <span itemprop="telephone">{{ contact_us_settings.phone }}</span><br>
 			{% endif %}
 			{% if contact_us_settings.email_id %}
-				<i class='fa fa-envelope'></i> <span itemprop="email">{{ contact_us_settings.email_id }}</span><br>
+				<i class='fa fa-envelope'></i>
+				<span itemprop="email">
+					<a href="mailto:{{ contact_us_settings.email_id }}">{{ contact_us_settings.email_id }}</a>
+				</span>
+				<br>
+			{% endif %}
+			{% if contact_us_settings.skype %}
+				<i class='fa fa-skype'></i> <span itemprop="email">{{ contact_us_settings.skype }}</span><br>
 			{% endif %}
 
 		</div>

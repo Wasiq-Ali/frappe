@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "role_profile",
  "creation": "2017-08-31 04:16:38.764465",
  "doctype": "DocType",
@@ -35,10 +36,17 @@
    "read_only": 1
   }
  ],
- "modified": "2020-03-03 15:42:37.745941",
+ "links": [
+  {
+   "link_doctype": "User",
+   "link_fieldname": "role_profile_name"
+  }
+ ],
+ "modified": "2021-12-03 15:45:45.270963",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Role Profile",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

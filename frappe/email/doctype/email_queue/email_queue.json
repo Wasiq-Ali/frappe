@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "hash",
  "creation": "2012-08-02 15:17:28",
  "description": "Email Queue records.",
@@ -23,7 +24,8 @@
   "unsubscribe_method",
   "expose_recipients",
   "attachments",
-  "retry"
+  "retry",
+  "email_account"
  ],
  "fields": [
   {
@@ -81,7 +83,8 @@
    "fieldname": "reference_name",
    "fieldtype": "Data",
    "label": "Reference DocName",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fieldname": "communication",
@@ -138,15 +141,23 @@
    "fieldtype": "Int",
    "label": "Retry",
    "read_only": 1
+  },
+  {
+   "fieldname": "email_account",
+   "fieldtype": "Link",
+   "label": "Email Account",
+   "options": "Email Account"
   }
  ],
  "icon": "fa fa-envelope",
  "idx": 1,
  "in_create": 1,
- "modified": "2022-08-08 15:16:51.640449",
+ "links": [],
+ "modified": "2022-07-12 15:17:37.934316",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Email Queue",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {
@@ -159,5 +170,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

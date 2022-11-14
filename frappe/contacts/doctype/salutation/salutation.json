@@ -1,4 +1,6 @@
 {
+ "actions": [],
+ "allow_rename": 1,
  "autoname": "field:salutation",
  "creation": "2017-04-10 12:17:58.071915",
  "doctype": "DocType",
@@ -15,7 +17,8 @@
    "unique": 1
   }
  ],
- "modified": "2020-03-03 15:42:49.774913",
+ "links": [],
+ "modified": "2022-08-05 18:33:28.196387",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Salutation",
@@ -52,5 +55,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "track_changes": 1
+ "states": [],
+ "track_changes": 1,
+ "translated_doctype": 1
 }

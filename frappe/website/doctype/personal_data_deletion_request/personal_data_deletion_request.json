@@ -1,12 +1,14 @@
 {
- "autoname": "format:deleted-user-{####}@deleted.com",
+ "actions": [],
  "creation": "2019-02-12 15:11:52.201733",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "email",
-  "status"
+  "status",
+  "anonymization_matrix",
+  "deletion_steps"
  ],
  "fields": [
   {
@@ -15,6 +17,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Email",
+   "options": "Email",
    "reqd": 1
   },
   {
@@ -24,11 +27,25 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Pending Verification\nPending Approval\nDeleted",
+   "options": "Pending Verification\nPending Approval\nOn Hold\nDeleted",
    "read_only": 1
+  },
+  {
+   "fieldname": "anonymization_matrix",
+   "fieldtype": "Code",
+   "label": "Anonymization Matrix",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "deletion_steps",
+   "fieldtype": "Table",
+   "label": "Deletion Steps ",
+   "options": "Personal Data Deletion Step"
   }
  ],
- "modified": "2020-03-03 15:37:51.047899",
+ "links": [],
+ "modified": "2021-12-16 10:39:27.058371",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Personal Data Deletion Request",

@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2016-12-08 12:01:07.993900",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -21,7 +22,8 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "\nNot Sent\nSending\nSent\nError\nExpired"
+   "options": "\nNot Sent\nSending\nSent\nError\nExpired",
+   "search_index": 1
   },
   {
    "fieldname": "error",
@@ -30,7 +32,8 @@
   }
  ],
  "istable": 1,
- "modified": "2020-03-03 15:44:56.456455",
+ "links": [],
+ "modified": "2022-07-11 16:38:10.644417",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Email Queue Recipient",
@@ -38,5 +41,6 @@
  "permissions": [],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

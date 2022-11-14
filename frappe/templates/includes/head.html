@@ -1,0 +1,13 @@
+{% if head_html is defined -%}
+{{ head_html or "" }}
+{%- endif %}
+
+{%- if theme.name != 'Standard' or custom_theme_url -%}
+<link type="text/css" rel="stylesheet" href="{{ custom_theme_url or theme.theme_url }}">
+{%- else -%}
+{{ include_style('website.bundle.css') }}
+{%- endif -%}
+
+{%- for link in web_include_css %}
+{{ include_style(link) }}
+{%- endfor -%}

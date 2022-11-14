@@ -1,27 +1,23 @@
 {
+ "actions": [],
  "creation": "2013-03-19 12:02:15",
  "description": "Settings for the About Us Page",
  "doctype": "DocType",
  "document_type": "Other",
  "engine": "InnoDB",
  "field_order": [
-  "help",
+  "page_title",
   "company_introduction",
   "sb0",
   "company_history_heading",
   "company_history",
   "sb1",
   "team_members_heading",
+  "team_members_subtitle",
   "team_members",
   "footer"
  ],
  "fields": [
-  {
-   "fieldname": "help",
-   "fieldtype": "HTML",
-   "label": "Help",
-   "options": "<div class=\"alert\">Link for About Us Page is \"/about\"</div>"
-  },
   {
    "description": "Introduce your company to the website visitor.",
    "fieldname": "company_introduction",
@@ -69,12 +65,24 @@
    "fieldname": "footer",
    "fieldtype": "Text Editor",
    "label": "Footer"
+  },
+  {
+   "fieldname": "page_title",
+   "fieldtype": "Data",
+   "label": "Page Title"
+  },
+  {
+   "fieldname": "team_members_subtitle",
+   "fieldtype": "Small Text",
+   "label": "Team Members Subtitle"
   }
  ],
  "icon": "fa fa-group",
  "idx": 1,
+ "index_web_pages_for_search": 1,
  "issingle": 1,
- "modified": "2020-03-03 15:44:52.923104",
+ "links": [],
+ "modified": "2020-10-12 13:26:20.277859",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "About Us Settings",

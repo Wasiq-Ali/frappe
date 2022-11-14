@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_rename": 1,
  "autoname": "field:kanban_board_name",
  "creation": "2016-10-19 12:26:04.809812",
@@ -9,10 +10,13 @@
   "kanban_board_name",
   "reference_doctype",
   "field_name",
+  "column_break_4",
+  "private",
+  "show_labels",
   "section_break_3",
   "columns",
   "filters",
-  "private"
+  "fields"
  ],
  "fields": [
   {
@@ -48,9 +52,9 @@
   },
   {
    "fieldname": "filters",
-   "fieldtype": "Text",
-   "hidden": 1,
+   "fieldtype": "Code",
    "label": "Filters",
+   "options": "JSON",
    "read_only": 1
   },
   {
@@ -59,14 +63,46 @@
    "fieldtype": "Check",
    "label": "Private",
    "read_only": 1
+  },
+  {
+   "fieldname": "fields",
+   "fieldtype": "Code",
+   "label": "Fields",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_labels",
+   "fieldtype": "Check",
+   "label": "Show Labels",
+   "read_only": 1
   }
  ],
- "modified": "2020-03-03 15:36:46.470879",
+ "links": [],
+ "modified": "2022-04-13 12:10:20.284367",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Kanban Board",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
+  {
+   "read": 1,
+   "role": "All"
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "if_owner": 1,
+   "read": 1,
+   "role": "All",
+   "write": 1
+  },
   {
    "create": 1,
    "delete": 1,
@@ -75,11 +111,14 @@
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "All",
+   "role": "System Manager",
    "share": 1,
    "write": 1
   }
  ],
+ "read_only": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }

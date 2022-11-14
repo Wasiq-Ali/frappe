@@ -25,6 +25,7 @@ CREATE TABLE `tabDocField` (
   `oldfieldtype` varchar(255) DEFAULT NULL,
   `options` text,
   `search_index` int(1) NOT NULL DEFAULT 0,
+  `show_dashboard` int(1) NOT NULL DEFAULT 0,
   `hidden` int(1) NOT NULL DEFAULT 0,
   `set_only_once` int(1) NOT NULL DEFAULT 0,
   `allow_in_quick_entry` int(1) NOT NULL DEFAULT 0,
@@ -40,6 +41,8 @@ CREATE TABLE `tabDocField` (
   `show_preview_popup` int(1) NOT NULL DEFAULT 0,
   `trigger` varchar(255) DEFAULT NULL,
   `collapsible_depends_on` text,
+  `mandatory_depends_on` text,
+  `read_only_depends_on` text,
   `depends_on` text,
   `permlevel` int(11) NOT NULL DEFAULT 0,
   `ignore_user_permissions` int(1) NOT NULL DEFAULT 0,
@@ -59,14 +62,18 @@ CREATE TABLE `tabDocField` (
   `in_preview` int(1) NOT NULL DEFAULT 0,
   `read_only` int(1) NOT NULL DEFAULT 0,
   `precision` varchar(255) DEFAULT NULL,
+  `max_height` varchar(10) DEFAULT NULL,
   `length` int(11) NOT NULL DEFAULT 0,
   `translatable` int(1) NOT NULL DEFAULT 0,
+  `hide_border` int(1) NOT NULL DEFAULT 0,
+  `hide_days` int(1) NOT NULL DEFAULT 0,
+  `hide_seconds` int(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`name`),
   KEY `parent` (`parent`),
   KEY `label` (`label`),
   KEY `fieldtype` (`fieldtype`),
   KEY `fieldname` (`fieldname`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 --
@@ -103,7 +110,54 @@ CREATE TABLE `tabDocPerm` (
   `email` int(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`name`),
   KEY `parent` (`parent`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Table structure for table `tabDocType Action`
+--
+
+CREATE TABLE `tabDocType Action` (
+  `name` varchar(140) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `creation` datetime(6) DEFAULT NULL,
+  `modified` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `owner` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `docstatus` int(1) NOT NULL DEFAULT 0,
+  `parent` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `parentfield` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `parenttype` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `idx` int(8) NOT NULL DEFAULT 0,
+  `label` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `group` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `action_type` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `action` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`name`),
+  KEY `parent` (`parent`),
+  KEY `modified` (`modified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+
+--
+-- Table structure for table `tabDocType Action`
+--
+
+CREATE TABLE `tabDocType Link` (
+  `name` varchar(140) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `creation` datetime(6) DEFAULT NULL,
+  `modified` datetime(6) DEFAULT NULL,
+  `modified_by` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `owner` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `docstatus` int(1) NOT NULL DEFAULT 0,
+  `parent` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `parentfield` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `parenttype` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `idx` int(8) NOT NULL DEFAULT 0,
+  `group` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `link_doctype` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `link_fieldname` varchar(140) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`name`),
+  KEY `parent` (`parent`),
+  KEY `modified` (`modified`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 --
 -- Table structure for table `tabDocType`
@@ -117,9 +171,6 @@ CREATE TABLE `tabDocType` (
   `modified_by` varchar(255) DEFAULT NULL,
   `owner` varchar(255) DEFAULT NULL,
   `docstatus` int(1) NOT NULL DEFAULT 0,
-  `parent` varchar(255) DEFAULT NULL,
-  `parentfield` varchar(255) DEFAULT NULL,
-  `parenttype` varchar(255) DEFAULT NULL,
   `idx` int(8) NOT NULL DEFAULT 0,
   `search_fields` varchar(255) DEFAULT NULL,
   `issingle` int(1) NOT NULL DEFAULT 0,
@@ -131,6 +182,7 @@ CREATE TABLE `tabDocType` (
   `restrict_to_domain` varchar(255) DEFAULT NULL,
   `app` varchar(255) DEFAULT NULL,
   `autoname` varchar(255) DEFAULT NULL,
+  `naming_rule` varchar(40) DEFAULT NULL,
   `name_case` varchar(255) DEFAULT NULL,
   `title_field` varchar(255) DEFAULT NULL,
   `image_field` varchar(255) DEFAULT NULL,
@@ -168,9 +220,15 @@ CREATE TABLE `tabDocType` (
   `allow_guest_to_view` int(1) NOT NULL DEFAULT 0,
   `route` varchar(255) DEFAULT NULL,
   `is_published_field` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`name`),
-  KEY `parent` (`parent`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `website_search_field` varchar(255) DEFAULT NULL,
+  `email_append_to` int(1) NOT NULL DEFAULT 0,
+  `subject_field` varchar(255) DEFAULT NULL,
+  `sender_field` varchar(255) DEFAULT NULL,
+  `show_title_field_in_link` int(1) NOT NULL DEFAULT 0,
+  `migration_hash` varchar(255) DEFAULT NULL,
+  `translated_doctype` int(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Table structure for table `tabSeries`
@@ -178,10 +236,10 @@ CREATE TABLE `tabDocType` (
 
 DROP TABLE IF EXISTS `tabSeries`;
 CREATE TABLE `tabSeries` (
-  `name` varchar(100) DEFAULT NULL,
+  `name` varchar(100),
   `current` int(10) NOT NULL DEFAULT 0,
   PRIMARY KEY(`name`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 --
@@ -198,7 +256,7 @@ CREATE TABLE `tabSessions` (
   `device` varchar(255) DEFAULT 'desktop',
   `status` varchar(20) DEFAULT NULL,
   KEY `sid` (`sid`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 --
@@ -211,7 +269,7 @@ CREATE TABLE `tabSingles` (
   `field` varchar(255) DEFAULT NULL,
   `value` text,
   KEY `singles_doctype_field_index` (`doctype`, `field`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Table structure for table `__Auth`
@@ -222,10 +280,10 @@ CREATE TABLE `__Auth` (
 	`doctype` VARCHAR(140) NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
 	`fieldname` VARCHAR(140) NOT NULL,
-	`password` VARCHAR(255) NOT NULL,
+	`password` TEXT NOT NULL,
 	`encrypted` INT(1) NOT NULL DEFAULT 0,
 	PRIMARY KEY (`doctype`, `name`, `fieldname`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Table structure for table `tabFile`
@@ -253,7 +311,7 @@ CREATE TABLE `tabFile` (
   KEY `parent` (`parent`),
   KEY `attached_to_name` (`attached_to_name`),
   KEY `attached_to_doctype` (`attached_to_doctype`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Table structure for table `tabDefaultValue`
@@ -276,4 +334,4 @@ CREATE TABLE `tabDefaultValue` (
   PRIMARY KEY (`name`),
   KEY `parent` (`parent`),
   KEY `defaultvalue_parent_defkey_index` (`parent`,`defkey`)
-) ENGINE=InnoDB ROW_FORMAT=COMPRESSED CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC CHARACTER SET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2016-12-29 12:59:48.638970",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -18,14 +19,16 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Deleted Name"
+   "label": "Deleted Name",
+   "read_only": 1
   },
   {
    "fieldname": "deleted_doctype",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Deleted DocType"
+   "label": "Deleted DocType",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_3",
@@ -51,11 +54,13 @@
   {
    "fieldname": "data",
    "fieldtype": "Code",
-   "label": "Data"
+   "label": "Data",
+   "read_only": 1
   }
  ],
  "in_create": 1,
- "modified": "2021-12-10 12:13:43.687443",
+ "links": [],
+ "modified": "2022-06-13 05:50:58.314908",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Deleted Document",
@@ -70,6 +75,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "deleted_name",
  "track_changes": 1
 }

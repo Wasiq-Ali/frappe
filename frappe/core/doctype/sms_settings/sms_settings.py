@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
+# Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and Contributors
+# License: MIT. See LICENSE
 
-from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import nowdate, cint, cstr
@@ -272,6 +270,7 @@ def get_doc_for_triggers(reference_doctype, reference_name):
 def send_via_gateway(args):
 	ss = frappe.get_cached_doc('SMS Settings', None)
 	headers = get_headers(ss)
+	use_json = headers.get("Content-Type") == "application/json"
 
 	request_params = {
 		ss.message_parameter: args.get('message')
@@ -306,9 +305,9 @@ def send_via_gateway(args):
 
 def get_headers(sms_settings=None):
 	if not sms_settings:
-		sms_settings = frappe.get_doc('SMS Settings', 'SMS Settings')
+		sms_settings = frappe.get_doc("SMS Settings", "SMS Settings")
 
-	headers = {'Accept': "text/plain, text/html, */*"}
+	headers = {"Accept": "text/plain, text/html, */*"}
 	for d in sms_settings.get("parameters"):
 		if d.header == 1:
 			headers.update({d.parameter: d.value})
@@ -316,17 +315,24 @@ def get_headers(sms_settings=None):
 	return headers
 
 
-def send_request(gateway_url, params, headers=None, use_post=False):
+def send_request(gateway_url, params, headers=None, use_post=False, use_json=False):
 	import requests
 
 	if not headers:
 		headers = get_headers()
+	kwargs = {"headers": headers}
+
+	if use_json:
+		kwargs["json"] = params
+	elif use_post:
+		kwargs["data"] = params
+	else:
+		kwargs["params"] = params
 
 	if use_post:
-		response = requests.post(gateway_url, headers=headers, data=params)
+		response = requests.post(gateway_url, **kwargs)
 	else:
-		response = requests.get(gateway_url, headers=headers, params=params)
-
+		response = requests.get(gateway_url, **kwargs)
 	response.raise_for_status()
 	return response
 

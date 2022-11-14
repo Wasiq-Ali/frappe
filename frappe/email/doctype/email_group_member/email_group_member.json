@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "autoname": "hash",
  "creation": "2015-03-18 06:15:59.321619",
@@ -18,7 +19,8 @@
    "in_standard_filter": 1,
    "label": "Email Group",
    "options": "Email Group",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fieldname": "email",
@@ -33,13 +35,16 @@
    "fieldname": "unsubscribed",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "label": "Unsubscribed"
+   "label": "Unsubscribed",
+   "search_index": 1
   }
  ],
- "modified": "2020-03-03 15:44:51.499369",
+ "links": [],
+ "modified": "2022-07-11 16:38:34.165271",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Email Group Member",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {
@@ -59,6 +64,7 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "email",
  "track_changes": 1
 }

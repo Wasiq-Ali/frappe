@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_rename": 1,
  "creation": "2013-05-24 13:41:00",
  "doctype": "DocType",
@@ -59,7 +60,7 @@
   },
   {
    "bold": 1,
-   "description": "Help: To link to another record in the system, use \"#Form/Note/[Note Name]\" as the Link URL. (don't use \"http://\")",
+   "description": "Help: To link to another record in the system, use \"/app/note/[Note Name]\" as the Link URL. (don't use \"http://\")",
    "fieldname": "content",
    "fieldtype": "Text Editor",
    "in_global_search": 1,
@@ -80,7 +81,8 @@
  ],
  "icon": "fa fa-file-text",
  "idx": 1,
- "modified": "2020-03-03 15:41:08.113533",
+ "links": [],
+ "modified": "2021-09-18 10:57:51.352643",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Note",

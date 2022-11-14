@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
  "allow_import": 1,
  "creation": "2013-03-28 10:35:30",
@@ -7,19 +8,32 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "published_on",
-  "published",
-  "column_break_3",
   "blog_category",
   "blogger",
   "route",
+  "read_time",
+  "column_break_3",
+  "published_on",
+  "published",
+  "featured",
+  "hide_cta",
+  "enable_email_notification",
+  "disable_comments",
+  "disable_likes",
   "section_break_5",
   "blog_intro",
   "content_type",
   "content",
   "content_md",
   "content_html",
-  "email_sent"
+  "email_sent",
+  "meta_tags",
+  "meta_title",
+  "meta_description",
+  "column_break_18",
+  "meta_image",
+  "section_break_20",
+  "google_preview"
  ],
  "fields": [
   {
@@ -74,7 +88,7 @@
    "fieldtype": "Section Break"
   },
   {
-   "description": "Description for listing page, in plain text, only a couple of lines. (max 140 characters)",
+   "description": "Description for listing page, in plain text, only a couple of lines. (max 200 characters)",
    "fieldname": "blog_intro",
    "fieldtype": "Small Text",
    "label": "Blog Intro"
@@ -99,6 +113,7 @@
    "depends_on": "eval:doc.content_type === 'Markdown'",
    "fieldname": "content_md",
    "fieldtype": "Markdown Editor",
+   "ignore_xss_filter": 1,
    "label": "Content (Markdown)"
   },
   {
@@ -114,14 +129,93 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Email Sent"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable_comments",
+   "fieldtype": "Check",
+   "label": "Disable Comments"
+  },
+  {
+   "fieldname": "meta_description",
+   "fieldtype": "Small Text",
+   "label": "Meta Description"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meta_image",
+   "fieldtype": "Attach Image",
+   "label": "Meta Image",
+   "mandatory_depends_on": "eval:doc.featured"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "This is an example Google SERP Preview.",
+   "fieldname": "google_preview",
+   "fieldtype": "HTML",
+   "label": "Google Snippet Preview",
+   "read_only": 1
+  },
+  {
+   "fieldname": "meta_tags",
+   "fieldtype": "Section Break",
+   "label": "Meta Tags"
+  },
+  {
+   "description": "in minutes",
+   "fieldname": "read_time",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Read Time",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "featured",
+   "fieldtype": "Check",
+   "label": "Featured"
+  },
+  {
+   "default": "0",
+   "fieldname": "hide_cta",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Hide CTA"
+  },
+  {
+   "fieldname": "meta_title",
+   "fieldtype": "Data",
+   "label": "Meta Title",
+   "length": 60
+  },
+  {
+   "default": "1",
+   "description": "Enable email notification for any comment or likes received on your Blog Post.",
+   "fieldname": "enable_email_notification",
+   "fieldtype": "Check",
+   "label": "Enable Email Notification"
+  },
+  {
+   "default": "0",
+   "fieldname": "disable_likes",
+   "fieldtype": "Check",
+   "label": "Disable Likes"
   }
  ],
  "has_web_view": 1,
  "icon": "fa fa-quote-left",
  "idx": 1,
+ "index_web_pages_for_search": 1,
  "is_published_field": "published",
- "max_attachments": 5,
- "modified": "2020-03-03 15:34:45.610226",
+ "links": [],
+ "make_attachments_public": 1,
+ "modified": "2022-08-24 07:10:08.620136",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Blog Post",
@@ -150,9 +244,10 @@
    "write": 1
   }
  ],
- "route": "/blog",
+ "route": "blog",
  "sort_field": "modified",
  "sort_order": "ASC",
+ "states": [],
  "title_field": "title",
  "track_changes": 1
 }

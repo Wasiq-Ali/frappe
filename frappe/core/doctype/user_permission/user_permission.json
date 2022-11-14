@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_import": 1,
  "creation": "2017-07-17 14:25:27.881871",
  "doctype": "DocType",
@@ -12,7 +13,9 @@
   "is_default",
   "advanced_control_section",
   "apply_to_all_doctypes",
-  "applicable_for"
+  "applicable_for",
+  "column_break_9",
+  "hide_descendants"
  ],
  "fields": [
   {
@@ -33,10 +36,6 @@
    "label": "Allow",
    "options": "DocType",
    "reqd": 1
-  },
-  {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "for_value",
@@ -72,9 +71,26 @@
    "in_list_view": 1,
    "label": "Applicable For",
    "options": "DocType"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "Hide descendant records of <b>For Value</b>.",
+   "fieldname": "hide_descendants",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Hide Descendants"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
   }
  ],
- "modified": "2020-03-03 15:37:34.098026",
+ "links": [],
+ "modified": "2022-01-03 11:25:03.726150",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User Permission",
@@ -95,6 +111,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "user",
  "track_changes": 1
 }

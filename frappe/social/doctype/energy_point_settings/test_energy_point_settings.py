@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2020, Frappe Technologies and Contributors
+# Copyright (c) 2021, Frappe Technologies and Contributors
 # See license.txt
-from __future__ import unicode_literals
 
 # import frappe
-import unittest
+from frappe.tests.utils import FrappeTestCase
 
-class TestEnergyPointSettings(unittest.TestCase):
+
+class TestEnergyPointSettings(FrappeTestCase):
 	pass

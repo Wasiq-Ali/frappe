@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "Prompt",
  "creation": "2019-09-11 22:15:44.851526",
  "doctype": "DocType",
@@ -13,8 +14,11 @@
   "enable_email_assignment",
   "enable_email_energy_point",
   "enable_email_share",
+  "enable_email_event_reminders",
   "user",
-  "seen"
+  "seen",
+  "system_notifications_section",
+  "energy_points_system_notifications"
  ],
  "fields": [
   {
@@ -26,7 +30,7 @@
   {
    "fieldname": "subscribed_documents",
    "fieldtype": "Table MultiSelect",
-   "label": "Subscribed Documents",
+   "label": "Open Documents",
    "options": "Notification Subscribed Document"
   },
   {
@@ -83,13 +87,34 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Seen"
+  },
+  {
+   "fieldname": "system_notifications_section",
+   "fieldtype": "Section Break",
+   "label": "System Notifications"
+  },
+  {
+   "default": "1",
+   "fieldname": "energy_points_system_notifications",
+   "fieldtype": "Check",
+   "label": "Energy Points"
+  },
+  {
+   "default": "1",
+   "depends_on": "enable_email_notifications",
+   "fieldname": "enable_email_event_reminders",
+   "fieldtype": "Check",
+   "label": "Event Reminders"
   }
  ],
  "in_create": 1,
- "modified": "2020-03-03 15:34:46.821177",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2021-11-24 14:45:31.931154",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Notification Settings",
+ "naming_rule": "Set by user",
  "owner": "Administrator",
  "permissions": [
   {

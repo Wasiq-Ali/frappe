@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
  "allow_import": 1,
  "creation": "2014-10-30 14:25:53.780105",
@@ -14,8 +15,7 @@
   "section_break_7",
   "content",
   "likes",
-  "route",
-  "owner"
+  "route"
  ],
  "fields": [
   {
@@ -78,19 +78,14 @@
    "fieldtype": "Data",
    "in_global_search": 1,
    "label": "Route"
-  },
-  {
-   "default": "user",
-   "fieldname": "owner",
-   "fieldtype": "Link",
-   "label": "Owner",
-   "options": "User"
   }
  ],
  "has_web_view": 1,
  "icon": "icon-file-alt",
+ "index_web_pages_for_search": 1,
  "is_published_field": "published",
- "modified": "2020-03-03 15:42:04.579944",
+ "links": [],
+ "modified": "2022-01-04 16:25:18.577325",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Help Article",

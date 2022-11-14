@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2016-10-19 12:26:42.569185",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -25,12 +26,12 @@
    "options": "Active\nArchived"
   },
   {
-   "default": "darkgrey",
+   "default": "Gray",
    "fieldname": "indicator",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Indicator",
-   "options": "blue\norange\nred\ngreen\ndarkgrey\npurple\nyellow\nlightblue"
+   "options": "Blue\nCyan\nGray\nGreen\nLight Blue\nOrange\nPink\nPurple\nRed\nRed\nYellow"
   },
   {
    "fieldname": "order",
@@ -39,7 +40,8 @@
   }
  ],
  "istable": 1,
- "modified": "2020-03-03 15:44:52.242098",
+ "links": [],
+ "modified": "2021-12-14 13:13:38.804259",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Kanban Board Column",
@@ -48,5 +50,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

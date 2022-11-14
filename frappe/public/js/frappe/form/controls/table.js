@@ -1,25 +1,21 @@
-import Grid from '../grid';
+import Grid from "../grid";
 
-frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
-	make: function() {
-		this._super();
+frappe.ui.form.ControlTable = class ControlTable extends frappe.ui.form.Control {
+	make() {
+		super.make();
 
 		// add title if prev field is not column / section heading or html
 		this.grid = new Grid({
 			frm: this.frm,
 			df: this.df,
-			perm: this.perm || (this.frm && this.frm.perm) || this.df.perm,
-			parent: this.wrapper
+			parent: this.wrapper,
+			control: this,
 		});
-		if(this.frm) {
+
+		if (this.frm) {
 			this.frm.grids[this.frm.grids.length] = this;
 		}
 
-		// description
-		if(this.df.description) {
-			$('<p class="text-muted small">' + __(this.df.description) + '</p>')
-				.appendTo(this.wrapper);
-		}
 		this.$wrapper.on('paste',':text', function(e) {
 			var dialog = cur_dialog;
 			var frm = cur_frm;
@@ -112,22 +108,45 @@ frappe.ui.form.ControlTable = frappe.ui.form.Control.extend({
 			frappe.hide_progress();
 			return false; // Prevent the default handler from running.
 		});
-	},
-	refresh_input: function() {
+	}
+	get_field(field_name) {
+		let fieldname;
+		field_name = field_name.toLowerCase();
+		this.grid.meta.fields.some((field) => {
+			if (frappe.model.no_value_type.includes(field.fieldtype)) {
+				return false;
+			}
+
+			const is_field_matching = () => {
+				return (
+					field.fieldname.toLowerCase() === field_name ||
+					(field.label || "").toLowerCase() === field_name ||
+					(__(field.label) || "").toLowerCase() === field_name
+				);
+			};
+
+			if (is_field_matching()) {
+				fieldname = field.fieldname;
+				return true;
+			}
+		});
+		return fieldname;
+	}
+	refresh_input() {
 		this.grid.refresh();
-	},
-	get_value: function() {
-		if(this.grid) {
+	}
+	get_value() {
+		if (this.grid) {
 			return this.grid.get_data();
 		}
-	},
-	set_input: function( ) {
-		//
-	},
-	validate: function() {
-		return this.get_value();
-	},
-	check_all_rows() {
-		this.$wrapper.find('.grid-row-check')[0].click();
 	}
-});
+	set_input() {
+		//
+	}
+	validate() {
+		return this.get_value();
+	}
+	check_all_rows() {
+		this.$wrapper.find(".grid-row-check")[0].click();
+	}
+};

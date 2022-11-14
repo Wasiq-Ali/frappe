@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2019-08-26 13:37:34.165254",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -8,10 +9,12 @@
   "for_user",
   "type",
   "email_content",
-  "column_break_4",
   "document_type",
   "read",
   "document_name",
+  "attached_file",
+  "attachment_link",
+  "open_reference_document",
   "from_user"
  ],
  "fields": [
@@ -19,57 +22,49 @@
    "fieldname": "subject",
    "fieldtype": "Text",
    "in_list_view": 1,
-   "label": "Subject",
-   "read_only": 1
+   "label": "Subject"
   },
   {
    "fieldname": "for_user",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "For User",
-   "options": "User",
-   "read_only": 1
+   "options": "User"
   },
   {
    "fieldname": "type",
    "fieldtype": "Select",
+   "hidden": 1,
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Type",
-   "options": "Mention\nEnergy Point\nAssignment\nShare",
-   "read_only": 1,
-   "search_index": 1
+   "options": "Mention\nEnergy Point\nAssignment\nShare\nAlert"
   },
   {
    "fieldname": "email_content",
-   "fieldtype": "Text",
-   "label": "Email Content",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_4",
-   "fieldtype": "Column Break"
+   "fieldtype": "Text Editor",
+   "label": "Message"
   },
   {
    "fieldname": "document_type",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Document Type",
-   "options": "DocType",
-   "read_only": 1,
-   "search_index": 1
+   "options": "DocType"
   },
   {
    "fieldname": "document_name",
    "fieldtype": "Data",
-   "label": "Document Name",
-   "read_only": 1,
+   "hidden": 1,
+   "label": "Document Link",
    "search_index": 1
   },
   {
    "fieldname": "from_user",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "From User",
    "options": "User",
-   "read_only": 1,
    "search_index": 1
   },
   {
@@ -79,30 +74,47 @@
    "hidden": 1,
    "ignore_user_permissions": 1,
    "label": "Read"
+  },
+  {
+   "fieldname": "open_reference_document",
+   "fieldtype": "Button",
+   "label": "Open Reference Document"
+  },
+  {
+   "fieldname": "attached_file",
+   "fieldtype": "Code",
+   "hidden": 1,
+   "label": "Attached File",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "attachment_link",
+   "fieldtype": "HTML",
+   "label": "Attachment Link"
   }
  ],
+ "hide_toolbar": 1,
  "in_create": 1,
- "modified": "2020-03-03 15:34:45.247560",
+ "links": [],
+ "modified": "2022-09-13 16:08:48.153934",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Notification Log",
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
    "email": 1,
    "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "All",
-   "share": 1,
-   "write": 1
+   "share": 1
   }
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "subject",
- "track_changes": 1,
  "track_seen": 1
 }
