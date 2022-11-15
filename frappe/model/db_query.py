@@ -927,7 +927,7 @@ class DatabaseQuery:
 		if "select" in _lower and "from" in _lower:
 			frappe.throw(_("Cannot use sub-query in order by"))
 
-		if ORDER_GROUP_PATTERN.match(_lower):
+		if self.strict and ORDER_GROUP_PATTERN.match(_lower):
 			frappe.throw(_("Illegal SQL Query"))
 
 		for field in parameters.split(","):
