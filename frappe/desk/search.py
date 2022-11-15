@@ -198,13 +198,17 @@ def search_widget(
 			order_by = f"{order_by_based_on_meta}, `tab{doctype}`.idx desc"
 
 			if not meta.translated_doctype:
-				formatted_fields.append(
-					"""locate({_txt}, `tab{doctype}`.`name`) as `_relevance`""".format(
-						_txt=frappe.db.escape((txt or "").replace("%", "").replace("@", "")),
-						doctype=doctype,
-					)
+				locate_string = """locate({_txt}, `tab{doctype}`.`name`)""".format(
+					_txt=frappe.db.escape((txt or "").replace("%", "").replace("@", "")),
+					doctype=doctype,
 				)
-				order_by = f"if(_relevance, _relevance, 99999), {order_by}"
+				formatted_fields.append(f"{locate_string} as `_relevance`")
+
+				if frappe.db.db_type == "mariadb":
+					order_by = f"if(_relevance, _relevance, 99999), {order_by}"
+				else:
+					case_condition = f"CASE WHEN {locate_string} > 0 THEN {locate_string} ELSE 99999 END"
+					order_by = f"{case_condition}, {order_by}"
 
 			ptype = "select" if frappe.only_has_select_perm(doctype) else "read"
 			ignore_permissions = (
