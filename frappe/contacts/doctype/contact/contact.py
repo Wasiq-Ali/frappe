@@ -215,24 +215,21 @@ class Contact(Document):
 
 def get_default_contact(doctype, name, is_primary=None):
 	'''Returns default contact for the given doctype, name'''
-	out = frappe.db.sql('''select parent,
+	out = frappe.db.sql("""
+		select parent,
 			IFNULL((select is_primary_contact from tabContact c where c.name = dl.parent), 0)
 				as is_primary_contact
 		from
 			`tabDynamic Link` dl
-		where
-			dl.link_doctype=%s and
-			dl.link_name=%s and
-			dl.parenttype = "Contact"''',
-		(doctype, name),
-		as_dict=True,
-	)
+		where dl.link_doctype=%s and dl.link_name=%s and dl.parenttype = 'Contact'
+		order by is_primary_contact desc, creation
+	""", (doctype, name))
 
 	if is_primary is not None:
 		out = [d for d in out if d[1] == cint(is_primary)]
 
 	if out:
-		return sorted(out, key = functools.cmp_to_key(lambda x,y: cmp(cint(y[1]), cint(x[1]))))[0][0]
+		return out[0]
 	else:
 		return None
 
