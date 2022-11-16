@@ -66,8 +66,13 @@ frappe.ui.FieldGroup = frappe.ui.form.Layout.extend({
 		$(this.body).find('input[type="text"], input[type="password"], select').keypress(function(e) {
 			if(e.which==13) {
 				if(me.has_primary_action) {
+					$(document.activeElement).blur();
 					e.preventDefault();
-					me.get_primary_btn().trigger("click");
+					setTimeout(() => {
+						if(me.has_primary_action) {
+							me.get_primary_btn().trigger("click");
+						}
+					}, 100);
 				}
 			}
 		});

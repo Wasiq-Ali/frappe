@@ -182,7 +182,7 @@ def update_parent_mins_to_first_response(doc):
 
 	# update parent mins_to_first_communication only if we create the Email communication
 	# ignore in case of only Comment is added
-	if doc.communication_type == "Comment":
+	if doc.communication_type in  ["Comment", "Feedback"]:
 		return
 
 	status_field = parent.meta.get_field("status")
