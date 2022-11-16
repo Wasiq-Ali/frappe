@@ -9,9 +9,9 @@ body {
 	background-color: var(--bg-color);
 
 	&.full-width {
-	@include media-breakpoint-up(md) {
+	@include media-breakpoint-up(sm) {
 		.container {
-				width: 90%;
+				width: 98%;
 				max-width: 100%;
 			}
 		}
