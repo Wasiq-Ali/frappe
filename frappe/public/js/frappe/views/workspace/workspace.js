@@ -325,8 +325,8 @@ frappe.views.Workspace = class Workspace {
 			this.create_page_skeleton();
 
 			let pages = page.public ? this.public_pages : this.private_pages;
-			let current_page = pages.filter((p) => p.title == page.name)[0];
-			this.content = current_page && JSON.parse(current_page.content);
+			let current_page = pages.filter((p) => p.title == page.name)[0] || {};
+			this.content = current_page && JSON.parse(current_page.content) || [];
 
 			this.add_custom_cards_in_content();
 
