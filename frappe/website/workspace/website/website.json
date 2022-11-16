@@ -232,16 +232,24 @@
    "type": "Link"
   }
  ],
- "modified": "2022-01-13 17:49:41.527194",
+ "modified": "2022-11-16 12:24:38.243392",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Website",
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
+ "quick_lists": [],
  "restrict_to_domain": "",
- "roles": [],
- "sequence_id": 28.0,
+ "roles": [
+  {
+   "role": "System Manager"
+  },
+  {
+   "role": "Website Manager"
+  }
+ ],
+ "sequence_id": 19.0,
  "shortcuts": [
   {
    "color": "Green",

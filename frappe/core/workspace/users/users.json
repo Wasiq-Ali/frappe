@@ -145,16 +145,21 @@
    "type": "Link"
   }
  ],
- "modified": "2022-01-13 17:49:08.912772",
+ "modified": "2022-11-16 12:24:38.189568",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Users",
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
+ "quick_lists": [],
  "restrict_to_domain": "",
- "roles": [],
- "sequence_id": 27.0,
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ],
+ "sequence_id": 18.0,
  "shortcuts": [
   {
    "label": "User",
