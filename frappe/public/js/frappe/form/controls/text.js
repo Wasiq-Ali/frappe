@@ -7,7 +7,7 @@ frappe.ui.form.ControlText = class ControlText extends frappe.ui.form.ControlDat
 	}
 	make_input() {
 		super.make_input();
-		this.$input.css({ height: "168px" });
+		this.$input.css({ height: "164px" });
 		if (this.df.max_height) {
 			this.$input.css({ "max-height": this.df.max_height });
 		}
@@ -18,6 +18,6 @@ frappe.ui.form.ControlLongText = frappe.ui.form.ControlText;
 frappe.ui.form.ControlSmallText = class ControlSmallText extends frappe.ui.form.ControlText {
 	make_input() {
 		super.make_input();
-		this.$input.css({ height: "94px" });
+		this.$input.css({ height: "99px" });
 	}
 };
