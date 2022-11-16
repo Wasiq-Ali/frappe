@@ -1796,13 +1796,13 @@ frappe.ui.form.Form = class FrappeForm {
 
 	set_indicator_formatter(fieldname, get_color, get_text) {
 		// get doctype from parent
-		var doctype;
-		if (frappe.meta.docfield_map[this.doctype][fieldname]) {
-			doctype = this.doctype;
-		} else {
-			frappe.meta.get_table_fields(this.doctype).every(function (df) {
-				if (frappe.meta.docfield_map[df.options][fieldname]) {
-					doctype = df.options;
+		let me = this;
+
+		let df = this.get_docfield(fieldname);
+		if (!df) {
+			frappe.meta.get_table_fields(this.doctype).every(function (table_df) {
+				df = me.get_docfield(table_df.fieldname, fieldname);
+				if (df) {
 					return false;
 				} else {
 					return true;
@@ -1810,36 +1810,28 @@ frappe.ui.form.Form = class FrappeForm {
 			});
 		}
 
-		frappe.meta.docfield_map[doctype][fieldname].formatter = function (
+		df.formatter = function (
 			value,
 			df,
 			options,
 			doc
 		) {
-			if (value) {
-				let label;
-				if (get_text) {
-					label = get_text(doc);
-				} else if (frappe.form.link_formatters[df.options]) {
-					label = frappe.form.link_formatters[df.options](value, doc);
-				} else {
-					label = value;
-				}
-
-				let color = get_color(doc || {}, me.doc);
-
-				if (!options) {
-					options = {};
-				}
-				options.label = label;
-				if (color) {
-					options.indicator = color;
-				}
-
-				return frappe.form.formatters['Link'](value, df, options, doc);
-			} else {
-				return "";
+			let label;
+			if (get_text) {
+				label = get_text(doc);
 			}
+
+			let color = get_color(doc || {}, me.doc);
+
+			if (!options) {
+				options = {};
+			}
+			options.label = label;
+			if (color) {
+				options.indicator = color;
+			}
+
+			return frappe.format(value, df, options, doc, true);
 		};
 	}
 

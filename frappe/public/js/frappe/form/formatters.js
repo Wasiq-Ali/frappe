@@ -12,38 +12,89 @@ frappe.form.formatters = {
 		if (options && (options.inline || options.only_value)) {
 			return value;
 		} else {
-			value = frappe.form.formatters._apply_custom_formatter(value, df, options);
+			let out = value;
+			let css_class = frappe.form.formatters._get_css_class(options);
+			let css_style = frappe.form.formatters._get_css_style(options);
 
 			if (options) {
-				var css = "";
-
-				if (options.css && !$.isEmptyObject(options.css)) {
-					$.each(options.css || {}, function (prop, val) {
-						css += `${prop}:${val};`;
-					});
-				}
-
 				if (options.link_href) {
-					value = `<a href='${options.link_href}' title="${options.link_title || "Open Link"}"`
-						+ (options.link_target ? ` target='${options.link_target}'` : "")
-						+ (css ? ` style='${css}'` : "")
-						+ `>${value}</a>`;
+					let link_title = frappe.form.formatters._get_link_title(options);
+					let link_target = frappe.form.formatters._get_link_target(options);
 
-					css = "";
+					out = `<a href="${options.link_href}"
+						${link_title}${link_target}${css_class}${css_style}>
+						${value}</a>`;
+
+					css_style = "";
+					css_class = "";
 				}
 			}
 
-			if (css || right_align) {
-				right_align = right_align ? 'text-align: right;' : '';
-				css = ` style='${cstr(css)}${right_align}'`;
-				return `<div${css}>${value}</div>`;
-			} else {
-				return value;
+			if (css_style || css_class) {
+				out = `<div${css_style}${css_class}>${out}</div>`;
 			}
+
+			if (right_align) {
+				out = `<div style="text-align: right;">${out}</div>`;
+			}
+
+			return out;
 		}
 	},
 
-	_apply_custom_formatter: function (value, df, options) {
+	_get_css_style: function (options) {
+		let css_style = "";
+		if (options && options.css && !$.isEmptyObject(options.css)) {
+			$.each(options.css || {}, function (prop, val) {
+				css_style += `${prop}:${val};`;
+			});
+		}
+
+		if (css_style) {
+			css_style = ` style="${css_style}"`;
+		}
+		return css_style;
+	},
+
+	_get_css_class: function (options) {
+		let classes = [];
+
+		if (options && options.indicator) {
+			classes.push(`indicator ${options.indicator}`);
+		}
+
+		if (options && options.css_class) {
+			if (Array.isArray(options.css_class)) {
+				classes.push(...options.css_class);
+			} else {
+				classes.push(options.css_class);
+			}
+		}
+
+		let css_class = classes.join(" ");
+		if (css_class) {
+			css_class = ` class="${css_class}"`;
+		}
+		return css_class;
+	},
+
+	_get_link_target: function (options) {
+		let link_target = "";
+		if (options && options.link_target) {
+			link_target = ` target="${opions.link_target}"`;
+		}
+		return link_target;
+	},
+
+	_get_link_title: function (options) {
+		let link_title = "";
+		if (options && options.link_title) {
+			link_title = ` title="${opions.link_title}"`;
+		}
+		return link_title;
+	},
+
+	_get_custom_formatter: function (df) {
 		/* you can add a custom formatter in df.formatter
 		example:
 			frappe.meta.docfield_map[df.parent][df.fieldname].formatter = (value) => {
@@ -56,10 +107,9 @@ frappe.form.formatters = {
 				frappe.meta.docfield_map[df.parent] &&
 				frappe.meta.docfield_map[df.parent][df.fieldname];
 			if (std_df && std_df.formatter && typeof std_df.formatter === "function") {
-				value = std_df.formatter(value, df);
+				return std_df.formatter;
 			}
 		}
-		return value;
 	},
 
 	_format_number: function(value, format, precision) {
@@ -171,8 +221,8 @@ frappe.form.formatters = {
 			class="disabled-${value ? "selected" : "deselected"}">`;
 	},
 	Link: function (value, docfield, options, doc) {
-		var doctype = docfield._options || docfield.options;
-		var original_value = value;
+		let doctype = docfield._options || docfield.options;
+		let original_value = value;
 		let link_title = frappe.utils.get_link_title(doctype, value);
 
 		if (value && value.match && value.match(/^['"].*['"]$/)) {
@@ -197,40 +247,35 @@ frappe.form.formatters = {
 			return value.substring(1, value.length - 1);
 		}
 
-		var color_style = "";
-		if (options && options.css && typeof options.css === 'object' && options.css.color) {
-			color_style = `style="color: ${options.css.color}"`;
-		}
+		let css_class = frappe.form.formatters._get_css_class(options);
+		let css_style = frappe.form.formatters._get_css_style(options);
+		let anchor_target = frappe.form.formatters._get_link_target(options);
+		let anchor_title = frappe.form.formatters._get_link_title(options);
 
-		var css_class = [];
-		if (options && options.indicator) {
-			css_class.push(`indicator ${options.indicator}`);
-		}
+		let link_text = __((options && options.label) || link_title || value);
+		let url = `/app/${encodeURIComponent(frappe.router.slug(doctype))}/${encodeURIComponent(original_value)}`;
 
-		var anchor;
+		let formatted;
 		if (docfield && docfield.link_onclick) {
-			anchor = repl('<a onclick="%(onclick)s" ${color_style}>%(value)s</a>', {
+			formatted = repl(`<a onclick="%(onclick)s"${anchor_title}${css_class}${css_style}>${link_text}</a>`, {
 				onclick: docfield.link_onclick.replace(/"/g, "&quot;"),
-				value: value,
 			});
 		} else if (docfield && doctype) {
 			if (frappe.model.can_read(doctype)) {
-				anchor = `<a class="${css_class.join(' ')}" ${color_style}
-					href="/app/${encodeURIComponent(frappe.router.slug(doctype))}/${encodeURIComponent(
-					original_value
-				)}"
+				formatted = `<a ${anchor_title}${anchor_target}${css_class}${css_style}
+					href="${url}"
 					data-doctype="${doctype}"
 					data-name="${original_value}"
 					data-value="${original_value}">
-					${__((options && options.label) || link_title || value)}</a>`;
-			} else {
-				 anchor = link_title || value;
+					${link_text}</a>`;
 			}
-		} else {
-			anchor = link_title || value;
 		}
 
-		return frappe.form.formatters._style(anchor, docfield, options);
+		if (formatted) {
+			return formatted;
+		} else {
+			return frappe.form.formatters._style(link_text, docfield, options);
+		}
 	},
 	Date: function (value, docfield, options) {
 		if (!frappe.datetime.str_to_user) {
@@ -428,7 +473,7 @@ frappe.form.get_formatter = function (fieldtype) {
 	return frappe.form.formatters[fieldtype.replace(/ /g, "")] || frappe.form.formatters.Data;
 };
 
-frappe.format = function (value, df, options, doc) {
+frappe.format = function (value, df, options, doc, standard) {
 	if (!df) df = { fieldtype: "Data" };
 	if (df.fieldname == "_user_tags") df.fieldtype = "Tag";
 	var fieldtype = df.fieldtype || "Data";
@@ -439,7 +484,13 @@ frappe.format = function (value, df, options, doc) {
 		df._options = doc ? doc[df.options] : null;
 	}
 
-	var formatter = df.formatter || frappe.form.get_formatter(fieldtype);
+	var standard_formatter = frappe.form.get_formatter(fieldtype);
+	var formatter = standard_formatter;
+
+	if (!standard) {
+		var customer_formatter = frappe.form.formatters._get_custom_formatter(df);
+		formatter = df.formatter || customer_formatter || standard_formatter;
+	}
 
 	var formatted = formatter(value, df, options, doc);
 
