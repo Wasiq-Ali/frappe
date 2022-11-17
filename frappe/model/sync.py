@@ -66,8 +66,8 @@ def sync_for(app_name, force=0, reset_permissions=False):
 			"workspace_shortcut",
 			"workspace_quick_list",
 			"workspace",
-			"form_tour",
 			"form_tour_step",
+			"form_tour",
 		]:
 			files.append(os.path.join(FRAPPE_PATH, "desk", "doctype", desk_module, f"{desk_module}.json"))
 
