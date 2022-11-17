@@ -2,6 +2,8 @@ import frappe
 
 
 def execute():
+	frappe.reload_doc("core", "doctype", "scheduled_job_log")
+
 	old_settings = {
 		"Error Log": get_current_setting("clear_error_log_after"),
 		"Activity Log": get_current_setting("clear_activity_log_after"),

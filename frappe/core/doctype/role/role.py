@@ -33,7 +33,7 @@ class Role(Document):
 			self.set_desk_properties()
 
 	def disable_role(self):
-		if self.name in STANDARD_ROLES:
+		if self.name in STANDARD_ROLES and not frappe.flags.in_migrate:
 			frappe.throw(frappe._("Standard roles cannot be disabled"))
 		else:
 			self.remove_roles()
