@@ -164,27 +164,35 @@ export default class GridRow {
 				default: this.doc.idx,
 			},
 			function (values) {
-				if (me.doc._sortable === false) {
-					frappe.msgprint(__("Cannot move row"));
-					return;
-				}
-
-				// renumber and refresh
-				let data = me.grid.get_data();
-				data.move(me.doc.idx - 1, values.move_to - 1);
-
-				// renum idx
-				for (let i = 0; i < data.length; i++) {
-					data[i].idx = i + 1;
-				}
-
-				me.toggle_view(false);
-				me.grid.refresh();
-				$(me.frm.wrapper).trigger("grid-move-row", [me.frm, me]);
+				me.move_to_idx(values.move_to);
 			},
 			__("Move To"),
 			"Update"
 		);
+	}
+	move_to_idx(move_to, do_not_refresh) {
+		var me = this;
+
+		if (me.doc._sortable === false) {
+			frappe.msgprint(__("Cannot move row"));
+			return;
+		}
+
+		// renumber and refresh
+		let data = me.grid.get_data();
+		data.move(me.doc.idx - 1, move_to - 1);
+
+		// renum idx
+		for (let i = 0; i < data.length; i++) {
+			data[i].idx = i + 1;
+		}
+
+		me.toggle_view(false);
+
+		if (!do_not_refresh) {
+			me.grid.refresh();
+		}
+		$(me.frm.wrapper).trigger("grid-move-row", [me.frm, me]);
 	}
 	refresh() {
 		// update docfields for new record

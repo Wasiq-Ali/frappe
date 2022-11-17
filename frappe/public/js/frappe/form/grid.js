@@ -266,24 +266,46 @@ export default class Grid {
 		this.remove_all_rows_button.toggleClass("hidden", !show_delete_all_btn);
 	}
 
-	get_selected() {
+	get_selected_rows() {
 		return (this.grid_rows || [])
 			.map((row) => {
-				return row.doc.__checked ? row.doc.name : null;
+				return row.doc.__checked ? row : null;
 			})
 			.filter((d) => {
 				return d;
 			});
 	}
 
+	get_selected() {
+		return this.get_selected_rows().map((row) => row.doc.name);
+	}
+
 	get_selected_children() {
-		return (this.grid_rows || [])
-			.map((row) => {
-				return row.doc.__checked ? row.doc : null;
-			})
-			.filter((d) => {
-				return d;
-			});
+		return this.get_selected_rows().map((row) => row.doc);
+	}
+
+	move_selected_rows(move_to) {
+		if (!move_to) {
+			return;
+		}
+
+		var rows = this.get_selected_rows();
+		var first_idx = Math.min(...rows.map((row) => row.doc.idx));
+
+		var increase_idx = false;
+		if (move_to < first_idx) {
+			increase_idx = true;
+		}
+
+		var next_idx = move_to;
+		rows.forEach((row) => {
+			row.move_to_idx(next_idx, true);
+			if (increase_idx) {
+				next_idx += 1;
+			}
+		});
+
+		this.refresh();
 	}
 
 	reset_grid() {
