@@ -67,14 +67,16 @@ frappe.ui.FieldGroup = class FieldGroup extends frappe.ui.form.Layout {
 		$(this.body)
 			.find('input[type="text"], input[type="password"], select')
 			.keypress(function (e) {
-				if(me.has_primary_action) {
-					$(document.activeElement).blur();
-					e.preventDefault();
-					setTimeout(() => {
-						if(me.has_primary_action) {
-							me.get_primary_btn().trigger("click");
-						}
-					}, 100);
+				if (e.which == 13) {
+					if (me.has_primary_action) {
+						$(document.activeElement).blur();
+						e.preventDefault();
+						setTimeout(() => {
+							if (me.has_primary_action) {
+								me.get_primary_btn().trigger("click");
+							}
+						}, 100);
+					}
 				}
 			});
 	}
