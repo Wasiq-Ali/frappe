@@ -473,7 +473,7 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 				filter[3].push("...");
 			}
 
-			let value = filter[3] == null || filter[3] === "" ? __("empty") : String(filter[3]);
+			let value = filter[3] == null || filter[3] === "" ? __("empty") : cstr(filter[3]);
 
 			return [__(label).bold(), filter[2], value.bold()].join(" ");
 		}

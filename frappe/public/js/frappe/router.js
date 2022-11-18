@@ -430,7 +430,7 @@ frappe.router = {
 				frappe.route_options = a;
 				return null;
 			} else {
-				return encodeURIComponent(String(a));
+				return encodeURIComponent(cstr(a));
 			}
 		}).join("/");
 		let private_home = frappe.workspaces[`home-${frappe.user.name.toLowerCase()}`];

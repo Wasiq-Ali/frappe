@@ -182,7 +182,7 @@ $.extend(frappe.model, {
 
 		// 3 - look in default of docfield
 		if (!value || df["default"]) {
-			const default_val = String(df["default"]);
+			const default_val = cstr(df["default"]);
 			if (default_val == "__user" || default_val.toLowerCase() == "user") {
 				value = frappe.session.user;
 			} else if (default_val == "user_fullname") {

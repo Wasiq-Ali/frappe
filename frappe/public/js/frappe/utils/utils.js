@@ -257,7 +257,7 @@ Object.assign(frappe.utils, {
 			"=": "&#x3D;",
 		};
 
-		return String(txt).replace(/[&<>"'`=/]/g, (char) => escape_html_mapping[char] || char);
+		return cstr(txt).replace(/[&<>"'`=/]/g, (char) => escape_html_mapping[char] || char);
 	},
 
 	unescape_html: function (txt) {
@@ -272,7 +272,7 @@ Object.assign(frappe.utils, {
 			"&#x3D;": "=",
 		};
 
-		return String(txt).replace(
+		return cstr(txt).replace(
 			/&amp;|&lt;|&gt;|&quot;|&#39;|&#x2F;|&#x60;|&#x3D;/g,
 			(char) => unescape_html_mapping[char] || char
 		);
@@ -1382,7 +1382,7 @@ Object.assign(frappe.utils, {
 		 */
 
 		// return number if total digits is lesser than min_length
-		const len = String(number).match(/\d/g).length;
+		const len = cstr(number).match(/\d/g).length;
 		if (len < min_length) return number.toString();
 
 		const number_system = this.get_number_system(country);
