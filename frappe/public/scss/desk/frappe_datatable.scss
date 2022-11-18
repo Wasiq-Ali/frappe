@@ -4,8 +4,8 @@
 	--dt-light-red: var(--red-50);
 	--dt-light-yellow: var(--yellow-50);
 	--dt-orange: var(--orange-500);
-	--dt-text-color: var(--text-light);
-	--dt-text-light: var(--bg-color);
+	--dt-text-color: var(--text-color);
+	--dt-text-light: var(--text-light);
 	--dt-spacer-1: 0.25rem;
 	--dt-spacer-2: var(--padding-xs);
 	--dt-spacer-3: 1rem;
@@ -15,11 +15,12 @@
 	--dt-border-radius: var(--border-radius);
 	--dt-header-cell-bg: var(--fg-color);
 	--dt-selection-highlight-color: var(--highlight-color);
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
 
 	background-color: var(--fg-color);
 	margin-left: -5px;
 	margin-top: 0px;
-	font-size: var(--text-md);
+	font-size: 12px;
 
 	.frappe-control, .form-control {
 		margin: 0;
