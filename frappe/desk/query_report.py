@@ -836,7 +836,7 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 
 	out = []
 
-	for group_value, rows in iteritems(group_rows):
+	for group_value, rows in group_rows.items():
 		grouped_by_map = get_grouped_by_map(group_value)
 		group_object = frappe._dict({
 			"_isGroup": 1,
@@ -848,7 +848,7 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 				parent_grouped_by=grouped_by_map)
 		})
 
-		for f, g in iteritems(grouped_by_map):
+		for f, g in grouped_by_map.items():
 			if f not in group_object and f is not None:
 				group_object[f] = g
 
