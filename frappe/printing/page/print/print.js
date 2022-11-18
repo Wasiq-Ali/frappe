@@ -62,13 +62,13 @@ frappe.ui.form.PrintView = class {
 	}
 
 	setup_toolbar() {
-		this.page.set_primary_action(__("Print"), () => this.printit(), "printer");
+		this.page.set_primary_action(__("PDF"), () => this.render_pdf(), { icon: "small-file" });
+
+		this.page.add_button(__("Print"), () => this.printit(), { icon: "printer" });
 
 		this.page.add_button(__("Full Page"), () => this.render_page("/printview?"), {
 			icon: "full-page",
 		});
-
-		this.page.add_button(__("PDF"), () => this.render_pdf(), { icon: "small-file" });
 
 		this.page.add_button(__("Refresh"), () => this.refresh_print_format(), {
 			icon: "refresh",
