@@ -9,7 +9,7 @@ from frappe.contacts.address_and_contact import set_link_title
 from frappe.core.doctype.dynamic_link.dynamic_link import deduplicate_dynamic_links
 from frappe.model.document import Document
 from frappe.model.naming import make_autoname
-from frappe.utils import cstr
+from frappe.utils import cstr, cint
 
 
 class Address(Document):
@@ -232,9 +232,13 @@ def get_address_templates(address):
 		return result
 
 
-def get_company_address(company):
+@frappe.whitelist()
+def get_company_address(company, shipping_address=False):
 	ret = frappe._dict()
-	ret.company_address = get_default_address("Company", company)
+
+	sort_key = "is_shipping_address" if cint(shipping_address) else "is_primary_address"
+
+	ret.company_address = get_default_address("Company", company, sort_key=sort_key)
 	ret.company_address_display = get_address_display(ret.company_address)
 
 	return ret
