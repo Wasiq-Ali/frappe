@@ -85,7 +85,7 @@ def get_bootinfo():
 		bootinfo.lang = str(bootinfo.lang)
 	bootinfo.versions = {k: v["version"] for k, v in get_versions().items()}
 
-	bootinfo.error_report_email = frappe.conf.error_report_email
+	bootinfo.error_report_email = frappe.conf.error_report_email or 'info@paralogic.io'
 	bootinfo.calendars = sorted(frappe.get_hooks("calendars"))
 	bootinfo.treeviews = frappe.get_hooks("treeviews") or []
 	bootinfo.lang_dict = get_lang_dict()
