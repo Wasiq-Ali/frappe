@@ -73,7 +73,6 @@
 	font-size: $font-size-sm;
 }
 
-.grid-empty,
 .list-loading {
 	@include flex(flex, center, center, column);
 	padding: var(--padding-lg) var(--padding-sm);
@@ -81,6 +80,18 @@
 
 	img {
 		margin-bottom: var(--margin-sm);
+	}
+}
+
+.grid-empty {
+	@include flex(flex, center, center, row);
+	padding: 0 var(--padding-sm);
+	color: var(--text-muted);
+	gap: 10px;
+	height: 34px;
+
+	img {
+		height: 22px;
 	}
 }
 
