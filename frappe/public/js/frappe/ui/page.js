@@ -177,16 +177,23 @@ frappe.ui.Page = class Page {
 				delay: { show: 600, hide: 100 },
 				trigger: "hover",
 			});
-			sidebar_toggle.click(() => {
-				if (frappe.utils.is_xs() || frappe.utils.is_sm()) {
-					this.setup_overlay_sidebar();
-				} else {
-					sidebar_wrapper.toggle();
-				}
-				$(document.body).trigger("toggleSidebar");
-				this.update_sidebar_icon();
-			});
+			sidebar_toggle.click(() => this.toggle_sidebar());
 		}
+	}
+
+	toggle_sidebar() {
+		let sidebar_wrapper = this.wrapper.find(".layout-side-section");
+		if (this.disable_sidebar_toggle || !sidebar_wrapper.length) {
+			return;
+		}
+
+		if (frappe.utils.is_xs() || frappe.utils.is_sm()) {
+			this.setup_overlay_sidebar();
+		} else {
+			sidebar_wrapper.toggle();
+		}
+		$(document.body).trigger("toggleSidebar");
+		this.update_sidebar_icon();
 	}
 
 	setup_overlay_sidebar() {

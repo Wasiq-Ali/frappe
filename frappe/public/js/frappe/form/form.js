@@ -20,12 +20,6 @@ frappe.ui.form.Controller = class FormController {
 		$.extend(this, opts);
 	}
 
-	remove_sidebar() {
-		this.frm.page.sidebar.remove(); // this removes the sidebar
-		this.frm.page.wrapper.find(".layout-main-section-wrapper").removeClass("col-md-10");
-		this.frm.page.wrapper.find(".layout-main-section-wrapper").addClass("col-md-12");
-	}
-
 	set_disallow_on_submit_fields_read_only(doc, cdt, cdn) {
 		let me = this;
 

@@ -2,6 +2,10 @@
 // MIT License. See license.txt
 
 frappe.ui.form.on("DocType", {
+	setup: function (frm) {
+		frm.page.toggle_sidebar();
+	},
+
 	refresh: function (frm) {
 		frm.set_query("role", "permissions", function (doc) {
 			if (doc.custom && frappe.session.user != "Administrator") {
