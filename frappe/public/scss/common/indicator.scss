@@ -10,7 +10,7 @@
 @mixin indicator-color($color) {
 	&::before,
 	&::after {
-		background: var(--text-on-#{$color});
+		background: var(--indicator-#{$color});
 	}
 }
 
@@ -102,7 +102,7 @@
 }
 
 .indicator-pill.orange,
-.indicator-pill-right.orange
+.indicator-pill-right.orange,
 .indicator-pill-round.orange {
 	@include indicator-pill-color('orange');
 }
@@ -112,9 +112,23 @@
 }
 
 .indicator-pill.yellow,
-.indicator-pill-right.yellow
+.indicator-pill-right.yellow,
 .indicator-pill-round.yellow {
 	@include indicator-pill-color('yellow');
+}
+
+.indicator.light-gray,
+.indicator.light-grey {
+	@include indicator-color('light-gray');
+}
+
+.indicator-pill.light-gray,
+.indicator-pill-right.light-gray,
+.indicator-pill-round.light-gray,
+.indicator-pill.light-grey,
+.indicator-pill-right.light-grey,
+.indicator-pill-round.light-grey {
+	@include indicator-pill-color('light-gray');
 }
 
 .indicator.gray,
@@ -128,7 +142,21 @@
 .indicator-pill.grey,
 .indicator-pill-right.grey,
 .indicator-pill-round.grey  {
-	@include indicator-pill-color('light-gray');
+	@include indicator-pill-color('gray');
+}
+
+.indicator.darkgray,
+.indicator.darkgrey {
+	@include indicator-color('gray');
+}
+
+.indicator-pill.darkgray,
+.indicator-pill-right.darkgray,
+.indicator-pill-round.darkgray,
+.indicator-pill.darkgrey,
+.indicator-pill-right.darkgrey,
+.indicator-pill-round.darkgrey {
+	@include indicator-pill-color('gray');
 }
 
 .indicator.red {
@@ -151,10 +179,8 @@
 	@include indicator-pill-color('pink');
 }
 
-.indicator-pill.darkgrey,
-.indicator-pill-right.darkgrey,
-.indicator-pill-round.darkgrey {
-	@include indicator-pill-color('gray');
+.indicator.purple {
+	@include indicator-color('purple');
 }
 
 .indicator-pill.purple,

@@ -57,7 +57,7 @@ frappe.ui.form.ControlSelect = class ControlSelect extends frappe.ui.form.Contro
 			this.set_model_value(input_value);
 		}
 
-		$(this.$input).css("color", input_value ? "inherit" : "lightgrey");
+		$(this.$input).css("color", input_value ? "inherit" : "var(--gray-500)");
 	}
 	set_options(value) {
 		// reset options, if something new is set
