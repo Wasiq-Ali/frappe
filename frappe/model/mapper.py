@@ -68,6 +68,7 @@ def get_mapped_doc(
 	postprocess=None,
 	ignore_permissions=False,
 	ignore_child_tables=False,
+	explicit_child_tables=False,
 ):
 
 	apply_strict_user_permissions = frappe.get_system_settings("apply_strict_user_permissions")
