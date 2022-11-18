@@ -76,6 +76,10 @@
 		padding-top: 0;
 		padding-bottom: 0;
 	}
+
+	&.form-stats {
+		font-size: var(--text-md);
+	}
 }
 
 .control-label,
@@ -304,6 +308,9 @@
 		margin-bottom: 0;
 	}
 	&:last-child.frappe-control[data-fieldtype="Table"] {
+		margin-bottom: 0;
+	}
+	&.frappe-control[data-fieldtype="Check"] {
 		margin-bottom: 0;
 	}
 }
