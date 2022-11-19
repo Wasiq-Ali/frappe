@@ -533,6 +533,8 @@ def new_widget(config, doctype, parentfield):
 		doc = frappe.new_doc(doctype)
 		doc.update(widget)
 
+		doc.stats_filter = frappe.utils.html_utils.unescape_html(doc.get("stats_filter") or "")
+
 		# Manually Set IDX
 		doc.idx = idx + 1
 

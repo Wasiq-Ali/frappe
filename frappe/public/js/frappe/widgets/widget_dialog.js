@@ -384,22 +384,25 @@ class ShortcutDialog extends WidgetDialog {
 				onchange: () => {
 					if (this.dialog.get_value("type") == "DocType") {
 						let doctype = this.dialog.get_value("link_to");
-						frappe.model.with_doctype(doctype, () => {
-							let meta = frappe.get_meta(doctype);
+						if (doctype) {
+							frappe.model.with_doctype(doctype, () => {
+								let meta = frappe.get_meta(doctype);
 
-							if (doctype && frappe.boot.single_types.includes(doctype)) {
-								this.hide_filters();
-							} else if (doctype) {
-								this.setup_filter(doctype);
-								this.show_filters();
-							}
+								if (doctype && frappe.boot.single_types.includes(doctype)) {
+									this.hide_filters();
+								} else if (doctype) {
+									this.setup_filter(doctype);
+									this.show_filters();
+								}
 
-							const views = ["List", "Report Builder", "Dashboard", "New"];
-							if (meta.is_tree === "Tree") views.push("Tree");
-							if (frappe.boot.calendars.includes(doctype)) views.push("Calendar");
+								const views = ["List", "Report Builder", "Dashboard", "New"];
+								if (meta.is_tree) views.push("Tree");
+								if (frappe.boot.calendars.includes(doctype)) views.push("Calendar");
 
-							this.dialog.set_df_property("doc_view", "options", views.join("\n"));
-						});
+								this.dialog.set_df_property("doc_view", "options", views.join("\n"));
+								this.dialog.refresh_fields();
+							});
+						}
 					} else {
 						this.hide_filters();
 					}
