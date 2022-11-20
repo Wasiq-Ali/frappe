@@ -7,8 +7,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "is_standard",
-  "module",
   "chart_name",
   "chart_type",
   "report_name",
@@ -24,8 +22,10 @@
   "group_by_based_on",
   "aggregate_function_based_on",
   "number_of_groups",
-  "column_break_6",
   "is_public",
+  "is_standard",
+  "module",
+  "column_break_6",
   "heatmap_year",
   "timespan",
   "from_date",
@@ -242,6 +242,7 @@
    "default": "0",
    "fieldname": "is_standard",
    "fieldtype": "Check",
+   "in_standard_filter": 1,
    "label": "Is Standard",
    "read_only_depends_on": "eval: !frappe.boot.developer_mode"
   },
@@ -287,7 +288,7 @@
   }
  ],
  "links": [],
- "modified": "2022-07-27 11:09:09.203236",
+ "modified": "2022-11-19 17:16:26.846027",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Dashboard Chart",
