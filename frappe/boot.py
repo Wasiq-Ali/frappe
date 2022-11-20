@@ -379,7 +379,11 @@ def get_desk_settings():
 
 
 def get_notification_settings():
-	return frappe.get_cached_doc("Notification Settings", frappe.session.user)
+	try:
+		return frappe.get_cached_doc("Notification Settings", frappe.session.user)
+	except frappe.DoesNotExistError:
+		from frappe.desk.doctype.notification_settings.notification_settings import create_notification_settings
+		return create_notification_settings(frappe.session.user)
 
 
 def get_link_title_doctypes():

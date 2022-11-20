@@ -45,6 +45,7 @@ def create_notification_settings(user):
 		_doc = frappe.new_doc("Notification Settings")
 		_doc.name = user
 		_doc.insert(ignore_permissions=True)
+		return _doc
 
 
 def toggle_notifications(user: str, enable: bool = False):
