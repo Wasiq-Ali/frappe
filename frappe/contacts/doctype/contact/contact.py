@@ -229,7 +229,7 @@ def get_default_contact(doctype, name, is_primary=None):
 		out = [d for d in out if d[1] == cint(is_primary)]
 
 	if out:
-		return out[0]
+		return out[0][0]
 	else:
 		return None
 
