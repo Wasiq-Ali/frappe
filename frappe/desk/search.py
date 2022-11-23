@@ -210,11 +210,16 @@ def search_widget(
 					case_condition = f"CASE WHEN {locate_string} > 0 THEN {locate_string} ELSE 99999 END"
 					order_by = f"{case_condition}, {order_by}"
 
-			ptype = "select" if frappe.only_has_select_perm(doctype) else "read"
 			ignore_permissions = (
 				True
 				if doctype == "DocType"
-				else (cint(ignore_user_permissions) and has_permission(doctype, ptype=ptype))
+				else (
+					cint(ignore_user_permissions)
+					and has_permission(
+						doctype,
+						ptype="select" if frappe.only_has_select_perm(doctype) else "read",
+					)
+				)
 			)
 
 			values = frappe.get_list(
