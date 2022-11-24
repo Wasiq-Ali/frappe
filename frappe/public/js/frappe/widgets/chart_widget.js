@@ -586,11 +586,17 @@ export default class ChartWidget extends Widget {
 
 		if (this.chart_doc.document_type) {
 			let doctype_meta = frappe.get_meta(this.chart_doc.document_type);
-			let field = doctype_meta.fields.find(
-				(x) => x.fieldname == this.chart_doc.value_based_on
-			);
-			fieldtype = field?.fieldtype;
-			options = field?.options;
+			let field;
+			if (this.chart_doc.value_based_on) {
+				field = doctype_meta.fields.find((x) => x.fieldname == this.chart_doc.value_based_on);
+			} else if (this.chart_doc.aggregate_function_based_on) {
+				field = doctype_meta.fields.find((x) => x.fieldname == this.chart_doc.aggregate_function_based_on);
+			}
+
+			if (field) {
+				fieldtype = field.fieldtype;
+				options = field.options;
+			}
 		}
 
 		if (this.chart_doc.chart_type == "Report" && this.report_result?.chart?.fieldtype) {

@@ -290,6 +290,7 @@ def get_group_by_chart_config(chart, filters):
 		group_by=group_by_field,
 		order_by="count desc",
 		ignore_ifnull=True,
+		limit=chart.number_of_groups or None
 	)
 
 	if data:
