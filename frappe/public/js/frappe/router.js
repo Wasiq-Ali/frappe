@@ -513,7 +513,7 @@ frappe.router = {
 	},
 
 	slug(name) {
-		return name.toLowerCase().replace(/ /g, "-");
+		return cstr(name).toLowerCase().replace(/ /g, "-");
 	},
 };
 
