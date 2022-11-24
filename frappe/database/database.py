@@ -891,8 +891,8 @@ class Database:
 			modified_by = modified_by or frappe.session.user
 			to_update.update({"modified": modified, "modified_by": modified_by})
 
-		if for_update:
-			deprecation_warning("for_update parameter is deprecated and will be removed in v15.")
+		# if for_update:
+		# 	deprecation_warning("for_update parameter is deprecated and will be removed in v15.")
 
 		if is_single_doctype:
 			frappe.db.delete(
