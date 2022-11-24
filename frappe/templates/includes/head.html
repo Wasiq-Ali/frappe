@@ -2,9 +2,11 @@
 {{ head_html or "" }}
 {%- endif %}
 
-{%- if theme.name != 'Standard' or custom_theme_url -%}
-<link type="text/css" rel="stylesheet" href="{{ custom_theme_url or theme.theme_url }}">
-{%- else -%}
+{%- if custom_theme_bundle %}
+{{ include_style(custom_theme_bundle) }}
+{%- elif theme.name != 'Standard' %}
+<link type="text/css" rel="stylesheet" href="{{ theme.theme_url }}">
+{%- else %}
 {{ include_style('website.bundle.css') }}
 {%- endif -%}
 
