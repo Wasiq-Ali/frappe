@@ -84,7 +84,7 @@ def has_permission(doc, ptype, user):
 			return True
 	else:
 		allowed_doctypes = frappe.permissions.get_doctypes_with_read()
-		if doc.document_type in allowed_doctypes:
+		if (doc.parent_document_type or doc.document_type) in allowed_doctypes:
 			return True
 
 	if doc.roles:
@@ -215,6 +215,7 @@ def get_chart_config(chart, filters, timespan, timegrain, from_date, to_date):
 		group_by="_unit",
 		order_by="_unit asc",
 		as_list=True,
+		parent_doctype=chart.parent_document_type,
 	)
 
 	result = get_result(data, timegrain, from_date, to_date, chart.chart_type)
@@ -290,7 +291,8 @@ def get_group_by_chart_config(chart, filters):
 		group_by=group_by_field,
 		order_by="count desc",
 		ignore_ifnull=True,
-		limit=chart.number_of_groups or None
+		limit=chart.number_of_groups or None,
+		parent_doctype=chart.parent_document_type,
 	)
 
 	if data:
