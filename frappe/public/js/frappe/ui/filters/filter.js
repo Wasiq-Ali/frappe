@@ -101,6 +101,12 @@ frappe.ui.Filter = class {
 			this.on_change();
 		});
 
+		this.filter_edit_area.find('.set-filter-and-run').on('click', () => {
+			this.filter_edit_area.removeClass('new-filter');
+			this.on_change();
+			this.update_filter_tag();
+		});
+
 		this.filter_edit_area.find(".condition").change(() => {
 			if (!this.field) return;
 
@@ -166,8 +172,9 @@ frappe.ui.Filter = class {
 
 	remove() {
 		this.filter_edit_area.remove();
+		this.$filter_tag && this.$filter_tag.remove();
 		this.field = null;
-		// this.on_change(true);
+		this.on_change(true);
 	}
 
 	set_values(doctype, fieldname, condition, value) {
@@ -354,7 +361,10 @@ frappe.ui.Filter = class {
 
 		let filter_button = this.$filter_tag.find(".toggle-filter");
 		filter_button.on("click", () => {
-			filter_button.closest(".tag-filters-area").find(".filter-edit-area").show();
+			filter_button
+			.closest(".tag-filters-area")
+			.find(".filter-edit-area")
+			.show();
 			this.filter_edit_area.toggle();
 		});
 	}
