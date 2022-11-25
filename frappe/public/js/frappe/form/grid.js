@@ -1153,8 +1153,9 @@ export default class Grid {
 		const $wrapper = position === "top" ? this.grid_custom_buttons : this.grid_buttons;
 		let $btn = this.custom_buttons[label];
 		if (!$btn) {
-			$btn = $(`<button class="btn btn-default btn-xs btn-custom">${__(label)}</button>`)
-				.prependTo($wrapper)
+			$btn = $(`<button class="btn btn-secondary btn-xs btn-custom"
+			 style="margin-left: 4px;">${__(label)}</button>`)
+				.appendTo($wrapper)
 				.on("click", click);
 			this.custom_buttons[label] = $btn;
 		} else {
