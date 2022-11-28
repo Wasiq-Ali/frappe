@@ -81,7 +81,7 @@ frappe.form.formatters = {
 	_get_link_target: function (options) {
 		let link_target = "";
 		if (options && options.link_target) {
-			link_target = ` target="${opions.link_target}"`;
+			link_target = ` target="${options.link_target}"`;
 		}
 		return link_target;
 	},
@@ -89,7 +89,7 @@ frappe.form.formatters = {
 	_get_link_title: function (options) {
 		let link_title = "";
 		if (options && options.link_title) {
-			link_title = ` title="${opions.link_title}"`;
+			link_title = ` title="${options.link_title}"`;
 		}
 		return link_title;
 	},
