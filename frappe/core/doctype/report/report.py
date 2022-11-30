@@ -87,6 +87,9 @@ class Report(Document):
 
 			self.create_report_py()
 
+	def before_export(self, newdoc):
+		newdoc.pop('letter_head', None)
+
 	def create_report_py(self):
 		if self.report_type == "Script Report":
 			make_boilerplate("controller.py", self, {"name": self.name})
