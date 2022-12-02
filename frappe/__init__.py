@@ -42,7 +42,7 @@ from .utils.jinja import (
 )
 from .utils.lazy_loader import lazy_import
 
-__version__ = "14.16.0"
+__version__ = "14.17.1"
 __title__ = "Frappe Framework"
 
 controllers = {}
@@ -1996,6 +1996,7 @@ def get_print(
 	no_letterhead=0,
 	password=None,
 	pdf_options=None,
+	letterhead=None,
 ):
 	"""Get Print Format for given document.
 
@@ -2014,6 +2015,7 @@ def get_print(
 	local.form_dict.style = style
 	local.form_dict.doc = doc
 	local.form_dict.no_letterhead = no_letterhead
+	local.form_dict.letterhead = letterhead
 
 	pdf_options = pdf_options or {}
 	if password:
