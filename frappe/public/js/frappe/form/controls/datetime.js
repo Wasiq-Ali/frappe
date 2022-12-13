@@ -31,6 +31,12 @@ frappe.ui.form.ControlDatetime = class ControlDatetime extends frappe.ui.form.Co
 		$.extend(this.datepicker_options, {
 			timepicker: true,
 			timeFormat: time_format,
+			onSelect: () => {
+				// ignore micro seconds
+				if (moment(this.get_value()).format(frappe.defaultDatetimeFormat) != moment(this.value).format(frappe.defaultDatetimeFormat)) {
+					this.$input.trigger('change');
+				}
+			},
 		});
 	}
 	get_now_date() {
