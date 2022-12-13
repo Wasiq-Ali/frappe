@@ -148,6 +148,10 @@ def normalize_result(result, columns):
 @frappe.whitelist()
 def background_enqueue_run(report_name, filters=None, user=None):
 	"""run reports in background"""
+	from frappe.core.doctype.prepared_report.prepared_report import (
+		process_filters_for_prepared_report,
+	)
+
 	if not user:
 		user = frappe.session.user
 	report = get_report_doc(report_name)
@@ -155,9 +159,7 @@ def background_enqueue_run(report_name, filters=None, user=None):
 		{
 			"doctype": "Prepared Report",
 			"report_name": report_name,
-			# This looks like an insanity but, without this it'd be very hard to find Prepared Reports matching given condition
-			# We're ensuring that spacing is consistent. e.g. JS seems to put no spaces after ":", Python on the other hand does.
-			"filters": json.dumps(json.loads(filters)),
+			"filters": process_filters_for_prepared_report(filters),
 			"ref_report_doctype": report_name,
 			"report_type": report.report_type,
 			"query": report.query,
@@ -302,6 +304,10 @@ def get_columns_from_list(columns, target_columns, result):
 	return reordered_result
 
 def get_prepared_report_result(report, filters, dn="", user=None):
+	from frappe.core.doctype.prepared_report.prepared_report import (
+		process_filters_for_prepared_report,
+	)
+
 	latest_report_data = {}
 	doc = None
 	if dn:
@@ -313,7 +319,7 @@ def get_prepared_report_result(report, filters, dn="", user=None):
 			"Prepared Report",
 			filters={
 				"status": "Completed",
-				"filters": json.dumps(filters),
+				"filters": process_filters_for_prepared_report(filters),
 				"owner": user,
 				"report_name": report.get("custom_report") or report.get("report_name"),
 			},
