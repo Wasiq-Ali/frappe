@@ -67,6 +67,7 @@ $input-height: calc(1.5em + 0.75rem);
 	--gray-400: #C0C6CC;
 	--gray-300: #DCE0E3;
 	--gray-200: #EBEEF0;
+	--gray-150: #F0F2F3;
 	--gray-100: #F4F5F6;
 	--gray-50: #F9FAFA;
 
@@ -227,6 +228,7 @@ $input-height: calc(1.5em + 0.75rem);
 	--disabled-text-color: var(--gray-800);
 	--disabled-control-bg: var(--gray-50);
 	--control-bg: var(--gray-100);
+	--control-border: var(--gray-400);
 	--control-bg-on-gray: var(--gray-200);
 	--awesomebar-focus-bg: var(--fg-color);
 	--modal-bg: white;
@@ -246,9 +248,9 @@ $input-height: calc(1.5em + 0.75rem);
 	--scrollbar-track-color: var(--gray-200);
 
 	--shadow-inset: inset 0px -1px 0px var(--gray-300);
-	--border-color: var(--gray-200);
-	--dark-border-color: var(--gray-400);
-	--table-border-color: var(--gray-300);
+	--border-color: var(--gray-300);
+	--dark-border-color: var(--gray-500);
+	--table-border-color: var(--gray-400);
 	--highlight-color: var(--gray-50);
 	--yellow-highlight-color: var(--yellow-50);
 

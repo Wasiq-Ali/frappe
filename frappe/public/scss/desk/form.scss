@@ -280,6 +280,11 @@
 	line-height: 1.6;
 }
 
+.checkbox .help-box:empty {
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
 .form-heatmap {
 	.heatmap {
 		display: flex;

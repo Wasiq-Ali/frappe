@@ -2,6 +2,7 @@
 	border: 1px solid var(--table-border-color);
 	border-radius: var(--border-radius);
 	color: var(--text-color);
+	margin-bottom: var(--margin-sm);
 }
 
 .form-grid.error {
@@ -338,15 +339,15 @@
 		line-height: 1.8em;
 	}
 
-	.btn {
-		box-shadow: none;
-	}
-
 	.form-section {
-		padding: var(--padding-md);
+		padding: var(--padding-sm);
 
 		&:not(:first-child) {
 			border-top: 1px solid var(--border-color);
+		}
+
+		&:first-child {
+			padding-top: 0;
 		}
 
 		.section-head {
@@ -415,12 +416,9 @@
 }
 
 .grid-footer, .grid-custom-buttons {
-	padding: var(--padding-sm) 0px;
 	background-color: var(--fg-color);
 	.btn {
 		box-shadow: none;
-		margin-top: -3px;
-		margin-bottom: -3px;
 	}
 
 	.btn:not(:last-child) {
