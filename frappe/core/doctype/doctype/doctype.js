@@ -108,6 +108,7 @@ frappe.ui.form.on("DocField", {
 		// Render two select fields for Fetch From instead of Small Text for better UX
 		let field = frm.cur_grid.grid_form.fields_dict.fetch_from;
 		$(field.input_area).hide();
+		$(field.$wrapper).find('.help-box').hide();
 
 		let $doctype_select = $(`<select class="form-control">`);
 		let $field_select = $(`<select class="form-control">`);
