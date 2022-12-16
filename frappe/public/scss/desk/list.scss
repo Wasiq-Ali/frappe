@@ -30,9 +30,33 @@
 	}
 }
 
+.filter-list {
+	position: relative;
+	.tag-filters-area {
+		padding: 10px 150px 10px 10px;
+		border-bottom: 1px solid var(--border-color);
+	}
+	.sort-selector {
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		margin: 8px;
+	}
+}
+
+.active-tag-filters {
+	.add-filter, .filter-tag, .clear-filters {
+		margin: 0 10px 0px 0;
+	}
+}
+
+.filter-box {
+    border-bottom: 1px solid var(--border-color);
+	padding: 10px;
+}
+
 .list-skeleton {
 	min-height: calc(100vh - 200px);
-
 	.list-skeleton-box {
 		background-color: var(--skeleton-bg);
 		height: 100%;

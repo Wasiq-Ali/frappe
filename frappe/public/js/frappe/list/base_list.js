@@ -301,6 +301,7 @@ frappe.views.BaseList = class BaseList {
 
 	setup_list_wrapper() {
 		this.$frappe_list = $('<div class="frappe-list">').appendTo(this.page.main);
+
 	}
 
 	setup_filter_area() {
@@ -573,14 +574,15 @@ class FilterArea {
 			? this.list_view.page.custom_actions
 			: this.list_view.page.page_form;
 
-		this.list_view.$filter_section = $('<div class="filter-section flex">').appendTo(
-			filter_area
+		this.list_view.$filter_section = $('<div class="filter-list">').appendTo(
+			this.list_view.$frappe_list
 		);
 
 		this.$filter_list_wrapper = this.list_view.$filter_section;
 		this.trigger_refresh = true;
 		this.setup();
 	}
+
 
 	setup() {
 		if (!this.list_view.hide_page_form) this.make_standard_filters();
@@ -882,14 +884,14 @@ class FilterArea {
 
 	make_filter_list() {
 		$(`<div class="filter-selector">
-			<button class="btn btn-default btn-sm filter-button">
+			<!-- <button class="btn btn-default btn-sm filter-button">
 				<span class="filter-icon">
 					${frappe.utils.icon("filter")}
 				</span>
 				<span class="button-label hidden-xs">
 					${__("Filter")}
 				<span>
-			</button>
+			</button>  -->
 		</div>`).appendTo(this.$filter_list_wrapper);
 
 		this.filter_button = this.$filter_list_wrapper.find(".filter-button");

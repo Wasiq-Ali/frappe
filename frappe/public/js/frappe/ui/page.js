@@ -103,7 +103,7 @@ frappe.ui.Page = class Page {
 				`
 				<div class="row layout-main">
 					<div class="col-lg-2 layout-side-section"></div>
-					<div class="col layout-main-section-wrapper">
+					<div class="col-10 layout-main-section-wrapper">
 						<div class="layout-main-section"></div>
 						<div class="layout-footer hide"></div>
 					</div>
