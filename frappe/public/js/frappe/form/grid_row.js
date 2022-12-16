@@ -44,24 +44,35 @@ export default class GridRow {
 	}
 
 	set_docfields(update = false) {
-		if (this.doc && this.parent_df.options) {
-			frappe.meta.make_docfield_copy_for(
-				this.parent_df.options,
-				this.doc.name,
-				this.docfields
-			);
-			const docfields = frappe.meta.get_docfields(this.parent_df.options, this.doc.name);
-			if (update) {
-				// to maintain references
-				this.docfields.forEach((df) => {
-					Object.assign(
-						df,
-						docfields.find((d) => d.fieldname === df.fieldname)
-					);
-				});
-			} else {
-				this.docfields = docfields;
+		if (this.parent_df.options) {
+			let doc_docfields = [];
+			if (this.frm) {
+				doc_docfields = frappe.meta.get_docfields(this.parent_df.options, this.frm.docname) || [];
 			}
+
+			let row_docfields = [];
+			if (this.doc) {
+				row_docfields = frappe.meta.get_docfields(this.parent_df.options, this.doc.name) || [];
+			}
+
+			let docfields = [];
+			if (!row_docfields.length) {
+				docfields = doc_docfields;
+			} else {
+				row_docfields.forEach((row_df) => {
+					let df = {};
+
+					let doc_df = doc_docfields.find((field) => field.fieldname == row_df.fieldname);
+					if (doc_df) {
+						Object.assign(df, doc_df);
+					}
+
+					Object.assign(df, row_df);
+					docfields.push(df);
+				});
+			}
+
+			this.docfields = docfields;
 		}
 	}
 
@@ -196,7 +207,7 @@ export default class GridRow {
 	}
 	refresh() {
 		// update docfields for new record
-		if (this.frm && this.doc && this.doc.__islocal) {
+		if (this.frm && this.doc) {
 			this.set_docfields(true);
 		}
 
@@ -1240,7 +1251,7 @@ export default class GridRow {
 			return this;
 		}
 
-		if (this.frm) {
+		if (this.frm && this.doc) {
 			// reload doc
 			this.doc = locals[this.doc.doctype][this.doc.name];
 		}

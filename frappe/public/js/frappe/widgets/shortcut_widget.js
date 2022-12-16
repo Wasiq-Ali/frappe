@@ -36,10 +36,10 @@ export default class ShortcutWidget extends Widget {
 				doc_view: this.doc_view,
 			});
 
-			let filters = frappe.utils.get_filter_from_json(this.stats_filter);
-			if (this.type == "DocType" && filters) {
-				frappe.route_options = filters;
-			}
+			// let filters = frappe.utils.get_filter_from_json(this.stats_filter);
+			// if (this.type == "DocType" && filters) {
+			// 	frappe.route_options = filters;
+			// }
 			frappe.set_route(route);
 		});
 	}
