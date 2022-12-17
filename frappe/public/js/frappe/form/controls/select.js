@@ -5,7 +5,7 @@ frappe.ui.form.ControlSelect = class ControlSelect extends frappe.ui.form.Contro
 
 		const is_xs_input = this.df.input_class && this.df.input_class.includes("input-xs");
 		this.set_icon(is_xs_input);
-		this.df.placeholder && this.set_placeholder(is_xs_input);
+		this.set_placeholder(is_xs_input);
 
 		this.$input.addClass("ellipsis");
 		this.set_options();
@@ -27,7 +27,7 @@ frappe.ui.form.ControlSelect = class ControlSelect extends frappe.ui.form.Contro
 		const placeholder_html = `<div class="placeholder ellipsis text-extra-muted ${
 			is_xs_input ? "xs" : ""
 		}">
-				<span>${this.df.placeholder}</span>
+				<span>${this.df.placeholder || this.df.label}</span>
 			</div>`;
 		if (this.only_input) {
 			this.$wrapper.append(placeholder_html);
@@ -56,8 +56,6 @@ frappe.ui.form.ControlSelect = class ControlSelect extends frappe.ui.form.Contro
 			// model value must be same as whatever the input is
 			this.set_model_value(input_value);
 		}
-
-		$(this.$input).css("color", input_value ? "inherit" : "var(--gray-500)");
 	}
 	set_options(value) {
 		// reset options, if something new is set
@@ -75,9 +73,6 @@ frappe.ui.form.ControlSelect = class ControlSelect extends frappe.ui.form.Contro
 
 		if (this.$input) {
 			var selected = this.$input.find(":selected").val();
-			if (options && options.length && !options[0]) {
-				options[0] = {label: this.df.label, value: options[0]}
-			}
 			this.$input.empty();
 			frappe.ui.form.add_options(this.$input, options || []);
 
