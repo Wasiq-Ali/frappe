@@ -230,8 +230,8 @@ frappe.views.BaseList = class BaseList {
 				$secondary_action.addClass("visible-xs");
 			}
 		} else {
-			this.refresh_button = this.page.add_action_icon("refresh", () => {
-				this.refresh();
+			this.refresh_button = this.page.add_button(__("Refresh"), () => this.refresh(), {
+				icon: "refresh"
 			});
 		}
 	}

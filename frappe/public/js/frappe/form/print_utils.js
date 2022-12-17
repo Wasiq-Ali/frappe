@@ -8,9 +8,14 @@ frappe.ui.get_print_settings = function (pdf, callback, letter_head, pick_column
 
 	var columns = [
 		{
-			fieldtype: "Check",
-			fieldname: "with_letter_head",
-			label: __("With Letter head"),
+			fieldtype: "Select",
+			fieldname: "orientation",
+			label: __("Orientation"),
+			options: [
+				{ value: "Landscape", label: __("Landscape") },
+				{ value: "Portrait", label: __("Portrait") },
+			],
+			default: "Landscape",
 		},
 		{
 			fieldtype: "Select",
@@ -21,15 +26,16 @@ frappe.ui.get_print_settings = function (pdf, callback, letter_head, pick_column
 			default: letter_head || default_letter_head,
 		},
 		{
-			fieldtype: "Select",
-			fieldname: "orientation",
-			label: __("Orientation"),
-			options: [
-				{ value: "Landscape", label: __("Landscape") },
-				{ value: "Portrait", label: __("Portrait") },
-			],
-			default: "Landscape",
+			fieldtype: "Check",
+			fieldname: "with_letter_head",
+			label: __("With Letter head"),
 		},
+		{
+			fieldtype: "Check",
+			fieldname: "page_break_groups",
+			label: __("Insert Page Breaks Between Groups"),
+			default: 0
+		}
 	];
 
 	if (pick_columns) {

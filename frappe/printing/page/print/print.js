@@ -62,7 +62,7 @@ frappe.ui.form.PrintView = class {
 	}
 
 	setup_toolbar() {
-		this.page.set_primary_action(__("PDF"), () => this.render_pdf(), { icon: "small-file" });
+		this.page.add_button(__("Back"), () => this.go_to_form_view(), { icon: "left" });
 
 		this.page.add_button(__("Print"), () => this.printit(), { icon: "printer" });
 
@@ -74,14 +74,15 @@ frappe.ui.form.PrintView = class {
 			icon: "refresh",
 		});
 
-		this.page.add_action_icon(
-			"file",
-			() => {
-				this.go_to_form_view();
-			},
-			"",
-			__("Form")
-		);
+		this.page.set_primary_action(__("PDF"), () => this.render_pdf(), { icon: "file" });
+		this.page.add_menu_item(__("Get PDF"), () => this.render_pdf(), true, "Ctrl+P");
+
+		// hide print view on pressing escape, only if there is no focus on any input
+		$(document).on("keydown", (e) => {
+			if (e.which === 27 && this.frm && e.target === document.body) {
+				this.go_to_form_view()
+			}
+		});
 	}
 
 	setup_sidebar() {
@@ -118,9 +119,6 @@ frappe.ui.form.PrintView = class {
 			placeholder: __("Select Letterhead"),
 			options: [__("No Letterhead")],
 			change: () => this.preview(),
-			default: this.print_settings.with_letterhead
-				? __("No Letterhead")
-				: __("Select Letterhead"),
 		});
 		this.letterhead_selector = this.letterhead_selector_df.$input;
 		this.sidebar_dynamic_section = $(`<div class="dynamic-settings"></div>`).appendTo(
@@ -185,11 +183,11 @@ frappe.ui.form.PrintView = class {
 		this.setup_customize_dialog();
 
 		// print format builder beta
-		this.page.add_inner_message(`
-			<a style="line-height: 2.4" href="/app/print-format-builder-beta?doctype=${this.frm.doctype}">
-				${__("Try the new Print Format Builder")}
-			</a>
-		`);
+		// this.page.add_inner_message(`
+		// 	<a style="line-height: 2.4" href="/app/print-format-builder-beta?doctype=${this.frm.doctype}">
+		// 		${__("Try the new Print Format Builder")}
+		// 	</a>
+		// `);
 
 		let tasks = [
 			this.refresh_print_options,

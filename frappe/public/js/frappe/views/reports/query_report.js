@@ -84,11 +84,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	set_default_secondary_action() {
-		this.refresh_button && this.refresh_button.remove();
-		this.refresh_button = this.page.add_action_icon("refresh", () => {
+		this.refresh_button = this.page.set_secondary_action(__("Refresh"), () => {
 			this.setup_progress_bar();
 			this.refresh();
-		});
+		}, "refresh");
 	}
 
 	get_no_result_message() {
@@ -175,9 +174,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	add_card_button_to_toolbar() {
-		this.page.add_inner_button(__("Create Card"), () => {
+		this.page.add_menu_item(__("Create Card"), () => {
 			this.add_card_to_dashboard();
-		});
+		}, true);
 	}
 
 	add_chart_buttons_to_toolbar(show) {
@@ -189,11 +188,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 			if (this.chart_fields || this.chart_options) {
 				this.add_to_dashboard_button && this.add_to_dashboard_button.remove();
-				this.add_to_dashboard_button = this.page.add_button(
+				this.add_to_dashboard_button = this.page.add_menu_item(
 					__("Add Chart to Dashboard"),
 					() => {
 						this.add_chart_to_dashboard();
-					}
+					},
+					true
 				);
 			}
 		} else {
@@ -576,7 +576,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 	set_route_filters(route_options) {
 		if (!route_options) route_options = frappe.route_options;
-		
+
 		if (route_options) {
 			const fields = Object.keys(route_options);
 			const filters_to_set = this.filters.filter((f) => fields.includes(f.df.fieldname));
@@ -1679,6 +1679,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					this.add_portrait_warning(dialog);
 				},
 				condition: () => frappe.model.can_print(this.report_doc.ref_doctype),
+				shortcut: "Ctrl+P",
 				standard: true,
 			},
 			{

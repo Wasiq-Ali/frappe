@@ -260,22 +260,36 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		if (this.can_create && !frappe.boot.read_only) {
 			const doctype_name = __(frappe.router.doctype_layout) || __(this.doctype);
 
+			const primary_action_function = () => {
+				if (this.settings.primary_action) {
+					this.settings.primary_action();
+				} else {
+					this.make_new_doc();
+				}
+			}
+
 			// Better style would be __("Add {0}", [doctype_name], "Primary action in list view")
 			// Keeping it like this to not disrupt existing translations
 			const label = `${__("Add", null, "Primary action in list view")} ${doctype_name}`;
 			this.page.set_primary_action(
 				label,
-				() => {
-					if (this.settings.primary_action) {
-						this.settings.primary_action();
-					} else {
-						this.make_new_doc();
-					}
-				},
+				primary_action_function,
 				"add"
+			);
+
+			this.new_menu_button = this.page.add_menu_item(
+				`${__("New")} ${doctype_name}`,
+				primary_action_function,
+				true,
+				"Ctrl+B"
 			);
 		} else {
 			this.page.clear_primary_action();
+			if (this.new_menu_button) {
+				this.page.clear_action_of(this.new_menu_button);
+				this.new_menu_button.remove();
+				this.new_menu_button = null;
+			}
 		}
 	}
 
