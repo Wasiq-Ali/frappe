@@ -47,17 +47,13 @@ frappe.ui.Page = class Page {
 
 	setup_scroll_handler() {
 		let last_scroll = 0;
+		$(".page-head").css("top", "var(--navbar-height)");
 		window.addEventListener(
 			"scroll",
 			frappe.utils.throttle(() => {
-				$(".page-head").toggleClass("drop-shadow", !!document.documentElement.scrollTop);
-				let current_scroll = document.documentElement.scrollTop;
-				if (current_scroll > 0 && last_scroll <= current_scroll) {
-					$(".page-head").css("top", "-15px");
-				} else {
-					$(".page-head").css("top", "var(--navbar-height)");
-				}
-				last_scroll = current_scroll;
+				let is_scrolled = !!document.documentElement.scrollTop;
+				$(".page-head").toggleClass("drop-shadow", is_scrolled);
+				last_scroll = document.documentElement.scrollTop;
 			}),
 			500
 		);
@@ -251,10 +247,10 @@ frappe.ui.Page = class Page {
 
 	get_icon_label(icon, label) {
 		let icon_name = icon;
-		let size = "xs";
+		let size = "sm";
 		if (typeof icon === "object") {
 			icon_name = icon.icon;
-			size = icon.size || "xs";
+			size = icon.size || "sm";
 		}
 		return `${icon ? frappe.utils.icon(icon_name, size) : ""} <span class="hidden-xs"> ${__(
 			label

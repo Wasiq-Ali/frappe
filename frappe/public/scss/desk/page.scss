@@ -88,13 +88,14 @@
 	position: sticky;
 	top: var(--navbar-height);
 	background: var(--bg-color);
-	margin-bottom: 5px;
+	margin-bottom: 2px;
 	transition: 0.5s top;
 	.page-head-content {
 		height: var(--page-head-height);
 	}
 	&.drop-shadow {
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--shadow-base);
+		border-bottom: 1px solid var(--gray-300);
 		background-color: var(--fg-color) !important;
 	}
 }
