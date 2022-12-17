@@ -29,10 +29,10 @@ frappe.ui.Filter = class {
 		];
 
 		this.nested_set_conditions = [
-			['descendants of', __('Descendants Of')],
-			['not descendants of', __('Not Descendants Of')],
-			['ancestors of', __('Ancestors Of')],
-			['not ancestors of', __('Not Ancestors Of')],
+			["descendants of", __("Descendants Of")],
+			["not descendants of", __("Not Descendants Of")],
+			["ancestors of", __("Ancestors Of")],
+			["not ancestors of", __("Not Ancestors Of")],
 			["subtree of", __("Subtree Of")],
 			["not subtree of", __("Not Subtree Of")]
 		];
@@ -70,6 +70,7 @@ frappe.ui.Filter = class {
 		this.filter_edit_area = $(
 			frappe.render_template("edit_filter", {
 				conditions: this.conditions,
+				without_popover: this.without_popover,
 			})
 		);
 		this.parent && this.filter_edit_area.appendTo(this.parent.find(".filter-edit-area"));
@@ -146,7 +147,7 @@ frappe.ui.Filter = class {
 	setup_state(is_new) {
 		let promise = Promise.resolve();
 		if (is_new) {
-			this.filter_edit_area.addClass('new-filter');
+			this.filter_edit_area.addClass("new-filter");
 		} else {
 			promise = this.update_filter_tag();
 		}
@@ -371,7 +372,7 @@ frappe.ui.Filter = class {
 	}
 
 	set_filter_button_text() {
-		this.$filter_tag.find('.toggle-filter').html(this.get_filter_button_text());
+		this.$filter_tag.find(".toggle-filter").html(this.get_filter_button_text());
 	}
 
 	get_filter_button_text() {

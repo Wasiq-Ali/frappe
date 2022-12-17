@@ -3,13 +3,18 @@ frappe.ui.FilterGroup = class {
 		$.extend(this, opts);
 		this.filters = [];
 		window.fltr = this;
-		this.wrapper = this.parent;
-		this.wrapper.append(this.get_filter_area_template());
-		this.set_filter_events();
+		if (!this.filter_button) {
+			this.without_popover = true;
+			this.wrapper = this.parent;
+			this.wrapper.append(this.get_filter_area_template());
+			this.set_filter_events();
+		} else {
+			this.make_popover();
+		}
 	}
 
 	make_popover() {
-		this.get_filter_area_template()
+		this.init_filter_popover();
 		this.set_popover_events();
 	}
 
@@ -94,7 +99,16 @@ frappe.ui.FilterGroup = class {
 		});
 	}
 
+	apply() {
+		this.update_filters();
+		this.on_change();
+	}
+
 	update_filter_button() {
+		if (!this.filter_button) {
+			return;
+		}
+
 		const filters_applied = this.filters.length > 0;
 		const button_label = filters_applied
 			? this.filters.length > 1
@@ -112,15 +126,21 @@ frappe.ui.FilterGroup = class {
 	}
 
 	set_filter_events() {
-		this.wrapper.find('.add-filter').on('click', () => {
-			this.add_filter(this.doctype, 'name');
-
+		this.wrapper.find(".add-filter").on("click", () => {
+			this.toggle_empty_filters(false);
+			this.add_filter(this.doctype, "name");
 		});
-		this.wrapper.find('.clear-filters').on('click', () => {
+
+		this.wrapper.find(".clear-filters").on("click", () => {
 			if (this.base_list && this.base_list.filter_area) {
 				this.base_list.filter_area.clear();
 			}
 			this.clear_filters();
+			this.toggle_empty_filters(true);
+		});
+
+		this.wrapper.find(".apply-filters").on("click", () => {
+			this.filter_button.popover("hide");
 		});
 	}
 
@@ -169,7 +189,7 @@ frappe.ui.FilterGroup = class {
 		return true;
 	}
 
-	push_new_filter(args) {
+	push_new_filter(args, is_new_filter=false) {
 		// args: [doctype, fieldname, condition, value]
 		if (this.filter_exists(args)) return;
 
@@ -178,7 +198,9 @@ frappe.ui.FilterGroup = class {
 		let filter = this._push_new_filter(...args);
 
 		if (filter && filter.value) {
-			// filter.setup_state(is_new_filter);
+			if (this.without_popover) {
+				filter.setup_state(is_new_filter);
+			}
 			return filter._filter_value_set; // internal promise
 		}
 	}
@@ -203,6 +225,7 @@ frappe.ui.FilterGroup = class {
 				return !this.filter_exists([doctype, fieldname]);
 			},
 			filter_list: this.base_list || this,
+			without_popover: this.without_popover,
 		};
 		let filter = new frappe.ui.Filter(args);
 		this.filters.push(filter);
@@ -271,20 +294,24 @@ frappe.ui.FilterGroup = class {
 	}
 
 	get_filter_area_template() {
+		if (this.without_popover) {
+			return $(`
+				<div class="tag-filters-area">
+					<div class="active-tag-filters">
+						<button class="btn btn-default btn-xs filter-button text-muted add-filter">
+							${__("Add Filter")}
+						</button><button class="btn btn-default btn-xs filter-button text-muted clear-filters">
+							${__("Clear Filters")}
+						</button>
+					</div>
+				</div>
+				<div class="filter-edit-area"></div>
+			`);
+		}
+
 		/* eslint-disable indent */
 		return $(`
-		<div class="tag-filters-area">
-			<div class="active-tag-filters">
-				<button class="btn btn-default btn-xs filter-button text-muted add-filter">
-					${__("Add Filter")}
-				</button><button class="btn btn-default btn-xs filter-button text-muted clear-filters">
-					${__("Clear Filters")}
-				</button>
-			</div>
-		</div>
-		<div class="filter-edit-area"></div>
-
-		<!-- <div class="filter-area">
+			<div class="filter-area">
 				<div class="filter-edit-area">
 					<div class="text-muted empty-filters text-center">
 						${__("No filters selected")}
@@ -292,7 +319,7 @@ frappe.ui.FilterGroup = class {
 				</div>
 				<hr class="divider"></hr>
 				<div class="filter-action-buttons mt-2">
-					<button class="text-muted add-filter btn btn-xs">
+					<button class="text-muted add-filter btn btn-default btn-xs">
 						+ ${__("Add a Filter")}
 					</button>
 					<div>
@@ -308,8 +335,7 @@ frappe.ui.FilterGroup = class {
 						}
 					</div>
 				</div>
-			</div> -->`
-			);
+			</div>`);
 		/* eslint-disable indent */
 	}
 
