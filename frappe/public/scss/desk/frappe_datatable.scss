@@ -107,9 +107,11 @@
 		}
 
 		.dt-filter.dt-input {
+			border: 1px solid var(--control-border);
 			border-radius: var(--border-radius);
 			height: 100%;
 			background-color: var(--control-bg);
+			padding: 0 var(--padding-xs);
 		}
 	}
 
