@@ -669,10 +669,10 @@ export default class ChartWidget extends Widget {
 	}
 
 	render_heatmap_legend() {
-		let legend_colors;
+		let legend_colors = [];
 
 		let set_legend_color = (options) => {
-			legend_colors = JSON.parse(options).colors;
+			legend_colors = JSON.parse(options || {}).colors || [];
 		};
 
 		if (this.custom_options) {

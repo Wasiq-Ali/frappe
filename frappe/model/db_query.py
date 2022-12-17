@@ -439,6 +439,9 @@ class DatabaseQuery:
 
 				if table_name.lower().startswith("group_concat("):
 					table_name = table_name[13:]
+				elif table_name.lower().startswith("unix_timestamp("):
+					table_name = table_name[15:]
+
 				if not table_name[0] == "`":
 					table_name = f"`{table_name}`"
 				if table_name not in self.tables and table_name not in (

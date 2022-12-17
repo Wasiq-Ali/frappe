@@ -158,7 +158,9 @@ frappe.ui.FieldSelect = class FieldSelect {
 		if (df.fieldname == "docstatus" && !frappe.model.is_submittable(me.doctype)) return;
 
 		if (frappe.model.table_fields.includes(df.fieldtype)) {
-			me.table_fields.push(df);
+			if (!me.child_doctype || df.options == me.child_doctype) {
+				me.table_fields.push(df);
+			}
 			return;
 		}
 

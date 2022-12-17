@@ -200,6 +200,8 @@ def get_chart_config(chart, filters, timespan, timegrain, from_date, to_date):
 		to_date = now_datetime()
 
 	doctype = chart.document_type
+	parent_doctype = chart.parent_document_type or chart.document_type
+
 	datefield = chart.based_on
 	value_field = chart.value_based_on or "1"
 	from_date = from_date.strftime("%Y-%m-%d")
@@ -209,8 +211,11 @@ def get_chart_config(chart, filters, timespan, timegrain, from_date, to_date):
 	filters.append([doctype, datefield, "<=", to_date, False])
 
 	data = frappe.db.get_list(
-		doctype,
-		fields=[f"{datefield} as _unit", f"SUM({value_field})", "COUNT(*)"],
+		parent_doctype,
+		fields=[
+			f"`tab{doctype}`.{datefield} as _unit",
+			f"SUM({value_field})", "COUNT(*)"
+		],
 		filters=filters,
 		group_by="_unit",
 		order_by="_unit asc",
@@ -234,7 +239,10 @@ def get_chart_config(chart, filters, timespan, timegrain, from_date, to_date):
 def get_heatmap_chart_config(chart, filters, heatmap_year):
 	aggregate_function = get_aggregate_function(chart.chart_type)
 	value_field = chart.value_based_on or "1"
+
 	doctype = chart.document_type
+	parent_doctype = chart.parent_document_type or chart.document_type
+
 	datefield = chart.based_on
 	year = cint(heatmap_year) if heatmap_year else getdate(nowdate()).year
 	year_start_date = datetime.date(year, 1, 1).strftime("%Y-%m-%d")
@@ -244,13 +252,13 @@ def get_heatmap_chart_config(chart, filters, heatmap_year):
 	filters.append([doctype, datefield, "<", f"{next_year_start_date}", False])
 
 	if frappe.db.db_type == "mariadb":
-		timestamp_field = f"unix_timestamp({datefield})"
+		timestamp_field = f"unix_timestamp(`tab{doctype}`.{datefield})"
 	else:
 		timestamp_field = f"extract(epoch from timestamp {datefield})"
 
 	data = dict(
 		frappe.get_all(
-			doctype,
+			parent_doctype,
 			fields=[
 				timestamp_field,
 				"{aggregate_function}({value_field})".format(
@@ -258,9 +266,9 @@ def get_heatmap_chart_config(chart, filters, heatmap_year):
 				),
 			],
 			filters=filters,
-			group_by=f"date({datefield})",
+			group_by=f"date(`tab{doctype}`.{datefield})",
 			as_list=1,
-			order_by=f"{datefield} asc",
+			order_by=f"`tab{doctype}`.{datefield} asc",
 			ignore_ifnull=True,
 		)
 	)
@@ -277,15 +285,15 @@ def get_group_by_chart_config(chart, filters):
 	aggregate_function = get_aggregate_function(chart.group_by_type)
 	value_field = chart.aggregate_function_based_on or "1"
 	group_by_field = chart.group_by_based_on
+
 	doctype = chart.document_type
+	parent_doctype = chart.parent_document_type or chart.document_type
 
 	data = frappe.db.get_list(
-		doctype,
+		parent_doctype,
 		fields=[
-			f"{group_by_field} as name",
-			"{aggregate_function}({value_field}) as count".format(
-				aggregate_function=aggregate_function, value_field=value_field
-			),
+			f"`tab{doctype}`.{group_by_field} as name",
+			f"{aggregate_function}({value_field}) as count"
 		],
 		filters=filters,
 		group_by=group_by_field,

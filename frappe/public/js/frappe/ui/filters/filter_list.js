@@ -189,6 +189,7 @@ frappe.ui.FilterGroup = class {
 			parent_doctype: this.doctype,
 			doctype: doctype,
 			_parent_doctype: this.parent_doctype,
+			child_doctype: this.child_doctype,
 			fieldname: fieldname,
 			condition: condition,
 			value: value,

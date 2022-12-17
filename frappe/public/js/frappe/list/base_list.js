@@ -899,7 +899,7 @@ class FilterArea {
 			base_list: this.list_view,
 			parent: this.$filter_list_wrapper,
 			doctype: this.list_view.doctype,
-			filter_button: this.filter_button,
+			// filter_button: this.filter_button,
 			default_filters: [],
 			on_change: () => this.refresh_list_view(),
 		});

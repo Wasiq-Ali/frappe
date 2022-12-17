@@ -255,29 +255,43 @@ frappe.ui.form.on("Dashboard Chart", {
 			frm.trigger("show_filters");
 		};
 
+		let tasks = [];
+
+		if (frm.doc.parent_document_type) {
+			tasks.push(() => {
+				frappe.model.with_doctype(frm.doc.parent_document_type);
+			});
+		}
+
 		if (doctype) {
-			frappe.model.with_doctype(doctype, () => {
-				// get all date and datetime fields
-				frappe.get_meta(doctype).fields.map((df) => {
-					if (["Date", "Datetime"].includes(df.fieldtype)) {
-						date_fields.push({ label: df.label, value: df.fieldname });
-					}
-					if (
-						["Int", "Float", "Currency", "Percent", "Duration"].includes(df.fieldtype)
-					) {
-						value_fields.push({ label: df.label, value: df.fieldname });
-						aggregate_function_fields.push({ label: df.label, value: df.fieldname });
-					}
-					if (["Link", "Select"].includes(df.fieldtype)) {
-						group_by_fields.push({ label: df.label, value: df.fieldname });
-					}
+			tasks.push(() => {
+				frappe.model.with_doctype(doctype, () => {
+					// get all date and datetime fields
+					frappe.get_meta(doctype).fields.map((df) => {
+						if (["Date", "Datetime"].includes(df.fieldtype)) {
+							date_fields.push({ label: df.label, value: df.fieldname });
+						}
+						if (
+							["Int", "Float", "Currency", "Percent", "Duration"].includes(df.fieldtype)
+						) {
+							value_fields.push({ label: df.label, value: df.fieldname });
+							aggregate_function_fields.push({ label: df.label, value: df.fieldname });
+						}
+						if (["Link", "Select"].includes(df.fieldtype)) {
+							group_by_fields.push({ label: df.label, value: df.fieldname });
+						}
+					});
+					update_form();
 				});
-				update_form();
 			});
 		} else {
-			// update select options
-			update_form();
+			tasks.push(() => {
+				// update select options
+				update_form();
+			});
 		}
+
+		return frappe.run_serially(tasks);
 	},
 
 	show_filters: function (frm) {
@@ -402,8 +416,8 @@ frappe.ui.form.on("Dashboard Chart", {
 			if (is_document_type) {
 				frm.filter_group = new frappe.ui.FilterGroup({
 					parent: dialog.get_field("filter_area").$wrapper,
-					doctype: frm.doc.document_type,
-					parent_doctype: frm.doc.parent_document_type,
+					doctype: frm.doc.parent_document_type || frm.doc.document_type,
+					child_doctype: frm.doc.parent_document_type ? frm.doc.document_type : null,
 					on_change: () => {},
 				});
 

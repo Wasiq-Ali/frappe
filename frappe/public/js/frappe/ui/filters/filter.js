@@ -83,6 +83,7 @@ frappe.ui.Filter = class {
 			parent: this.filter_edit_area.find(".fieldname-select-area"),
 			doctype: this.parent_doctype,
 			parent_doctype: this._parent_doctype,
+			child_doctype: this.child_doctype,
 			filter_fields: this.filter_fields,
 			input_class: "input-xs",
 			select: (doctype, fieldname) => {
