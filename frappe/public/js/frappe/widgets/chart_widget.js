@@ -441,7 +441,8 @@ export default class ChartWidget extends Widget {
 
 	create_filter_group_and_add_filters() {
 		this.filter_group = new frappe.ui.FilterGroup({
-			doctype: this.chart_doc.document_type,
+			doctype: this.chart_doc.parent_document_type || this.chart_doc.document_type,
+			child_doctype: this.chart_doc.parent_document_type ? this.chart_doc.document_type : null,
 			parent_doctype: this.chart_doc.parent_document_type,
 			filter_button: this.filter_button,
 			on_change: () => {
@@ -454,9 +455,24 @@ export default class ChartWidget extends Widget {
 		});
 
 		this.filters &&
-			frappe.model.with_doctype(this.chart_doc.document_type, () => {
+			this.with_chart_doctype(() => {
 				this.filter_group.add_filters_to_filter_group(this.filters);
 			});
+	}
+
+	with_chart_doctype(callback) {
+		return frappe.run_serially([
+			() => {
+				if (this.chart_doc.parent_document_type) {
+					return frappe.model.with_doctype(this.chart_doc.parent_document_type);
+				}
+			},
+			() => {
+				return frappe.model.with_doctype(this.chart_doc.document_type, () => {
+					callback && callback();
+				})
+			}
+		]);
 	}
 
 	set_chart_actions(actions) {
@@ -548,7 +564,7 @@ export default class ChartWidget extends Widget {
 			this.chart_doc.document_type = await this.get_source_doctype();
 
 			if (this.chart_doc.document_type) {
-				frappe.model.with_doctype(this.chart_doc.document_type, setup_dashboard_chart);
+				this.with_chart_doctype(setup_dashboard_chart);
 			} else {
 				setup_dashboard_chart();
 			}
