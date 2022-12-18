@@ -1962,17 +1962,23 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 	show_footer_message() {
 		this.$report_footer && this.$report_footer.remove();
-		this.$report_footer = $(`<div class="report-footer text-muted"></div>`).appendTo(
-			this.page.main
-		);
+		this.$report_footer = $(`<div class="report-footer text-muted">
+			<div class="col-md-12">
+				<div class="d-flex justify-between report-footer-items">
+				</div>
+			</div>
+		</div>`).appendTo(this.page.main);
+
+		this.$report_footer_items = $(".report-footer-items", this.$report_footer);
+
 		if (this.tree_report) {
-			this.$tree_footer = $(`<div class="tree-footer col-md-6">
+			this.$tree_footer = $(`<div class="tree-footer">
 				<button class="btn btn-xs btn-default" data-action="expand_all_rows">
 					${__("Expand All")}</button>
 				<button class="btn btn-xs btn-default" data-action="collapse_all_rows">
 					${__("Collapse All")}</button>
 			</div>`);
-			$(this.$report_footer).append(this.$tree_footer);
+			this.$report_footer_items.append(this.$tree_footer);
 		}
 
 		const message = __(
@@ -1980,9 +1986,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		);
 		const execution_time_msg = __("Execution Time: {0} sec", [this.execution_time || 0.1]);
 
-		this.$report_footer.append(`<div class="col-md-12">
-			<span">${message}</span><span class="pull-right">${execution_time_msg}</span>
-		</div>`);
+		this.$report_footer_items.append(`<div>${message}</div>`);
+		this.$report_footer_items.append(`<div>${execution_time_msg}</div>`);
 	}
 
 	expand_all_rows() {
