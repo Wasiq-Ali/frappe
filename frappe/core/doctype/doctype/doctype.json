@@ -13,6 +13,7 @@
   "is_submittable",
   "istable",
   "issingle",
+  "column_break_6",
   "is_tree",
   "is_calendar_and_gantt",
   "editable_grid",
@@ -195,6 +196,8 @@
    "label": "Beta"
   },
   {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:true",
    "fieldname": "fields_section_break",
    "fieldtype": "Section Break",
    "label": "Fields",
@@ -209,6 +212,8 @@
    "options": "DocField"
   },
   {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:true",
    "fieldname": "sb1",
    "fieldtype": "Section Break",
    "label": "Naming"
@@ -243,6 +248,7 @@
   },
   {
    "collapsible": 1,
+   "collapsible_depends_on": "eval:true",
    "fieldname": "form_settings_section",
    "fieldtype": "Section Break",
    "label": "Form Settings"
@@ -316,6 +322,7 @@
   },
   {
    "collapsible": 1,
+   "collapsible_depends_on": "eval:true",
    "fieldname": "view_settings",
    "fieldtype": "Section Break",
    "label": "View Settings"
@@ -390,6 +397,8 @@
    "label": "Make \"name\" searchable in Global Search"
   },
   {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:true",
    "depends_on": "eval:!doc.istable",
    "fieldname": "sb2",
    "fieldtype": "Section Break",
@@ -426,6 +435,8 @@
    "oldfieldtype": "Check"
   },
   {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:true",
    "depends_on": "eval:doc.custom===0",
    "fieldname": "web_view",
    "fieldtype": "Section Break",
@@ -498,7 +509,7 @@
   },
   {
    "collapsible": 1,
-   "collapsible_depends_on": "actions",
+   "collapsible_depends_on": "eval:true",
    "fieldname": "actions_section",
    "fieldtype": "Section Break",
    "label": "Actions"
@@ -511,7 +522,7 @@
   },
   {
    "collapsible": 1,
-   "collapsible_depends_on": "links",
+   "collapsible_depends_on": "eval:true",
    "fieldname": "links_section",
    "fieldtype": "Section Break",
    "label": "Linked Documents"
@@ -543,6 +554,7 @@
   },
   {
    "collapsible": 1,
+   "collapsible_depends_on": "eval:true",
    "fieldname": "email_settings_sb",
    "fieldtype": "Section Break",
    "label": "Email Settings"
@@ -595,6 +607,7 @@
   },
   {
    "collapsible": 1,
+   "collapsible_depends_on": "eval:true",
    "fieldname": "document_states_section",
    "fieldtype": "Section Break",
    "label": "Document States"
@@ -634,6 +647,10 @@
    "fieldname": "is_calendar_and_gantt",
    "fieldtype": "Check",
    "label": "Is Calendar and Gantt"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-bolt",
@@ -716,7 +733,7 @@
    "link_fieldname": "reference_doctype"
   }
  ],
- "modified": "2022-10-12 14:13:27.315351",
+ "modified": "2022-12-18 17:38:52.307342",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocType",
