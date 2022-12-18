@@ -173,6 +173,7 @@
 	@extend .list-row;
 	cursor: default;
 	background-color: var(--gray-50);
+	border-bottom: 1px solid var(--border-color);
 
 	.list-subject {
 		font-weight: normal;

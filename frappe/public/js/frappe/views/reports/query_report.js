@@ -1964,7 +1964,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		this.$report_footer && this.$report_footer.remove();
 		this.$report_footer = $(`<div class="report-footer text-muted">
 			<div class="col-md-12">
-				<div class="d-flex justify-between report-footer-items">
+				<div class="report-footer-items">
 				</div>
 			</div>
 		</div>`).appendTo(this.page.main);
