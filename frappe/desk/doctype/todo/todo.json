@@ -164,11 +164,13 @@
  ],
  "icon": "fa fa-check",
  "idx": 2,
+ "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2021-09-16 11:36:34.586898",
+ "modified": "2022-12-20 15:41:11.946103",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "ToDo",
+ "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [
   {
@@ -199,6 +201,7 @@
  "sender_field": "sender",
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "subject_field": "title",
  "title_field": "title",
  "track_changes": 1,
