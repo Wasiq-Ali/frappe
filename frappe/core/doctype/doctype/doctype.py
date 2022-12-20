@@ -229,7 +229,8 @@ class DocType(Document):
 			)
 
 		if frappe.conf.get("developer_mode"):
-			self.owner = "Administrator"
+			if self.is_new():
+				self.owner = "Administrator"
 			self.modified_by = "Administrator"
 
 	def setup_fields_to_fetch(self):
