@@ -12,11 +12,11 @@
   "module",
   "is_submittable",
   "istable",
+  "editable_grid",
   "issingle",
   "column_break_6",
   "is_tree",
   "is_calendar_and_gantt",
-  "editable_grid",
   "quick_entry",
   "cb01",
   "track_changes",
@@ -733,7 +733,7 @@
    "link_fieldname": "reference_doctype"
   }
  ],
- "modified": "2022-12-18 17:38:52.307342",
+ "modified": "2022-12-19 15:15:43.284461",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocType",
