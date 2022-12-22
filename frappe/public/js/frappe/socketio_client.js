@@ -2,6 +2,7 @@ import { io } from "socket.io-client";
 frappe.socketio = {
 	open_tasks: {},
 	open_docs: [],
+	subscribe_throttle: {},
 	emit_queue: [],
 
 	init: function (port = 3000) {
@@ -133,16 +134,19 @@ frappe.socketio = {
 		frappe.socketio.socket.emit("list_update", doctype);
 	},
 	doc_subscribe: function (doctype, docname) {
-		if (frappe.flags.doc_subscribe) {
-			console.log("throttled");
+		if (frappe.socketio.subscribe_throttle[doctype]?.[docname]) {
+			// console.log("throttled");
 			return;
 		}
 
-		frappe.flags.doc_subscribe = true;
-
 		// throttle to 1 per sec
+		if (!frappe.socketio.subscribe_throttle[doctype]) {
+			frappe.socketio.subscribe_throttle[doctype] = {};
+		}
+		frappe.socketio.subscribe_throttle[doctype][docname] = true;
+
 		setTimeout(function () {
-			frappe.flags.doc_subscribe = false;
+			frappe.socketio.subscribe_throttle[doctype][docname] = false;
 		}, 1000);
 
 		frappe.socketio.socket.emit("doc_subscribe", doctype, docname);
