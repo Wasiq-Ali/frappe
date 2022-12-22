@@ -211,6 +211,10 @@ body {
 		min-height: 240px;
 		padding: var(--padding-xs);
 
+		.frappe-chart {
+			overflow: inherit;
+		}
+
 		.filter-chart {
 			background-color: var(--control-bg);
 		}
@@ -565,7 +569,7 @@ body {
 	}
 
 	&.links-widget-box {
-		padding: 18px 12px;
+		padding: var(--padding-md);
 		box-shadow: var(--shadow-sm);
 
 		.link-item {
