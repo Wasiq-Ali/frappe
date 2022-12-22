@@ -1862,6 +1862,11 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		return items;
 	}
 
+	get_checked_items() {
+		const indexes = this.datatable.rowmanager.getCheckedRows();
+		return indexes.map(i => this.data[i]).filter(i => i != undefined);
+	}
+
 	add_portrait_warning(dialog) {
 		if (this.columns.length > 10) {
 			dialog.set_df_property("orientation", "change", () => {
