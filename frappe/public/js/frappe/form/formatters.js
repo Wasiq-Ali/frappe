@@ -252,7 +252,7 @@ frappe.form.formatters = {
 		let anchor_target = frappe.form.formatters._get_link_target(options);
 		let anchor_title = frappe.form.formatters._get_link_title(options);
 
-		let link_text = __((options && options.label) || link_title || value);
+		let link_text = __((options && options.label) || (link_title != original_value && link_title) || value);
 		let url = `/app/${encodeURIComponent(frappe.router.slug(doctype))}/${encodeURIComponent(original_value)}`;
 
 		let formatted;
