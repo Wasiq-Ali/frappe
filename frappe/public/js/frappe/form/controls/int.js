@@ -11,7 +11,7 @@ frappe.ui.form.ControlInt = class ControlInt extends frappe.ui.form.ControlData 
 		this.$input
 			// .addClass("text-right")
 			.on("focus", function () {
-				if (!document || !document.activeElement) return;
+				if (!document || !document.activeElement || !document.activeElement.select) return;
 				document.activeElement.value = me.validate(document.activeElement.value);
 				document.activeElement.select();
 				return false;
