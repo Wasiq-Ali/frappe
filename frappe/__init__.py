@@ -1139,7 +1139,7 @@ def clear_document_cache(doctype, name):
 
 
 def get_cached_value(
-	doctype: str, name: str, fieldname: str = "name", as_dict: bool = False
+	doctype: str, name: str, fieldname: str | list = "name", as_dict: bool = False
 ) -> Any:
 	try:
 		doc = get_cached_doc(doctype, name)
