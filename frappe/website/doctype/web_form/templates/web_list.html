@@ -6,7 +6,7 @@
 	<!-- main card -->
 	<div class="web-list-container">
 		<!-- list -->
-		<div class="web-list-header">
+		<div class="web-list-header d-flex justify-content-between align-items-center">
 			<div class="web-list-title ellipsis">
 				<h1 class="ellipsis">{{ _(list_title or title) }}</h1>
 			</div>
@@ -16,7 +16,7 @@
 				{%- endif -%}
 			</div>
 		</div>
-		<div class="web-list-filters hide"></div>
+		<div class="web-list-filters row hide"></div>
 		<div class="web-list-table"></div>
 		<div class="web-list-footer"></div>
 	</div>
@@ -33,6 +33,7 @@
 {% endblock script %}
 
 {% block style %}
+	{{ include_style("web_form.bundle.scss") }}
 	<style>
 		{% if style is defined %}
 			{{ style }}
