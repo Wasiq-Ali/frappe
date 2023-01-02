@@ -878,31 +878,36 @@ frappe.ui.form.Form = class FrappeForm {
 		const me = this;
 		this.validate_form_action("Cancel");
 		me.ignore_doctypes_on_cancel_all = me.ignore_doctypes_on_cancel_all || [];
-		frappe
-			.call({
-				method: "frappe.desk.form.linked_with.get_submitted_linked_docs",
-				args: {
-					doctype: me.doc.doctype,
-					name: me.doc.name,
-				},
-				freeze: true,
-			})
-			.then((r) => {
-				if (!r.exc) {
-					let doctypes_to_cancel = (r.message.docs || [])
-						.map((value) => {
-							return value.doctype;
-						})
-						.filter((value) => {
-							return !me.ignore_doctypes_on_cancel_all.includes(value);
-						});
 
-					if (doctypes_to_cancel.length) {
-						return me._cancel_all(r, btn, callback, on_error);
+		if (me.cancel_all_submitted_linked_docs) {
+			frappe
+				.call({
+					method: "frappe.desk.form.linked_with.get_submitted_linked_docs",
+					args: {
+						doctype: me.doc.doctype,
+						name: me.doc.name,
+					},
+					freeze: true,
+				})
+				.then((r) => {
+					if (!r.exc) {
+						let doctypes_to_cancel = (r.message.docs || [])
+							.map((value) => {
+								return value.doctype;
+							})
+							.filter((value) => {
+								return !me.ignore_doctypes_on_cancel_all.includes(value);
+							});
+
+						if (doctypes_to_cancel.length) {
+							return me._cancel_all(r, btn, callback, on_error);
+						}
 					}
-				}
-				return me._cancel(btn, callback, on_error, false);
-			});
+					return me._cancel(btn, callback, on_error, false);
+				});
+		} else {
+			return me._cancel(btn, callback, on_error, false);
+		}
 	}
 
 	_cancel_all(r, btn, callback, on_error) {
