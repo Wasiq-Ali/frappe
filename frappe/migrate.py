@@ -72,12 +72,13 @@ class SiteMigration:
 		self.touched_tables_file = frappe.get_site_path("touched_tables.json")
 		add_column(doctype="DocType", column_name="migration_hash", fieldtype="Data")
 
-		frappe.reload_doc("core", "doctype", "doctype_action")
-		frappe.reload_doc("core", "doctype", "doctype_link")
-		frappe.reload_doc("core", "doctype", "doctype_state")
-		frappe.reload_doc("core", "doctype", "docfield")
-		frappe.reload_doc("core", "doctype", "doctype")
 		clear_global_cache()
+
+		frappe.reload_doc("core", "doctype", "doctype_action", force=True)
+		frappe.reload_doc("core", "doctype", "doctype_link", force=True)
+		frappe.reload_doc("core", "doctype", "doctype_state", force=True)
+		frappe.reload_doc("core", "doctype", "docfield", force=True)
+		frappe.reload_doc("core", "doctype", "doctype", force=True)
 
 		if os.path.exists(self.touched_tables_file):
 			os.remove(self.touched_tables_file)
