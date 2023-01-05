@@ -176,7 +176,7 @@ def is_autoincremented(doctype: str, meta: Optional["Meta"] = None) -> bool:
 	"""Checks if the doctype has autoincrement autoname set"""
 
 	if doctype in log_types:
-		if autoincremented_site_status_map.get(frappe.local.site) is None:
+		if autoincremented_site_status_map.get(frappe.local.site, {}).get(doctype) is None:
 			if (
 				frappe.db.sql(
 					f"""select data_type FROM information_schema.columns
@@ -184,12 +184,12 @@ def is_autoincremented(doctype: str, meta: Optional["Meta"] = None) -> bool:
 				)[0][0]
 				== "bigint"
 			):
-				autoincremented_site_status_map[frappe.local.site] = 1
+				autoincremented_site_status_map.setdefault(frappe.local.site, {})[doctype] = 1
 				return True
 			else:
-				autoincremented_site_status_map[frappe.local.site] = 0
+				autoincremented_site_status_map.setdefault(frappe.local.site, {})[doctype] = 0
 
-		elif autoincremented_site_status_map[frappe.local.site]:
+		elif autoincremented_site_status_map[frappe.local.site][doctype]:
 			return True
 
 	else:
