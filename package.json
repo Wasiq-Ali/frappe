@@ -33,7 +33,7 @@
     "editorjs-undo": "0.1.6",
     "fast-deep-equal": "^2.0.1",
     "frappe-charts": "2.0.0-rc22",
-    "frappe-datatable": "github:ParaLogicTech/datatable",
+    "frappe-datatable": "github:ParaLogicTech/datatable#6074a240039bdf509e197739012614408f21bdbc",
     "frappe-gantt": "^0.6.0",
     "highlight.js": "^10.4.1",
     "html5-qrcode": "^2.0.11",

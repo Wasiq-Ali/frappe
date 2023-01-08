@@ -1258,9 +1258,9 @@ frappe-charts@2.0.0-rc22:
   resolved "https://registry.yarnpkg.com/frappe-charts/-/frappe-charts-2.0.0-rc22.tgz#9a5a747febdc381a1d4d7af96e89cf519dfba8c0"
   integrity sha512-N7f/8979wJCKjusOinaUYfMxB80YnfuVLrSkjpj4LtyqS0BGS6SuJxUnb7Jl4RWUFEIs7zEhideIKnyLeFZF4Q==
 
-"frappe-datatable@github:ParaLogicTech/datatable":
+"frappe-datatable@github:ParaLogicTech/datatable#6074a240039bdf509e197739012614408f21bdbc":
   version "0.0.0-development"
-  resolved "https://codeload.github.com/ParaLogicTech/datatable/tar.gz/7465f9fd9e67ae30bd74c37c881a8c6931258b03"
+  resolved "https://codeload.github.com/ParaLogicTech/datatable/tar.gz/6074a240039bdf509e197739012614408f21bdbc"
   dependencies:
     hyperlist "^1.0.0-beta"
     lodash "^4.17.5"
