@@ -109,12 +109,8 @@
 	color: $light;
 }
 
-.main-column {
-	background-color: var(--bg-color);
-
-	.page-content-wrapper {
-		margin: 3rem 0;
-	}
+.main-column .page-content-wrapper {
+	margin: 2rem 0;
 }
 
 @media (max-width: map-get($grid-breakpoints, "lg")) {
