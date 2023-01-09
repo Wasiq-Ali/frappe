@@ -556,7 +556,7 @@ export default class Grid {
 				this.frm.script_manager.trigger(
 					this.df.fieldname + "_move",
 					this.df.options,
-					doc.name
+					doc?.name
 				);
 				this.refresh();
 				this.frm.dirty();
