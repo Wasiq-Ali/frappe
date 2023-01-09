@@ -387,12 +387,11 @@
 				.web-list-container {
 					box-shadow: var(--card-shadow);
 					border-radius: var(--border-radius-md);
-					padding: var(--padding-sm) 25px;
 
 					.web-list-filters {
 						display: flex;
 						flex-wrap: wrap;
-						margin: 1.25rem 0;
+						padding: var(--padding-lg);
 						gap: 10px;
 
 						.form-group.frappe-control {
@@ -423,19 +422,21 @@
 
 						.table {
 							border-top: 1px solid var(--border-color);
+							margin: 0;
 
 							thead tr {
-									th {
-										border: 0;
-										font-weight: bold;
-										color: var(--heading-color);
-										padding: 1rem;
-
-										// input[type="checkbox"] {
-										// 	margin-bottom: -2px;
-										// }
+								th {
+									border: 0;
+									font-weight: bold;
+									color: var(--heading-color);
+									padding: 1rem;
+									vertical-align: middle;
+									background-color: var(--bg-color);
+									input[type="checkbox"] {
+										margin-bottom: -2px;
 									}
 								}
+							}
 
 							tbody {
 								tr {
@@ -469,9 +470,9 @@
 							}
 						}
 
-							input[type="checkbox"] {
-								margin-top: 2px;
-							}
+						input[type="checkbox"] {
+							margin-top: 2px;
+						}
 
 							// .list-col-checkbox {
 							// 	width: 1rem;
@@ -480,16 +481,17 @@
 							// .list-col-serial {
 							// 	width: 1.5rem;
 							// }
-						}
-
-						.no-result {
-							min-height: 330px;
-							border-top: 1px solid var(--border-color);
-						}
 					}
 
-					.web-list-footer {
+					.no-result {
+						min-height: 330px;
+						border-top: 1px solid var(--border-color);
+					}
+				}
+
+				.web-list-footer {
 						text-align: right;
+						padding: var(--padding-md);
 					}
 				}
 
