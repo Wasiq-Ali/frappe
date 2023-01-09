@@ -3,22 +3,23 @@
 {% block breadcrumbs %}{% endblock %}
 
 {% block page_content %}
-	<!-- main card -->
-	<div class="web-list-container">
-		<!-- list -->
-		<div class="web-list-header d-flex justify-content-between align-items-center">
-			<div class="web-list-title ellipsis">
-				<h1 class="ellipsis">{{ _(list_title or title) }}</h1>
-			</div>
-			<div class="web-list-actions">
-				{%- if allow_multiple -%}
-					<a class="btn btn-primary btn-sm button-new" href="/{{ route }}/new">New</a>
-				{%- endif -%}
-			</div>
+	<!-- main card header-->
+	<div class="web-list-header">
+		<div class="web-list-title ellipsis">
+			<h1 class="ellipsis">{{ _(list_title or title) }}</h1>
 		</div>
-		<div class="web-list-filters row hide"></div>
+		<div class="web-list-actions">
+			{%- if allow_multiple -%}
+				<a class="btn btn-primary btn-sm button-new" href="/{{ route }}/new">New</a>
+			{%- endif -%}
+		</div>
+	</div>
+	<!-- main card -->
+	<div class="web-list-container card">
+		<!-- list -->
+		<div class="web-list-filters hide"></div>
 		<div class="web-list-table"></div>
-		<div class="web-list-footer"></div>
+		<div class="web-list-footer hide"></div>
 	</div>
 {% endblock page_content %}
 

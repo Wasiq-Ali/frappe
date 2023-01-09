@@ -299,6 +299,7 @@ export default class WebFormList {
 	create_more() {
 		if (this.rows.length >= this.page_length) {
 			const footer = $(".web-list-footer");
+			footer.removeClass("hide");
 			this.add_button(footer, "more", "secondary", false, "Load More", () => this.more());
 		}
 	}
