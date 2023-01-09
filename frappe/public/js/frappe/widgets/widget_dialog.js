@@ -17,6 +17,7 @@ class WidgetDialog {
 		this.dialog = new frappe.ui.Dialog({
 			title: this.get_title(),
 			fields: this.get_fields(),
+			size: "extra-large",
 			primary_action: (data) => {
 				data = this.process_data(data);
 
@@ -232,17 +233,6 @@ class CardDialog extends WidgetDialog {
 				},
 				fields: [
 					{
-						fieldname: "label",
-						fieldtype: "Data",
-						in_list_view: 1,
-						label: "Label",
-					},
-					{
-						fieldname: "icon",
-						fieldtype: "Icon",
-						label: "Icon",
-					},
-					{
 						fieldname: "link_type",
 						fieldtype: "Select",
 						in_list_view: 1,
@@ -259,6 +249,17 @@ class CardDialog extends WidgetDialog {
 						get_options: (df) => {
 							return df.doc.link_type;
 						},
+					},
+					{
+						fieldname: "label",
+						fieldtype: "Data",
+						in_list_view: 1,
+						label: "Label",
+					},
+					{
+						fieldname: "icon",
+						fieldtype: "Icon",
+						label: "Icon",
 					},
 					{
 						fieldname: "column_break_7",
@@ -280,12 +281,14 @@ class CardDialog extends WidgetDialog {
 						fieldname: "onboard",
 						fieldtype: "Check",
 						label: "Onboard",
+						in_list_view: 1,
 					},
 					{
 						default: "0",
 						fieldname: "is_query_report",
 						fieldtype: "Check",
 						label: "Is Query Report",
+						in_list_view: 1,
 					},
 				],
 			},
