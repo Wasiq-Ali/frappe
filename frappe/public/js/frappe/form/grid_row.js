@@ -718,7 +718,7 @@ export default class GridRow {
 
 	set_dependant_property(df) {
 		if (
-			df && !df.reqd &&
+			!df.reqd &&
 			df.mandatory_depends_on &&
 			this.evaluate_depends_on_value(df.mandatory_depends_on)
 		) {

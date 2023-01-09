@@ -25,11 +25,13 @@
 					padding-bottom: 2px;
 				}
 
+				.web-form-container {
+					box-shadow: var(--card-shadow);
+					border-radius: var(--border-radius-md);
+					padding: var(--padding-sm) 25px;
+				}
+
 				.web-form-header {
-					border-bottom: none;
-					border-top-left-radius: var(--border-radius-md);
-					border-top-right-radius: var(--border-radius-md);
-					background-color: var(--fg-color);
 
 					.breadcrumb-container {
 						padding: 0px;
@@ -72,7 +74,7 @@
 
 						.web-form-introduction {
 							color: var(--text-muted);
-							margin-top: 1.25rem;
+							margin-top: 0.5rem;
 
 							p {
 								color: var(--text-muted);
@@ -365,23 +367,27 @@
 					}
 				}
 
-				.web-list-container {
+				.web-list-header {
+					display: flex;
+					justify-content: space-between;
+					flex-wrap: wrap;
+					gap: 1rem;
+					// border-bottom: 1px solid var(--dark-border-color);
+					// padding-bottom: 1.25rem;
+					margin-bottom: var(--margin-lg);
 
-					.web-list-header {
+					.web-list-actions {
 						display: flex;
-						justify-content: space-between;
-						flex-wrap: wrap;
-						gap: 1rem;
-						// border-bottom: 1px solid var(--dark-border-color);
-						padding-bottom: 1.25rem;
-
-						.web-list-actions {
-							display: flex;
-							align-items: center;
-							justify-content: flex-end;
-							flex: 1;
-						}
+						align-items: center;
+						justify-content: flex-end;
+						flex: 1;
 					}
+				}
+
+				.web-list-container {
+					box-shadow: var(--card-shadow);
+					border-radius: var(--border-radius-md);
+					padding: var(--padding-sm) 25px;
 
 					.web-list-filters {
 						display: flex;
@@ -416,24 +422,23 @@
 						overflow: auto;
 
 						.table {
-							border-bottom: 1px solid var(--border-color);
 							border-top: 1px solid var(--border-color);
 
 							thead tr {
-								border-bottom: 2px solid var(--border-color);
-								border-top: 2px solid var(--border-color);
 									th {
 										border: 0;
 										font-weight: bold;
 										color: var(--heading-color);
+										padding: 1rem;
 
-										input[type="checkbox"] {
-											margin-bottom: -2px;
-										}
+										// input[type="checkbox"] {
+										// 	margin-bottom: -2px;
+										// }
 									}
 								}
 
-							tbody tr {
+							tbody {
+								tr {
 								color: var(--text-color);
 								cursor: pointer;
 
@@ -441,7 +446,7 @@
 									font-size: 13px;
 									border-top: 1px solid var(--border-color);
 									max-width: 160px;
-									padding-bottom: 1.5rem;
+									padding: 1rem;
 
 									.ql-editor, p {
 										width: max-content;
@@ -454,11 +459,15 @@
 										}
 									}
 								}
+
 								&:hover {
 									cursor: pointer;
 									background-color: var(--gray-100);
 								}
+
+								}
 							}
+						}
 
 							input[type="checkbox"] {
 								margin-top: 2px;
@@ -500,5 +509,4 @@
 				padding-left: 0;
 				padding-right: 0;
 			}
-	}
 }

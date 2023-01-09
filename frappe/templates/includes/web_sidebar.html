@@ -36,8 +36,8 @@
 
 {% macro my_account() %}
 {% if frappe.user != 'Guest' %}
-<ul class="list-unstyled">
-	<li class="sidebar-item" style="background-color: #D1E8FF;">
+<ul class="list-unstyled my-account">
+	<li class="sidebar-item">
 		<a href="/me">{{ _("My Account") }}</a>
 	</li>
 </ul>
@@ -50,7 +50,7 @@
 		{{ sidebar_title }}
 	</li>
 	{% endif %}
-	<div class="sidebar-items" style="background-color: var(--white); box-shadow: var(--shadow-base);">
+	<div class="sidebar-items">
 		{{ render_sidebar_items(sidebar_items) }}
 		{{ my_account() }}
 	</div>

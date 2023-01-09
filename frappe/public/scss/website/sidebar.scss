@@ -1,26 +1,45 @@
+.sidebar-column {
+	background-color: var(--bg-color);
+}
+
 .web-sidebar {
 	padding-top: 2rem;
 	padding-bottom: 2rem;
 	position: sticky;
 	top: 0;
-	margin-left: -30px;
-	margin-right: 30px;
 }
 
-.sidebar-item a {
-	display: block;
-	padding: 0.25rem 0.5rem;
-	margin-top: 0.25rem;
-	border-radius: 0.375rem;
-	font-size: $font-size-sm;
-	color: var(--text-color);
-	text-decoration: none;
-	font-weight: 500;
-	@include transition();
+.sidebar-items {
+	background-color: var(--fg-color);
+	box-shadow: var(--shadow-base);
 
-	&:hover {
-		color: $gray-900;
+	li {
+		&:hover{
+			color: $gray-900;
+			background-color: var(--gray-100);
+		}
 	}
+}
+
+.sidebar-item {
+	padding: 0.4rem;
+	border-bottom: 1px solid var(--gray-200);
+	a {
+		display: block;
+		padding: 0.25rem 0.5rem;
+		margin-top: 0.25rem;
+		border-radius: 0.375rem;
+		font-size: $font-size-sm;
+		text-align: center;
+		color: var(--text-color);
+		text-decoration: none;
+		font-weight: 500;
+		@include transition();
+	}
+}
+
+.my-account {
+	background-color: var(--bg-dark-blue);
 }
 
 // Remove top margin from frist child
@@ -29,8 +48,7 @@
 }
 
 .sidebar-item a.active {
-	color: var(--primary);
-	background-color: var(--primary-light);
+	color: var(--primary) !important;
 }
 
 .sidebar-item-icon {

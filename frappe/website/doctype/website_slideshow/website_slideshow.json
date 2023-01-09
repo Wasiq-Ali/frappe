@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "field:slideshow_name",
  "creation": "2013-03-07 15:53:15",
  "description": "Slideshow like display for the website",
@@ -43,11 +44,13 @@
  ],
  "icon": "fa fa-play",
  "idx": 1,
+ "links": [],
  "max_attachments": 10,
- "modified": "2020-03-03 15:37:47.424189",
+ "modified": "2023-01-05 18:51:43.339695",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Website Slideshow",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -64,5 +67,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
