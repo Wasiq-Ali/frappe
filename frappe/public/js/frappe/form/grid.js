@@ -1154,7 +1154,7 @@ export default class Grid {
 		let $btn = this.custom_buttons[label];
 		if (!$btn) {
 			$btn = $(`<button class="btn btn-secondary btn-xs btn-custom">${__(label)}</button>`)
-				.prependTo($wrapper)
+				.appendTo($wrapper)
 				.on("click", click);
 			this.custom_buttons[label] = $btn;
 		} else {
