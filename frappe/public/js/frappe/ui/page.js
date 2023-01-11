@@ -47,13 +47,12 @@ frappe.ui.Page = class Page {
 
 	setup_scroll_handler() {
 		let last_scroll = 0;
-		$(".page-head").css("top", "var(--navbar-height)");
 		$(window).scroll(
 			frappe.utils.throttle(() => {
 				let is_scrolled = !!document.documentElement.scrollTop;
 				$(".page-head").toggleClass("drop-shadow", is_scrolled);
 				last_scroll = document.documentElement.scrollTop;
-			}, 100),
+			}, 100)
 		);
 	}
 
