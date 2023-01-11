@@ -18,6 +18,6 @@ frappe.ui.form.ControlLongText = frappe.ui.form.ControlText;
 frappe.ui.form.ControlSmallText = class ControlSmallText extends frappe.ui.form.ControlText {
 	make_input() {
 		super.make_input();
-		this.$input.css({ height: "99px" });
+		this.$input.css({ height: "95px" });
 	}
 };
