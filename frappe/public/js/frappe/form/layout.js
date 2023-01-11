@@ -456,10 +456,32 @@ frappe.ui.form.Layout = class Layout {
 	}
 
 	setup_events() {
+		let last_scroll = 0;
+		let tabs_list = $(".form-tabs-list");
+		let tabs_content = this.tabs_content[0];
+		if (!tabs_list.length) return;
+
+		tabs_list.addClass("form-tabs-sticky-down");
+		$(window).scroll(
+			frappe.utils.throttle(() => {
+				let is_scrolled = !!document.documentElement.scrollTop;
+				tabs_list.toggleClass("drop-shadow", is_scrolled);
+				last_scroll = document.documentElement.scrollTop;
+			}, 100)
+		);
+
 		this.tabs_list.off("click").on("click", ".nav-link", (e) => {
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			$(e.currentTarget).tab("show");
+			// if (tabs_content.getBoundingClientRect().top < 100) {
+			// 	tabs_content.scrollIntoView();
+			// 	setTimeout(() => {
+			// 		$(".page-head").css("top", "-15px");
+			// 		$(".form-tabs-list").removeClass("form-tabs-sticky-down");
+			// 		$(".form-tabs-list").addClass("form-tabs-sticky-up");
+			// 	}, 3);
+			// }
 		});
 	}
 

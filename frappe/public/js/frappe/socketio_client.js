@@ -130,8 +130,8 @@ frappe.socketio = {
 	task_unsubscribe: function (task_id) {
 		frappe.socketio.socket.emit("task_unsubscribe", task_id);
 	},
-	list_subscribe: function (doctype) {
-		frappe.socketio.socket.emit("list_update", doctype);
+	doctype_subscribe: function (doctype) {
+		frappe.socketio.socket.emit("doctype_subscribe", doctype);
 	},
 	doc_subscribe: function (doctype, docname) {
 		if (frappe.socketio.subscribe_throttle[doctype]?.[docname]) {
