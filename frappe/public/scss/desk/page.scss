@@ -87,14 +87,14 @@
 	z-index: 6;
 	position: sticky;
 	top: var(--navbar-height);
-	background: var(--bg-color);
+	background-color: var(--bg-color);
 	margin-bottom: 2px;
-	transition: 0.5s top;
+	transition: 0.25s background-color, 0.25s box-shadow;
 	.page-head-content {
 		height: var(--page-head-height);
 	}
 	&.drop-shadow {
-		box-shadow: var(--shadow-base);
+		box-shadow: var(--shadow-sm);
 		border-bottom: 1px solid var(--gray-300);
 		background-color: var(--fg-color) !important;
 	}

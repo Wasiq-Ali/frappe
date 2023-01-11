@@ -337,25 +337,31 @@
 	position: sticky;
 	background-color: var(--card-bg);
 	z-index: 5;
-	transition: 0.5s top;
+	transition: 0.25s box-shadow, 0.25s border, 0.25s border-radius;
 	padding-left: var(--padding-xs);
-	border-bottom: 2px solid var(--border-color);
+	border-bottom: 1px solid var(--border-color);
 	border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
 
 	.form-tabs {
 		.nav-item {
 			.nav-link {
 				color: var(--text-muted);
-				padding: var(--padding-md) 0;
+				padding: var(--padding-md) 0 calc(var(--padding-md) - 2px) 0;
 				margin: 0 var(--margin-md);
 
 				&.active {
 					font-weight: 600;
-					border-bottom: 1px solid var(--primary);
+					border-bottom: 2px solid var(--primary);
 					color: var(--text-color);
 				}
 			}
 		}
+	}
+
+	&.drop-shadow {
+		box-shadow: var(--shadow-base);
+		border-bottom: 1px solid var(--border-color);
+		border-radius: 0;
 	}
 }
 .form-tab-content {
@@ -365,7 +371,7 @@
 	top: calc(var(--navbar-height) - 1px);
 }
 .form-tabs-sticky-down {
-	top: calc(var(--navbar-height) + var(--page-head-height) - 1px);
+	top: calc(var(--navbar-height) + var(--page-head-height) + 1px);
 }
 
 .progress-area {
