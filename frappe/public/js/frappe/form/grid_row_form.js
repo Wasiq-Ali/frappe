@@ -111,7 +111,7 @@ export default class GridRowForm {
 			return false;
 		});
 		this.wrapper.find(".grid-form-heading, .grid-footer-toolbar").on("click", function () {
-			if (!this.wrapper.is(":visible")) {
+			if (!me.row.wrapper.hasClass("grid-row-open")) {
 				return;
 			}
 			me.row.toggle_view();
