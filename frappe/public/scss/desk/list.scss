@@ -166,6 +166,9 @@
 
 	.select-like, .file-select {
 		padding: 15px 0px 15px 15px;
+		&:first-child {
+			padding-left: 4px;
+		}
 	}
 }
 
@@ -264,7 +267,7 @@ input.list-check-all, input.list-row-checkbox {
 }
 
 input.list-check-all {
-	margin-left: 15px;
+	margin-left: 4px;
 }
 
 .render-list-checkbox {

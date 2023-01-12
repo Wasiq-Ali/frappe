@@ -657,7 +657,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 					"list-row-col ellipsis",
 					col.type == "Subject" ? "list-subject level" : "hidden-xs",
 					col.type == "Tag" ? "tag-col hide" : "",
-					frappe.model.is_numeric_field(col.df) ? "text-right" : "",
+					frappe.model.is_numeric_field(col.df) || col.df?.fieldname == "name" ? "text-right" : "",
 				].join(" ");
 
 				return `
@@ -841,7 +841,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		const css_class = [
 			"list-row-col ellipsis",
 			class_map[col.type],
-			frappe.model.is_numeric_field(df) ? "text-right" : "",
+			frappe.model.is_numeric_field(df) || df.fieldname == "name" ? "text-right" : "",
 		].join(" ");
 
 		const html_map = {
