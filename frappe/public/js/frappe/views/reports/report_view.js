@@ -1464,7 +1464,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 						fields: this.get_dialog_fields(),
 						primary_action: (values) => {
 							// doctype fields
-							let fields = values[this.doctype].map((f) => [f, this.doctype]);
+							let fields = (values[this.doctype] || []).map((f) => [f, this.doctype]);
 							delete values[this.doctype];
 
 							// child table fields
