@@ -683,6 +683,11 @@ class FilterArea {
 					condition === "="
 					|| (condition === "like" && fields_dict[fieldname]?.df?.fieldtype != "Link")
 					|| condition === "subtree of"
+					|| (
+						condition === "in"
+						&& fieldname == "docstatus"
+						&& fields_dict[fieldname]?.df?.fieldtype == "Select"
+					)
 				)
 			) {
 				// standard filter
@@ -779,7 +784,6 @@ class FilterArea {
 			doctype: this.list_view.doctype,
 			fieldname: 'docstatus',
 			filter_condition: 'in',
-			default: __('Hide Cancelled'),
 			options: [
 				'',
 				{label: `${__('Draft Only')}`, value: [0]},
