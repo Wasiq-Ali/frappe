@@ -395,11 +395,12 @@ def export_query():
 			)
 			return
 
+		columns_row = [c.get("label") or c.get("content") for c in columns]
 		report_data = json.loads(data.data) if isinstance(data.data, str) else data.data
-		format_duration_fields(report_data)
+		format_duration_fields(report_data, columns)
 
 		from frappe.utils.xlsxutils import make_xlsx
-		xlsx_data = [columns] + report_data
+		xlsx_data = [columns_row] + report_data
 		xlsx_file = make_xlsx(xlsx_data, "Query Report")
 
 		frappe.response['filename'] = report_name + '.xlsx'
@@ -407,12 +408,12 @@ def export_query():
 		frappe.response['type'] = 'binary'
 
 
-def format_duration_fields(data: frappe._dict) -> None:
-	for i, col in enumerate(data.columns):
+def format_duration_fields(data: list, columns: list) -> None:
+	for i, col in enumerate(columns):
 		if col.get("fieldtype") != "Duration":
 			continue
 
-		for row in data.result:
+		for row in data:
 			index = col.get("fieldname") if isinstance(row, dict) else i
 			if row[index]:
 				row[index] = format_duration(row[index])

@@ -1552,11 +1552,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			({ file_format, include_indentation }) => {
 				this.make_access_log("Export", file_format);
 
-				const column_row = this.datatable.datamanager.getColumns(true).map(col => col.label || col.content);
+				const columns = this.datatable.datamanager.getColumns(true);
+				const columns_row = columns.map(col => col.label || col.content);
 				const data = this.get_data_for_csv(include_indentation);
 
 				if (file_format === 'CSV') {
-					const out = [column_row].concat(data);
+					const out = [columns_row].concat(data);
 					frappe.tools.downloadify(out, null, this.report_name);
 				} else {
 					let filters = this.get_filter_values(true);
@@ -1578,10 +1579,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 						custom_columns: this.custom_columns.length ? this.custom_columns : [],
 						file_format_type: file_format,
 						data: data,
-						columns: column_row,
+						columns: columns,
 						filters: filters,
-						visible_idx,
-						include_indentation,
+						visible_idx: visible_idx,
+						include_indentation: cint(include_indentation),
 					};
 
 					open_url_post(frappe.request.url, args);
