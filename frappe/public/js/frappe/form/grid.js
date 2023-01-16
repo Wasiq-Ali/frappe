@@ -652,14 +652,13 @@ export default class Grid {
 
 	set_column_disp(fieldname, show, do_not_refresh) {
 		if (Array.isArray(fieldname)) {
-			let me = this;
-			for(var i=0, l=fieldname.length; i<l; i++) {
-				var fname = fieldname[i];
-				me.get_docfield(fname).hidden = show ? 0 : 1;
+			for (let i = 0, l = fieldname.length; i<l; i++) {
+				let fname = fieldname[i];
+				this.update_docfield_property(fname, "hidden", show ? 0 : 1, do_not_refresh);
 				this.set_editable_grid_column_disp(fname, show, do_not_refresh);
 			}
 		} else {
-			this.get_docfield(fieldname).hidden = show ? 0 : 1;
+			this.update_docfield_property(fieldname, "hidden", show ? 0 : 1, do_not_refresh);
 			this.set_editable_grid_column_disp(fieldname, show, do_not_refresh);
 		}
 
@@ -1168,7 +1167,7 @@ export default class Grid {
 		this.grid_buttons.find(".btn-custom").addClass("hidden");
 	}
 
-	update_docfield_property(fieldname, property, value) {
+	update_docfield_property(fieldname, property, value, do_not_refresh) {
 		// update the docfield of each row
 		if (!this.grid_rows) {
 			return;
@@ -1186,6 +1185,8 @@ export default class Grid {
 		// update the parent too (for new rows)
 		this.docfields.find((d) => d.fieldname === fieldname)[property] = value;
 
-		this.debounced_refresh();
+		if (!do_not_refresh) {
+			this.debounced_refresh();
+		}
 	}
 }

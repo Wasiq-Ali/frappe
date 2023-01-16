@@ -60,15 +60,12 @@ export default class GridRow {
 				docfields = doc_docfields;
 			} else {
 				row_docfields.forEach((row_df) => {
-					let df = {};
-
 					let doc_df = doc_docfields.find((field) => field.fieldname == row_df.fieldname);
 					if (doc_df) {
-						Object.assign(df, doc_df);
+						Object.assign(row_df, doc_df);
 					}
 
-					Object.assign(df, row_df);
-					docfields.push(df);
+					docfields.push(row_df);
 				});
 			}
 
