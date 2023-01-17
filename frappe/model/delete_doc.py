@@ -361,6 +361,7 @@ def delete_dynamic_links(doctype, name):
 	delete_references("View Log", doctype, name)
 	delete_references("Document Follow", doctype, name, "ref_doctype", "ref_docname")
 	delete_references("Notification Log", doctype, name, "document_type", "document_name")
+	delete_references("Notification Count", doctype, name)
 
 	# unlink communications
 	clear_timeline_references(doctype, name)

@@ -406,4 +406,5 @@ ignore_links_on_delete = [
 	"Document Share Key",
 	"Integration Request",
 	"Unhandled Email",
+	"Notification Count",
 ]

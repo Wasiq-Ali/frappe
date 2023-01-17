@@ -155,6 +155,7 @@ frappe.patches.v12_0.delete_useless_versions
 frappe.patches.v12_0.set_time_format_12_hour
 frappe.patches.v12_0.trim_tables
 frappe.patches.v12_0.rename_notification_type_field
+frappe.patches.v12_0.move_notification_count_parent_to_reference_fields
 frappe.patches.v13_0.add_toggle_width_in_navbar_settings
 frappe.patches.v13_0.rename_notification_fields
 frappe.patches.v13_0.remove_duplicate_navbar_items

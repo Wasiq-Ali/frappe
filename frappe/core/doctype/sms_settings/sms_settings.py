@@ -61,7 +61,7 @@ def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_alr
 		return False
 
 	if not allow_if_already_sent:
-		notification_count = get_notification_count(doc, notification_type, "SMS")
+		notification_count = get_notification_count(doc.doctype, doc.name, notification_type, "SMS")
 		if notification_count:
 			return False
 
@@ -75,7 +75,7 @@ def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_alr
 	if send_after:
 		args['send_after'] = send_after
 
-	set_notification_last_scheduled(doc, notification_type, "SMS", update=True)
+	set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS")
 	create_communication(args)
 	queue_sms(args)
 
@@ -230,7 +230,6 @@ def run_before_send_methods(args):
 		validation = run_validate_notification(doc, notification_type, throw=True)
 		if not validation:
 			frappe.throw(_("{0} Notification Validation Failed").format(notification_type))
-		add_notification_count(doc, notification_type, 'SMS', update=True)
 
 
 def run_validate_notification(doc, notification_type, throw=True):
@@ -244,9 +243,11 @@ def run_validate_notification(doc, notification_type, throw=True):
 
 
 def run_after_send_methods(args):
-	doc = args.get('doc')
 	notification_type = cstr(args.get('notification_type'))
+	if args.get("reference_doctype") and args.get("reference_name"):
+		add_notification_count(args.get("reference_doctype"), args.get("reference_name"), notification_type, 'SMS')
 
+	doc = args.get('doc')
 	if doc:
 		doc.run_method("after_send_notification", notification_medium="SMS", notification_type=notification_type)
 		doc.notify_update()
