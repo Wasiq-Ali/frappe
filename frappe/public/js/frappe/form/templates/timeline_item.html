@@ -31,6 +31,7 @@
 			</div>
 			{% if(data.communication_type==="Communication"
 				|| data.communication_type==="Feedback"
+				|| data.communication_type==="Automated Message"
 				|| (data.communication_type==="Comment"
 					&& data.comment_type==="Comment")) { %}
 			<div class="comment-header clearfix small {% if (data.edit || data.delete) { %} links-active {% } %}">
@@ -57,7 +58,7 @@
 							</a>
 						{% } %}
 					</span>
-						{% if(in_list(["Communication", "Feedback"], data.communication_type)) { %}
+						{% if(in_list(["Communication", "Feedback", "Automated Message"], data.communication_type)) { %}
 							{% if (frappe.model.can_read(\'Communication\')) { %}
 							<a href="#Form/Communication/{%= data.name %}"
 								class="text-muted">

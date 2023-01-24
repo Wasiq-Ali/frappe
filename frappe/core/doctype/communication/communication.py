@@ -97,7 +97,7 @@ class Communication(Document):
 		if self.reference_doctype == "Communication" and self.sent_or_received == "Sent":
 			frappe.db.set_value("Communication", self.reference_name, "status", "Replied")
 
-		if self.communication_type == "Communication":
+		if self.communication_type in ("Communication", "Feedback", "Automated Message"):
 			# send new comment to listening clients
 			frappe.publish_realtime('new_communication', self.as_dict(),
 				doctype=self.reference_doctype, docname=self.reference_name,
@@ -123,7 +123,7 @@ class Communication(Document):
 			self.bot_reply()
 
 	def on_trash(self):
-		if self.communication_type == "Communication":
+		if self.communication_type in ("Communication", "Feedback", "Automated Message"):
 			# send delete comment to listening clients
 			frappe.publish_realtime('delete_communication', self.as_dict(),
 				doctype= self.reference_doctype, docname = self.reference_name,

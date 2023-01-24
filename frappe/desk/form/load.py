@@ -188,7 +188,7 @@ def get_communication_data(doctype, name, start=0, limit=20, after=None, fields=
 	part1 = '''
 		SELECT {fields}
 		FROM `tabCommunication` as C
-		WHERE C.communication_type IN ('Communication', 'Feedback')
+		WHERE C.communication_type IN ('Communication', 'Feedback', 'Automated Message')
 		AND (C.reference_doctype = %(doctype)s AND C.reference_name = %(name)s)
 		{conditions}
 	'''.format(fields=fields, conditions=conditions)

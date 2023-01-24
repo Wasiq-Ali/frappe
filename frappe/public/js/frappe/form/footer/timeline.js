@@ -401,12 +401,13 @@ frappe.ui.form.Timeline = class Timeline {
 
 				c.original_content = c.content;
 				c.content = frappe.utils.toggle_blockquote(c.content);
-			} else if (c.communication_type==="Feedback") {
+			} else if (["Feedback", "Automated Message"].includes(c.communication_type)) {
 				c.content = frappe.utils.strip_original_content(c.content);
 
 				c.original_content = c.content;
 				c.content = frappe.utils.toggle_blockquote(c.content);
 			}
+
 			if(!frappe.utils.is_html(c.content)) {
 				c.content_html = frappe.markdown(__(c.content));
 			} else {
@@ -429,7 +430,7 @@ frappe.ui.form.Timeline = class Timeline {
 
 		// subject
 		c.show_subject = false;
-		if(c.subject && c.communication_type==="Communication") {
+		if(c.subject && ["Communication", "Automated Message"].includes(c.communication_type)) {
 			if(this.frm.doc.subject && !this.frm.doc.subject.includes(c.subject)) {
 				c.show_subject = true;
 			} else if(this.frm.meta.title_field && this.frm.doc[this.frm.meta.title_field]
@@ -444,6 +445,7 @@ frappe.ui.form.Timeline = class Timeline {
 	is_communication_or_comment(c) {
 		return c.communication_type==="Communication"
 		|| c.communication_type==="Feedback"
+		|| c.communication_type==="Automated Message"
 		|| (c.communication_type==="Comment" && (c.comment_type==="Comment"||c.comment_type==="Relinked"));
 	}
 
