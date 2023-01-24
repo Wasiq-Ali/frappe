@@ -76,7 +76,7 @@ def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_alr
 		args['send_after'] = send_after
 
 	set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS")
-	create_communication(args)
+	create_communication(args, automated=True)
 	queue_sms(args)
 
 	return True
@@ -190,7 +190,7 @@ def process_and_send(args):
 	run_after_send_methods(args)
 
 
-def create_communication(args):
+def create_communication(args, automated=False):
 	"""Make communication entry"""
 	if args.get('reference_doctype') and args.get('reference_name'):
 		subject = "SMS"
@@ -202,6 +202,7 @@ def create_communication(args):
 		comm = frappe.get_doc({
 			"doctype": "Communication",
 			"communication_medium": "SMS",
+			"communication_type": "Automated Message" if automated else "Communication",
 			"subject": subject or 'SMS',
 			"content": args.get('message'),
 			"sent_or_received": "Sent",

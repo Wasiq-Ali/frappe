@@ -126,7 +126,7 @@ class Communication(Document, CommunicationEmailMixin):
 		if self.reference_doctype == "Communication" and self.sent_or_received == "Sent":
 			frappe.db.set_value("Communication", self.reference_name, "status", "Replied")
 
-		if self.communication_type == "Communication":
+		if self.communication_type in ("Communication", "Feedback", "Automated Message"):
 			self.notify_change("add")
 
 		elif self.communication_type in ("Chat", "Notification"):
@@ -192,7 +192,7 @@ class Communication(Document, CommunicationEmailMixin):
 			update_parent_document_on_communication(self)
 
 	def on_trash(self):
-		if self.communication_type == "Communication":
+		if self.communication_type in ("Communication", "Feedback", "Automated Message"):
 			self.notify_change("delete")
 
 	@property
@@ -549,7 +549,7 @@ def update_parent_document_on_communication(doc):
 
 	# update parent mins_to_first_communication only if we create the Email communication
 	# ignore in case of only Comment is added
-	if doc.communication_type in ("Comment", "Feedback"):
+	if doc.communication_type in ("Comment", "Feedback", "Automated Message"):
 		return
 
 	status_field = parent.meta.get_field("status")
@@ -557,13 +557,10 @@ def update_parent_document_on_communication(doc):
 		options = (status_field.options or "").splitlines()
 
 		# if status has a "Replied" option, then update the status for received communication
-		if ("Replied" in options) and doc.sent_or_received == "Received":
+		if ("Replied" in options) and ("Open" in options) and doc.sent_or_received == "Received":
 			parent.db_set("status", "Open")
 			parent.run_method("handle_hold_time", "Replied")
 			apply_assignment_rule(parent)
-		else:
-			# update the modified date for document
-			parent.update_modified()
 
 	update_first_response_time(parent, doc)
 	set_avg_response_time(parent, doc)
