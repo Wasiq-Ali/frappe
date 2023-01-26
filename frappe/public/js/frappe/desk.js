@@ -169,9 +169,22 @@ frappe.Application = class Application {
 	}
 
 	set_route() {
-		if (frappe.boot && localStorage.getItem("session_last_route")) {
-			frappe.set_route(localStorage.getItem("session_last_route"));
-			localStorage.removeItem("session_last_route");
+		let session_last_route = localStorage.getItem("session_last_route");
+		if (frappe.boot && session_last_route) {
+			try {
+				let url = new URL(document.location.origin + session_last_route);
+				let url_search = new URLSearchParams(url.search);
+				frappe.route_options = {};
+				for (let [key, value] of url_search) {
+					frappe.route_options[key] = value;
+				}
+				frappe.set_route(url.pathname);
+			} catch (e) {
+				frappe.route_options = {};
+				frappe.set_route(session_last_route);
+			} finally {
+				localStorage.removeItem("session_last_route");
+			}
 		} else {
 			// route to home page
 			frappe.router.route();
