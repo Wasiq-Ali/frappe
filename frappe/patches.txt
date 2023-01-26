@@ -224,3 +224,4 @@ frappe.patches.v14_0.update_multistep_webforms
 frappe.patches.v14_0.drop_unused_indexes
 frappe.patches.v14_0.add_manage_subscriptions_in_navbar_settings
 frappe.patches.v14_0.set_homepage_from_desk_to_app
+frappe.patches.v14_0.disable_email_accounts_with_oauth

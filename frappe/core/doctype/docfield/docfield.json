@@ -60,6 +60,7 @@
   "width",
   "max_height",
   "description",
+  "documentation_url",
   "list__search_settings_section",
   "column_break_35",
   "permissions",
@@ -430,6 +431,7 @@
    "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Description",
+   "max_height": "3rem",
    "oldfieldname": "description",
    "oldfieldtype": "Text",
    "print_width": "300px",
@@ -554,13 +556,20 @@
    "fieldname": "is_virtual",
    "fieldtype": "Check",
    "label": "Virtual"
+  },
+  {
+   "depends_on": "eval:!in_list([\"Tab Break\", \"Section Break\", \"Column Break\", \"Button\", \"HTML\"], doc.fieldtype)",
+   "fieldname": "documentation_url",
+   "fieldtype": "Small Text",
+   "label": "Documentation URL",
+   "max_height": "3rem"
   }
  ],
  "idx": 1,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-12-18 17:31:31.520911",
+ "modified": "2023-01-26 23:49:05.140927",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocField",

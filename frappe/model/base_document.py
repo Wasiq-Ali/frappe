@@ -982,9 +982,16 @@ class BaseDocument:
 						microseconds=db_value.microsecond,
 					)
 				if self_value != db_value:
-					frappe.throw(_("Not allowed to change {0} after submission<br><br><b>Old Value:</b> {1}<br><b>New Value:</b> {2}")
-						.format(frappe.bold(df.label), frappe.format(db_value, df=df), frappe.format(self_value, df=df)),
-						frappe.UpdateAfterSubmitError)
+					frappe.throw(
+						_("{0} Not allowed to change {1} after submission from {2} to {3}").format(
+							f"Row #{self.idx}:" if self.get("parent") else "",
+							frappe.bold(_(df.label)),
+							frappe.bold(frappe.format(db_value, df=df)),
+							frappe.bold(frappe.format(self_value, df=df)),
+						),
+						frappe.UpdateAfterSubmitError,
+						title=_("Cannot Update After Submit"),
+					)
 
 	def is_disallowed_on_submit(self, fieldname):
 		doc = getattr(self, "parent_doc", None) or self
