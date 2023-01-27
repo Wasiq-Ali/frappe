@@ -430,7 +430,7 @@ frappe.ui.form.Timeline = class Timeline {
 
 		// subject
 		c.show_subject = false;
-		if(c.subject && ["Communication", "Automated Message"].includes(c.communication_type)) {
+		if(c.subject && ["Communication", "Automated Message", "Feedback"].includes(c.communication_type)) {
 			if(this.frm.doc.subject && !this.frm.doc.subject.includes(c.subject)) {
 				c.show_subject = true;
 			} else if(this.frm.meta.title_field && this.frm.doc[this.frm.meta.title_field]
