@@ -59,7 +59,7 @@ class Weekday(Enum):
 
 
 def get_first_day_of_the_week() -> str:
-	return frappe.get_system_settings("first_day_of_the_week") or "Sunday"
+	return frappe.get_system_settings("first_day_of_the_week") or "Monday"
 
 
 def get_start_of_week_index() -> int:
