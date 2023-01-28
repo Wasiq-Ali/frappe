@@ -1000,7 +1000,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			shortenYAxisNumbers: 1,
 			numberFormatter: frappe.utils.format_chart_axis_number,
 		};
-		options.height = 280;
+
+		if (options.type == "percentage") {
+			options.height = 200;
+		} else {
+			options.height = 280;
+		}
 		return options;
 	}
 
