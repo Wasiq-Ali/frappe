@@ -23,7 +23,7 @@ frappe.ui.form.ControlInt = class ControlInt extends frappe.ui.form.ControlData 
 	eval_expression(value) {
 		if (typeof value === "string") {
 			value = strip(value);
-			if (value.match(/^[0-9+\-/* .,()]+$/)) {
+			if (value.match(/^[0-9+\-/* \t.,()]+$/)) {
 				value = strip_number_groups(value);
 				// If it is a string containing operators
 				try {
