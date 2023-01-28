@@ -627,11 +627,6 @@ frappe.ui.form.Form = class FrappeForm {
 				() => this.cscript.is_onload && this.is_new() && this.focus_on_first_input(),
 				() => this.run_after_load_hook(),
 				() => this.dashboard.after_refresh(),
-				() => {
-					if (!this.hidden) {
-						this.layout.show_empty_form_message();
-					}
-				},
 			]);
 		} else {
 			this.refresh_header(switched);
