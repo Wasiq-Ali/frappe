@@ -245,7 +245,17 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 				if (me.$input.cache[doctype][term] != null) {
 					// immediately show from cache
 					me.awesomplete.list = me.$input.cache[doctype][term];
+				} else {
+					me.awesomplete.list = [{
+						value: "loading__link_option",
+						html: "<span class='text-muted link-option'>" +
+							"<i class='fa fa-clock-o' style='margin-right: 5px;'></i> " +
+								__("Loading...") +
+							"</span>",
+						is_loading: true,
+					}];
 				}
+
 				var args = {
 					txt: term,
 					doctype: doctype,
@@ -266,14 +276,29 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 						}
 						r.results = me.merge_duplicates(r.results);
 
+						if (!r.results.length) {
+							r.results.push({
+								value: "empty_result__link_option",
+								html: "<span class='text-muted link-option'>" +
+									"<i class='fa fa-circle-thin' style='margin-right: 5px;'></i> " +
+										__("Could not find any {0} {1}", [
+											__(me.get_options()),
+											term ? __("that matches your search term") : ""
+										]) +
+									"</span>",
+								is_empty_result: true,
+							});
+						}
+
 						// show filter description in awesomplete
 						if (args.filters) {
 							let filter_string = me.get_filter_description(args.filters);
 							if (filter_string) {
 								r.results.push({
-									html: `<span class="text-muted" style="line-height: 1.5">${filter_string}</span>`,
+									html: `<span class="text-muted link-option"><i class="fa fa-filter" style='margin-right: 5px;'></i>${filter_string}</span>`,
 									value: "",
 									action: () => {},
+									is_filter_description: true,
 								});
 							}
 						}
@@ -318,11 +343,16 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 							}
 						}
 						me.$input.cache[doctype][term] = r.results;
-						me.awesomplete.list = me.$input.cache[doctype][term];
+
+						let current_term = e.target.value;
+						if (current_term == term) {
+							me.awesomplete.list = me.$input.cache[doctype][term];
+						}
+
 						me.toggle_href(doctype);
 					},
 				});
-			}, 100)
+			}, 150)
 		);
 
 		this.$input.on("blur", function () {
@@ -361,6 +391,11 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 		this.$input.on("awesomplete-select", function (e) {
 			var o = e.originalEvent;
 			var item = me.awesomplete.get_item(o.text.value);
+
+			if (item.is_loading || item.is_empty_result || item.is_filter_description) {
+				e.preventDefault();
+				return false;
+			}
 
 			me.autocomplete_open = false;
 
