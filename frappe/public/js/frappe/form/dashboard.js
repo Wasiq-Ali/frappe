@@ -302,13 +302,21 @@ frappe.ui.form.Dashboard = class FormDashboard {
 		this.render_report_links();
 
 		// bind links
-		transactions_area_body.find(".badge-link").on("click", function () {
-			me.open_document_list($(this).closest(".document-link"));
+		transactions_area_body.find(".badge-link").on("click", function (e) {
+			let open_in_new_tab = false;
+			if (e.ctrlKey || e.metaKey) {
+				open_in_new_tab = true;
+			}
+			me.open_document_list($(this).closest(".document-link"), false, open_in_new_tab);
 		});
 
 		// bind open notifications
-		transactions_area_body.find(".open-notification").on("click", function () {
-			me.open_document_list($(this).parent(), true);
+		transactions_area_body.find(".open-notification").on("click", function (e) {
+			let open_in_new_tab = false;
+			if (e.ctrlKey || e.metaKey) {
+				open_in_new_tab = true;
+			}
+			me.open_document_list($(this).parent(), true, open_in_new_tab);
 		});
 
 		// bind new
@@ -342,7 +350,7 @@ frappe.ui.form.Dashboard = class FormDashboard {
 		frappe.set_route("query-report", report);
 	}
 
-	open_document_list($link, show_open) {
+	open_document_list($link, show_open, open_in_new_tab) {
 		// show document list with filters
 		let doctype = $link.attr("data-doctype"),
 			names = $link.attr("data-names") || [];
@@ -360,6 +368,9 @@ frappe.ui.form.Dashboard = class FormDashboard {
 			}
 		}
 
+		if (open_in_new_tab) {
+			frappe.open_in_new_tab = true;
+		}
 		frappe.set_route("List", doctype, "List");
 	}
 
