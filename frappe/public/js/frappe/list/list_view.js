@@ -414,8 +414,10 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		let total_fields = 6;
 
 		if (window.innerWidth <= 1366) {
-			total_fields = 4;
-		} else if (window.innerWidth >= 1920) {
+			this.page.toggle_sidebar(false);
+		}
+
+		if (window.innerWidth >= 1920) {
 			total_fields = 10;
 		}
 

@@ -3,7 +3,7 @@
 
 frappe.ui.form.on("DocType", {
 	setup: function (frm) {
-		frm.page.toggle_sidebar();
+		frm.page.toggle_sidebar(false);
 	},
 
 	refresh: function (frm) {
