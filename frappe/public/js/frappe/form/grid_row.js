@@ -60,9 +60,11 @@ export default class GridRow {
 				docfields = doc_docfields;
 			} else {
 				row_docfields.forEach((row_df) => {
-					let doc_df = doc_docfields.find((field) => field.fieldname == row_df.fieldname);
-					if (doc_df) {
-						Object.assign(row_df, doc_df);
+					if (!update) {
+						let doc_df = doc_docfields.find((field) => field.fieldname == row_df.fieldname);
+						if (doc_df) {
+							Object.assign(row_df, doc_df);
+						}
 					}
 
 					docfields.push(row_df);
@@ -1068,9 +1070,7 @@ export default class GridRow {
 
 		var me = this,
 			parent = column.field_area,
-			_df = column.df;
-
-		var df = this.grid.get_docfield(_df.fieldname) || _df;
+			df = column.df;
 
 		// no text editor in grid
 		if (df.fieldtype == "Text Editor") {

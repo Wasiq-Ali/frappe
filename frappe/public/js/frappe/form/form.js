@@ -1793,19 +1793,7 @@ frappe.ui.form.Form = class FrappeForm {
 		// get doctype from parent
 		let me = this;
 
-		let df = this.get_docfield(fieldname);
-		if (!df) {
-			frappe.meta.get_table_fields(this.doctype).every(function (table_df) {
-				df = me.get_docfield(table_df.fieldname, fieldname);
-				if (df) {
-					return false;
-				} else {
-					return true;
-				}
-			});
-		}
-
-		df.formatter = function (
+		const formatter = function (
 			value,
 			df,
 			options,
@@ -1828,6 +1816,21 @@ frappe.ui.form.Form = class FrappeForm {
 
 			return frappe.format(value, df, options, doc, true);
 		};
+
+		let parent_df = this.get_docfield(fieldname);
+		if (parent_df) {
+			parent_df.formatter = formatter;
+		} else {
+			frappe.meta.get_table_fields(this.doctype).every(function (table_df) {
+				let has_field = me.get_docfield(table_df.fieldname, fieldname);
+				if (has_field) {
+					me.fields_dict[table_df.fieldname]?.grid?.update_docfield_property(fieldname, "formatter", formatter);
+					return false;
+				} else {
+					return true;
+				}
+			});
+		}
 	}
 
 	can_create(doctype) {
