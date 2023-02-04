@@ -125,49 +125,35 @@ Object.assign(frappe.model, {
 					local_doc[fieldname] = [];
 				}
 
+				// remove extra rows from local
+				let new_docnames = doc[fieldname].map(d => d.name).filter(d => d);
+				for (let local_d of local_doc[fieldname]) {
+					if (local_d.name && !new_docnames.includes(local_d.name)) {
+						// clear from local
+						if (locals[local_d.doctype] && locals[local_d.doctype][local_d.name]) {
+							delete locals[local_d.doctype][local_d.name];
+						}
+					}
+				}
+
 				// child table, override each row and append new rows if required
 				for (let i = 0; i < doc[fieldname].length; i++) {
 					let d = doc[fieldname][i];
-					let local_d = local_doc[fieldname][i];
+					let local_d = d.name && locals[d.doctype] && locals[d.doctype][d.name];
 					if (local_d) {
-						// deleted and added again
-						if (!locals[d.doctype]) locals[d.doctype] = {};
-
-						if (!d.name) {
-							// incoming row is new, find a new name
-							d.name = frappe.model.get_new_name(doc.doctype);
-						}
-
-						// if incoming row is not registered, register it
-						if (!locals[d.doctype][d.name]) {
-							// detach old key
-							delete locals[d.doctype][local_d.name];
-
-							// re-attach with new name
-							locals[d.doctype][d.name] = local_d;
-						}
-
 						// row exists, just copy the values
 						Object.assign(local_d, d);
 						clear_keys(d, local_d);
 					} else {
-						local_doc[fieldname].push(d);
 						if (!d.parent) d.parent = doc.name;
 						frappe.model.add_to_locals(d);
 					}
+
+					local_doc[fieldname][i] = local_d || d;
 				}
 
 				// remove extra rows
-				if (local_doc[fieldname].length > doc[fieldname].length) {
-					for (let i = doc[fieldname].length; i < local_doc[fieldname].length; i++) {
-						// clear from local
-						let d = local_doc[fieldname][i];
-						if (locals[d.doctype] && locals[d.doctype][d.name]) {
-							delete locals[d.doctype][d.name];
-						}
-					}
-					local_doc[fieldname].length = doc[fieldname].length;
-				}
+				local_doc[fieldname].length = doc[fieldname].length;
 			} else {
 				// literal
 				local_doc[fieldname] = doc[fieldname];

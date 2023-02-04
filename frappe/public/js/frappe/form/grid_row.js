@@ -45,8 +45,8 @@ export default class GridRow {
 
 	set_docfields(update = false) {
 		if (this.parent_df.options) {
-			let doc_docfields = [];
-			if (this.frm) {
+			let doc_docfields = this.grid.docfields || [];
+			if (!doc_docfields.length && this.frm) {
 				doc_docfields = frappe.meta.get_docfields(this.parent_df.options, this.frm.docname) || [];
 			}
 
@@ -60,11 +60,13 @@ export default class GridRow {
 				docfields = doc_docfields;
 			} else {
 				row_docfields.forEach((row_df) => {
-					if (!update) {
+					if (!row_df.__row_df_initialized) {
 						let doc_df = doc_docfields.find((field) => field.fieldname == row_df.fieldname);
 						if (doc_df) {
 							Object.assign(row_df, doc_df);
 						}
+
+						row_df.__row_df_initialized = true;
 					}
 
 					docfields.push(row_df);
