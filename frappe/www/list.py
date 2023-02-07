@@ -105,7 +105,7 @@ def get_list_data(
 
 	_get_list = list_context.get_list or get_list
 
-	kwargs = dict(
+	list_kwargs = dict(
 		doctype=doctype,
 		txt=txt,
 		filters=filters,
@@ -116,11 +116,11 @@ def get_list_data(
 
 	# allow guest if flag is set
 	if not list_context.get_list and (list_context.allow_guest or meta.allow_guest_to_view):
-		kwargs["ignore_permissions"] = True
+		list_kwargs["ignore_permissions"] = True
 
-	raw_result = _get_list(**kwargs)
+	raw_result = _get_list(**list_kwargs)
 
-	count_kwargs = kwargs.copy()
+	count_kwargs = list_kwargs.copy()
 	count_kwargs.update(dict(
 		limit_start=0,
 		limit_page_length=None,

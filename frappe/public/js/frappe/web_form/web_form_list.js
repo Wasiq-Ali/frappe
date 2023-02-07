@@ -144,7 +144,7 @@ export default class WebFormList {
 	async get_data() {
 		let response = await this.fetch_data();
 		if (response) {
-			this.data = await response.message;
+			this.data = await response.message.raw_result;
 		}
 	}
 
@@ -154,7 +154,7 @@ export default class WebFormList {
 			if (res.message.length === 0) {
 				frappe.msgprint(__("No more items to display"));
 			}
-			this.append_rows(res.message);
+			this.append_rows(res.message.raw_result);
 		});
 	}
 
