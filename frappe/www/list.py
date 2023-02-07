@@ -30,7 +30,9 @@ def get_context(context, **dict_params):
 def get(doctype, txt=None, limit_start=0, limit=20, pathname=None, **kwargs):
 	"""Returns processed HTML page for a standard listing."""
 	limit_start = cint(limit_start)
-	raw_result = get_list_data(doctype, txt, limit_start, limit=limit + 1, **kwargs)
+	list_data = get_list_data(doctype, txt, limit_start, limit=limit + 1, **kwargs)
+
+	raw_result = list_data.raw_result
 	show_more = len(raw_result) > limit
 	if show_more:
 		raw_result = raw_result[:-1]
@@ -48,9 +50,9 @@ def get(doctype, txt=None, limit_start=0, limit=20, pathname=None, **kwargs):
 	row_template = list_context.row_template or "templates/includes/list/row_template.html"
 	list_view_fields = [df for df in meta.fields if df.in_list_view][:4]
 
-	for doc in raw_result:
+	for i, doc in enumerate(raw_result):
 		doc.doctype = doctype
-		new_context = frappe._dict(doc=doc, meta=meta, list_view_fields=list_view_fields)
+		new_context = frappe._dict(doc=doc, meta=meta, list_view_fields=list_view_fields, idx=i + 1)
 
 		if not list_context.get_list and not isinstance(new_context.doc, Document):
 			new_context.doc = frappe.get_doc(doc.doctype, doc.name)
@@ -68,6 +70,7 @@ def get(doctype, txt=None, limit_start=0, limit=20, pathname=None, **kwargs):
 
 	return {
 		"raw_result": json.dumps(raw_result, default=json_handler),
+		"list_count": cint(list_data.list_count),
 		"result": result,
 		"show_more": show_more,
 		"next_start": limit_start + limit,
@@ -117,10 +120,24 @@ def get_list_data(
 
 	raw_result = _get_list(**kwargs)
 
+	count_kwargs = kwargs.copy()
+	count_kwargs.update(dict(
+		limit_start=0,
+		limit_page_length=None,
+		fields="count(name) as count",
+		order_by=None,
+	))
+	list_count = _get_list(**count_kwargs)
+	list_count = cint(list_count[0].get("count")) if list_count else 0
+	list_context['list_count'] = list_count
+
 	# list context to be used if called as rendered list
 	frappe.flags.list_context = list_context
 
-	return raw_result
+	return frappe._dict({
+		"raw_result": raw_result,
+		"list_count": list_count,
+	})
 
 
 def set_route(context):
