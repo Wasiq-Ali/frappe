@@ -371,6 +371,9 @@ class CustomizeForm(Document):
 			d.insert_after = self.fields[i - 1].fieldname
 		d.idx = i
 
+		if df.fieldname:
+			d.fieldname = df.fieldname
+
 		d.insert()
 		df.fieldname = d.fieldname
 
