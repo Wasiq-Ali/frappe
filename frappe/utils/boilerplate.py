@@ -536,7 +536,11 @@ gitignore_template = """.DS_Store
 *.swp
 tags
 {app_name}/docs/current
-node_modules/"""
+node_modules/
+__pycache__
+.idea/
+.vscode/
+dist/"""
 
 docs_template = '''"""
 Configuration for docs
