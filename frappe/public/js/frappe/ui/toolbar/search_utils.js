@@ -209,7 +209,7 @@ frappe.search.utils = {
 						});
 					}
 
-					out.push(option("List", ["List", item], 0.05));
+					out.push(option("List", ["List", item, "List"], 0.05));
 					if (frappe.model.can_get_report(item)) {
 						out.push(option("Report", ["List", item, "Report"], 0.04));
 					}

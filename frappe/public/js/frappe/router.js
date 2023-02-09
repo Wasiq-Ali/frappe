@@ -211,14 +211,12 @@ frappe.router = {
 				route = ["Form", doctype_route.doctype, docname];
 			} else if (frappe.model.is_single(doctype_route.doctype)) {
 				route = ["Form", doctype_route.doctype, doctype_route.doctype];
-			} else if (meta.default_view) {
-				route = [
-					"List",
-					doctype_route.doctype,
-					this.list_views_route[meta.default_view.toLowerCase()],
-				];
 			} else {
-				route = ["List", doctype_route.doctype, "List"];
+				route = this.get_standard_route_for_list(
+					route,
+					doctype_route,
+					meta.default_view,
+				);
 			}
 			// reset the layout to avoid using incorrect views
 			this.doctype_layout = doctype_route.doctype_layout;
@@ -228,46 +226,50 @@ frappe.router = {
 
 	get_standard_route_for_list(route, doctype_route, default_view) {
 		let standard_route;
-		let _route = default_view || route[2] || "";
+		let _route = default_view || route[2] || "list";
 
-		if (_route.toLowerCase() === "tree") {
-			standard_route = ["Tree", doctype_route.doctype];
+		let new_route = this.list_views_route[_route.toLowerCase()];
+		let re_route = cstr(route[2]).toLowerCase() !== new_route.toLowerCase();
+
+		if (re_route) {
+			/**
+			 * In case of force_re_route, the url of the route should change,
+			 * if the _route and route[2] are different, it means there is a default_view
+			 * with force_re_route enabled.
+			 *
+			 * To change the url, to the correct view, the route[2] is changed with default_view
+			 *
+			 * Eg: If default_view is set to Report with force_re_route enabled and user routes
+			 * to List,
+			 * route: [todo, view, list]
+			 * default_view: report
+			 *
+			 * replaces the list to report and re-routes to the new route but should be replaced in
+			 * the history since the list route should not exist in history as we are rerouting it to
+			 * report
+			 */
+			frappe.route_flags.replace_route = true;
+
+			route[1] = "view"
+			route[2] = _route.toLowerCase();
+			this.set_route(route);
+		}
+
+		if (cstr(route[2]).toLowerCase() == "tree") {
+			standard_route = [
+				"Tree",
+				doctype_route.doctype,
+			];
 		} else {
-			let new_route = this.list_views_route[_route.toLowerCase()];
-			let re_route = route[2].toLowerCase() !== new_route.toLowerCase();
-
-			if (re_route) {
-				/**
-				 * In case of force_re_route, the url of the route should change,
-				 * if the _route and route[2] are different, it means there is a default_view
-				 * with force_re_route enabled.
-				 *
-				 * To change the url, to the correct view, the route[2] is changed with default_view
-				 *
-				 * Eg: If default_view is set to Report with force_re_route enabled and user routes
-				 * to List,
-				 * route: [todo, view, list]
-				 * default_view: report
-				 *
-				 * replaces the list to report and re-routes to the new route but should be replaced in
-				 * the history since the list route should not exist in history as we are rerouting it to
-				 * report
-				 */
-				frappe.route_flags.replace_route = true;
-
-				route[2] = _route.toLowerCase();
-				this.set_route(route);
-			}
-
 			standard_route = [
 				"List",
 				doctype_route.doctype,
 				this.list_views_route[_route.toLowerCase()],
 			];
-
-			// calendar / kanban / dashboard / folder
-			if (route[3]) standard_route.push(...route.slice(3, route.length));
 		}
+
+		// calendar / kanban / dashboard / folder
+		if (route[3]) standard_route.push(...route.slice(3, route.length));
 
 		return standard_route;
 	},
