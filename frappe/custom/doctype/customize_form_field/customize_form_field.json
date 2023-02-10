@@ -85,6 +85,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Field Name",
+   "no_copy": 1,
    "oldfieldname": "fieldname",
    "oldfieldtype": "Data",
    "search_index": 1
@@ -139,7 +140,7 @@
    "label": "Bold"
   },
   {
-   "default": "1",
+   "default": "0",
    "depends_on": "eval:['Data', 'Select', 'Text', 'Small Text', 'Text Editor'].includes(doc.fieldtype)",
    "fieldname": "translatable",
    "fieldtype": "Check",
@@ -437,7 +438,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-02-07 18:23:23.001586",
+ "modified": "2023-02-08 14:50:24.729897",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Customize Form Field",
