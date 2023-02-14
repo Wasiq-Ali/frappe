@@ -173,7 +173,7 @@ frappe.form.formatters = {
 			return value;
 		}
 	},
-	Date: function(value) {
+	Date: function(value, docfield, options) {
 		if (!frappe.datetime.str_to_user) {
 			return value;
 		}
@@ -185,7 +185,7 @@ frappe.form.formatters = {
 			}
 		}
 
-		return value || "";
+		return frappe.form.formatters._style(value || "", options);
 	},
 	DateRange: function(value) {
 		if($.isArray(value)) {
