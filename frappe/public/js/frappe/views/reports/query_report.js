@@ -1228,6 +1228,10 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 				};
 			}
 
+			if (this.report_settings.prepare_column) {
+				this.report_settings.prepare_column.call(this, column);
+			}
+
 			return Object.assign(column, {
 				id: column.fieldname,
 				name: __(column.label, null, `Column of report '${this.report_name}'`), // context has to match context in   get_messages_from_report in translate.py
@@ -1251,7 +1255,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_editing_object(colIndex, rowIndex, value, parent) {
-		const control = this.render_editing_input(colIndex, value, parent);
+		const control = this.render_editing_input(colIndex, rowIndex, value, parent);
 		if (!control) return false;
 
 		control.df.change = () => control.set_focus();
@@ -1294,22 +1298,27 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		});
 	}
 
-	render_editing_input(colIndex, value, parent) {
+	render_editing_input(colIndex, rowIndex, value, parent) {
 		const col = this.datatable.getColumn(colIndex);
 		let control = null;
 
-		if (col.fieldtype === 'Text Editor') {
+		if (col.custom_editor) {
+			control = col.custom_editor.call(this, col, value, rowIndex);
+		} else if (col.fieldtype === 'Text Editor') {
 			const d = new frappe.ui.Dialog({
-				title: __('Edit {0}', [col.docfield.label]),
-				fields: [col.docfield],
+				title: __('Edit {0}', [col.label]),
+				fields: [col],
 				primary_action: () => {
 					this.datatable.cellmanager.submitEditing();
 					this.datatable.cellmanager.deactivateEditing();
 					d.hide();
+				},
+				secondary_action: () => {
+					this.datatable.cellmanager.deactivateEditing(false);
 				}
 			});
 			d.show();
-			control = d.fields_dict[col.docfield.fieldname];
+			control = d.fields_dict[col.fieldname];
 		} else {
 			// make control
 			control = frappe.ui.form.make_control({
