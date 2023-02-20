@@ -76,12 +76,15 @@ $.extend(list_view, {
 	},
 
 	get_query_args: function() {
-		return $.extend(frappe.utils.get_query_params(), {
+		args = frappe.utils.get_query_params();
+
+		Object.assign(args, {
 			doctype: "{{ doctype }}",
-			txt: "{{ txt or '' }}",
 			pathname: location.pathname,
 			web_form_name: frappe.web_form_name,
 		});
+
+		return args;
 	},
 
 	clear_list: function() {
