@@ -76,7 +76,7 @@ $.extend(list_view, {
 	},
 
 	get_query_args: function() {
-		args = frappe.utils.get_query_params();
+		let args = frappe.utils.get_query_params();
 
 		Object.assign(args, {
 			doctype: "{{ doctype }}",
