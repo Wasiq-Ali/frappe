@@ -23,7 +23,8 @@
   "email_id",
   "skype",
   "map_iframe",
-  "map_url"
+  "map_url",
+  "footer_logo_detail"
  ],
  "fields": [
   {
@@ -126,13 +127,18 @@
    "fieldname": "map_url",
    "fieldtype": "Data",
    "label": "Map URL"
+  },
+  {
+   "fieldname": "footer_logo_detail",
+   "fieldtype": "Small Text",
+   "label": "Footer Logo Detail"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-03-02 17:42:32.947404",
+ "modified": "2023-02-10 15:33:51.469388",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Contact Us Settings",
@@ -160,5 +166,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
