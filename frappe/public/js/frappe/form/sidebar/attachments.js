@@ -193,6 +193,8 @@ frappe.ui.form.Attachments = class Attachments {
 		if (this.fieldname) {
 			this.frm.set_value(this.fieldname, attachment.file_url);
 		}
+
+		this.frm.trigger("on_upload_complete");
 	}
 	update_attachment(attachment) {
 		if (attachment.name) {
