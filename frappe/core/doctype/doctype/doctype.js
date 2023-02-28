@@ -105,11 +105,11 @@ frappe.ui.form.on("DocField", {
 	form_render(frm, doctype, docname) {
 		// Render two select fields for Fetch From instead of Small Text for better UX
 		let field = frm.cur_grid.grid_form.fields_dict.fetch_from;
-		$(field.input_area).hide();
-		$(field.$wrapper).find('.help-box').hide();
+		// $(field.input_area).hide();
+		// $(field.$wrapper).find('.help-box').hide();
 
-		let $doctype_select = $(`<select class="form-control">`);
-		let $field_select = $(`<select class="form-control">`);
+		let $doctype_select = $(`<select class="form-control fetch-doctype-select">`);
+		let $field_select = $(`<select class="form-control fetch-field-select">`);
 		let $wrapper = $('<div class="fetch-from-select row"><div>');
 		$wrapper.append($doctype_select, $field_select);
 		field.$input_wrapper.append($wrapper);
@@ -179,12 +179,40 @@ frappe.ui.form.on("DocField", {
 		$field_select.on("change", () => {
 			let fetch_from = `${$doctype_select.val()}.${$field_select.val()}`;
 			row.fetch_from = fetch_from;
+			refresh_field("fetch_from", row.name, "fields");
 			frm.dirty();
 		});
 
 		if (curr_value.doctype) {
 			$doctype_select.val(curr_value.doctype);
 			update_fieldname_options();
+		}
+	},
+
+	fetch_from: function (frm) {
+		var open_form = frm.open_grid_row();
+		if (!open_form) {
+			return;
+		}
+
+		let $wrapper = $(".fetch-from-select", open_form.grid_form.wrapper);
+		if (!$wrapper || !$wrapper.length) {
+			return;
+		}
+
+		let $doctype_select = $(".fetch-doctype-select", $wrapper);
+		let $field_select = $(".fetch-field-select", $wrapper);
+		if (!$doctype_select || !$field_select || !$doctype_select.length || !$field_select.length) {
+			return;
+		}
+
+		if (open_form.doc.fetch_from) {
+			let [dt, fn] = open_form.doc.fetch_from.split(".");
+			$doctype_select.val(dt || "");
+			$field_select.val(fn || "");
+		} else {
+			$doctype_select.val("");
+			$field_select.val("");
 		}
 	},
 
