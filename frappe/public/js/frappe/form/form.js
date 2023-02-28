@@ -669,6 +669,10 @@ frappe.ui.form.Form = class FrappeForm {
 		this.cleanup_refresh(this);
 	}
 
+	debounced_refresh_fields = frappe.utils.debounce(() => {
+		this.refresh_fields();
+	}, 100);
+
 	cleanup_refresh() {
 		if (this.fields_dict["amended_from"]) {
 			if (this.doc.amended_from) {
