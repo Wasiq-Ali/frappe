@@ -19,6 +19,7 @@
   "track_changes",
   "track_views",
   "allow_auto_repeat",
+  "allow_auto_value_setter",
   "allow_import",
   "fields_section_break",
   "fields",
@@ -359,6 +360,12 @@
    "fieldname": "is_calendar_and_gantt",
    "fieldtype": "Check",
    "label": "Is Calendar and Gantt"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_auto_value_setter",
+   "fieldtype": "Check",
+   "label": "Allow Auto Value Setter"
   }
  ],
  "hide_toolbar": 1,
@@ -367,7 +374,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-08-30 11:45:16.772277",
+ "modified": "2023-03-01 14:00:58.107142",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Customize Form",

@@ -580,6 +580,7 @@ doctype_properties = {
 	"track_changes": "Check",
 	"track_views": "Check",
 	"allow_auto_repeat": "Check",
+	"allow_auto_value_setter": "Check",
 	"allow_import": "Check",
 	"show_preview_popup": "Check",
 	"default_email_template": "Data",
