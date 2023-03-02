@@ -60,10 +60,13 @@ def export_fixtures(app=None):
 			if not os.path.exists(frappe.get_app_path(app, "fixtures")):
 				os.mkdir(frappe.get_app_path(app, "fixtures"))
 
+			meta = frappe.get_meta(fixture)
+			order_by = "idx, creation" if meta.istable else "creation"
+
 			export_json(
 				fixture,
 				frappe.get_app_path(app, "fixtures", frappe.scrub(fixture) + ".json"),
 				filters=filters,
 				or_filters=or_filters,
-				order_by="idx asc, creation asc",
+				order_by=order_by,
 			)
