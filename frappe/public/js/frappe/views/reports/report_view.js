@@ -663,10 +663,13 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 		const col = this.datatable.getColumn(colIndex);
 		let control = null;
 
-		if (col.docfield.fieldtype === "Text Editor") {
+		if (["Text Editor", "Code"].includes(col.docfield.fieldtype)) {
+			let df_copy = Object.assign({}, col.docfield);
+			df_copy.depends_on = null;
+
 			const d = new frappe.ui.Dialog({
 				title: __("Edit {0}", [col.docfield.label]),
-				fields: [col.docfield],
+				fields: [df_copy],
 				primary_action: () => {
 					this.datatable.cellmanager.deactivateEditing();
 					d.hide();
