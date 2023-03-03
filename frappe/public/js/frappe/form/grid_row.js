@@ -1321,7 +1321,7 @@ export default class GridRow {
 		}
 
 		if (this.frm) {
-			this.frm.script_manager.trigger(this.doc.parentfield + "_on_form_rendered");
+			this.frm.script_manager.trigger(this.doc.parentfield + "_on_form_rendered", this.doc.doctype, this.doc.name);
 			this.frm.script_manager.trigger("form_render", this.doc.doctype, this.doc.name);
 		}
 	}
