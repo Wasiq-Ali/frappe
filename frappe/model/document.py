@@ -249,9 +249,9 @@ class Document(BaseDocument):
 		self.set_docstatus()
 		self.check_if_latest()
 		self._validate_links()
-		self.apply_auto_value_setters()
 		self.check_permission("create")
 		self.run_method("before_insert")
+		self.apply_auto_value_setters()
 		self.set_new_name(set_name=set_name, set_child_names=set_child_names)
 		self.set_parent_in_children()
 		self.validate_higher_perm_levels()
@@ -332,15 +332,15 @@ class Document(BaseDocument):
 		self.set_user_and_timestamp()
 		self.set_docstatus()
 		self.check_if_latest()
-
-		if self._action != "cancel":
-			self.apply_auto_value_setters()
-
 		self.set_parent_in_children()
 		self.set_name_in_children()
 
 		self.validate_higher_perm_levels()
 		self._validate_links()
+
+		if self._action != "cancel":
+			self.apply_auto_value_setters()
+
 		self.run_before_save_methods()
 
 		if self._action != "cancel":
