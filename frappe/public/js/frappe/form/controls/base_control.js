@@ -281,6 +281,7 @@ frappe.ui.form.Control = class BaseControl {
 			}
 			this.last_value = value;
 			this.set_input(value);
+			this.grid?.set_value(this.df.fieldname, value, this.doc);
 			return Promise.resolve();
 		}
 	}
