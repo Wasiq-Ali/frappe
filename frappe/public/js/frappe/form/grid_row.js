@@ -74,6 +74,29 @@ export default class GridRow {
 			}
 
 			this.docfields = docfields;
+		} else {
+			let grid_docfields = this.grid.docfields || [];
+			let row_docfields = this.docfields || [];
+
+			let docfields = [];
+			if (!row_docfields.length) {
+				docfields = grid_docfields;
+			} else {
+				row_docfields.forEach((row_df) => {
+					if (!row_df.__row_df_initialized) {
+						let grid_df = grid_docfields.find((field) => field.fieldname == row_df.fieldname);
+						if (grid_df) {
+							row_df = Object.assign({}, grid_df);
+						}
+
+						row_df.__row_df_initialized = true;
+					}
+
+					docfields.push(row_df);
+				});
+			}
+
+			this.docfields = docfields;
 		}
 	}
 
@@ -1162,24 +1185,41 @@ export default class GridRow {
 				};
 
 				// TAB
-				if (e.which === TAB && !e.shiftKey) {
-					var last_column = me.wrapper.find(":input:enabled:last").get(0);
-					var is_last_column = $(this).attr("data-last-input") || last_column === this;
+				if (e.which === TAB) {
+					if (!e.shiftKey) {
+						let last_column = me.wrapper.find('input[type="Text"],textarea,select')
+							.filter(":visible:enabled:last").get(0);
+						let is_last_column = $(this).attr("data-last-input") || last_column === this;
 
-					if (is_last_column) {
-						// last row
-						if (me.doc.idx === values.length) {
-							setTimeout(function () {
-								me.grid.add_new_row(null, null, true);
-								me.grid.grid_rows[
-									me.grid.grid_rows.length - 1
-								].toggle_editable_row();
-								me.grid.set_focus_on_row();
-							}, 100);
-						} else {
-							// last column before last row
-							me.grid.grid_rows[me.doc.idx].toggle_editable_row();
-							me.grid.set_focus_on_row(me.doc.idx);
+						if (is_last_column) {
+							// last row
+							if (me.doc.idx === values.length) {
+								setTimeout(function () {
+									me.grid.add_new_row(null, null, true);
+									me.grid.grid_rows[me.grid.grid_rows.length - 1].toggle_editable_row();
+									me.grid.set_focus_on_row();
+								}, 100);
+							} else {
+								// last column before last row
+								if (e.target) {
+									e.target.blur();
+								}
+								me.grid.grid_rows[me.doc.idx].toggle_editable_row();
+								me.grid.set_focus_on_row(me.doc.idx);
+								return false;
+							}
+						}
+					} else {
+						let first_column = me.wrapper.find('input[type="Text"],textarea,select')
+							.filter(":not(.grid-row-check):visible:enabled:first").get(0);
+						let is_first_column = first_column === this;
+						if (is_first_column && me.doc.idx > 1) {
+							// first column of non first row
+							if (e.target) {
+								e.target.blur();
+							}
+							me.grid.grid_rows[me.doc.idx-2].toggle_editable_row();
+							me.grid.set_focus_on_row(me.doc.idx-2, true);
 							return false;
 						}
 					}
@@ -1417,12 +1457,13 @@ export default class GridRow {
 	}
 
 	bind_onchange(df) {
+		let me = this;
 		if (!df.onchange_modified) {
 			var field_on_change_function = df.onchange;
-			df.onchange = (e) => {
+			df.onchange = function (e) {
 				field_on_change_function && field_on_change_function.apply(this, [e]);
-				this.refresh_field(df.fieldname);
-			};
+				me.refresh_field(df.fieldname);
+			}
 
 			df.onchange_modified = true;
 		}

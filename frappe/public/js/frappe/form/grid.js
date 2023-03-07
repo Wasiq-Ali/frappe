@@ -885,15 +885,14 @@ export default class Grid {
 		return d;
 	}
 
-	set_focus_on_row(idx) {
-		let me = this;
+	set_focus_on_row(idx, last_column) {
 		if (!idx && idx !== 0) {
 			idx = this.grid_rows.length - 1;
 		}
 
 		this.grid_rows[idx].row
 			.find('input[type="Text"],textarea,select')
-			.filter(":visible:first")
+			.filter(":not(.grid-row-check):visible:enabled" + (last_column ? ":last" : ":first"))
 			.focus();
 	}
 
