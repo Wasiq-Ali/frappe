@@ -465,16 +465,20 @@ frappe.ui.form.MultiSelectDialog = class MultiSelectDialog {
 
 		let contents = ``;
 		this.get_datatable_columns().forEach(function (column) {
+			let df = frappe.meta.get_docfield(me.doctype, column);
+			let label = df ? df.label : frappe.model.unscrub(column);
+			let formatted_value = df && !head && result[column] ? frappe.format(result[column], df, null, result) : result[column] || "";
+
 			contents += `<div class="list-item__content ellipsis">
 				${
 					head
 						? `<span class="ellipsis text-muted" title="${__(
-								frappe.model.unscrub(column)
-						  )}">${__(frappe.model.unscrub(column))}</span>`
+								label
+						  )}">${__(label)}</span>`
 						: column !== "name"
 						? `<span class="ellipsis result-row" title="${__(
-								result[column] || ""
-						  )}">${__(result[column] || "")}</span>`
+								formatted_value
+						  )}">${__(formatted_value)}</span>`
 						: `<a href="${
 								"/app/" + frappe.router.slug(me.doctype) + "/" + result[column] ||
 								""
@@ -554,8 +558,12 @@ frappe.ui.form.MultiSelectDialog = class MultiSelectDialog {
 
 		if ($.isArray(this.setters)) {
 			for (let df of this.setters) {
-				filters[df.fieldname] =
-					me.dialog.fields_dict[df.fieldname].get_value() || undefined;
+				if (df.fieldtype == "DateRange" && me.dialog.fields_dict[df.fieldname].get_value()) {
+					filters[df.fieldname] = ['between', me.dialog.fields_dict[df.fieldname].get_value()];
+				} else {
+					filters[df.fieldname] = me.dialog.fields_dict[df.fieldname].get_value() || undefined;
+				}
+
 				me.args[df.fieldname] = filters[df.fieldname];
 				filter_fields.push(df.fieldname);
 			}
@@ -597,6 +605,7 @@ frappe.ui.form.MultiSelectDialog = class MultiSelectDialog {
 			page_length: this.page_length + 5,
 			query: this.get_query ? this.get_query().query : "",
 			as_dict: 1,
+			format_values: 0,
 		};
 	}
 

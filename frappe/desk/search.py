@@ -61,6 +61,7 @@ def search_widget(
 	as_dict=False,
 	reference_doctype=None,
 	ignore_user_permissions=False,
+	format_values=True,
 ):
 
 	start = cint(start)
@@ -83,6 +84,10 @@ def search_widget(
 			frappe.response["values"] = frappe.call(
 				query, doctype, txt, searchfield, start, page_length, filters, as_dict=as_dict
 			)
+
+			if cint(format_values):
+				format_response_values(as_dict)
+
 		except frappe.exceptions.PermissionError as e:
 			if frappe.local.conf.developer_mode:
 				raise e
@@ -230,20 +235,32 @@ def search_widget(
 				if as_dict:
 					for r in values:
 						r.pop("_relevance")
-
-					# format values
-					for i, r in enumerate(values):
-						formatted_row = {k: frappe.format(v) if v else v for k, v in r.items()}
-						values[i] = formatted_row
 				else:
 					values = [r[:-1] for r in values]
 
-					# format values
-					for i, r in enumerate(values):
-						formatted_row = [frappe.format(v) if v else v for v in r]
-						values[i] = formatted_row
-
 			frappe.response["values"] = values
+
+			if cint(format_values):
+				format_response_values(as_dict)
+
+
+def format_response_values(as_dict):
+	values = frappe.response.get("values")
+	if not values:
+		return
+
+	formatted_values = []
+
+	if as_dict:
+		for i, r in enumerate(values):
+			formatted_row = {k: frappe.format(v) if v else v for k, v in r.items()}
+			formatted_values.append(formatted_row)
+	else:
+		for i, r in enumerate(values):
+			formatted_row = [frappe.format(v) if v else v for v in r]
+			formatted_values.append(formatted_row)
+
+	frappe.response["values"] = formatted_values
 
 
 def get_std_fields_list(meta, key):
