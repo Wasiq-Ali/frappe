@@ -40,6 +40,7 @@ $.extend(list_view, {
 					list_view.clear_list();
 					list_view.append_list(r.message.result);
 					list_view.toggle_show_more_button(r.message.show_more);
+					list_view.toggle_empty_result(!r.message.result.length);
 
 					opts.callback && opts.callback(r);
 				}
@@ -112,6 +113,11 @@ $.extend(list_view, {
 		if (btn) {
 			$(btn).prop("disabled", list_view.loading);
 		}
+	},
+
+	toggle_empty_result: function(is_empty) {
+		$(".empty-apps-state").toggleClass("hide", !is_empty);
+		$(".website-list").toggleClass("hide", !!is_empty);
 	}
 });
 
