@@ -209,6 +209,7 @@ frappe.render_pdf = function (html, opts = {}) {
 			document.body.appendChild(hidden_a_tag);
 			hidden_a_tag.style = "display: none";
 			hidden_a_tag.href = objectUrl;
+			hidden_a_tag.target = "_blank";
 			hidden_a_tag.download = opts.report_name || "report.pdf";
 
 			// Open report in a new window

@@ -1463,7 +1463,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 		this.make_access_log("Print", "PDF");
 		frappe.render_grid({
-			template: print_settings.columns ? "print_grid" : custom_format,
+			template: custom_format && !print_settings.columns?.length ? custom_format : "print_grid",
 			title: __(this.report_name),
 			subtitle: filters_html,
 			print_settings: print_settings,
@@ -1487,7 +1487,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		const applied_filters = this.get_filter_values();
 
 		const filters_html = this.get_filters_html_for_print();
-		const template = print_settings.columns || !custom_format ? "print_grid" : custom_format;
+		const template = custom_format && !print_settings.columns?.length ? custom_format : "print_grid";
 		const content = frappe.render_template(template, {
 			title: __(this.report_name),
 			subtitle: filters_html,
@@ -1528,9 +1528,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		const applied_filters = this.get_filter_values();
 		return Object.keys(applied_filters)
 			.map((fieldname) => {
-				const label = frappe.query_report.get_filter(fieldname).df.label;
+				const df = frappe.query_report.get_filter(fieldname).df;
 				const value = applied_filters[fieldname];
-				return `<h6>${__(label)}: ${value}</h6>`;
+				return `<h6>${__(df.label)}: ${frappe.format(value, df, null, applied_filters)}</h6>`;
 			})
 			.join("");
 	}
