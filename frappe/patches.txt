@@ -172,7 +172,7 @@ execute:frappe.delete_doc("DocType", "Footer Item")
 execute:frappe.reload_doctype('user')
 execute:frappe.reload_doctype('docperm')
 frappe.patches.v13_0.replace_field_target_with_open_in_new_tab
-frappe.core.doctype.role.patches.v13_set_default_desk_properties
+frappe.core.doctype.role.patches.v13_set_default_desk_properties # 22-03-2023
 frappe.patches.v13_0.add_switch_theme_to_navbar_settings
 frappe.patches.v13_0.update_icons_in_customized_desk_pages
 execute:frappe.db.set_default('desktop:home_page', 'space')
