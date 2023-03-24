@@ -1446,6 +1446,7 @@ export default class GridRow {
 		if (field) {
 			field.docname = this.doc.name;
 			field.df = df;
+			field.doc = this.doc;
 			this.bind_onchange(field.df);
 			field.refresh();
 		}
