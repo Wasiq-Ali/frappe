@@ -379,11 +379,13 @@ class Document(BaseDocument):
 					"doctype": "File",
 					"file_url": attach_item.file_url,
 					"file_name": attach_item.file_name,
+					"is_private": attach_item.is_private,
 					"attached_to_name": self.name,
 					"attached_to_doctype": self.doctype,
 					"folder": "Home/Attachments",
 				}
 			)
+			_file.flags.is_amended = True
 			_file.save()
 
 	def update_children(self):

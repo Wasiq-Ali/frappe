@@ -314,7 +314,7 @@ export default {
 						file_obj: file,
 						cropper_file: file,
 						crop_box_data: null,
-						optimize: size_kb > 200 && is_image && !file.type.includes('svg'),
+						optimize: 0,
 						name: file.name,
 						doc: null,
 						progress: 0,

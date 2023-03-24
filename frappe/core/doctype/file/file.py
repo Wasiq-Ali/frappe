@@ -58,6 +58,7 @@ class File(Document):
 
 	def before_insert(self):
 		self.set_folder_name()
+		self.set_is_private()
 		self.set_file_name()
 		self.validate_attachment_limit()
 
@@ -74,7 +75,6 @@ class File(Document):
 	def after_insert(self):
 		if not self.is_folder:
 			self.create_attachment_record()
-		self.set_is_private()
 		self.set_file_name()
 		self.validate_duplicate_entry()
 
@@ -553,8 +553,8 @@ class File(Document):
 
 		# transform file content based on site settings
 		if (
-			self.content_type
-			and self.content_type == "image/jpeg"
+			not self.flags.is_amended and not self.flags.is_copied
+			and self.content_type and self.content_type == "image/jpeg"
 			and frappe.get_system_settings("strip_exif_metadata_from_uploaded_images")
 		):
 			self._content = strip_exif_data(self._content, self.content_type)
