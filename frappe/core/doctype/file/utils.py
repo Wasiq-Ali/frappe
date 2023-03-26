@@ -326,6 +326,7 @@ def attach_files_to_document(doc: "File", event) -> None:
 			attached_to_field=df.fieldname,
 			folder="Home/Attachments",
 		)
+		file.flags.is_copied = True
 		try:
 			file.insert(ignore_permissions=True)
 		except Exception:
