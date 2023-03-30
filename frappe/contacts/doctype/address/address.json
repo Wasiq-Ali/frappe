@@ -85,7 +85,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "state",
    "fieldtype": "Data",
-   "label": "Province/Status"
+   "label": "Province/State"
   },
   {
    "allow_in_quick_entry": 1,
@@ -178,7 +178,7 @@
  "icon": "fa fa-map-marker",
  "idx": 5,
  "links": [],
- "modified": "2020-10-21 16:14:37.284830",
+ "modified": "2023-03-30 14:57:52.735069",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Address",
@@ -275,5 +275,6 @@
  "search_fields": "address_line1, address_line2, city, country",
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
