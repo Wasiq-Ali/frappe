@@ -8,15 +8,11 @@
  "engine": "InnoDB",
  "field_order": [
   "subject",
-  "section_break_8",
   "content",
-  "column_break_5",
-  "additional_info",
-  "communication_date",
-  "column_break_7",
-  "operation",
-  "status",
   "reference_section",
+  "user",
+  "full_name",
+  "column_break_5",
   "reference_doctype",
   "reference_name",
   "reference_owner",
@@ -25,8 +21,12 @@
   "timeline_name",
   "link_doctype",
   "link_name",
-  "user",
-  "full_name"
+  "additional_info",
+  "communication_date",
+  "column_break_7",
+  "operation",
+  "status",
+  "section_break_8"
  ],
  "fields": [
   {
@@ -52,7 +52,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "collapsible": 1,
    "fieldname": "additional_info",
    "fieldtype": "Section Break",
    "label": "More Information"
@@ -81,7 +80,6 @@
    "options": "\nSuccess\nFailed\nLinked\nClosed"
   },
   {
-   "collapsible": 1,
    "fieldname": "reference_section",
    "fieldtype": "Section Break",
    "label": "Reference"
@@ -154,13 +152,13 @@
    "fieldname": "full_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Full Name"
+   "label": "User Name"
   }
  ],
  "icon": "fa fa-comment",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-09-13 15:19:42.474114",
+ "modified": "2023-03-31 23:35:19.178108",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Activity Log",
