@@ -423,19 +423,19 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 		this.columns = this.columns.slice(0, this.list_view_settings.total_fields || total_fields);
 
-		if (
-			!this.settings.hide_name_column &&
-			this.meta.title_field &&
-			this.meta.title_field !== "name"
-		) {
-			this.columns.push({
-				type: "Field",
-				df: {
-					label: __("ID"),
-					fieldname: "name",
-				},
-			});
-		}
+		// if (
+		// 	!this.settings.hide_name_column &&
+		// 	this.meta.title_field &&
+		// 	this.meta.title_field !== "name"
+		// ) {
+		// 	this.columns.push({
+		// 		type: "Field",
+		// 		df: {
+		// 			label: __("ID"),
+		// 			fieldname: "name",
+		// 		},
+		// 	});
+		// }
 	}
 
 	reorder_listview_fields() {
@@ -659,6 +659,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 					"list-row-col ellipsis",
 					col.type == "Subject" ? "list-subject level" : "hidden-xs",
 					col.type == "Tag" ? "tag-col hide" : "",
+					col.type == "Status" ? "list-row-status" : "",
 					frappe.model.is_numeric_field(col.df) || col.df?.fieldname == "name" ? "text-right" : "",
 				].join(" ");
 
@@ -728,7 +729,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	get_column_html(col, doc) {
 		if (col.type === "Status") {
 			return `
-				<div class="list-row-col hidden-xs ellipsis">
+				<div class="list-row-col list-row-status hidden-xs ellipsis">
 					${this.get_indicator_html(doc)}
 				</div>
 			`;
@@ -770,6 +771,8 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 							aria-valuemin="0" aria-valuemax="100" style="width: ${Math.round(value)}%;">
 						</div>
 					</div>`;
+			} else if (df.fieldname === "name" && doc[this.meta.title_field || ''] === doc.name) {
+				return "";
 			} else {
 				return frappe.format(value, df, {'no_newlines': 1}, doc);
 			}
@@ -887,6 +890,20 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	get_meta_html(doc) {
 		let html = "";
 
+		if (!this.settings.hide_name_column
+			&& this.meta.title_field
+			&& this.meta.title_field !== "name"
+			&& doc[this.meta.title_field || ""] !== doc.name
+		) {
+			html += `
+				<div class="level-item list-row-id hidden-xs hidden-sm ellipsis mr-md-2 mr-lg-0">
+					<a class="ellipsis" href="${this.get_form_link(doc)}">
+						${doc.name}
+					</a>
+				</div>
+			`;
+		}
+
 		let settings_button = null;
 		if (this.settings.button && this.settings.button.show(doc)) {
 			settings_button = `
@@ -903,8 +920,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		const modified = comment_when(doc.modified, true);
 
 		let assigned_to = `<div class="list-assignments">
-			<span class="avatar avatar-small">
-			<span class="avatar-empty"></span>
+			<div class="avatar-group right">
+				<span class="avatar avatar-small">
+					<span class="avatar-empty"></span>
+				</span>
+			</div>
 		</div>`;
 
 		let assigned_users = JSON.parse(doc._assign || "[]");
@@ -914,8 +934,9 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				</div>`;
 		}
 
-		const comment_count = `<span class="comment-count">
-				${frappe.utils.icon("small-message")}
+		const comment_count = `<span class="comment-count ${doc._comment_count > 0 ? "bold" : "text-faded"}">
+				${frappe.utils.icon("small-message", "sm", "",
+					doc._comment_count > 0 ? "" : "stroke: var(--text-faded)")}
 				${doc._comment_count > 99 ? "99+" : doc._comment_count || 0}
 			</span>`;
 

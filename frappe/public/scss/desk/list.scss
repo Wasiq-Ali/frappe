@@ -111,8 +111,8 @@
 		min-width: 80%;
 	}
 	.level-right {
-		flex: 1.5;
-		overflow: visible;
+		flex: 2;
+		//overflow: visible;
 	}
 
 	.tag-col {
@@ -139,7 +139,7 @@
 			display: inline-block;
 
 			&:not(:last-child) {
-				margin-right: 15px;
+				margin-right: var(--margin-xs);
 			}
 		}
 
@@ -151,11 +151,21 @@
 			font-size: var(--text-xs);
 			white-space: nowrap;
 			min-width: 30px;
+			text-align: center;
 		}
 
 		.list-assignments, .list-actions {
-			margin-right: var(--margin-md);
+			margin-right: var(--margin-xs);
 		}
+	}
+
+	.list-row-id {
+		flex-grow: 0;
+		flex-shrink: 1;
+	}
+
+	.list-row-status {
+		flex: 0.75;
 	}
 
 	.tag-pill {
