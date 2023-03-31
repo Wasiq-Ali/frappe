@@ -96,7 +96,7 @@
 	cursor: pointer;
 	transition: color 0.2s;
 	-webkit-transition: color 0.2s;
-	font-size: var(--text-md);
+	font-size: var(--text-sm);
 
 	&:hover:not(.list-row-head) {
 		background-color: var(--highlight-color);
@@ -326,7 +326,7 @@ input.list-check-all {
 	height: 40px;
 	padding-left: 15px;
 
-	font-size: var(--text-md);
+	font-size: var(--text-sm);
 
 	&:hover {
 		background-color: var(--highlight-color);
