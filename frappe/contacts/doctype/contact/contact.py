@@ -6,7 +6,7 @@ from frappe.contacts.address_and_contact import set_link_title
 from frappe.core.doctype.dynamic_link.dynamic_link import deduplicate_dynamic_links
 from frappe.model.document import Document
 from frappe.model.naming import append_number_if_name_exists
-from frappe.utils import cstr, has_gravatar, cint
+from frappe.utils import cstr, has_gravatar, cint, clean_whitespace
 
 
 class Contact(Document):
@@ -25,6 +25,7 @@ class Contact(Document):
 			break
 
 	def validate(self):
+		self.clean_contact_name()
 		self.clean_numbers_and_emails()
 		self.remove_duplicates()
 		self.set_primary_email()
@@ -59,6 +60,15 @@ class Contact(Document):
 						doc.notify_update()
 				except ImportError:
 					pass
+
+	def clean_contact_name(self):
+		self.first_name = clean_whitespace(self.first_name)
+		self.middle_name = clean_whitespace(self.middle_name)
+		self.last_name = clean_whitespace(self.last_name)
+
+		if not self.last_name and self.middle_name:
+			self.last_name = self.middle_name
+			self.middle_name = ""
 
 	def clean_numbers_and_emails(self):
 		self.mobile_no = cstr(self.mobile_no).strip()
