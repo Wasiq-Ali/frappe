@@ -4,40 +4,43 @@
 from jinja2 import TemplateSyntaxError
 
 import frappe
-from frappe import _, throw
+from frappe import _
 from frappe.contacts.address_and_contact import set_link_title
 from frappe.core.doctype.dynamic_link.dynamic_link import deduplicate_dynamic_links
 from frappe.model.document import Document
-from frappe.model.naming import make_autoname
-from frappe.utils import cstr, cint
+from frappe.utils import cint, clean_whitespace
 
 
 class Address(Document):
 	def __setup__(self):
 		self.flags.linked = False
 
-	def autoname(self):
-		if not self.address_title:
-			if self.links:
-				self.address_title = self.links[0].link_name
-
-		if self.address_title:
-			self.name = cstr(self.address_title).strip() + "-" + cstr(_(self.address_type)).strip()
-			if frappe.db.exists("Address", self.name):
-				self.name = make_autoname(
-					cstr(self.address_title).strip() + "-" + cstr(self.address_type).strip() + "-.#"
-				)
-		else:
-			throw(_("Address Title is mandatory."))
-
 	def validate(self):
+		self.clean_address()
 		self.link_address()
 		self.validate_preferred_address()
 		set_link_title(self)
 		deduplicate_dynamic_links(self)
 
+	def before_save(self):
+		if not self.address_title:
+			if self.links:
+				self.address_title = self.links[0].link_title or self.links[0].link_name
+				self.address_title = clean_whitespace(self.address_title)
+
 	def on_update(self):
 		self.update_primary_address_in_linked_docs()
+
+	def clean_address(self):
+		fields = [
+			"address_title",
+			"address_line1", "address_line2", "address_line3",
+			"city", "state", "pincode"
+		]
+
+		for f in fields:
+			if self.meta.has_field(f) and self.get(f):
+				self.set(f, clean_whitespace(self.get(f)))
 
 	def update_primary_address_in_linked_docs(self):
 		from frappe.model.base_document import get_controller
@@ -247,60 +250,54 @@ def get_company_address(company, shipping_address=False):
 @frappe.whitelist()
 @frappe.validate_and_sanitize_search_inputs
 def address_query(doctype, txt, searchfield, start, page_len, filters):
-	from frappe.desk.reportview import get_match_cond
+	from frappe.desk.reportview import get_match_cond, get_filters_cond
 
 	doctype = "Address"
 	link_doctype = filters.pop("link_doctype")
 	link_name = filters.pop("link_name")
 
-	condition = ""
 	meta = frappe.get_meta(doctype)
-	for fieldname, value in filters.items():
-		if meta.get_field(fieldname) or fieldname in frappe.db.DEFAULT_COLUMNS:
-			condition += f" and {fieldname}={frappe.db.escape(value)}"
-
 	searchfields = meta.get_search_fields()
-
-	if searchfield and (meta.get_field(searchfield) or searchfield in frappe.db.DEFAULT_COLUMNS):
+	if searchfield and searchfield not in searchfields and \
+			(meta.get_field(searchfield) or searchfield in frappe.db.DEFAULT_COLUMNS):
 		searchfields.append(searchfield)
 
-	search_condition = ""
-	for field in searchfields:
-		if search_condition == "":
-			search_condition += f"`tabAddress`.`{field}` like %(txt)s"
-		else:
-			search_condition += f" or `tabAddress`.`{field}` like %(txt)s"
+	fields = ["name"] + searchfields
+	fields = frappe.utils.unique(fields)
+	fields = ", ".join(["`tabAddress`.{0}".format(f) for f in fields])
 
-	return frappe.db.sql("""select
-			`tabAddress`.name, `tabAddress`.address_line1, `tabAddress`.address_line2,
-			`tabAddress`.city, `tabAddress`.country
-		from
-			`tabAddress`, `tabDynamic Link`
-		where
-			`tabDynamic Link`.parent = `tabAddress`.name and
-			`tabDynamic Link`.parenttype = 'Address' and
-			`tabDynamic Link`.link_doctype = %(link_doctype)s and
-			`tabDynamic Link`.link_name = %(link_name)s and
-			ifnull(`tabAddress`.disabled, 0) = 0 and
-			({search_condition})
-			{mcond} {condition}
+	search_condition = " or ".join(["`tabAddress`.{0}".format(field) + " like %(txt)s" for field in searchfields])
+
+	return frappe.db.sql("""
+		select {fields}
+		from `tabAddress`, `tabDynamic Link`
+		where `tabDynamic Link`.parent = `tabAddress`.name
+			and `tabDynamic Link`.parenttype = 'Address'
+			and `tabDynamic Link`.link_doctype = %(link_doctype)s
+			and `tabDynamic Link`.link_name = %(link_name)s
+			and `tabAddress`.disabled = 0
+			and ({scond})
+			{fcond} {mcond}
 		order by
 			if(locate(%(_txt)s, `tabAddress`.name), locate(%(_txt)s, `tabAddress`.name), 99999),
-			`tabAddress`.idx desc, `tabAddress`.name
-		limit %(start)s, %(page_len)s """.format(
-			mcond=get_match_cond(doctype),
-			search_condition=search_condition,
-			condition=condition or "",
-		),
-		{
-			"txt": "%" + txt + "%",
-			"_txt": txt.replace("%", ""),
-			"start": start,
-			"page_len": page_len,
-			"link_name": link_name,
-			"link_doctype": link_doctype,
-		},
-	)
+			if(locate(%(_txt)s, `tabAddress`.address_line1), locate(%(_txt)s, `tabAddress`.address_line1), 99999),
+			if(locate(%(_txt)s, `tabAddress`.address_line2), locate(%(_txt)s, `tabAddress`.address_line2), 99999),
+			`tabAddress`.idx desc,
+			`tabAddress`.name
+		limit %(start)s, %(page_len)s
+	""".format(
+		fields=fields,
+		mcond=get_match_cond(doctype),
+		scond=search_condition,
+		fcond=get_filters_cond(doctype, filters, []),
+	), {
+		"txt": "%" + txt + "%",
+		"_txt": txt.replace("%", ""),
+		"start": start,
+		"page_len": page_len,
+		"link_name": link_name,
+		"link_doctype": link_doctype,
+	})
 
 
 def get_condensed_address(doc):

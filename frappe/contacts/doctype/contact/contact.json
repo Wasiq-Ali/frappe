@@ -2,7 +2,7 @@
  "actions": [],
  "allow_events_in_timeline": 1,
  "allow_import": 1,
- "allow_rename": 1,
+ "autoname": "CONT-.#####",
  "creation": "2013-01-10 16:34:32",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -12,8 +12,7 @@
   "first_name",
   "middle_name",
   "last_name",
-  "sync_with_google_contacts",
-  "unsubscribed",
+  "full_name",
   "column_break_6",
   "salutation",
   "gender",
@@ -23,6 +22,8 @@
   "mobile_no_2",
   "phone",
   "email_id",
+  "sync_with_google_contacts",
+  "unsubscribed",
   "image",
   "sb_00",
   "google_contacts",
@@ -98,7 +99,6 @@
    "default": "Passive",
    "fieldname": "status",
    "fieldtype": "Select",
-   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
    "options": "Passive\nOpen\nReplied"
@@ -193,7 +193,7 @@
   {
    "fieldname": "email_ids",
    "fieldtype": "Table",
-   "label": "Email IDs",
+   "label": "Email Addresses",
    "options": "Contact Email"
   },
   {
@@ -279,6 +279,12 @@
   {
    "fieldname": "col_break_31",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "label": "Full Name",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-user",
@@ -286,11 +292,11 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2020-08-27 14:12:09.906719",
+ "modified": "2023-04-11 01:27:04.804177",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
- "name_case": "Title Case",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -378,8 +384,10 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "first_name, middle_name, last_name, email_id, mobile_no, mobile_no_2, phone, tax_cnic",
+ "search_fields": "full_name, email_id, mobile_no, mobile_no_2, phone, tax_cnic",
  "sort_field": "modified",
  "sort_order": "ASC",
+ "states": [],
+ "title_field": "full_name",
  "track_changes": 1
 }

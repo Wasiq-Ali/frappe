@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_import": 1,
- "allow_rename": 1,
+ "autoname": "ADDR-.#####",
  "creation": "2013-01-10 16:34:32",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -56,6 +56,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "address_line1",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Address Line 1",
    "reqd": 1
   },
@@ -101,9 +102,7 @@
   {
    "fieldname": "pincode",
    "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Postal Code",
-   "search_index": 1
+   "label": "Postal Code"
   },
   {
    "fieldname": "column_break0",
@@ -178,11 +177,11 @@
  "icon": "fa fa-map-marker",
  "idx": 5,
  "links": [],
- "modified": "2023-03-30 14:57:52.735069",
+ "modified": "2023-04-11 00:52:42.375775",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Address",
- "name_case": "Title Case",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -276,5 +275,6 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
+ "title_field": "address_title",
  "track_changes": 1
 }

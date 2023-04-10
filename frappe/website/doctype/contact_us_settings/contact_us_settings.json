@@ -85,12 +85,12 @@
   {
    "fieldname": "state",
    "fieldtype": "Data",
-   "label": "State"
+   "label": "Province/State"
   },
   {
    "fieldname": "pincode",
    "fieldtype": "Data",
-   "label": "Pincode"
+   "label": "Postal Code"
   },
   {
    "fieldname": "country",
@@ -109,7 +109,7 @@
   {
    "fieldname": "email_id",
    "fieldtype": "Data",
-   "label": "Email Id",
+   "label": "Email Address",
    "options": "Email"
   },
   {
@@ -132,7 +132,7 @@
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-02-20 13:19:31.990922",
+ "modified": "2023-04-11 01:02:44.532889",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Contact Us Settings",
