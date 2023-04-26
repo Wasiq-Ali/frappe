@@ -29,6 +29,8 @@ def get_context(context, **dict_params):
 @frappe.whitelist(allow_guest=True)
 def get(doctype, txt=None, limit_start=0, limit=20, pathname=None, **kwargs):
 	"""Returns processed HTML page for a standard listing."""
+	limit = cint(limit)
+
 	limit_start = cint(limit_start)
 	list_data = get_list_data(doctype, txt, limit_start, limit=limit + 1, **kwargs)
 
@@ -124,7 +126,7 @@ def get_list_data(
 	count_kwargs.update(dict(
 		limit_start=0,
 		limit_page_length=None,
-		fields="count(name) as count",
+		fields=f"count(`tab{doctype}`.name) as count",
 		order_by=None,
 	))
 	list_count = _get_list(**count_kwargs)
@@ -233,6 +235,7 @@ def get_list(
 	ignore_permissions=False,
 	fields=None,
 	order_by=None,
+	debug=False,
 ):
 	meta = frappe.get_meta(doctype)
 	if not filters:
@@ -263,4 +266,5 @@ def get_list(
 		limit_page_length=limit_page_length,
 		ignore_permissions=ignore_permissions,
 		order_by=order_by,
+		debug=debug,
 	)
