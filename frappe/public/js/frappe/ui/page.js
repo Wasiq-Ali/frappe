@@ -331,8 +331,7 @@ frappe.ui.Page = class Page {
 	}
 
 	clear_action_of(btn) {
-		btn.addClass("hide").unbind("click").
-		moveAttr("data-working-label");
+		btn.addClass("hide").unbind("click").removeAttr("data-working-label");
 	}
 
 	clear_primary_action() {
