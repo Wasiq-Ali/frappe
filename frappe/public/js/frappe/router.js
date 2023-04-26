@@ -40,6 +40,7 @@ $("body").on("click", "a", function (e) {
 	};
 
 	const target_element = e.currentTarget;
+	const target = target_element.getAttribute("target");
 	const href = target_element.getAttribute("href");
 	const is_on_same_host = target_element.hostname === window.location.hostname;
 
@@ -50,6 +51,10 @@ $("body").on("click", "a", function (e) {
 		e.metaKey || // open in a new tab
 		href === "#" // hash is home
 	) {
+		return;
+	}
+
+	if (target && target != "_self") {
 		return;
 	}
 
