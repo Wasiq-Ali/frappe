@@ -30,8 +30,10 @@ def execute():
 	for old_name in addresses:
 		new_name = make_autoname(address_series)
 		frappe.rename_doc("Address", old_name, new_name, force=True, rebuild_search=False)
+		frappe.db.commit()
 
 	print("Renaming {0} Contacts".format(len(contacts)))
 	for old_name in contacts:
 		new_name = make_autoname(contact_series)
 		frappe.rename_doc("Contact", old_name, new_name, force=True, rebuild_search=False)
+		frappe.db.commit()
