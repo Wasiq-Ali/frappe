@@ -79,7 +79,7 @@
 }
 
 .layout-main-section.frappe-card {
-	overflow: hidden;
+	// overflow: hidden;
 	@include card($padding: 0px);
 }
 
