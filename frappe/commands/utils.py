@@ -22,7 +22,11 @@ DATA_IMPORT_DEPRECATION = (
 @click.option("--app", help="Build assets for app")
 @click.option("--apps", help="Build assets for specific apps")
 @click.option(
-	"--hard-link", is_flag=True, default=False, help="Copy the files instead of symlinking"
+	"--hard-link",
+	is_flag=True,
+	default=False,
+	help="Copy the files instead of symlinking",
+	envvar="FRAPPE_HARD_LINK_ASSETS",
 )
 @click.option(
 	"--make-copy",
@@ -558,7 +562,7 @@ def _psql():
 @pass_context
 def jupyter(context):
 	installed_packages = (
-		r.split("==")[0]
+		r.split("==", 1)[0]
 		for r in subprocess.check_output([sys.executable, "-m", "pip", "freeze"], encoding="utf8")
 	)
 
@@ -889,7 +893,7 @@ def run_ui_tests(
 
 	os.chdir(app_base_path)
 
-	node_bin = subprocess.getoutput("npm bin")
+	node_bin = subprocess.getoutput("yarn bin")
 	cypress_path = f"{node_bin}/cypress"
 	drag_drop_plugin_path = f"{node_bin}/../@4tw/cypress-drag-drop"
 	real_events_plugin_path = f"{node_bin}/../cypress-real-events"
@@ -994,7 +998,7 @@ def request(context, args=None, path=None):
 					frappe.local.form_dict = frappe._dict()
 
 				if args.startswith("/api/method"):
-					frappe.local.form_dict.cmd = args.split("?")[0].split("/")[-1]
+					frappe.local.form_dict.cmd = args.split("?", 1)[0].split("/")[-1]
 			elif path:
 				with open(os.path.join("..", path)) as f:
 					args = json.loads(f.read())

@@ -12,6 +12,15 @@ QueryValues = tuple | list | dict | NoneType
 
 EmptyQueryValues = object()
 FallBackDateTimeStr = "0001-01-01 00:00:00.000000"
+DefaultOrderBy = "KEEP_DEFAULT_ORDERING"
+NestedSetHierarchy = (
+	"ancestors of",
+	"descendants of",
+	"not ancestors of",
+	"not descendants of",
+	"subtree of",
+	"not subtree of",
+)
 
 
 def is_query_type(query: str, query_type: str | tuple[str]) -> bool:

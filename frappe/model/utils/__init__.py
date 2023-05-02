@@ -129,8 +129,7 @@ def get_fetch_values(doctype, fieldname, value):
 
 
 @site_cache()
-def is_virtual_doctype(doctype):
+def is_virtual_doctype(doctype: str):
 	if frappe.db.has_column("DocType", "is_virtual"):
 		return frappe.db.get_value("DocType", doctype, "is_virtual")
-	else:
-		return 0
+	return False

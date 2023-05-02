@@ -353,7 +353,7 @@ class ShortcutDialog extends WidgetDialog {
 				fieldname: "type",
 				label: "Type",
 				reqd: 1,
-				options: "DocType\nReport\nPage\nDashboard",
+				options: "DocType\nReport\nPage\nDashboard\nURL",
 				onchange: () => {
 					if (this.dialog.get_value("type") == "DocType") {
 						this.dialog.fields_dict.link_to.get_query = () => {
@@ -382,7 +382,6 @@ class ShortcutDialog extends WidgetDialog {
 				fieldtype: "Dynamic Link",
 				fieldname: "link_to",
 				label: "Link To",
-				reqd: 1,
 				options: "type",
 				onchange: () => {
 					if (this.dialog.get_value("type") == "DocType") {
@@ -410,6 +409,17 @@ class ShortcutDialog extends WidgetDialog {
 						this.hide_filters();
 					}
 				},
+				depends_on: (s) => s.type != "URL",
+				mandatory_depends_on: (s) => s.type != "URL",
+			},
+			{
+				fieldtype: "Data",
+				fieldname: "url",
+				label: "URL",
+				options: "URL",
+				default: "",
+				depends_on: (s) => s.type == "URL",
+				mandatory_depends_on: (s) => s.type == "URL",
 			},
 			{
 				fieldtype: "Select",
@@ -506,6 +516,19 @@ class ShortcutDialog extends WidgetDialog {
 
 		data.label = data.label ? data.label : frappe.model.unscrub(data.link_to);
 
+		if (data.url) {
+			!validate_url(data.url) &&
+				frappe.throw({
+					message: __("<b>{0}</b> is not a valid URL", [data.url]),
+					title: __("Invalid URL"),
+					indicator: "red",
+				});
+
+			if (!data.label) {
+				data.label = "No Label (URL)";
+			}
+		}
+
 		return data;
 	}
 }
@@ -517,6 +540,32 @@ class NumberCardDialog extends WidgetDialog {
 
 	get_fields() {
 		let fields;
+
+		if (this.for_workspace) {
+			return [
+				{
+					fieldtype: "Link",
+					fieldname: "number_card_name",
+					label: __("Number Cards"),
+					options: "Number Card",
+					reqd: 1,
+					get_query: () => {
+						return {
+							query: "frappe.desk.doctype.number_card.number_card.get_cards_for_user",
+							filters: {
+								document_type: this.document_type,
+							},
+						};
+					},
+				},
+				{
+					fieldtype: "Data",
+					fieldname: "label",
+					label: __("Label"),
+				},
+			];
+		}
+
 		fields = [
 			{
 				fieldtype: "Select",
@@ -611,7 +660,7 @@ class NumberCardDialog extends WidgetDialog {
 	}
 
 	setup_dialog_events() {
-		if (!this.document_type) {
+		if (!this.document_type && !this.for_workspace) {
 			if (this.default_values && this.default_values["doctype"]) {
 				this.document_type = this.default_values["doctype"];
 				this.setup_filter(this.default_values["doctype"]);
@@ -644,12 +693,16 @@ class NumberCardDialog extends WidgetDialog {
 	}
 
 	process_data(data) {
+		if (this.for_workspace) {
+			data.label = data.label ? data.label : data.number_card_name;
+			return data;
+		}
+
 		if (data.new_or_existing == "Existing Card") {
 			data.name = data.card;
 		}
 		data.stats_filter = this.filter_group && JSON.stringify(this.filter_group.get_filters());
 		data.document_type = this.document_type;
-
 		return data;
 	}
 }
@@ -658,10 +711,10 @@ export default function get_dialog_constructor(type) {
 	const widget_map = {
 		chart: ChartDialog,
 		shortcut: ShortcutDialog,
-		number_card: NumberCardDialog,
 		links: CardDialog,
 		onboarding: OnboardingDialog,
 		quick_list: QuickListDialog,
+		number_card: NumberCardDialog,
 	};
 
 	return widget_map[type] || WidgetDialog;

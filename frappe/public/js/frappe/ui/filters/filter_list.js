@@ -15,7 +15,31 @@ frappe.ui.FilterGroup = class {
 
 	make_popover() {
 		this.init_filter_popover();
+		this.set_clear_all_filters_event();
 		this.set_popover_events();
+	}
+
+	set_clear_all_filters_event() {
+		if (!this.filter_x_button) return;
+
+		this.filter_x_button.on("click", () => {
+			this.toggle_empty_filters(true);
+			if (typeof this.base_list !== "undefined") {
+				// It's a list view. Clear all the filters, also the ones in the
+				// FilterArea outside this FilterGroup
+				this.base_list.filter_area.clear();
+			} else {
+				// Not a list view, just clear the filters in this FilterGroup
+				this.clear_filters();
+			}
+			this.update_filter_button();
+		});
+	}
+
+	hide_popover() {
+		if (this.filter_button) {
+			this.filter_button.popover("hide");
+		}
 	}
 
 	init_filter_popover() {
@@ -55,7 +79,7 @@ frappe.ui.FilterGroup = class {
 					!$(e.target).is(this.filter_button) &&
 					!in_datepicker
 				) {
-					this.wrapper && this.filter_button.popover("hide");
+					this.wrapper && this.hide_popover();
 				}
 			}
 		});
@@ -86,7 +110,7 @@ frappe.ui.FilterGroup = class {
 		// REDESIGN-TODO: (Temporary) Review and find best solution for this
 		frappe.router.on("change", () => {
 			if (this.wrapper && this.wrapper.is(":visible")) {
-				this.filter_button.popover("hide");
+				this.hide_popover();
 			}
 		});
 	}
@@ -137,11 +161,10 @@ frappe.ui.FilterGroup = class {
 			}
 			this.clear_filters();
 			this.toggle_empty_filters(true);
+			this.hide_popover();
 		});
 
-		this.wrapper.find(".apply-filters").on("click", () => {
-			this.filter_button.popover("hide");
-		});
+		this.wrapper.find(".apply-filters").on("click", () => this.hide_popover());
 	}
 
 	add_filters(filters) {

@@ -22,7 +22,7 @@ from frappe.utils import (
 	flt,
 	format_datetime,
 	get_formatted_email,
-	get_time_zone,
+	get_system_timezone,
 	has_gravatar,
 	now_datetime,
 	today,
@@ -125,12 +125,16 @@ class User(Document):
 			user=self,
 			ignore_mandatory=True,
 			now=now,
-			enqueue_after_commit=True
+			enqueue_after_commit=True,
 		)
 
 		if self.name not in STANDARD_USERS and not self.user_image:
-			frappe.enqueue("frappe.core.doctype.user.user.update_gravatar", name=self.name, now=now,
-				enqueue_after_commit=True)
+			frappe.enqueue(
+				"frappe.core.doctype.user.user.update_gravatar",
+				name=self.name,
+				now=now,
+				enqueue_after_commit=True,
+			)
 
 		# Set user selected timezone
 		if self.time_zone:
@@ -648,7 +652,7 @@ class User(Document):
 
 	def set_time_zone(self):
 		if not self.time_zone:
-			self.time_zone = get_time_zone()
+			self.time_zone = get_system_timezone()
 
 
 @frappe.whitelist()

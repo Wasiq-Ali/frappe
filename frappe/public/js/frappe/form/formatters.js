@@ -118,6 +118,7 @@ frappe.form.formatters = {
 
 	Data: function(value, df, options) {
 		if (df && df.options == "URL") {
+			if (!value) return;
 			return `<a href="${value}" title="Open Link" target="_blank">${value}</a>`;
 		}
 		value = value == null ? "" : value;
@@ -282,7 +283,7 @@ frappe.form.formatters = {
 			return value;
 		}
 		if (value) {
-			value = frappe.datetime.str_to_user(value);
+			value = frappe.datetime.str_to_user(value, false, true);
 			// handle invalid date
 			if (value === "Invalid date") {
 				value = null;

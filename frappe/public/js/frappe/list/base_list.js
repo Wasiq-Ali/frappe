@@ -53,8 +53,8 @@ frappe.views.BaseList = class BaseList {
 
 		this.fields = [];
 		this.filters = [];
-		this.sort_by = "modified";
-		this.sort_order = "desc";
+		this.sort_by = this.meta.sort_field || "modified";
+		this.sort_order = this.meta.sort_order || "desc";
 
 		// Setup buttons
 		this.primary_action = null;
@@ -812,6 +812,8 @@ class FilterArea {
 					'HTML Editor',
 					'Data',
 					'Code',
+					'Phone',
+					'JSON',
 					'Read Only'
 				].includes(fieldtype)
 			) {
@@ -899,6 +901,7 @@ class FilterArea {
 		</div>`).appendTo(this.$filter_list_wrapper);
 
 		this.filter_button = this.$filter_list_wrapper.find(".filter-button");
+		this.filter_x_button = this.$filter_list_wrapper.find(".filter-x-button");
 		this.filter_list = new frappe.ui.FilterGroup({
 			base_list: this.list_view,
 			parent: this.$filter_list_wrapper,

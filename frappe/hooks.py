@@ -233,7 +233,6 @@ scheduler_events = {
 		"frappe.email.doctype.unhandled_email.unhandled_email.remove_old_unhandled_emails",
 		"frappe.core.doctype.prepared_report.prepared_report.delete_expired_prepared_reports",
 		"frappe.core.doctype.log_settings.log_settings.run_log_clean_up",
-		"frappe.utils.subscription.enable_manage_subscription",
 	],
 	"daily_long": [
 		"frappe.integrations.doctype.dropbox_settings.dropbox_settings.take_backups_daily",
@@ -407,4 +406,22 @@ ignore_links_on_delete = [
 	"Integration Request",
 	"Unhandled Email",
 	"Notification Count",
+	"Webhook Request Log",
+]
+
+# Request Hooks
+before_request = [
+	"frappe.recorder.record",
+	"frappe.monitor.start",
+	"frappe.rate_limiter.apply",
+]
+after_request = ["frappe.rate_limiter.update", "frappe.monitor.stop", "frappe.recorder.dump"]
+
+# Background Job Hooks
+before_job = [
+	"frappe.monitor.start",
+]
+after_job = [
+	"frappe.monitor.stop",
+	"frappe.utils.file_lock.release_document_locks",
 ]
