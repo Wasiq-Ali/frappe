@@ -1408,11 +1408,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	setup_realtime_updates() {
-		this.pending_document_refreshes = [];
-
 		if (this.list_view_settings?.disable_auto_refresh || this.realtime_events_setup) {
 			return;
 		}
+
+		this.pending_document_refreshes = [];
 		frappe.socketio.doctype_subscribe(this.doctype);
 		frappe.realtime.off("list_update");
 		frappe.realtime.on("list_update", (data) => {
@@ -1424,7 +1424,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			}
 
 			this.pending_document_refreshes.push(data);
-			frappe.utils.debounce(this.process_document_refreshes.bind(this), 1000)();
+			frappe.utils.debounce(this.process_document_refreshes.bind(this), 1000, true)();
 		});
 		this.realtime_events_setup = true;
 	}
