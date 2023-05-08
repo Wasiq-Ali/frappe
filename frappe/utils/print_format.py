@@ -134,8 +134,16 @@ def download_pdf(
 			doctype, name, format, doc=doc, as_pdf=True, letterhead=letterhead, no_letterhead=no_letterhead
 		)
 
-	frappe.local.response.filename = "{name}.pdf".format(
-		name=name.replace(" ", "-").replace("/", "-")
+	title = doc.get_title()
+	if title and title == name:
+		title = ""
+	if title:
+		title = f" {frappe.utils.clean_whitespace(title)}"
+		title = title[:25]
+
+	frappe.local.response.filename = "{name}{title}.pdf".format(
+		name=name.replace(" ", "-").replace("/", "-"),
+		title=title.replace(" ", "-").replace("/", "-"),
 	)
 	frappe.local.response.filecontent = pdf_file
 	frappe.local.response.type = "pdf"
