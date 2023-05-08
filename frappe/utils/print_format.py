@@ -138,8 +138,10 @@ def download_pdf(
 	if title and title == name:
 		title = ""
 	if title:
-		title = f" {frappe.utils.clean_whitespace(title)}"
+		title = frappe.utils.clean_whitespace(title)
 		title = title[:25]
+		title = title.rstrip()
+		title = " " + title
 
 	frappe.local.response.filename = "{name}{title}.pdf".format(
 		name=name.replace(" ", "-").replace("/", "-"),
