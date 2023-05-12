@@ -206,7 +206,7 @@ frappe.patches.v14_0.update_webforms
 frappe.patches.v14_0.delete_payment_gateways
 frappe.patches.v14_0.event_streaming_deprecation_warning
 frappe.patches.v14_0.clean_contact_names
-frappe.patches.v14_0.rename_address_contact_series
+# frappe.patches.v14_0.rename_address_contact_series
 
 [post_model_sync]
 execute:frappe.get_doc('Role', 'Guest').save() # remove desk access
