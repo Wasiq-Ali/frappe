@@ -211,6 +211,7 @@ frappe.render_pdf = function (html, opts = {}) {
 			hidden_a_tag.href = objectUrl;
 			hidden_a_tag.target = "_blank";
 			hidden_a_tag.download = opts.report_name || "report.pdf";
+			hidden_a_tag.type = "application/pdf";
 
 			// Open report in a new window
 			hidden_a_tag.click();

@@ -157,6 +157,7 @@ def report_to_pdf(html, orientation="Landscape"):
 	frappe.local.response.filename = "report.pdf"
 	frappe.local.response.filecontent = get_pdf(html, {"orientation": orientation})
 	frappe.local.response.type = "pdf"
+	frappe.local.response.display_content_as = "inline"
 
 
 @frappe.whitelist()
