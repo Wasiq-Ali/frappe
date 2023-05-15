@@ -1538,7 +1538,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			name_len = 0;
 		for (let key of Object.keys(applied_filters)) {
 			let filter_df = this.filters.find(d => d.df.fieldname == key)?.df;
-			if (!filter_df || filter_df.fieldtype == "Check") {
+			if (!filter_df || filter_df.fieldtype == "Check" || filter_df.hidden) {
 				continue;
 			}
 
