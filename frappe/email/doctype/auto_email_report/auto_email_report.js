@@ -84,7 +84,7 @@ frappe.ui.form.on("Auto Email Report", {
 				wrapper
 			);
 
-			var filters = JSON.parse(frm.doc.filters || "{}");
+			var filters = {};
 
 			let report_filters, report_name;
 
@@ -93,9 +93,20 @@ frappe.ui.form.on("Auto Email Report", {
 				frappe.query_reports[frm.doc.reference_report] &&
 				frappe.query_reports[frm.doc.reference_report].filters
 			) {
+				if (frm.doc.filters) {
+					filters = JSON.parse(frm.doc.filters);
+				} else {
+					frappe.db.get_value("Report", frm.doc.report, "json", (r) => {
+						if (r && r.json) {
+							filters = JSON.parse(r.json).filters || {};
+						}
+					});
+				}
+
 				report_filters = frappe.query_reports[frm.doc.reference_report].filters;
 				report_name = frm.doc.reference_report;
 			} else {
+				filters = JSON.parse(frm.doc.filters || "{}");
 				report_filters = frappe.query_reports[frm.doc.report].filters;
 				report_name = frm.doc.report;
 			}

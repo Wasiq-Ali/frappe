@@ -1368,8 +1368,9 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 			.map((f) => {
 				const [doctype, fieldname, condition, value] = f;
 				if (condition !== "=") return "";
+				const label = frappe.meta.get_label(doctype, fieldname);
 				const docfield = frappe.meta.get_docfield(doctype, fieldname);
-				return `<h6>${__(docfield.label)}: ${frappe.format(value, docfield)}</h6>`;
+				return `<h6>${__(label)}: ${frappe.format(value, docfield)}</h6>`;
 			})
 			.join("");
 	}
@@ -1434,7 +1435,8 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 							print_settings: print_settings,
 							columns: this.columns,
 							data: rows_in_order,
-							report: this
+							report: this,
+							can_use_smaller_font: 1,
 						});
 					});
 				},

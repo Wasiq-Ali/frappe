@@ -43,6 +43,26 @@ $.extend(frappe.contacts, {
 		};
 	},
 
+	get_address_display: function (frm, address_field, display_field) {
+		if (frm.updating_party_details) {
+			return;
+		}
+
+		let _address_field = address_field || "address";
+		let _display_field = display_field || "address_display";
+
+		if (!frm.doc[_address_field]) {
+			frm.set_value(_display_field, "");
+			return;
+		}
+
+		frappe
+			.xcall("frappe.contacts.doctype.address.address.get_address_display", {
+				address_dict: frm.doc[_address_field],
+			})
+			.then((address_display) => frm.set_value(_display_field, address_display));
+	},
+
 	get_all_contact_nos: function (frm, link_doctype, link_name) {
 		if (link_doctype && link_name) {
 			return frappe.call({
@@ -217,5 +237,5 @@ $.extend(frappe.contacts, {
 			contacts = contacts.map(d => d.contact);
 		}
 		return contacts;
-	}
+	},
 })
