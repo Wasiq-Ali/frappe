@@ -977,7 +977,7 @@ class BaseDocument:
 					self_value = self.get_value(key)
 
 				if df.fieldtype in ("Currency", "Float", "Percent"):
-					self_value = round_half_away_from_zero(self_value, 6 if cint(df.precision) <= 6 else 9)
+					self_value = round_half_away_from_zero(self_value, 9)
 
 				# Postgres stores values as `datetime.time`, MariaDB as `timedelta`
 				if isinstance(self_value, datetime.timedelta) and isinstance(db_value, datetime.time):
