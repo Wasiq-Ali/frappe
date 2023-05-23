@@ -579,6 +579,7 @@ class File(Document):
 
 		if not file_exists:
 			if not overwrite:
+				self.original_file_name = self.file_name
 				self.file_name = generate_file_name(
 					name=self.file_name,
 					suffix=self.content_hash[-6:],
