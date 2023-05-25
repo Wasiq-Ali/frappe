@@ -241,6 +241,9 @@ def export_json(doctype, path, filters=None, or_filters=None, name=None, order_b
 							if key in child:
 								del child[key]
 
+			if doctype == "Custom Field":
+				doc["is_system_generated"] = 1
+
 	out = []
 	if name:
 		out.append(frappe.get_doc(doctype, name).as_dict())
