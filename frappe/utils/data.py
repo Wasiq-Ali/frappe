@@ -1115,6 +1115,22 @@ def round_half_away_from_zero(num, precision=0):
 	return math.copysign(rounded_abs, num)
 
 
+def round_up(value, decimals):
+	factor = 10 ** decimals
+
+	value = math.ceil(flt(value * factor, 9)) / factor
+	value = flt(value, 9)
+	return value
+
+
+def round_down(value, decimals):
+	factor = 10 ** decimals
+
+	value = math.floor(flt(value * factor, 9)) / factor
+	value = flt(value, 9)
+	return value
+
+
 def _round_away_from_zero(num, precision):
 	if num == 0:
 		return 0.0
