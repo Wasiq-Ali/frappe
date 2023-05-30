@@ -612,6 +612,7 @@ docfield_properties = {
 	"print_width": "Data",
 	"non_negative": "Check",
 	"reqd": "Check",
+	"search_index": "Check",
 	"unique": "Check",
 	"ignore_user_permissions": "Check",
 	"in_list_view": "Check",
