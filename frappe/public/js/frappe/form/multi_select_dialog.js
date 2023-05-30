@@ -467,7 +467,9 @@ frappe.ui.form.MultiSelectDialog = class MultiSelectDialog {
 		this.get_datatable_columns().forEach(function (column) {
 			let df = frappe.meta.get_docfield(me.doctype, column);
 			let label = df ? df.label : frappe.model.unscrub(column);
-			let formatted_value = df && !head && result[column] ? frappe.format(result[column], df, null, result) : result[column] || "";
+			let formatted_value = df && !head && result[column] ?
+				frappe.format(result[column], df, {only_value: 1}, result)
+				: result[column] || "";
 
 			contents += `<div class="list-item__content ellipsis">
 				${
