@@ -148,6 +148,8 @@ def get_mapped_doc(
 
 					map_child_doc(source_d, target_doc, table_map, source_doc)
 
+	if table_maps.get("postprocess"):
+		table_maps["postprocess"](source_doc, target_doc)
 	if postprocess:
 		postprocess(source_doc, target_doc)
 
