@@ -154,8 +154,12 @@
 			text-align: center;
 		}
 
-		.list-assignments, .list-actions {
+		.list-assignments {
 			margin-right: var(--margin-xs);
+		}
+		.list-actions {
+			margin-right: var(--margin-xs);
+			margin-left: var(--margin-xs);
 		}
 	}
 
@@ -174,11 +178,15 @@
 		}
 	}
 
-	.select-like, .file-select {
+	.select-like, .file-select, .list-row-activity {
 		padding: 15px 0px 15px 15px;
 		&:first-child {
 			padding-left: 4px;
 		}
+	}
+
+	.list-row-activity {
+		padding-left: 0;
 	}
 }
 
