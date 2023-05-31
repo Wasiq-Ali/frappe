@@ -23,7 +23,7 @@ frappe.ui.FieldGroup = class FieldGroup extends frappe.ui.form.Layout {
 			this.refresh();
 			// set default
 			$.each(this.fields_list, function (i, field) {
-				if (field.df["default"]) {
+				if (field.df["default"] != null) {
 					let def_value = field.df["default"];
 
 					if (def_value == "Today" && field.df["fieldtype"] == "Date") {
