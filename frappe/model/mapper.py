@@ -262,13 +262,19 @@ def map_fetch_fields(target_doc, df, no_copy_fields):
 				target_doc.set(fetch_df.fieldname, val)
 
 
-def map_child_doc(source_d, target_parent, table_map, source_parent=None):
+def map_child_doc(source_d, target_parent, table_map, source_parent=None, target_d=None):
+	row_exists = bool(target_d)
+
 	target_child_doctype = table_map["doctype"]
 	target_parentfield = target_parent.get_parentfield_of_doctype(target_child_doctype)
-	target_d = frappe.new_doc(target_child_doctype, target_parent, target_parentfield)
+
+	if not row_exists:
+		target_d = frappe.new_doc(target_child_doctype, target_parent, target_parentfield)
 
 	map_doc(source_d, target_d, table_map, source_parent, target_parent)
 
-	target_d.idx = None
-	target_parent.append(target_parentfield, target_d)
+	if not row_exists:
+		target_d.idx = None
+		target_parent.append(target_parentfield, target_d)
+
 	return target_d
