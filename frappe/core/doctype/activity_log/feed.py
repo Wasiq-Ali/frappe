@@ -30,11 +30,13 @@ def update_feed(doc, method=None):
 			name = feed.name or doc.name
 
 			# delete earlier feed
-			frappe.db.sql("""delete from `tabActivity Log`
-				where
-					reference_doctype=%s and reference_name=%s and date(creation) = %s
-					and ifnull(link_doctype, '') = %s""", (doctype, name, frappe.utils.today(), cstr(feed.link_doctype)))
-			frappe.get_doc({
+			frappe.db.sql("""
+				delete from `tabActivity Log`
+				where reference_doctype=%s and reference_name=%s and date(creation) = %s
+					and ifnull(link_doctype, '') = %s
+			""", (doctype, name, frappe.utils.today(), cstr(feed.link_doctype)))
+
+			log = frappe.get_doc({
 				"doctype": "Activity Log",
 				"reference_doctype": doctype,
 				"reference_name": name,
@@ -45,7 +47,10 @@ def update_feed(doc, method=None):
 				"link_name": feed.link_name,
 				"timeline_doctype": feed.timeline_doctype,
 				"timeline_name": feed.timeline_name,
-			}).insert(ignore_permissions=True)
+			})
+
+			log.parent_doc = doc
+			log.insert(ignore_permissions=True)
 
 def login_feed(login_manager):
 	if login_manager.user != "Guest":
