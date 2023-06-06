@@ -238,6 +238,8 @@ def set_naming_from_document_naming_rule(doc):
 
 	if doc.doctype in IGNORED_DOCTYPES:
 		return
+	if doc.meta.istable:
+		return
 
 	# ignore_ddl if naming is not yet bootstrapped
 	for d in frappe.get_all(
