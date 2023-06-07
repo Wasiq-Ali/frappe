@@ -1584,11 +1584,7 @@ def execute_action(__doctype, __name, __action, **kwargs):
 		frappe.db.rollback()
 
 		# add a comment (?)
-		if frappe.local.message_log:
-			msg = json.loads(frappe.local.message_log[-1]).get("message")
-		else:
-			msg = "<pre><code>" + frappe.get_traceback() + "</pre></code>"
-
+		msg = "<pre><code>" + frappe.get_traceback() + "</pre></code>"
 		doc.add_comment("Comment", _("Action Failed") + "<br><br>" + msg)
 	doc.notify_update()
 
