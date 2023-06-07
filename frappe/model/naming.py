@@ -242,15 +242,23 @@ def set_naming_from_document_naming_rule(doc):
 		return
 
 	# ignore_ddl if naming is not yet bootstrapped
-	for d in frappe.get_all(
-		"Document Naming Rule",
-		dict(document_type=doc.doctype, disabled=0),
-		order_by="priority desc",
-		ignore_ddl=True,
-	):
+	for d in get_document_naming_rules(doc.doctype):
 		frappe.get_cached_doc("Document Naming Rule", d.name).apply(doc)
 		if doc.name:
 			break
+
+
+def get_document_naming_rules(doctype):
+	def generator():
+		return frappe.get_all(
+			"Document Naming Rule",
+			dict(document_type=doctype, disabled=0),
+			order_by="priority desc",
+			ignore_ddl=True,
+		)
+
+	return frappe.local_cache("document_naming_rules", doctype, generator)
+
 
 def set_name_by_naming_series(doc, series_value_field=''):
 	"""Sets name by the `naming_series` property"""
@@ -261,6 +269,7 @@ def set_name_by_naming_series(doc, series_value_field=''):
 		frappe.throw(frappe._("Naming Series mandatory"))
 
 	doc.name = make_autoname(doc.naming_series + ".#####", "", doc, series_value_field)
+
 
 def make_autoname(key="", doctype="", doc="", series_value_field=""):
 	"""
