@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2021-04-17 16:09:31.927442",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -10,7 +11,9 @@
   "last_scheduled_dt",
   "last_sent_dt",
   "reference_doctype",
-  "reference_name"
+  "reference_name",
+  "child_doctype",
+  "child_name"
  ],
  "fields": [
   {
@@ -65,10 +68,30 @@
    "options": "reference_doctype",
    "read_only": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "child_name",
+   "fieldtype": "Dynamic Link",
+   "in_standard_filter": 1,
+   "label": "Child Name",
+   "no_copy": 1,
+   "options": "child_doctype",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "child_doctype",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Child DocType",
+   "no_copy": 1,
+   "options": "DocType",
+   "read_only": 1
   }
  ],
  "in_create": 1,
- "modified": "2023-01-16 14:59:15.764823",
+ "links": [],
+ "modified": "2023-06-08 12:44:01.287424",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Notification Count",
@@ -86,5 +109,6 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

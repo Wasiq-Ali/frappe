@@ -23,6 +23,8 @@ def send_sms(receiver_list,
 		notification_type=None,
 		reference_doctype=None,
 		reference_name=None,
+		child_doctype=None,
+		child_name=None,
 		party_doctype=None,
 		party=None):
 
@@ -37,6 +39,8 @@ def send_sms(receiver_list,
 		'notification_type': notification_type,
 		'reference_doctype': reference_doctype,
 		'reference_name': reference_name,
+		'child_doctype': child_doctype,
+		'child_name': child_name,
 		'party_doctype': party_doctype,
 		'party': party,
 	})
@@ -45,7 +49,7 @@ def send_sms(receiver_list,
 	process_and_send(args)
 
 
-def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_already_sent=False, send_after=None):
+def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_already_sent=False, child_doctype=None, child_name=None, send_after=None):
 	from frappe.core.doctype.sms_queue.sms_queue import queue_sms
 
 	notification_type = cstr(notification_type)
@@ -56,16 +60,16 @@ def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_alr
 	if not is_automated_sms_enabled():
 		return False
 
-	validation = run_validate_notification(doc, notification_type, throw=False)
+	validation = run_validate_notification(doc, notification_type, child_doctype=child_doctype, child_name=child_name, throw=False)
 	if not validation:
 		return False
 
 	if not allow_if_already_sent:
-		notification_count = get_notification_count(doc.doctype, doc.name, notification_type, "SMS")
+		notification_count = get_notification_count(doc.doctype, doc.name, notification_type, "SMS", child_doctype=child_doctype, child_name=child_name)
 		if notification_count:
 			return False
 
-	args = get_template_sms_args(notification_type, doc=doc, context=context, throw=False)
+	args = get_template_sms_args(notification_type, doc=doc, context=context, child_doctype=child_doctype, child_name=child_name, throw=False)
 	if not args:
 		return False
 
@@ -75,16 +79,16 @@ def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_alr
 	if send_after:
 		args['send_after'] = send_after
 
-	set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS")
+	set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS", child_doctype=child_doctype, child_name=child_name)
 	create_communication(args, automated=True)
 	queue_sms(args)
 
 	return True
 
 
-def send_template_sms(notification_type, reference_doctype=None, reference_name=None, doc=None, context=None, receiver_list=None):
+def send_template_sms(notification_type, reference_doctype=None, reference_name=None, child_doctype=None, child_name=None, doc=None, context=None, receiver_list=None):
 	args = get_template_sms_args(notification_type, reference_doctype=reference_doctype, reference_name=reference_name,
-		doc=doc, context=context, get_doc=True, throw=True)
+		child_doctype=child_doctype, child_name=child_name, doc=doc, context=context, get_doc=True, throw=True)
 
 	if receiver_list:
 		args['receiver_list'] = clean_receiver_nos(receiver_list)
@@ -95,6 +99,7 @@ def send_template_sms(notification_type, reference_doctype=None, reference_name=
 
 def get_template_sms_args(notification_type,
 		reference_doctype=None, reference_name=None,
+		child_doctype=None, child_name=None,
 		doc=None, get_doc=False,
 		context=None,
 		is_automated_sms=True, throw=True
@@ -113,7 +118,7 @@ def get_template_sms_args(notification_type,
 	notification_type = cstr(notification_type)
 	for_notification_type_str = " for Notification Type {0}".format(notification_type) if notification_type else ""
 
-	args = get_sms_args_from_controller(notification_type, doc)
+	args = get_sms_args_from_controller(notification_type, doc, child_doctype=child_doctype, child_name=child_name)
 	if not args:
 		if throw:
 			frappe.throw(_("Template SMS not supported for {0}{1}")
@@ -157,9 +162,9 @@ def get_template_sms_args(notification_type,
 	return args
 
 
-def get_sms_args_from_controller(notification_type, doc):
+def get_sms_args_from_controller(notification_type, doc, child_doctype=None, child_name=None):
 	notification_type = cstr(notification_type)
-	args = frappe._dict(doc.run_method("get_sms_args", notification_type=notification_type))
+	args = frappe._dict(doc.run_method("get_sms_args", notification_type=notification_type, child_doctype=child_doctype, child_name=child_name))
 	if args:
 		args.reference_doctype = doc.doctype
 		args.reference_name = doc.name
@@ -228,14 +233,14 @@ def run_before_send_methods(args):
 	notification_type = cstr(args.get('notification_type'))
 
 	if doc:
-		validation = run_validate_notification(doc, notification_type, throw=True)
+		validation = run_validate_notification(doc, notification_type, child_doctype=args.get("child_doctype"), child_name=args.get("child_name"), throw=True)
 		if not validation:
 			frappe.throw(_("{0} Notification Validation Failed").format(notification_type))
 
 
-def run_validate_notification(doc, notification_type, throw=True):
+def run_validate_notification(doc, notification_type, child_doctype=None, child_name=None, throw=True):
 	notification_type = cstr(notification_type)
-	validation = doc.run_method("validate_notification", notification_type=notification_type, throw=throw)
+	validation = doc.run_method("validate_notification", notification_type=notification_type, child_doctype=child_doctype, child_name=child_name, throw=throw)
 
 	if validation is None:
 		return True
@@ -246,11 +251,14 @@ def run_validate_notification(doc, notification_type, throw=True):
 def run_after_send_methods(args):
 	notification_type = cstr(args.get('notification_type'))
 	if args.get("reference_doctype") and args.get("reference_name"):
-		add_notification_count(args.get("reference_doctype"), args.get("reference_name"), notification_type, 'SMS')
+		add_notification_count(args.get("reference_doctype"), args.get("reference_name"), notification_type, 'SMS',
+			child_doctype=args.get("child_doctype"), child_name=args.get("child_name"))
 
 	doc = args.get('doc')
+
 	if doc:
-		doc.run_method("after_send_notification", notification_medium="SMS", notification_type=notification_type)
+		doc.run_method("after_send_notification", notification_medium="SMS", notification_type=notification_type,
+			child_doctype=args.get("child_doctype"), child_name=args.get("child_name"))
 		doc.notify_update()
 
 
