@@ -71,7 +71,7 @@
   },
   {
    "fieldname": "child_name",
-   "fieldtype": "Dynamic Link",
+   "fieldtype": "Data",
    "in_standard_filter": 1,
    "label": "Child Name",
    "no_copy": 1,
@@ -91,7 +91,7 @@
  ],
  "in_create": 1,
  "links": [],
- "modified": "2023-06-08 12:44:01.287424",
+ "modified": "2023-06-08 14:03:54.777140",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Notification Count",
