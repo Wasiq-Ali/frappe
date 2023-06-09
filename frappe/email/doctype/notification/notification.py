@@ -485,23 +485,3 @@ def get_assignees(doc):
 	recipients = [d.allocated_to for d in assignees]
 
 	return recipients
-
-
-def create_system_notification(doc_type, doc_name, subject, role):
-	if not subject:
-		frappe.throw(_("Subject is Mandatory"))
-	if not role:
-		frappe.throw(_("Role is Mandatory"))
-
-	emails = list(set(get_info_based_on_role(role, "email", ignore_permissions=True)))
-
-	if not emails:
-		frappe.throw(_("No email found for role {0}").format(role))
-
-	notification_doc = {
-		"type": "Alert",
-		"document_type": doc_type,
-		"document_name": doc_name,
-		"subject": subject
-	}
-	enqueue_create_notification(emails, notification_doc)

@@ -90,6 +90,13 @@ def make_notification_logs(doc, users):
 			notification.insert(ignore_permissions=True)
 
 
+def make_notification_logs_for_role(notification_doc, role):
+	from frappe.core.doctype.role.role import get_info_based_on_role
+
+	emails = list(set(get_info_based_on_role(role, "email", ignore_permissions=True)))
+	make_notification_logs(notification_doc, emails)
+
+
 def _get_user_ids(user_emails):
 	user_names = frappe.db.get_values(
 		"User", {"enabled": 1, "email": ("in", user_emails)}, "name", pluck=True
