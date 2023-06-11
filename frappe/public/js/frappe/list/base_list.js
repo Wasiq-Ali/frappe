@@ -381,9 +381,7 @@ frappe.views.BaseList = class BaseList {
 		this.$frappe_list.append(this.$paging_area);
 
 		// set default paging btn active
-		this.$paging_area
-			.find(`.btn-paging[data-value="${this.page_length}"]`)
-			.addClass("btn-info");
+		this.update_paging_button();
 
 		this.$paging_area.on("click", ".btn-paging, .btn-more", (e) => {
 			const $this = $(e.currentTarget);
@@ -401,6 +399,15 @@ frappe.views.BaseList = class BaseList {
 			}
 			this.refresh();
 		});
+	}
+
+	update_paging_button() {
+		this.$paging_area
+			.find(`.btn-paging[data-value="${this.page_length}"]`)
+			.addClass("btn-info");
+		this.$paging_area
+			.find(`.btn-paging:not([data-value="${this.page_length}"])`)
+			.removeClass("btn-info");
 	}
 
 	get_fields() {

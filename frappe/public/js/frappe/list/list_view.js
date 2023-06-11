@@ -1996,6 +1996,12 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			let doctype = null;
 			let value = frappe.route_options[field];
 
+			if (field == "selected_page_count" && cint(value)) {
+				this.page_length = this.selected_page_count = cint(value);
+				this.update_paging_button();
+				continue;
+			}
+
 			let value_array;
 			if ($.isArray(value) && value[0].startsWith("[") && value[0].endsWith("]")) {
 				value_array = [];
