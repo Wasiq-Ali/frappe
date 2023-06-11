@@ -2,6 +2,7 @@
 // MIT License. See license.txt
 
 frappe.provide("frappe.views.list_view");
+frappe.provide("frappe.views.custom_view_classes");
 
 window.cur_list = null;
 frappe.views.ListFactory = class ListFactory extends frappe.views.Factory {
@@ -18,6 +19,10 @@ frappe.views.ListFactory = class ListFactory extends frappe.views.Factory {
 		}
 
 		let view_class = frappe.views[view_name + "View"];
+		if (frappe.views.custom_view_classes?.[doctype]?.[view_name]) {
+			view_class = frappe.views.custom_view_classes[doctype][view_name];
+		}
+
 		if (!view_class) view_class = frappe.views.ListView;
 
 		if (view_class && view_class.load_last_view && view_class.load_last_view()) {
