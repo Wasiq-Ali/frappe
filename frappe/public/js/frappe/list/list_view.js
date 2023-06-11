@@ -917,7 +917,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		}
 
 		let settings_button = null;
-		if (this.settings.button && this.settings.button.show(doc)) {
+		if (!this.hide_row_button && this.settings.button && this.settings.button.show(doc)) {
 			settings_button = `
 				<span class="list-actions">
 					<button class="btn btn-action btn-xs ${this.settings.button?.get_class(doc) || "btn-default"}"
@@ -1437,8 +1437,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	process_document_refreshes() {
 		if (!this.pending_document_refreshes.length) return;
 
-		const route = frappe.get_route() || [];
-		if (!cur_list || route[0] != "List" || cur_list.doctype != route[1]) {
+		if (frappe.get_route_str() != this.page_name) {
 			// wait till user is back on list view before refreshing
 			this.pending_document_refreshes = [];
 			this.disable_realtime_updates();
