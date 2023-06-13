@@ -421,17 +421,17 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 		this.columns = this.columns.slice(0, this.list_view_settings.total_fields || total_fields);
 
-		if (window.innerWidth <= 1366) {
-			this.page.toggle_sidebar(false);
-		} else if (window.innerWidth <= 1600) {
-			if (this.columns.length >= 8) {
-				this.page.toggle_sidebar(false);
-			}
-		} else if (window.innerWidth <= 1920) {
-			if (this.columns.length >= 9) {
-				this.page.toggle_sidebar(false);
-			}
-		}
+		// if (window.innerWidth <= 1366) {
+		// 	this.page.toggle_sidebar(false);
+		// } else if (window.innerWidth <= 1600) {
+		// 	if (this.columns.length >= 8) {
+		// 		this.page.toggle_sidebar(false);
+		// 	}
+		// } else if (window.innerWidth <= 1920) {
+		// 	if (this.columns.length >= 9) {
+		// 		this.page.toggle_sidebar(false);
+		// 	}
+		// }
 
 		// if (
 		// 	!this.settings.hide_name_column &&
