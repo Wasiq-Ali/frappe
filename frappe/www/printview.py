@@ -101,6 +101,8 @@ def get_rendered_template(
 
 	print_settings = frappe.get_single("Print Settings").as_dict()
 	print_settings.update(settings or {})
+	if print_format:
+		print_settings.print_format = print_format.name
 
 	if isinstance(no_letterhead, str):
 		no_letterhead = cint(no_letterhead)
