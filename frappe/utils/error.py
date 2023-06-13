@@ -23,6 +23,7 @@ EXCLUDE_EXCEPTIONS = (
 	frappe.SecurityException,
 	LDAPException,
 	frappe.InReadOnlyMode,
+	frappe.SessionStopped,
 )
 
 
