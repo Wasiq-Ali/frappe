@@ -1,6 +1,7 @@
 {
  "actions": [],
- "autoname": "role_profile",
+ "allow_rename": 1,
+ "autoname": "field:role_profile",
  "creation": "2017-08-31 04:16:38.764465",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -15,7 +16,7 @@
    "fieldname": "role_profile",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Role Name",
+   "label": "Role Profile Name",
    "reqd": 1,
    "unique": 1
   },
@@ -42,11 +43,11 @@
    "link_fieldname": "role_profile_name"
   }
  ],
- "modified": "2021-12-03 15:45:45.270963",
+ "modified": "2023-06-14 15:18:15.130808",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Role Profile",
- "naming_rule": "Expression (old style)",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -75,6 +76,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "title_field": "role_profile",
+ "states": [],
  "track_changes": 1
 }
