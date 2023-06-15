@@ -26,7 +26,7 @@ export default class GridRow {
 				) {
 					return;
 				}
-				if (me.grid.allow_on_grid_editing() && me.grid.is_editable()) {
+				if ((me.grid.allow_on_grid_editing() && me.grid.is_editable()) || me.grid.template) {
 					// pass
 				} else {
 					me.toggle_view();
@@ -254,32 +254,54 @@ export default class GridRow {
 		}
 	}
 	render_template() {
-		this.set_row_index();
+		let me = this;
 
-		if (this.row_display) {
-			this.row_display.remove();
+		if (this.show_search) {
+			return;
 		}
 
-		// row index
-		if (!this.row_index) {
-			this.row_index = $(
-				`<div class="template-row-index">${this.row_check_html}<span></span></div>`
+		this.wrapper.addClass("template-row");
+
+		this.set_row_index();
+
+		if (!this.row_check) {
+			this.row_check = $(
+				`<div class="row-check sortable-handle col">
+				${this.row_check_html}
+			</div>`
 			).appendTo(this.row);
 		}
 
-		if (this.doc) {
-			this.row_index.find("span").html(this.doc.idx);
+		let idx_txt = this.doc ? this.doc.idx : __("No.");
+
+		if (!this.row_index) {
+			this.row_index = $(
+				`<div class="row-index sortable-handle col">
+					<span>${idx_txt}</span>
+				</div>`
+			).appendTo(this.row).on("click", function (e) {
+				if (!$(e.target).hasClass("grid-row-check")) {
+					me.toggle_view();
+				}
+			});
 		}
 
-		this.row_display = $('<div class="row-data sortable-handle template-row"></div>')
-			.appendTo(this.row)
-			.html(
-				frappe.render(this.grid.template, {
-					doc: this.doc ? frappe.get_format_helper(this.doc) : null,
-					frm: this.frm,
-					row: this,
-				})
+		if (typeof this.grid.template === 'function') {
+			this.grid.template(
+				this.doc,
+				this
 			);
+		} else {
+			if (this.row_display) {
+				this.row_display.remove();
+			}
+
+			this.row_display = $(frappe.render(this.grid.template, {
+				doc: this.doc ? frappe.get_format_helper(this.doc) : null,
+				frm: this.frm,
+				row: this,
+			})).appendTo(this.row);
+		}
 	}
 	render_row(refresh) {
 		if (this.show_search && !this.show_search_row()) return;
