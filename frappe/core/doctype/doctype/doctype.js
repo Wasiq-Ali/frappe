@@ -72,6 +72,22 @@ frappe.ui.form.on("DocType", {
 		frm.cscript.autoname(frm);
 		frm.cscript.set_naming_rule_description(frm);
 		frm.trigger("setup_default_views");
+
+		frm.trigger("setup_edit_child");
+	},
+
+	setup_edit_child: (frm) => {
+		frm.doc.fields.forEach(function (f) {
+			if (f.fieldtype == "Table") {
+				frm.add_custom_button(
+					f.options,
+					function () {
+						frappe.set_route("Form", "DocType", f.options);
+					},
+					__("Edit Child Table")
+				);
+			}
+		});
 	},
 
 	istable: (frm) => {
