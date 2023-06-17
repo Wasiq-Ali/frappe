@@ -302,6 +302,8 @@ export default class GridRow {
 				row: this,
 			})).appendTo(this.row);
 		}
+
+		this.refresh_check();
 	}
 	render_row(refresh) {
 		if (this.show_search && !this.show_search_row()) return;
