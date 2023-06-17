@@ -378,17 +378,19 @@
 	padding-top: var(--padding-md);
 	padding-bottom: var(--padding-md);
 
-	.progress-chart {
-		padding-top: var(--padding-lg);
+	.progress-wrapper:not(:first-child) {
+		margin-top: var(--margin-md);
 	}
 
-	.progress {
-		margin-bottom: var(--margin-xs);
+	.progress-title {
+		font-weight: 500;
+		margin-bottom: 5px;
 	}
 
 	.progress-message {
 		font-feature-settings: "tnum" 1;
-		margin-top: 0px;
+		margin-top: 5px;
+		margin-bottom: 0;
 	}
 }
 
