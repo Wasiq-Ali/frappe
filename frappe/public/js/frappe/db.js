@@ -96,6 +96,7 @@ frappe.db = {
 	},
 	count: function (doctype, args = {}) {
 		let filters = args.filters || {};
+		let or_filters = args.or_filters || [];
 
 		// has a filter with childtable?
 		const distinct =
@@ -109,6 +110,7 @@ frappe.db = {
 		return frappe.xcall("frappe.desk.reportview.get_count", {
 			doctype,
 			filters,
+			or_filters,
 			fields,
 			distinct,
 		});
