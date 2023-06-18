@@ -1244,15 +1244,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	setup_list_click() {
 		this.$result.on("click", ".list-row, .image-view-header, .file-header", (e) => {
 			const $target = $(e.target);
-			// tick checkbox if Ctrl/Meta key is pressed
-			if ((e.ctrlKey || e.metaKey) && !$target.is("a")) {
-				const $list_row = $(e.currentTarget);
-				const $check = $list_row.find(".list-row-checkbox");
-				$check.prop("checked", !$check.prop("checked"));
-				e.preventDefault();
-				this.on_row_checked();
-				return;
-			}
+
 			// don't open form when checkbox, like, filterable are clicked
 			if (
 				$target.hasClass("filterable") ||
@@ -1262,6 +1254,16 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				$target.is(":checkbox")
 			) {
 				e.stopPropagation();
+				return;
+			}
+
+			// tick checkbox if Ctrl/Meta key is pressed
+			if ((e.ctrlKey || e.metaKey || this.check_on_click) && !$target.is("a")) {
+				const $list_row = $(e.currentTarget);
+				const $check = $list_row.find(".list-row-checkbox");
+				$check.prop("checked", !$check.prop("checked"));
+				e.preventDefault();
+				this.on_row_checked();
 				return;
 			}
 
