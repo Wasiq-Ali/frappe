@@ -631,7 +631,7 @@ body {
 
 	&.number-widget-box {
 		cursor: pointer;
-		height: 115px;
+		//height: 115px;
 		padding: var(--padding-sm) var(--padding-md);
 
 		.widget-head {
@@ -663,12 +663,12 @@ body {
 
 			.widget-content {
 				@include flex(flex, space-between, null, null);
-				padding-top: var(--padding-xl);
+				padding-top: var(--padding-md);
 
 				.number {
 					font-weight: 600;
 					font-size: 22px;
-					line-height: 2.4em;
+					line-height: 2.0em;
 					color: var(--text-color);
 				}
 
