@@ -49,6 +49,9 @@
 	--badge-bg: var(--gray-500);
 	--badge-hover-bg: var(--gray-600);
 
+	//table field color
+	--table-field-color: var(--gray-500);
+
 	// Background Text Color Pairs
 	--bg-blue: var(--blue-600);
 	--bg-light-blue: var(--blue-600);
@@ -82,13 +85,16 @@
 	--text-on-pink: var(--pink-100);
 	--text-on-cyan: var(--cyan-100);
 
+	//indicators
+	--indicator-red-bg: var(--red-500);
+
 	// alert colors
 	--alert-text-danger: var(--red-300);
 	--alert-text-warning: var(--yellow-300);
 	--alert-text-info: var(--blue-300);
 	--alert-text-success: var(--green-300);
 	--alert-bg-danger: var(--red-900);
-	--alert-bg-warning: var(--yellow-900);
+	--alert-bg-warning: var(--yellow-600);
 	--alert-bg-info: var(--blue-900);
 	--alert-bg-success: var(--green-900);
 
@@ -98,6 +104,7 @@
 	--scrollbar-track-color: var(--gray-700);
 
 	--shadow-inset: var(--fg-color);
+	--card-shadow: var(--shadow-base);
 	--border-color: var(--gray-400);
 	--dark-border-color: var(--gray-600);
 	--table-border-color: var(--gray-600);
