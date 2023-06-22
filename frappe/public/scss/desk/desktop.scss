@@ -207,7 +207,7 @@ body {
 
 	// Overrides for each widgets
 	&.dashboard-widget-box {
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--card-shadow);
 		min-height: 240px;
 		padding: var(--padding-xs);
 
@@ -574,7 +574,7 @@ body {
 
 	&.links-widget-box {
 		padding: var(--padding-md);
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--card-shadow);
 
 		.link-item {
 			display: flex;
@@ -1110,7 +1110,7 @@ body {
 
 	// widgets
 	.widget.number-widget-box {
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--card-shadow);
 	}
 
 
