@@ -261,8 +261,13 @@ $input-height: calc(1.5em + 0.75rem);
 	--awesomplete-hover-bg: var(--gray-150);
 
 	// Button Colors
-	--btn-default-bg: var(--gray-100);
-	--btn-default-hover-bg: var(--gray-300);
+	--btn-default-bg: white;
+	--btn-default-hover-bg: var(--gray-100);
+	--btn-default-active-bg: var(--gray-100);
+
+	// badge color
+	--badge-bg: var(--gray-200);
+	--badge-hover-bg: var(--gray-100);
 
 	// Other Colors
 	--sidebar-select-color: var(--gray-200);

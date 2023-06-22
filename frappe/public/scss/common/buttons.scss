@@ -59,16 +59,16 @@
 }
 
 .btn.btn-secondary {
-	background-color: var(--gray-200);
+	background-color: var(--badge-bg);
 	color: var(--text-color);
 	&:hover, &:active {
-		background-color: var(--gray-400);
+		background-color: var(--badge-hover-bg);
 		color: var(--text-color);
 	}
 }
 
 .btn.btn-default {
-	background-color: var(--fg-color);
+	background-color: var(--btn-default-bg);
 	color: var(--text-color);
 	&:hover, &:active {
 		background: var(--fg-hover-color);
