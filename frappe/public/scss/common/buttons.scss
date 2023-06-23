@@ -59,10 +59,14 @@
 }
 
 .btn.btn-secondary {
-	background-color: var(--badge-bg);
+	background-color: var(--btn-secondary-bg);
 	color: var(--text-color);
-	&:hover, &:active {
-		background-color: var(--badge-hover-bg);
+	&:hover {
+		background-color: var(--btn-secondary-hover-bg);
+		color: var(--text-color);
+	}
+	&:not(:disabled):not(.disabled):active {
+		background: var(--btn-secondary-active-bg);
 		color: var(--text-color);
 	}
 }
@@ -70,18 +74,31 @@
 .btn.btn-default {
 	background-color: var(--btn-default-bg);
 	color: var(--text-color);
-	&:hover, &:active {
-		background: var(--fg-hover-color);
+	&:hover {
+		background: var(--btn-default-hover-bg);
+		color: var(--text-color);
+	}
+	&:not(:disabled):not(.disabled):active {
+		background: var(--btn-default-active-bg);
 		color: var(--text-color);
 	}
 }
 
 .btn.btn-primary {
-	background-color: var(--primary);
+	background-color: var(--btn-primary-bg);
 	color: var(--white);
 	white-space: nowrap;
 	--icon-stroke: currentColor;
-	--icon-fill-bg: var(--primary);
+	--icon-fill-bg: var(--btn-primary-bg);
+
+	&:hover {
+		color: var(--white);
+		background-color: var(--btn-primary-hover-bg);
+	}
+	&:not(:disabled):not(.disabled):active {
+		color: var(--white);
+		background-color: var(--btn-primary-active-bg);
+	}
 }
 
 .btn.btn-danger {

@@ -263,11 +263,19 @@ $input-height: calc(1.5em + 0.75rem);
 	// Button Colors
 	--btn-default-bg: white;
 	--btn-default-hover-bg: var(--gray-100);
-	--btn-default-active-bg: var(--gray-100);
+	--btn-default-active-bg: var(--gray-200);
+
+	--btn-secondary-bg: var(--gray-200);
+	--btn-secondary-hover-bg: var(--gray-300);
+	--btn-secondary-active-bg: var(--gray-400);
+
+	--btn-primary-bg: var(--primary);
+	--btn-primary-hover-bg: #0051d8;
+	--btn-primary-active-bg: #0048bf;
+
 
 	// badge color
 	--badge-bg: var(--gray-200);
-	--badge-hover-bg: var(--gray-100);
 
 	// Other Colors
 	--sidebar-select-color: var(--gray-200);
