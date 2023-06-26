@@ -193,7 +193,7 @@
 .list-row-head {
 	@extend .list-row;
 	cursor: default;
-	background-color: var(--gray-50);
+	background-color: var(--highlight-color);
 	border-bottom: 1px solid var(--border-color);
 
 	.list-subject {

@@ -52,7 +52,7 @@
 	min-height: 560px;
 	border: none;
 	position: absolute;
-	box-shadow: 0px 1px 4px rgba(17, 43, 66, 0.1), 0px 2px 6px rgba(17, 43, 66, 0.08);
+	box-shadow: var(--shadow-base);
 
 	.notification-list-header {
 		margin: 0px 10px;

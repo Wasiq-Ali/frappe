@@ -95,7 +95,7 @@
 	}
 	&.drop-shadow {
 		box-shadow: var(--shadow-sm);
-		border-bottom: 1px solid var(--gray-300);
+		border-bottom: 1px solid var(--border-color);
 		background-color: var(--fg-color) !important;
 	}
 }

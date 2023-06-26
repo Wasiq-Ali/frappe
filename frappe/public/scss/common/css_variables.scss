@@ -140,6 +140,7 @@ $input-height: calc(1.5em + 0.75rem);
 	--shadow-lg: 0px 18px 22px rgba(25, 39, 52, 0.1), 0px 1px 10px rgba(0, 0, 0, 0.06), 0px 0.5px 5px rgba(25, 39, 52, 0.04);
 
 	--drop-shadow: 0px 0.5px 0px rgba(0, 0, 0, 0.05), 0px 0px 0px rgba(0, 0, 0, 0), 0px 2px 4px rgba(0, 0, 0, 0.05);
+	--awesomebar-shadow: 0px 2px 6px rgba(17, 43, 66, 0.08), 0px 1px 4px rgba(17, 43, 66, 0.1);
 
 	--modal-shadow: var(--shadow-md);
 	--card-shadow: var(--shadow-sm);
@@ -261,8 +262,21 @@ $input-height: calc(1.5em + 0.75rem);
 	--awesomplete-hover-bg: var(--gray-150);
 
 	// Button Colors
-	--btn-default-bg: var(--gray-100);
-	--btn-default-hover-bg: var(--gray-300);
+	--btn-default-bg: white;
+	--btn-default-hover-bg: var(--gray-100);
+	--btn-default-active-bg: var(--gray-200);
+
+	--btn-secondary-bg: var(--gray-200);
+	--btn-secondary-hover-bg: var(--gray-300);
+	--btn-secondary-active-bg: var(--gray-400);
+
+	--btn-primary-bg: var(--primary);
+	--btn-primary-hover-bg: #0051d8;
+	--btn-primary-active-bg: #0048bf;
+
+
+	// badge color
+	--badge-bg: var(--gray-200);
 
 	// Other Colors
 	--sidebar-select-color: var(--gray-200);

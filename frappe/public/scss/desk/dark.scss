@@ -3,7 +3,7 @@
 	--gray-100: #f7fafc;
 	--gray-200: #edf2f7;
 	--gray-300: #c9d0d6;
-	--gray-400: #7a838c;
+	--gray-400: #90979E;
 	--gray-500: #575e66;
 	--gray-600: #434a52;
 	--gray-700: #242a30;
@@ -18,7 +18,7 @@
 
 	// SVG Colors
 	--icon-fill: transparent;
-	--icon-stroke: var(--gray-300);
+	--icon-stroke: var(--gray-50);
 
 	// Error colors
 	--error-bg: var(--red-70);
@@ -28,7 +28,7 @@
 	--bg-color: var(--gray-900);
 	--fg-color: var(--gray-800);
 	--navbar-bg: var(--gray-800);
-	--fg-hover-color: var(--gray-700);
+	--fg-hover-color: var(--gray-600);
 	--card-bg: var(--gray-800);
 	--disabled-text-color: var(--gray-400);
 	--disabled-control-bg: var(--gray-700);
@@ -42,7 +42,15 @@
 
 	// Button Colors
 	--btn-default-bg: var(--gray-700);
-	--btn-default-hover-bg: var(--gray-500);
+	--btn-default-hover-bg: var(--gray-600);
+	--btn-default-active-bg: var(--gray-500);
+
+	--btn-secondary-bg: var(--gray-600);
+	--btn-secondary-hover-bg: var(--gray-500);
+	--btn-secondary-active-bg: var(--gray-400);
+
+	// badge bg
+	--badge-bg: var(--gray-600);
 
 	// Background Text Color Pairs
 	--bg-blue: var(--blue-600);
@@ -52,11 +60,12 @@
 	--bg-yellow: var(--yellow-700);
 	--bg-orange: var(--orange-700);
 	--bg-red: var(--red-600);
-	--bg-gray: var(--gray-400);
-	--bg-grey: var(--gray-400);
-	--bg-darkgrey: var(--gray-600);
-	--bg-dark-gray: var(--gray-600);
+	--bg-gray: var(--gray-600);
+	--bg-grey: var(--gray-600);
+	--bg-darkgrey: var(--gray-500);
+	--bg-dark-gray: var(--gray-500);
 	--bg-light-gray: var(--gray-700);
+	--bg-light-grey: var(--gray-700);
 	--bg-purple: var(--purple-700);
 	--bg-pink: var(--pink-700);
 	--bg-cyan: var(--cyan-800);
@@ -77,13 +86,16 @@
 	--text-on-pink: var(--pink-100);
 	--text-on-cyan: var(--cyan-100);
 
+	//indicators
+	--indicator-red-bg: var(--red-500);
+
 	// alert colors
 	--alert-text-danger: var(--red-300);
 	--alert-text-warning: var(--yellow-300);
 	--alert-text-info: var(--blue-300);
 	--alert-text-success: var(--green-300);
 	--alert-bg-danger: var(--red-900);
-	--alert-bg-warning: var(--yellow-900);
+	--alert-bg-warning: var(--yellow-600);
 	--alert-bg-info: var(--blue-900);
 	--alert-bg-success: var(--green-900);
 
@@ -93,17 +105,21 @@
 	--scrollbar-track-color: var(--gray-700);
 
 	--shadow-inset: var(--fg-color);
-	--border-color: var(--gray-700);
-	--dark-border-color: var(--gray-600);
-	--table-border-color: var(--gray-600);
+	--border-color: var(--gray-500);
+	--dark-border-color: var(--gray-400);
+	--table-border-color: var(--gray-500);
 	--highlight-color: var(--gray-700);
 	--yellow-highlight-color: var(--yellow-700);
 
 	--btn-group-border-color: var(--gray-800);
 
+	--shadow-xs:  rgba(112, 172, 228, 0.05) 0px 0.5px 0px 0px, rgba(112, 172, 228, 0.08) 0px 0px 0px 1px, rgba(112, 172, 228, 0.12) 0px 2px 4px 0px;
 	--highlight-shadow: 1px 1px 10px var(--blue-900), 0px 0px 4px var(--blue-500);
-
-	--shadow-base: 0px 4px 8px rgba(114, 176, 233, 0.06), 0px 0px 4px rgba(112, 172, 228, 0.12);
+	--shadow-sm: 0px 4px 8px rgba(114, 176, 233, 0.06), 0px 0px 4px rgba(112, 172, 228, 0.12);
+	--shadow-base: 0px 8px 14px rgba(25, 39, 52, 0.08), 0px 2px 6px rgba(112, 172, 228, 0.12);
+	--shadow-md:  0px 8px 14px rgba(25, 39, 52, 0.08), 0px 2px 6px rgba(112, 172, 228, 0.12);
+	--shadow-lg: 0px 18px 22px rgba(25, 39, 52, 0.1), 0px 1px 10px rgba(112, 172, 228, 0.12), 0px 0.5px 5px rgba(112, 172, 228, 0.12);
+	--awesomebar-shadow: 0px 2px 4px rgba(112, 172, 228, 0.12), 0px 2px 4px rgba(112, 172, 228, 0.12);
 
 	// "diff" colors
 	--diff-added: var(--green-800);
@@ -116,16 +132,6 @@
 	--checkbox-focus-shadow: 0 0 0 2px var(--gray-600);
 
 	color-scheme: dark;
-
-	.frappe-card {
-		.btn-default {
-			background-color: var(--bg-color);
-
-			&:hover {
-				background-color: var(--fg-hover-color);
-			}
-		}
-	}
 
 	.modal,
 	.form-in-grid {
