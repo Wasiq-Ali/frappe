@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "Prompt",
- "creation": "2023-03-31 23:29:24.198866",
+ "creation": "2023-07-21 14:45:28.016864",
  "description": "DocType is a Table / Form in the application.",
  "doctype": "DocType",
  "document_type": "Document",
@@ -681,6 +681,11 @@
   },
   {
    "group": "Customization",
+   "link_doctype": "Property Setter",
+   "link_fieldname": "doc_type"
+  },
+  {
+   "group": "Customization",
    "link_doctype": "Client Script",
    "link_fieldname": "dt"
   },
@@ -735,7 +740,7 @@
    "link_fieldname": "reference_doctype"
   }
  ],
- "modified": "2023-04-01 12:46:35.309888",
+ "modified": "2023-07-26 12:46:20.182274",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocType",
