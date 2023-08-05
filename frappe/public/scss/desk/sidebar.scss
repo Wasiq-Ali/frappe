@@ -111,12 +111,12 @@ body[data-route^="Module"] .main-menu {
 			height: auto;
 			max-height: 170px;
 			object-fit: cover;
-			border-radius: var(--border-radius-lg);
+			border-radius: var(--border-radius-sm);
 		}
 
 		.standard-image {
 			font-size: 52px;
-			border-radius: var(--border-radius-lg);
+			border-radius: var(--border-radius-sm);
 		}
 
 		.sidebar-image-wrapper {
