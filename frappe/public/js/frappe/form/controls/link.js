@@ -112,14 +112,14 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 
 		this.set_input_value(translated_link_text);
 	}
-	parse_validate_and_set_in_model(value, e, label) {
+	parse_validate_and_set_in_model(value, e, label, force_set_value) {
 		if (this.parse) value = this.parse(value, label);
 		if (label) {
 			this.label = this.get_translated(label);
 			frappe.utils.add_link_title(this.df.options, value, label);
 		}
 
-		return this.validate_and_set_in_model(value, e);
+		return this.validate_and_set_in_model(value, e, force_set_value);
 	}
 	parse(value) {
 		return strip_html(value);
@@ -421,7 +421,7 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 				frappe.boot.user.last_selected_values[me.df.options] = item.value;
 			}
 
-			me.parse_validate_and_set_in_model(item.value, null, item.label);
+			me.parse_validate_and_set_in_model(item.value, null, item.label, true);
 		});
 
 		this.$input.on("awesomplete-selectcomplete", function (e) {
