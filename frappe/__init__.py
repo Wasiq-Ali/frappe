@@ -2196,7 +2196,7 @@ def catch_realtime_msgprint(exc=ValidationError):
 				publish_realtime("msgprint", message, user=session.user)
 				raise
 
-		fn.run = run_and_catch
+		fn.catch = run_and_catch
 		return fn
 
 	return decorator
