@@ -2182,6 +2182,26 @@ def task(**task_kwargs):
 	return decorator_task
 
 
+def catch_realtime_msgprint(exc=ValidationError):
+	def decorator(fn):
+		def run_and_catch(*args, **kwargs):
+			try:
+				return fn(*args, **kwargs)
+			except exc:
+				message = message_log[-1] if message_log else {
+					"message": _("There was an error processing your action in background"),
+					"title": _("Background Task Error"),
+					"indicator": "red",
+				}
+				publish_realtime("msgprint", message, user=session.user)
+				raise
+
+		fn.run = run_and_catch
+		return fn
+
+	return decorator
+
+
 def enqueue_doc(*args, **kwargs):
 	"""
 	Enqueue method to be executed using a background worker
