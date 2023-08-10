@@ -8,6 +8,7 @@ from frappe.utils import cstr
 from frappe.model.document import Document
 from frappe.utils.jinja import validate_template
 
+
 class AutoValueSetter(Document):
 	def validate(self):
 		self.validate_doctype()
@@ -41,6 +42,7 @@ class AutoValueSetter(Document):
 		for d in self.conditions:
 			validate_template(cstr(d.value))
 
+
 def apply_auto_value_setters(doc, parent=None):
 	names = frappe.cache().hget('auto_value_setters', doc.doctype)
 	if names is None:
@@ -57,6 +59,8 @@ def apply_auto_value_setters(doc, parent=None):
 		current_value = doc.get(auto_value_setter.field_name)
 
 		if not df:
+			continue
+		if auto_value_setter.set_for_new_document and not doc.get("__islocal"):
 			continue
 		if auto_value_setter.set_if_empty and current_value:
 			continue

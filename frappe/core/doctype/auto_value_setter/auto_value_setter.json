@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "format:{document_type}-{field_name}",
  "creation": "2019-11-02 11:54:02.477996",
  "doctype": "DocType",
@@ -11,6 +12,7 @@
   "column_break_3",
   "enabled",
   "set_if_empty",
+  "set_for_new_document",
   "section_break_5",
   "conditions"
  ],
@@ -57,12 +59,20 @@
    "fieldtype": "Table",
    "label": "Conditions",
    "options": "Auto Value Setter Condition"
+  },
+  {
+   "default": "0",
+   "fieldname": "set_for_new_document",
+   "fieldtype": "Check",
+   "label": "Set Only For New Document"
   }
  ],
- "modified": "2020-03-03 15:34:41.869021",
+ "links": [],
+ "modified": "2023-08-10 13:39:56.827803",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Auto Value Setter",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -80,5 +90,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }
