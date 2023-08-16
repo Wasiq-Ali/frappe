@@ -245,7 +245,8 @@ frappe.form.formatters = {
 			return "";
 		}
 		if (value[0] == "'" && value[value.length - 1] == "'") {
-			return value.substring(1, value.length - 1);
+			value = value.substring(1, value.length - 1);
+			return frappe.form.formatters._style(value, docfield, options);
 		}
 
 		let css_class = frappe.form.formatters._get_css_class(options);
