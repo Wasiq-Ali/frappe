@@ -62,7 +62,7 @@ def setup_complete(args):
 		return process_setup_stages(stages, args)
 
 
-@frappe.task()
+@frappe.task(timeout=600)
 def process_setup_stages(stages, user_input, is_background_task=False):
 	from frappe.utils.telemetry import capture
 
