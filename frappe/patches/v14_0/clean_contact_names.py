@@ -2,6 +2,8 @@ import frappe
 
 
 def execute():
+	frappe.reload_doctype("Contact")
+
 	contacts = frappe.db.sql_list("""
 		select name
 		from `tabContact`
@@ -9,4 +11,8 @@ def execute():
 	""")
 
 	for name in contacts:
-		frappe.get_doc("Contact", name).save(ignore_permissions=True)
+		try:
+			frappe.get_doc("Contact", name).save(ignore_permissions=True)
+			frappe.db.commit()
+		except frappe.ValidationError:
+			frappe.db.rollback()
