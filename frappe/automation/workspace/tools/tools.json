@@ -8,6 +8,7 @@
  "hide_custom": 0,
  "icon": "tool",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Tools",
  "links": [
   {
@@ -208,10 +209,11 @@
    "type": "Link"
   }
  ],
- "modified": "2022-11-16 12:24:38.137386",
+ "modified": "2023-08-21 01:51:10.253432",
  "modified_by": "Administrator",
  "module": "Automation",
  "name": "Tools",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -222,7 +224,7 @@
    "role": "System Manager"
   }
  ],
- "sequence_id": 17.0,
+ "sequence_id": 4000.0,
  "shortcuts": [
   {
    "label": "ToDo",

@@ -8,6 +8,7 @@
  "hide_custom": 0,
  "icon": "integration",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Integrations",
  "links": [
   {
@@ -197,10 +198,11 @@
    "type": "Link"
   }
  ],
- "modified": "2022-11-16 12:24:38.089091",
+ "modified": "2023-08-21 01:51:08.885518",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Integrations",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -211,7 +213,7 @@
    "role": "System Manager"
   }
  ],
- "sequence_id": 16.0,
+ "sequence_id": 3000.0,
  "shortcuts": [],
  "title": "Integrations"
 }

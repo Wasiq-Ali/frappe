@@ -8,6 +8,7 @@
  "hide_custom": 0,
  "icon": "tool",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Build",
  "links": [
   {
@@ -273,10 +274,11 @@
    "type": "Link"
   }
  ],
- "modified": "2022-11-16 12:24:37.983763",
+ "modified": "2023-08-21 01:51:04.169100",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Build",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -287,7 +289,7 @@
    "role": "System Manager"
   }
  ],
- "sequence_id": 14.0,
+ "sequence_id": 1000.0,
  "shortcuts": [
   {
    "doc_view": "",

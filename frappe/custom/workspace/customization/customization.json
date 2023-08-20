@@ -8,6 +8,7 @@
  "hide_custom": 0,
  "icon": "customization",
  "idx": 0,
+ "is_hidden": 0,
  "label": "Customization",
  "links": [
   {
@@ -133,10 +134,11 @@
    "type": "Link"
   }
  ],
- "modified": "2022-12-18 15:31:34.205244",
+ "modified": "2023-08-21 01:51:07.313406",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Customization",
+ "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
  "public": 1,
@@ -147,7 +149,7 @@
    "role": "System Manager"
   }
  ],
- "sequence_id": 15.0,
+ "sequence_id": 2000.0,
  "shortcuts": [
   {
    "label": "Customize Form",
