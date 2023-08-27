@@ -213,3 +213,13 @@ frappe.ui.form.qz_fail = function (e) {
 		20
 	);
 };
+
+frappe.ui.get_print_format_printer_map = function () {
+	// returns the whole object "print_format_printer_map" stored in the localStorage.
+	try {
+		let print_format_printer_map = JSON.parse(localStorage.print_format_printer_map);
+		return print_format_printer_map;
+	} catch (e) {
+		return {};
+	}
+}
