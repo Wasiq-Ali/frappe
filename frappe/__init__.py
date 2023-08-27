@@ -1050,7 +1050,7 @@ def new_doc(
 	parent_doc: Optional["Document"] = None,
 	parentfield: str | None = None,
 	as_dict: bool = False,
-) -> "Document":
+):
 	"""Returns a new document of the given DocType with defaults set.
 
 	:param doctype: DocType of the new document.
@@ -1068,7 +1068,7 @@ def set_value(doctype, docname, fieldname, value=None):
 	return frappe.client.set_value(doctype, docname, fieldname, value)
 
 
-def get_cached_doc(*args, **kwargs) -> "Document":
+def get_cached_doc(*args, **kwargs):
 	def _respond(doc, from_redis=False):
 		if isinstance(doc, dict):
 			local.document_cache[key] = doc = get_doc(doc)
@@ -1163,7 +1163,7 @@ def get_cached_value(
 	return values
 
 
-def get_doc(*args, **kwargs) -> "Document":
+def get_doc(*args, **kwargs):
 	"""Return a `frappe.model.document.Document` object of the given type and name.
 
 	:param arg1: DocType name as string **or** document JSON.
@@ -1706,7 +1706,7 @@ def import_doc(path):
 	import_doc(path)
 
 
-def copy_doc(doc: "Document", ignore_no_copy: bool = True) -> "Document":
+def copy_doc(doc: "Document", ignore_no_copy: bool = True):
 	"""No_copy fields also get copied."""
 	import copy
 
