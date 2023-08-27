@@ -255,7 +255,6 @@ frappe.form.formatters = {
 		let anchor_title = frappe.form.formatters._get_link_title(options);
 
 		let link_text = __((options && options.label) || (link_title != original_value && link_title) || value);
-		let url = `/app/${encodeURIComponent(frappe.router.slug(doctype))}/${encodeURIComponent(original_value)}`;
 
 		let formatted;
 		if (docfield && docfield.link_onclick) {
@@ -264,6 +263,7 @@ frappe.form.formatters = {
 			});
 		} else if (docfield && doctype) {
 			if (frappe.model.can_read(doctype)) {
+				let url = frappe.utils.get_form_link(doctype, original_value);
 				formatted = `<a ${anchor_title}${anchor_target}${css_class}${css_style}
 					href="${url}"
 					data-doctype="${doctype}"
