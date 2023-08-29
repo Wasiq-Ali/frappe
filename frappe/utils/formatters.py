@@ -106,7 +106,12 @@ def format_value(value, df=None, doc=None, currency=None, translated=False, form
 		temp = cstr(flt(value, precision)).split(".")
 		if len(temp) == 1 or cint(temp[1]) == 0:
 			precision = 0
-		return f"{flt(value, precision)}%"
+
+		rounded = flt(value, precision)
+		if precision == 0:
+			rounded = cint(rounded)
+
+		return f"{rounded}%"
 
 	elif df.get("fieldtype") in ("Text", "Small Text"):
 		if not BLOCK_TAGS_PATTERN.search(cstr(value)):
