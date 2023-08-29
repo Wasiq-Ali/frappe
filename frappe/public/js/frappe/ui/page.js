@@ -607,14 +607,14 @@ frappe.ui.Page = class Page {
 	}
 
 	btn_disable_enable(btn, response) {
-		if (response && response.then) {
-			btn.prop("disabled", true);
-			response.then(() => {
-				btn.prop("disabled", false);
-			});
-		} else if (response && response.always) {
+		if (response && response.always) {
 			btn.prop("disabled", true);
 			response.always(() => {
+				btn.prop("disabled", false);
+			});
+		} else if (response && response.then) {
+			btn.prop("disabled", true);
+			response.then(() => {
 				btn.prop("disabled", false);
 			});
 		}
