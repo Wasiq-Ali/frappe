@@ -1427,7 +1427,7 @@ Object.assign(frappe.utils, {
 			}</div>
 			</div>`);
 		}
-		let df = { fieldtype: summary.datatype };
+		let df = { fieldtype: summary.datatype, precision: summary.precision };
 		let doc = null;
 		if (summary.datatype == "Currency") {
 			df.options = "currency";
