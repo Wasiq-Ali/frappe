@@ -725,8 +725,29 @@ def get_user_match_filters(doctypes, user):
 	return match_filters
 
 
-def group_report_data(rows_to_group, group_by, group_by_labels=None, total_fields=None, totals_only=False,
-		calculate_totals=None, postprocess_group=None, parent_grouped_by=None):
+def group_report_data(
+	rows_to_group, group_by, group_by_labels=None,
+	total_fields=None, totals_only=False,
+	calculate_totals=None, postprocess_group=None, starting_level=1,
+):
+	return _group_report_data(
+		rows_to_group=rows_to_group,
+		group_by=group_by,
+		group_by_labels=group_by_labels,
+		total_fields=total_fields,
+		totals_only=totals_only,
+		calculate_totals=calculate_totals,
+		postprocess_group=postprocess_group,
+		level=cint(starting_level)
+	)
+
+
+def _group_report_data(
+	rows_to_group, group_by, group_by_labels=None,
+	total_fields=None, totals_only=False,
+	calculate_totals=None, postprocess_group=None,
+	parent_grouped_by=None, level=1, level_idx=None
+):
 	def get_grouped_by_map(group):
 		res = parent_grouped_by.copy()
 		if isinstance(group_field, (list, tuple)):
@@ -736,8 +757,32 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 			res[group_field] = group
 		return res
 
+	def get_group_idx():
+		if level < 1:
+			return ""
+
+		group_idx = []
+		for l in range(level):
+			group_idx.append(str(level_idx[l+1]))
+
+		group_idx_str = ".".join(group_idx)
+		return group_idx_str
+
+	level = cint(level)
+	if not level_idx:
+		level_idx = {}
+
+	level_idx[level] = 0
+
+	# break condition
 	if not group_by and group_by is not None:
+		for i, d in enumerate(rows_to_group):
+			level_idx[level] = i + 1
+			d["_level_idx"] = level_idx[level]
+			d["_group_idx"] = get_group_idx()
+
 		return rows_to_group
+
 	if not isinstance(group_by, list):
 		group_by = [group_by]
 	if not group_by_labels:
@@ -777,15 +822,28 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 	out = []
 
 	for group_value, rows in group_rows.items():
+		level_idx[level] += 1
+
 		grouped_by_map = get_grouped_by_map(group_value)
 		group_object = frappe._dict({
 			"_isGroup": 1,
+			"_level_idx": level_idx[level],
+			"_group_idx": get_group_idx(),
 			"group_field": group_field,
 			"group_label": group_label,
 			"group_value": group_value,
-			"rows": group_report_data(rows, group_by[1:], group_by_labels=group_by_labels, totals_only=totals_only,
-				total_fields=total_fields, calculate_totals=calculate_totals, postprocess_group=postprocess_group,
-				parent_grouped_by=grouped_by_map)
+			"rows": _group_report_data(
+				rows_to_group=rows,
+				group_by=group_by[1:],
+				group_by_labels=group_by_labels,
+				totals_only=totals_only,
+				total_fields=total_fields,
+				calculate_totals=calculate_totals,
+				postprocess_group=postprocess_group,
+				parent_grouped_by=grouped_by_map,
+				level=level+1,
+				level_idx=level_idx,
+			),
 		})
 
 		for f, g in grouped_by_map.items():
@@ -795,6 +853,8 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 		if group_totals.get(group_value):
 			group_total_row = group_totals.get(group_value)
 			group_total_row['_bold'] = 1
+			group_total_row['_group_idx'] = group_object['_group_idx']
+			group_total_row['_level_idx'] = group_object['_level_idx']
 			group_object['totals'] = group_total_row
 
 		if postprocess_group and callable(postprocess_group):
@@ -807,6 +867,7 @@ def group_report_data(rows_to_group, group_by, group_by_labels=None, total_field
 			out.append(group_object)
 
 	return out
+
 
 def hide_columns_if_filtered(columns, filters):
 	def condition(col):
