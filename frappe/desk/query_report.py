@@ -606,6 +606,8 @@ def has_match(
 					# case handled above
 					if dt == "User" and columns_dict[idx] == columns_dict.get("owner"):
 						continue
+					if columns_dict[idx].get("ignore_user_permissions"):
+						continue
 
 					cell_value = None
 					if isinstance(row, dict):
