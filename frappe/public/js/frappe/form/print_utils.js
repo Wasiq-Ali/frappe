@@ -1,4 +1,4 @@
-frappe.ui.get_print_settings = function (pdf, callback, letter_head, pick_columns) {
+frappe.ui.get_print_settings = function (pdf, callback, letter_head, pick_columns, orientation) {
 	var print_settings = locals[":Print Settings"]["Print Settings"];
 
 	var default_letter_head =
@@ -15,7 +15,7 @@ frappe.ui.get_print_settings = function (pdf, callback, letter_head, pick_column
 				{ value: "Landscape", label: __("Landscape") },
 				{ value: "Portrait", label: __("Portrait") },
 			],
-			default: "Landscape",
+			default: orientation || "Landscape",
 		},
 		{
 			fieldtype: "Select",
@@ -29,6 +29,8 @@ frappe.ui.get_print_settings = function (pdf, callback, letter_head, pick_column
 			fieldtype: "Check",
 			fieldname: "with_letter_head",
 			label: __("With Letter head"),
+			default: letter_head === "no_letterhead" ? 0 : 1,
+			hidden: letter_head === "no_letterhead" ? 1 : 0,
 		},
 		{
 			fieldtype: "Check",

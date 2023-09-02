@@ -1722,8 +1722,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					let dialog = frappe.ui.get_print_settings(
 						false,
 						(print_settings) => this.print_report(print_settings),
-						this.report_doc.letter_head,
-						this.get_visible_columns()
+						this.get_filter_value("no_letterhead") || this.report_doc.letter_head,
+						this.get_visible_columns(),
+						this.get_filter_value("orientation"),
 					);
 					this.add_portrait_warning(dialog);
 				},
@@ -1737,8 +1738,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					let dialog = frappe.ui.get_print_settings(
 						false,
 						(print_settings) => this.pdf_report(print_settings),
-						this.report_doc.letter_head,
-						this.get_visible_columns()
+						this.get_filter_value("no_letterhead") || this.report_doc.letter_head,
+						this.get_visible_columns(),
+						this.get_filter_value("orientation"),
 					);
 
 					this.add_portrait_warning(dialog);
