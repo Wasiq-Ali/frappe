@@ -187,6 +187,7 @@ def get_script(report_name):
 		"script": render_include(script),
 		"html_format": html_format,
 		"execution_time": frappe.cache().hget("report_execution_time", report_name) or 0,
+		"filters": report.filters,
 	}
 
 
@@ -217,7 +218,7 @@ def run(
 	if (
 		report.prepared_report
 		and not report.disable_prepared_report
-		and not ignore_prepared_report
+		and not sbool(ignore_prepared_report)
 		and not custom_columns
 	):
 		dn = None
@@ -241,13 +242,20 @@ def run(
 
 
 def add_custom_column_data(custom_columns, result):
-	custom_column_data = get_data_for_custom_report(custom_columns)
+	custom_column_data = get_data_for_custom_report(custom_columns, result)
 
 	for column in custom_columns:
 		key = (column.get("doctype"), column.get("fieldname"))
 		if key in custom_column_data:
 			for row in result:
-				row_reference = row.get(column.get("link_field"))
+				link_field = column.get("link_field")
+
+				# backwards compatibile `link_field`
+				# old custom reports which use `str` should not break.
+				if isinstance(link_field, str):
+					link_field = frappe._dict({"fieldname": link_field, "names": []})
+
+				row_reference = row.get(link_field.get("fieldname"))
 				# possible if the row is empty
 				if not row_reference:
 					continue
@@ -335,7 +343,7 @@ def export_query():
 		xlsx_data = [columns_row] + report_data
 		xlsx_file = make_xlsx(xlsx_data, "Query Report")
 
-		frappe.response['filename'] = report_name + '.xlsx'
+		frappe.response['filename'] = _(report_name) + '.xlsx'
 		frappe.response['filecontent'] = xlsx_file.getvalue()
 		frappe.response['type'] = 'binary'
 
@@ -363,6 +371,13 @@ def build_xlsx_data(data, visible_idx, include_indentation, ignore_visible_idx=F
 		datetime.time,
 		datetime.timedelta,
 	)
+
+	if len(visible_idx) == len(data.result):
+		# It's not possible to have same length and different content.
+		ignore_visible_idx = True
+	else:
+		# Note: converted for faster lookups
+		visible_idx = set(visible_idx)
 
 	result = [[]]
 	column_widths = []
@@ -471,24 +486,42 @@ def add_total_row(result, columns, meta=None, is_tree=False, parent_field=None):
 
 
 @frappe.whitelist()
-def get_data_for_custom_field(doctype, field):
+def get_data_for_custom_field(doctype, field, names=None):
 
 	if not frappe.has_permission(doctype, "read"):
 		frappe.throw(_("Not Permitted to read {0}").format(doctype), frappe.PermissionError)
 
-	value_map = frappe._dict(frappe.get_all(doctype, fields=["name", field], as_list=1))
+	filters = {}
+	if names:
+		if isinstance(names, (str, bytearray)):
+			names = frappe.json.loads(names)
+		filters.update({"name": ["in", names]})
 
+	value_map = frappe._dict(
+		frappe.get_list(doctype, filters=filters, fields=["name", field], as_list=1)
+	)
 	return value_map
 
 
-def get_data_for_custom_report(columns):
+def get_data_for_custom_report(columns, result):
 	doc_field_value_map = {}
 
 	for column in columns:
-		if column.get("link_field"):
-			fieldname = column.get("fieldname")
-			doctype = column.get("doctype")
-			doc_field_value_map[(doctype, fieldname)] = get_data_for_custom_field(doctype, fieldname)
+		# backwards compatibile `link_field`
+		# old custom reports which use `str` should not break
+		link_field = column.get("link_field")
+		if isinstance(link_field, str):
+			link_field = frappe._dict({"fieldname": link_field, "names": []})
+
+		fieldname = column.get("fieldname")
+		doctype = column.get("doctype")
+
+		names = None
+		if link_field:
+			row_key = link_field.get("fieldname")
+			names = list({row[row_key] for row in result}) or None
+
+		doc_field_value_map[(doctype, fieldname)] = get_data_for_custom_field(doctype, fieldname, names)
 
 	return doc_field_value_map
 

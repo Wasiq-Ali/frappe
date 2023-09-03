@@ -8,7 +8,15 @@
  "engine": "InnoDB",
  "field_order": [
   "subject",
+  "section_break_8",
   "content",
+  "column_break_5",
+  "additional_info",
+  "communication_date",
+  "ip_address",
+  "column_break_7",
+  "operation",
+  "status",
   "reference_section",
   "user",
   "full_name",
@@ -21,18 +29,13 @@
   "timeline_name",
   "link_doctype",
   "link_name",
-  "additional_info",
-  "communication_date",
-  "column_break_7",
-  "operation",
-  "status",
-  "section_break_8"
+  "user",
+  "full_name"
  ],
  "fields": [
   {
    "fieldname": "subject",
    "fieldtype": "Small Text",
-   "in_global_search": 1,
    "in_list_view": 1,
    "label": "Subject",
    "reqd": 1
@@ -153,12 +156,17 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "User Name"
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address"
   }
  ],
  "icon": "fa fa-comment",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-03-31 23:35:19.178108",
+ "modified": "2023-07-28 13:26:32.281278",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Activity Log",

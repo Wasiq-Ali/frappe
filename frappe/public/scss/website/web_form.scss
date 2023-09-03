@@ -23,9 +23,17 @@
 					margin-top: 0;
 					margin-bottom: 0;
 					padding-bottom: 2px;
+
+					@include media-breakpoint-down(sm) {
+						font-size: 1.25rem;
+					}
 				}
 
 				.web-form-header {
+
+					@include media-breakpoint-down(sm) {
+						padding: 1.5rem 1.5rem 0;
+					}
 
 					.breadcrumb-container {
 						padding: 0px;
@@ -72,6 +80,10 @@
 
 							p {
 								color: var(--text-muted);
+
+								@include media-breakpoint-down(sm) {
+									font-size: var(--text-xs);
+								}
 							}
 						}
 					}
@@ -83,10 +95,18 @@
 					border-bottom-left-radius: var(--border-radius);
 					border-bottom-right-radius: var(--border-radius);
 
+					@include media-breakpoint-down(sm) {
+						padding: 1rem 1.5rem 1.5rem;
+					}
+
 					.web-form-wrapper {
 						.form-control {
 							color: var(--text-color);
 							background-color: var(--control-bg);
+
+							@include media-breakpoint-down(sm) {
+								font-size: var(--text-sm);
+							}
 						}
 
 						.form-section {
@@ -100,8 +120,18 @@
 						.form-column {
 							padding: 0 var(--padding-sm);
 
+							.form-group {
+								@include media-breakpoint-down(sm) {
+									margin-bottom: 0.5rem;
+								}
+							}
+
 							.frappe-control {
 								position: relative;
+
+								@include media-breakpoint-down(sm) {
+									font-size: var(--text-sm);
+								}
 
 								&[data-fieldtype="Rating"] {
 									.like-disabled-input {
@@ -181,6 +211,10 @@
 					.web-form-footer {
 						margin-top: 1rem;
 
+						@include media-breakpoint-down(sm) {
+							margin-top: 0.5rem;
+						}
+
 						.web-form-actions {
 							display: flex;
 							justify-content: space-between;
@@ -188,6 +222,10 @@
 
 							.btn {
 								font-size: var(--text-base);
+
+								@include media-breakpoint-down(sm) {
+									font-size: var(--text-sm);
+								}
 							}
 
 							.btn-link {
@@ -281,6 +319,10 @@
 									width: 100%;
 									justify-content: center;
 									margin-bottom: 1.5rem;
+
+									&:empty {
+										margin: 0;
+									}
 								}
 							}
 

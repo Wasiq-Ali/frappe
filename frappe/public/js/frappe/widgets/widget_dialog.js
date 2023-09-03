@@ -361,6 +361,7 @@ class ShortcutDialog extends WidgetDialog {
 								query: "frappe.core.report.permitted_documents_for_user.permitted_documents_for_user.query_doctypes",
 								filters: {
 									user: frappe.session.user,
+									include_single_doctypes: true,
 								},
 							};
 						};
@@ -384,27 +385,32 @@ class ShortcutDialog extends WidgetDialog {
 				label: "Link To",
 				options: "type",
 				onchange: () => {
-					if (this.dialog.get_value("type") == "DocType") {
-						let doctype = this.dialog.get_value("link_to");
-						if (doctype) {
-							frappe.model.with_doctype(doctype, () => {
-								let meta = frappe.get_meta(doctype);
+					const doctype = this.dialog.get_value("link_to");
+					if (doctype && this.dialog.get_value("type") == "DocType") {
+						frappe.model.with_doctype(doctype, async () => {
+							let meta = frappe.get_meta(doctype);
 
-								if (doctype && frappe.boot.single_types.includes(doctype)) {
-									this.hide_filters();
-								} else if (doctype) {
-									this.setup_filter(doctype);
-									this.show_filters();
-								}
+							if (doctype && frappe.boot.single_types.includes(doctype)) {
+								this.hide_filters();
+							} else if (doctype) {
+								this.setup_filter(doctype);
+								this.show_filters();
+							}
 
-								const views = ["List", "Report Builder", "Dashboard", "New"];
-								if (meta.is_tree) views.push("Tree");
-								if (frappe.boot.calendars.includes(doctype)) views.push("Calendar");
+							const views = ["List", "Report Builder", "Dashboard", "New"];
+							if (meta.is_tree) views.push("Tree");
+							if (frappe.boot.calendars.includes(doctype)) views.push("Calendar");
 
-								this.dialog.set_df_property("doc_view", "options", views.join("\n"));
-								this.dialog.refresh_fields();
-							});
-						}
+							const response = await frappe.db.get_value(
+								"Kanban Board",
+								{ reference_doctype: doctype },
+								"name"
+							);
+							if (response?.message?.name) views.push("Kanban");
+
+							this.dialog.set_df_property("doc_view", "options", views.join("\n"));
+							this.dialog.refresh_fields();
+						});
 					} else {
 						this.hide_filters();
 					}
@@ -434,10 +440,37 @@ class ShortcutDialog extends WidgetDialog {
 					if (this.dialog) {
 						let doctype = this.dialog.get_value("link_to");
 						let is_single = frappe.boot.single_types.includes(doctype);
-						return state.type == "DocType" && !is_single;
+						return doctype && state.type == "DocType" && !is_single;
 					}
 
 					return false;
+				},
+				onchange: () => {
+					if (this.dialog.get_value("doc_view") == "Kanban") {
+						this.dialog.fields_dict.kanban_board.get_query = () => {
+							return {
+								filters: {
+									reference_doctype: this.dialog.get_value("link_to"),
+								},
+							};
+						};
+					} else {
+						this.dialog.fields_dict.link_to.get_query = null;
+					}
+				},
+			},
+			{
+				fieldtype: "Link",
+				fieldname: "kanban_board",
+				label: "Kanban Board",
+				options: "Kanban Board",
+				depends_on: () => {
+					let doc_view = this.dialog?.get_value("doc_view");
+					return doc_view == "Kanban";
+				},
+				mandatory_depends_on: () => {
+					let doc_view = this.dialog?.get_value("doc_view");
+					return doc_view == "Kanban";
 				},
 			},
 			{
@@ -707,6 +740,29 @@ class NumberCardDialog extends WidgetDialog {
 	}
 }
 
+class CustomBlockDialog extends WidgetDialog {
+	constructor(opts) {
+		super(opts);
+	}
+
+	get_fields() {
+		return [
+			{
+				fieldtype: "Link",
+				fieldname: "custom_block_name",
+				label: "Custom Block Name",
+				options: "Custom HTML Block",
+				reqd: 1,
+				get_query: () => {
+					return {
+						query: "frappe.desk.doctype.custom_html_block.custom_html_block.get_custom_blocks_for_user",
+					};
+				},
+			},
+		];
+	}
+}
+
 export default function get_dialog_constructor(type) {
 	const widget_map = {
 		chart: ChartDialog,
@@ -715,6 +771,7 @@ export default function get_dialog_constructor(type) {
 		onboarding: OnboardingDialog,
 		quick_list: QuickListDialog,
 		number_card: NumberCardDialog,
+		custom_block: CustomBlockDialog,
 	};
 
 	return widget_map[type] || WidgetDialog;

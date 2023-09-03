@@ -3,6 +3,7 @@
 
 import datetime
 import re
+from collections import defaultdict
 from typing import TYPE_CHECKING, Callable, Optional
 
 import frappe
@@ -10,15 +11,12 @@ from frappe import _
 from frappe.model import log_types
 from frappe.query_builder import DocType
 from frappe.utils import cint, cstr, now_datetime
+from frappe.utils.caching import redis_cache
 
 if TYPE_CHECKING:
 	from frappe.model.document import Document
 	from frappe.model.meta import Meta
 
-
-# NOTE: This is used to keep track of status of sites
-# whether `log_types` have autoincremented naming set for the site or not.
-autoincremented_site_status_map = {}
 
 NAMING_SERIES_PATTERN = re.compile(r"^[\w\- \/.#{}]+$", re.UNICODE)
 BRACED_PARAMS_PATTERN = re.compile(r"(\{[\w | #]+\})")
@@ -64,8 +62,10 @@ class NamingSeries:
 				exc=InvalidNamingSeriesError,
 			)
 
-	def generate_next_name(self, doc: "Document", series_value_field='') -> str:
-		self.validate()
+	def generate_next_name(self, doc: "Document", *, ignore_validate=False, series_value_field='') -> str:
+		if not ignore_validate:
+			self.validate()
+
 		parts = self.series.split(".")
 		return parse_naming_series(parts, doc=doc, series_value_field=series_value_field)
 
@@ -176,22 +176,7 @@ def is_autoincremented(doctype: str, meta: Optional["Meta"] = None) -> bool:
 	"""Checks if the doctype has autoincrement autoname set"""
 
 	if doctype in log_types:
-		if autoincremented_site_status_map.get(frappe.local.site, {}).get(doctype) is None:
-			if (
-				frappe.db.sql(
-					f"""select data_type FROM information_schema.columns
-				where column_name = 'name' and table_name = 'tab{doctype}'"""
-				)[0][0]
-				== "bigint"
-			):
-				autoincremented_site_status_map.setdefault(frappe.local.site, {})[doctype] = 1
-				return True
-			else:
-				autoincremented_site_status_map.setdefault(frappe.local.site, {})[doctype] = 0
-
-		elif autoincremented_site_status_map[frappe.local.site][doctype]:
-			return True
-
+		return _implicitly_auto_incremented(doctype)
 	else:
 		if not meta:
 			meta = frappe.get_meta(doctype)
@@ -200,6 +185,16 @@ def is_autoincremented(doctype: str, meta: Optional["Meta"] = None) -> bool:
 			return True
 
 	return False
+
+
+@redis_cache
+def _implicitly_auto_incremented(doctype) -> bool:
+	query = f"""select data_type FROM information_schema.columns where column_name = 'name' and table_name = 'tab{doctype}'"""
+	values = ()
+	if frappe.db.db_type == "mariadb":
+		query += " and table_schema = %s"
+		values = (frappe.db.db_name,)
+	return frappe.db.sql(query, values)[0][0] == "bigint"
 
 
 def set_name_from_naming_options(autoname, doc):
@@ -241,8 +236,14 @@ def set_naming_from_document_naming_rule(doc):
 	if doc.meta.istable:
 		return
 
-	# ignore_ddl if naming is not yet bootstrapped
-	for d in get_document_naming_rules(doc.doctype):
+	document_naming_rules = frappe.cache_manager.get_doctype_map(
+		"Document Naming Rule",
+		doc.doctype,
+		filters={"document_type": doc.doctype, "disabled": 0},
+		order_by="priority desc",
+	)
+
+	for d in document_naming_rules:
 		frappe.get_cached_doc("Document Naming Rule", d.name).apply(doc)
 		if doc.name:
 			break
@@ -268,10 +269,11 @@ def set_name_by_naming_series(doc, series_value_field=''):
 	if not doc.naming_series:
 		frappe.throw(frappe._("Naming Series mandatory"))
 
-	doc.name = make_autoname(doc.naming_series + ".#####", "", doc, series_value_field)
+	doc.name = make_autoname(doc.naming_series + ".#####", "", doc,
+		series_value_field=series_value_field)
 
 
-def make_autoname(key="", doctype="", doc="", series_value_field=""):
+def make_autoname(key="", doctype="", doc="", *, ignore_validate=False, series_value_field=""):
 	"""
 	     Creates an autoname from the given key:
 
@@ -293,7 +295,8 @@ def make_autoname(key="", doctype="", doc="", series_value_field=""):
 		return frappe.generate_hash(length=10)
 
 	series = NamingSeries(key)
-	return series.generate_next_name(doc, series_value_field=series_value_field)
+	return series.generate_next_name(doc, ignore_validate=ignore_validate,
+		series_value_field=series_value_field)
 
 
 def parse_naming_series(
@@ -301,7 +304,7 @@ def parse_naming_series(
 	doctype=None,
 	doc: Optional["Document"] = None,
 	number_generator: Callable[[str, int], str] | None = None,
-	series_value_field = None,
+	series_value_field=None,
 ) -> str:
 
 	"""Parse the naming series and get next name.
@@ -351,13 +354,11 @@ def parse_naming_series(
 			part = determine_consecutive_week_number(today)
 		elif e == "timestamp":
 			part = str(today)
-		elif e == "FY":
-			part = frappe.defaults.get_user_default("fiscal_year")
-		elif e == 'CO' and doc and doc.get('company'):
-			part = frappe.get_cached_value('Company', doc.get('company'), 'abbr')
 		elif doc and (e.startswith("{") or doc.get(e, _sentinel) is not _sentinel):
 			e = e.replace("{", "").replace("}", "")
 			part = doc.get(e)
+		elif method := has_custom_parser(e):
+			part = frappe.get_attr(method[0])(doc, e)
 		else:
 			part = e
 
@@ -367,6 +368,11 @@ def parse_naming_series(
 			name += cstr(part).strip()
 
 	return name
+
+
+def has_custom_parser(e):
+	"""Returns true if the naming series part has a custom parser"""
+	return frappe.get_hooks("naming_series_variables", {}).get(e)
 
 
 def determine_consecutive_week_number(datetime):

@@ -149,7 +149,7 @@ def get_permitted_and_not_permitted_links(doctype):
 	return {"permitted_links": permitted_links, "not_permitted_links": not_permitted_links}
 
 
-def delete_contact_and_address(doctype, docname):
+def delete_contact_and_address(doctype: str, docname: str) -> None:
 	for parenttype in ("Contact", "Address"):
 		items = frappe.db.sql_list("""
 			select distinct parent
