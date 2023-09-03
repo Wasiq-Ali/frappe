@@ -739,7 +739,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		if (col.type === "Status" || col.df?.options == "Workflow State") {
 			let show_workflow_state = col.df?.options == "Workflow State";
 			return `
-				<div class="list-row-col hidden-xs ellipsis">
+				<div class="list-row-col list-row-status hidden-xs ellipsis">
 					${this.get_indicator_html(doc, show_workflow_state)}
 				</div>
 			`;
