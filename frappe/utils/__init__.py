@@ -188,7 +188,7 @@ def validate_email_address(email_str, throw=False):
 			if throw:
 				invalid_email = frappe.utils.escape_html(e)
 				frappe.throw(
-					frappe._("{0} is not a valid Email Address").format(invalid_email),
+					frappe._("{0} is not a valid Email Address").format(frappe.bold(invalid_email)),
 					frappe.InvalidEmailAddressError,
 				)
 			return None
