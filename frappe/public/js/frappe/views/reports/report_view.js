@@ -225,6 +225,12 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 		this.setup_datatable(this.data);
 	}
 
+	render_list() {
+		if (this.datatable) {
+			this.datatable.refresh(this.get_data(this.data), this.columns);
+		}
+	}
+
 	get_count_fields() {
 		let fields = [`count(${frappe.model.get_full_column_name('name', this.doctype)}) as total_count`];
 

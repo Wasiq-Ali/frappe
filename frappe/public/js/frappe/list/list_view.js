@@ -1457,6 +1457,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			(d) => names.indexOf(d.name) === -1
 		);
 
+		if (this.fields.filter((f) => f[1] !== this.doctype).length) {
+			this.refresh();
+			return;
+		}
+
 		if (!names.length) return;
 
 		// filters to get only the doc with this name
