@@ -149,7 +149,6 @@ frappe.patches.v13_0.generate_theme_files_in_public_folder
 frappe.patches.v13_0.increase_password_length
 frappe.patches.v12_0.fix_email_id_formatting
 frappe.patches.v12_0.enable_auto_value_setter_for_existing
-frappe.patches.v12_0.delete_orphaned_child_table_rows
 frappe.patches.v12_0.set_todo_title
 frappe.patches.v12_0.delete_useless_versions
 frappe.patches.v12_0.set_time_format_12_hour
@@ -233,3 +232,4 @@ frappe.patches.v14_0.remove_background_jobs_from_dropdown
 frappe.patches.v15_0.remove_prepared_report_settings_from_system_settings
 frappe.desk.doctype.form_tour.patches.introduce_ui_tours
 execute:frappe.delete_doc_if_exists("Workspace", "Customization")
+# frappe.patches.v12_0.delete_orphaned_child_table_rows
