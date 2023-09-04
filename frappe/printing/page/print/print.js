@@ -22,7 +22,7 @@ frappe.pages["print"].on_page_load = function (wrapper) {
 			print_view.frm = frappe.route_options.frm.doctype
 				? frappe.route_options.frm
 				: frappe.route_options.frm.frm;
-			frappe.route_options.frm = null;
+			frappe.route_options = null;
 			print_view.show(print_view.frm);
 		}
 	});
@@ -490,9 +490,9 @@ frappe.ui.form.PrintView = class {
 	}
 
 	go_to_form_view() {
-		frappe.route_options = {
-			frm: this,
-		};
+		// frappe.route_options = {
+		// 	frm: this,
+		// };
 		frappe.set_route("Form", this.frm.doctype, this.frm.docname);
 	}
 
