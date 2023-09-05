@@ -792,6 +792,12 @@ def _group_report_data(
 			res[group_field] = group
 		return res
 
+	def set_group_idx(_rows):
+		for i, d in enumerate(_rows):
+			level_idx[level] = i + 1
+			d["_level_idx"] = level_idx[level]
+			d["_group_idx"] = get_group_idx()
+
 	def get_group_idx():
 		if level < 1:
 			return ""
@@ -803,21 +809,19 @@ def _group_report_data(
 		group_idx_str = ".".join(group_idx)
 		return group_idx_str
 
+	# Initialize level
 	level = cint(level)
 	if not level_idx:
 		level_idx = {}
 
 	level_idx[level] = 0
 
-	# break condition
+	# Break condition
 	if not group_by and group_by is not None:
-		for i, d in enumerate(rows_to_group):
-			level_idx[level] = i + 1
-			d["_level_idx"] = level_idx[level]
-			d["_group_idx"] = get_group_idx()
-
+		set_group_idx(rows_to_group)
 		return rows_to_group
 
+	# Intialize grouping
 	if not isinstance(group_by, list):
 		group_by = [group_by]
 	if not group_by_labels:
@@ -830,6 +834,7 @@ def _group_report_data(
 	group_rows = OrderedDict()
 	group_totals = OrderedDict()
 
+	# Create group dictionaries
 	for row in rows_to_group:
 		if not group_field:
 			group_value = ''
@@ -840,22 +845,28 @@ def _group_report_data(
 
 		group_rows.setdefault(group_value, []).append(row)
 
+		# Calculate totals if total fields provided
 		if total_fields:
 			group_totals.setdefault(group_value, {})
 			for total_field in total_fields:
 				group_totals[group_value].setdefault(total_field, 0)
 				group_totals[group_value][total_field] += flt(row.get(total_field))
 
+	# Call User Provided calculate_totals
 	if calculate_totals and callable(calculate_totals):
 		for group_value in group_rows.keys():
 			grouped_by_map = get_grouped_by_map(group_value)
 			group_totals[group_value] = calculate_totals(group_rows[group_value], group_field, group_value, grouped_by_map)
 
+	# Group totals only break condition
 	if totals_only and len(group_by) == 1:
-		return list(group_totals.values())
+		out = list(group_totals.values())
+		set_group_idx(out)
+		return out
 
 	out = []
 
+	# Create group objects and recurse
 	for group_value, rows in group_rows.items():
 		level_idx[level] += 1
 
