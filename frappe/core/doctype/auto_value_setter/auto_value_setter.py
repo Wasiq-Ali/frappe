@@ -7,6 +7,7 @@ from frappe import _
 from frappe.utils import cstr
 from frappe.model.document import Document
 from frappe.utils.jinja import validate_template
+from frappe.utils.safe_exec import get_safe_globals
 
 
 class AutoValueSetter(Document):
@@ -69,12 +70,14 @@ def apply_auto_value_setters(doc, parent=None):
 		# if not doc.get("__islocal") and df.set_only_once and doc.get("_doc_before_save", {}).get(auto_value_setter.field_name):
 		# 	continue
 
+		eval_globals = get_safe_globals()
 		for d in auto_value_setter.conditions:
-			if not d.condition or frappe.safe_eval(d.condition, None, context):  # if condition is met
+			# if condition is met
+			if not d.condition or frappe.safe_eval(d.condition, eval_globals, context):
 				value = frappe.render_template(cstr(d.value), context)
 				doc.set(auto_value_setter.field_name, value)
 				break
 
+
 def get_context(doc, parent):
-	return {"doc": doc, "parent": parent, "nowdate": frappe.utils.nowdate, "frappe.utils": frappe.utils,
-		"frappe": frappe}
+	return {"doc": doc, "parent": parent, "nowdate": frappe.utils.nowdate}
