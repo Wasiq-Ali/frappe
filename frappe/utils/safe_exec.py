@@ -187,6 +187,7 @@ def get_safe_globals():
 			get_list=frappe.get_list,
 			get_all=frappe.get_all,
 			get_system_settings=frappe.get_system_settings,
+			generate_hash=frappe.generate_hash,
 			rename_doc=rename_doc,
 			delete_doc=delete_doc,
 			utils=datautils,
