@@ -478,6 +478,9 @@ frappe.form.formatters = {
 		});
 		return formatted_values.join(", ");
 	},
+	MultiSelectList: function (rows, df, options) {
+		return (rows || []).join(", ");
+	},
 	Color: (value) => {
 		return value
 			? `<div>
