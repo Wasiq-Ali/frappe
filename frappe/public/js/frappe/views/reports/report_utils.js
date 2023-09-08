@@ -165,4 +165,35 @@ frappe.report_utils = {
 		};
 		return get_result[fn](values);
 	},
+
+	get_filters_html_for_print(applied_filters, fields_dict) {
+		let filtered_items =  Object.keys(applied_filters).filter((fieldname) => {
+			const df = fields_dict[fieldname];
+			const value = applied_filters[fieldname];
+			if (!value || !value.length) {
+				return false;
+			}
+			if (df && df.print_hide) {
+				return false;
+			}
+			return true;
+		}).map((fieldname) => {
+			const df = fields_dict[fieldname];
+			const value = applied_filters[fieldname];
+			return `<div><b>${__(df.label)}</b>: ${frappe.format(value, df, null, applied_filters)}</div>`;
+		});
+
+		let column_size = Math.ceil(filtered_items.length / 3);
+		let columns = [];
+
+		for (let i = 0; i < filtered_items.length; i += column_size) {
+			columns.push(filtered_items.slice(i, i + column_size));
+		}
+
+		let columns_with_container = columns.map((items) => {
+			return `<div class="pull-left" style="width:33.33%;">${items.join("")}</div>`;
+		});
+
+		return `<div class="clearfix">${columns_with_container.join("")}</div>`;
+	}
 };
