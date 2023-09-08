@@ -1573,14 +1573,13 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_filters_html_for_print() {
-		const applied_filters = this.get_filter_values();
-		return Object.keys(applied_filters)
-			.map((fieldname) => {
-				const df = frappe.query_report.get_filter(fieldname).df;
-				const value = applied_filters[fieldname];
-				return `<h6>${__(df.label)}: ${frappe.format(value, df, null, applied_filters)}</h6>`;
-			})
-			.join("");
+		return frappe.report_utils.get_filters_html_for_print(
+			this.get_filter_values(),
+			this.filters.map(d=>d.df).reduce((acc,f ) => {
+				acc[f.fieldname] = f;
+				return acc;
+			}, {})
+		);
 	}
 
 	export_report() {

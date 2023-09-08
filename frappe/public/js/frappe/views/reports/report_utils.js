@@ -165,4 +165,27 @@ frappe.report_utils = {
 		};
 		return get_result[fn](values);
 	},
+
+	get_filters_html_for_print(applied_filters, fields_dict) {
+		let filtered_applied_filters = Object.fromEntries(Object.entries(applied_filters).filter(((e) => e[1].length)));
+		var arr =  Object.keys(filtered_applied_filters)
+		.map((fieldname) => {
+			const df = fields_dict[fieldname];
+			const value = applied_filters[fieldname]
+			return `<div><b>${__(df.label)}</b>: ${frappe.format(value, df, null,applied_filters)}</div>`;
+		})
+		let arrsize = Math.ceil(arr.length / 3);
+		let newarr = [];
+
+		for (var i = 0; i < arr.length; i += arrsize) {
+			const split_arr = arr.slice(i, i + arrsize);
+			newarr.push(split_arr);
+		}
+
+		var sep_array = newarr.map((newarr) => {
+			return `<div class="float-div">${newarr}</div>`;
+		})
+
+		return sep_array.toString().replaceAll(",", " ");
+	}
 };
