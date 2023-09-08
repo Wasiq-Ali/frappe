@@ -167,24 +167,33 @@ frappe.report_utils = {
 	},
 
 	get_filters_html_for_print(applied_filters, fields_dict) {
-		let filtered_applied_filters = Object.fromEntries(Object.entries(applied_filters).filter(((e) => e[1].length)));
-		let filtered_items =  Object.keys(filtered_applied_filters)
-			.map((fieldname) => {
-				const df = fields_dict[fieldname];
-				const value = applied_filters[fieldname]
-				return `<div><b>${__(df.label)}</b>: ${frappe.format(value, df, null,applied_filters)}</div>`;
-			})
-		let items_column_size = Math.ceil(filtered_items.length / 3);
-		let separated_items_row = [];
+		let filtered_items =  Object.keys(applied_filters).filter((fieldname) => {
+			const df = fields_dict[fieldname];
+			const value = applied_filters[fieldname];
+			if (!value || !value.length) {
+				return false;
+			}
+			if (df && df.print_hide) {
+				return false;
+			}
+			return true;
+		}).map((fieldname) => {
+			const df = fields_dict[fieldname];
+			const value = applied_filters[fieldname];
+			return `<div><b>${__(df.label)}</b>: ${frappe.format(value, df, null, applied_filters)}</div>`;
+		});
 
-		for (var i = 0; i < filtered_items.length; i += items_column_size) {
-			separated_items_row.push(filtered_items.slice(i, i + items_column_size));
+		let column_size = Math.ceil(filtered_items.length / 3);
+		let columns = [];
+
+		for (let i = 0; i < filtered_items.length; i += column_size) {
+			columns.push(filtered_items.slice(i, i + column_size));
 		}
 
-		 let items_list_with_separated_column = separated_items_row.map((items) => {
-			return `<div class="px-2 mb-2" style="width:33.33%;float:left">${items}</div>`;
-		})
+		let columns_with_container = columns.map((items) => {
+			return `<div class="pull-left" style="width:33.33%;">${items.join("")}</div>`;
+		});
 
-		return items_list_with_separated_column.toString().replaceAll(",", " ");
+		return `<div class="clearfix">${columns_with_container.join("")}</div>`;
 	}
 };
