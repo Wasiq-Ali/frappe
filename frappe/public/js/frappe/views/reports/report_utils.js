@@ -168,24 +168,23 @@ frappe.report_utils = {
 
 	get_filters_html_for_print(applied_filters, fields_dict) {
 		let filtered_applied_filters = Object.fromEntries(Object.entries(applied_filters).filter(((e) => e[1].length)));
-		var arr =  Object.keys(filtered_applied_filters)
-		.map((fieldname) => {
-			const df = fields_dict[fieldname];
-			const value = applied_filters[fieldname]
-			return `<div><b>${__(df.label)}</b>: ${frappe.format(value, df, null,applied_filters)}</div>`;
-		})
-		let arrsize = Math.ceil(arr.length / 3);
-		let newarr = [];
+		let filtered_item =  Object.keys(filtered_applied_filters)
+			.map((fieldname) => {
+				const df = fields_dict[fieldname];
+				const value = applied_filters[fieldname]
+				return `<div><b>${__(df.label)}</b>: ${frappe.format(value, df, null,applied_filters)}</div>`;
+			})
+		let filter_item_size = Math.ceil(filtered_item.length / 3);
+		let new_item_list = [];
 
-		for (var i = 0; i < arr.length; i += arrsize) {
-			const split_arr = arr.slice(i, i + arrsize);
-			newarr.push(split_arr);
+		for (var i = 0; i < filtered_item.length; i += filter_item_size) {
+			new_item_list.push(filtered_item.slice(i, i + filter_item_size));
 		}
 
-		var sep_array = newarr.map((newarr) => {
-			return `<div class="float-div">${newarr}</div>`;
+		var separated_item_list = new_item_list.map((new_item_list) => {
+			return `<div class="float-div">${new_item_list}</div>`;
 		})
 
-		return sep_array.toString().replaceAll(",", " ");
+		return separated_item_list.toString().replaceAll(",", " ");
 	}
 };
