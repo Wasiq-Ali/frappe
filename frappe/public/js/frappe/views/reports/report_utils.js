@@ -168,23 +168,23 @@ frappe.report_utils = {
 
 	get_filters_html_for_print(applied_filters, fields_dict) {
 		let filtered_applied_filters = Object.fromEntries(Object.entries(applied_filters).filter(((e) => e[1].length)));
-		let filtered_item =  Object.keys(filtered_applied_filters)
+		let filtered_items =  Object.keys(filtered_applied_filters)
 			.map((fieldname) => {
 				const df = fields_dict[fieldname];
 				const value = applied_filters[fieldname]
 				return `<div><b>${__(df.label)}</b>: ${frappe.format(value, df, null,applied_filters)}</div>`;
 			})
-		let filter_item_size = Math.ceil(filtered_item.length / 3);
-		let new_item_list = [];
+		let items_column_size = Math.ceil(filtered_items.length / 3);
+		let separated_items_row = [];
 
-		for (var i = 0; i < filtered_item.length; i += filter_item_size) {
-			new_item_list.push(filtered_item.slice(i, i + filter_item_size));
+		for (var i = 0; i < filtered_items.length; i += items_column_size) {
+			separated_items_row.push(filtered_items.slice(i, i + items_column_size));
 		}
 
-		var separated_item_list = new_item_list.map((new_item_list) => {
-			return `<div class="float-div">${new_item_list}</div>`;
+		 let items_list_with_separated_column = separated_items_row.map((items) => {
+			return `<div class="px-2 mb-2" style="width:33.33%;float:left">${items}</div>`;
 		})
 
-		return separated_item_list.toString().replaceAll(",", " ");
+		return items_list_with_separated_column.toString().replaceAll(",", " ");
 	}
 };
