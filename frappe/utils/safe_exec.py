@@ -217,6 +217,7 @@ def get_safe_globals():
 			socketio_port=frappe.conf.socketio_port,
 			get_hooks=get_hooks,
 			original_name=frappe.utils.original_name,
+			get_original_name=frappe.utils.get_original_name,
 			list_original_names=frappe.utils.list_original_names,
 			enqueue=safe_enqueue,
 			sanitize_html=frappe.utils.sanitize_html,
