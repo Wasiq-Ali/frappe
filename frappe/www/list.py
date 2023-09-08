@@ -72,7 +72,7 @@ def get(doctype, txt=None, limit_start=0, limit=20, pathname=None, **kwargs):
 
 	return {
 		"raw_result": json.dumps(raw_result, default=json_handler),
-		"list_count": cint(list_data.list_count),
+		"list_count": list_data.list_count,
 		"result": result,
 		"show_more": show_more,
 		"next_start": limit_start + limit,
@@ -122,16 +122,18 @@ def get_list_data(
 
 	raw_result = _get_list(**list_kwargs)
 
-	count_kwargs = list_kwargs.copy()
-	count_kwargs.update(dict(
-		limit_start=0,
-		limit_page_length=None,
-		fields=f"count(`tab{doctype}`.name) as count",
-		order_by=None,
-	))
-	list_count = _get_list(**count_kwargs)
-	list_count = cint(list_count[0].get("count")) if list_count else 0
-	list_context['list_count'] = list_count
+	list_count = None
+	if list_context.get_list_count:
+		count_kwargs = list_kwargs.copy()
+		count_kwargs.update(dict(
+			limit_start=0,
+			limit_page_length=None,
+			fields=f"count(`tab{doctype}`.name) as count",
+			order_by=None,
+		))
+		list_count = _get_list(**count_kwargs)
+		list_count = cint(list_count[0].get("count")) if list_count else 0
+		list_context['list_count'] = list_count
 
 	# list context to be used if called as rendered list
 	frappe.flags.list_context = list_context
