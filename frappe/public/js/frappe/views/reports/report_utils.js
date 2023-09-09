@@ -170,7 +170,10 @@ frappe.report_utils = {
 		let filtered_items =  Object.keys(applied_filters).filter((fieldname) => {
 			const df = fields_dict[fieldname];
 			const value = applied_filters[fieldname];
-			if (!value || !value.length) {
+			if (!value) {
+				return false;
+			}
+			if (Array.isArray(value) && !value.length) {
 				return false;
 			}
 			if (df && df.print_hide) {
