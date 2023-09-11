@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 	from frappe.model.meta import Meta
 
 
-NAMING_SERIES_PATTERN = re.compile(r"^[\w\- \/.#{}]+$", re.UNICODE)
+NAMING_SERIES_PATTERN = re.compile(r"^[\w\- \/.#{}()]+$", re.UNICODE)
 BRACED_PARAMS_PATTERN = re.compile(r"(\{[\w | #]+\})")
 
 
@@ -57,7 +57,7 @@ class NamingSeries:
 		if not NAMING_SERIES_PATTERN.match(self.series):
 			frappe.throw(
 				_(
-					"Special Characters except '-', '#', '.', '/', '{{' and '}}' not allowed in naming series {0}"
+					"Special Characters except '-', '#', '.', '/', '(', ')', '{{' and '}}' not allowed in naming series {0}"
 				).format(frappe.bold(self.series)),
 				exc=InvalidNamingSeriesError,
 			)
