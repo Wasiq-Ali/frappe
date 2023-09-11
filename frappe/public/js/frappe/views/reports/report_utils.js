@@ -197,8 +197,6 @@ frappe.report_utils = {
 			return `<div class="pull-left" style="width:33.33%;">${items.join("")}</div>`;
 		});
 
-		if (columns_with_container.length) {
-			return `<hr><div class="clearfix">${columns_with_container.join("")}</div><hr>`;
-		}
+		return columns_with_container.length ? `<div class="clearfix">${columns_with_container.join("")}</div>` : "";
 	}
 };
