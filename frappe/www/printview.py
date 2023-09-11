@@ -98,6 +98,7 @@ def get_rendered_template(
 	letterhead=None,
 	trigger_print=False,
 	settings=None,
+	args=None,
 ):
 
 	print_settings = frappe.get_single("Print Settings").as_dict()
@@ -190,7 +191,9 @@ def get_rendered_template(
 
 	convert_markdown(doc, meta)
 
-	args = {}
+	if not args:
+		args = {}
+
 	# extract `print_heading_template` from the first field and remove it
 	if format_data and format_data[0].get("fieldname") == "print_heading_template":
 		args["print_heading_template"] = format_data.pop(0).get("options")
@@ -335,8 +338,11 @@ def get_html_and_style(
 
 
 @frappe.whitelist()
-def get_rendered_raw_commands(doc, name=None, print_format=None, meta=None, lang=None):
+def get_rendered_raw_commands(doc, name=None, print_format=None, meta=None, lang=None, args=None):
 	"""Returns Rendered Raw Commands of print format, used to send directly to printer"""
+
+	if isinstance(args, str):
+		args = json.loads(args)
 
 	if isinstance(doc, str) and isinstance(name, str):
 		doc = frappe.get_doc(doc, name)
@@ -352,7 +358,7 @@ def get_rendered_raw_commands(doc, name=None, print_format=None, meta=None, lang
 		)
 
 	return {
-		"raw_commands": get_rendered_template(doc, name=name, print_format=print_format, meta=meta)
+		"raw_commands": get_rendered_template(doc, name=name, print_format=print_format, meta=meta, args=args)
 	}
 
 

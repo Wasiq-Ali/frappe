@@ -209,7 +209,7 @@ frappe.ui.form.qz_fail = function (e) {
 	// notify qz errors
 	frappe.show_alert(
 		{
-			message: __("QZ Tray Failed: ") + e.toString(),
+			message: __("QZ Tray Failed: ") + e ? e.toString() : "",
 			indicator: "red",
 		},
 		20
