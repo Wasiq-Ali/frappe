@@ -315,8 +315,8 @@ def _attach_files_to_document(parent_doc, child_doc=None) -> None:
 
 		if frappe.db.exists("File", {
 			"file_url": value,
-			"attached_to_name": doc.name,
-			"attached_to_doctype": doc.doctype,
+			"attached_to_name": parent_doc.name,
+			"attached_to_doctype": parent_doc.doctype,
 			"attached_to_field": df.fieldname,
 		}):
 			continue
@@ -336,8 +336,8 @@ def _attach_files_to_document(parent_doc, child_doc=None) -> None:
 				"File",
 				unattached_file,
 				field={
-					"attached_to_name": doc.name,
-					"attached_to_doctype": doc.doctype,
+					"attached_to_name": parent_doc.name,
+					"attached_to_doctype": parent_doc.doctype,
 					"attached_to_field": df.fieldname,
 				},
 			)
