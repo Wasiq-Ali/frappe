@@ -65,14 +65,24 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	get_url_with_filters() {
-		const query_params = Object.entries(this.get_filter_values())
-			.map(([field, value], _idx) => {
+		const query_params = Object.entries(this.get_filter_values(false, true))
+			.filter(([field, value]) => {
+				if (value) {
+					return true;
+				}
+
+				let filter = this.get_filter(field);
+				if (filter?.df?.default && cstr(filter.df.default) != cstr(value)) {
+					return true;
+				}
+			})
+			.map(([field, value]) => {
 				// multiselects
 				if (Array.isArray(value)) {
 					if (!value.length) return "";
 					value = JSON.stringify(value);
 				}
-				return `${field}=${encodeURIComponent(value)}`;
+				return `${field}=${encodeURIComponent(cstr(value))}`;
 			})
 			.filter(Boolean)
 			.join("&");
@@ -1397,7 +1407,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			.filter(Boolean);
 	}
 
-	get_filter_values(raise) {
+	get_filter_values(raise, get_empty_values) {
 		// check for mandatory property for filters added via UI
 		const mandatory = this.filters.filter((f) => f.df.reqd || f.df.mandatory);
 		const missing_mandatory = mandatory.filter((f) => !f.get_value());
@@ -1412,7 +1422,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		raise && this.toggle_message(false);
 
 		const filters = this.filters
-			.filter((f) => f.get_value())
+			.filter((f) => get_empty_values || f.get_value())
 			.map((f) => {
 				var v = f.get_value();
 				// hidden fields dont have $input
