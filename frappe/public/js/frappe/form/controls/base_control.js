@@ -197,6 +197,8 @@ frappe.ui.form.Control = class BaseControl {
 	get_model_value() {
 		if (this.doc) {
 			return this.doc[this.df.fieldname];
+		} else {
+			return this.value;
 		}
 	}
 	get_parsed_value(value) {

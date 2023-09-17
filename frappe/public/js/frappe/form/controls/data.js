@@ -242,7 +242,7 @@ frappe.ui.form.ControlData = class ControlData extends frappe.ui.form.ControlInp
 		}
 	}
 	set_input(value) {
-		this.last_value = value;
+		this.last_value = this.value;
 		this.value = value;
 		this.set_formatted_input(value);
 		this.set_disp_area(value);
