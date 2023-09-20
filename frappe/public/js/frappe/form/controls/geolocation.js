@@ -36,6 +36,7 @@ frappe.ui.form.ControlGeolocation = class ControlGeolocation extends frappe.ui.f
 
 	make_map(value) {
 		this.bind_leaflet_map();
+		this.setup_goolge_mutant();
 		if (this.disabled) {
 			this.map.dragging.disable();
 			this.map.touchZoom.disable();
@@ -49,7 +50,26 @@ frappe.ui.form.ControlGeolocation = class ControlGeolocation extends frappe.ui.f
 			this.bind_leaflet_event_listeners();
 			this.bind_leaflet_locate_control();
 			this.bind_leaflet_data(value);
+
 		}
+	}
+
+	setup_goolge_mutant() {
+		if (!L.gridLayer.hasOwnProperty('googleMutant')) {
+			return;
+		}
+		L.gridLayer.googleMutant({
+			type: "roadmap"
+		}).addTo(this.map);
+
+		$(`<input type="text" placeholder="Search for a place">`).appendTo(this.map_area);
+		var searchBox = new google.maps.places.SearchBox(this.map_area.find('input')[0]);
+		searchBox.addListener('places_changed', () => {
+			var places = searchBox.getPlaces();
+			if (places.length) {
+				this.map.setView([places[0].geometry.location.lat(), places[0].geometry.location.lng()], 20);
+			}
+		});
 	}
 
 	bind_leaflet_data(value) {

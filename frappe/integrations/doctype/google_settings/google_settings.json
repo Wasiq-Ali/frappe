@@ -12,7 +12,9 @@
   "api_key",
   "section_break_7",
   "google_drive_picker_enabled",
-  "app_id"
+  "app_id",
+  "google_maps_section",
+  "enable_google_maps_for_geolocation"
  ],
  "fields": [
   {
@@ -72,11 +74,22 @@
    "fieldname": "google_drive_picker_enabled",
    "fieldtype": "Check",
    "label": "Google Drive Picker Enabled"
+  },
+  {
+   "fieldname": "google_maps_section",
+   "fieldtype": "Section Break",
+   "label": "Google Maps"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_google_maps_for_geolocation",
+   "fieldtype": "Check",
+   "label": "Enable Google Maps for Geolocation Field "
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2021-06-29 18:26:07.094851",
+ "modified": "2023-09-20 16:11:35.085052",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Google Settings",
@@ -96,5 +109,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "ASC",
+ "states": [],
  "track_changes": 1
 }
