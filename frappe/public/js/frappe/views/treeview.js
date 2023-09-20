@@ -61,13 +61,15 @@ frappe.views.TreeView = class TreeView {
 		this.make_filters();
 		this.root_value = null;
 
-		if (me.opts.get_tree_root) {
-			this.get_root();
-		}
-
 		this.onload();
 		this.set_menu_item();
 		this.set_primary_action();
+
+		if (me.opts.get_tree_root) {
+			this.get_root();
+		} else {
+			this.make_tree();
+		}
 	}
 	get_permissions() {
 		this.can_read = frappe.model.can_read(this.doctype);
@@ -128,6 +130,12 @@ frappe.views.TreeView = class TreeView {
 		$.each(this.opts.filters || [], function (i, filter) {
 			if (frappe.route_options && frappe.route_options[filter.fieldname]) {
 				filter.default = frappe.route_options[filter.fieldname];
+			}
+
+			me.args[filter.fieldname] = filter.default;
+			if (me.args[filter.fieldname]) {
+				me.root_label = me.args[filter.fieldname];
+				me.set_title();
 			}
 
 			if (!filter.disable_onchange) {
