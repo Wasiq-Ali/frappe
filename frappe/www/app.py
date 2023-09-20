@@ -58,6 +58,7 @@ def get_context(context):
 			"boot": boot if context.get("for_mobile") else boot_json,
 			"desk_theme": boot.get("desk_theme") or "Light",
 			"csrf_token": csrf_token,
+			"google_api_key": frappe.db.get_single_value('Google Settings', 'api_key'),
 			"google_analytics_id": frappe.conf.get("google_analytics_id"),
 			"google_analytics_anonymize_ip": frappe.conf.get("google_analytics_anonymize_ip"),
 			"mixpanel_id": frappe.conf.get("mixpanel_id"),

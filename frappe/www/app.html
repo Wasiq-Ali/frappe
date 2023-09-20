@@ -51,6 +51,11 @@
 	{{ include_script(include) }}
 	{% endfor %}
 
+	{% if google_api_key %}
+		<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
+		<script src="https://unpkg.com/leaflet.gridlayer.googlemutant@latest/dist/Leaflet.GoogleMutant.js"></script>
+	{% endif %}
+
 	{% include "templates/includes/app_analytics/google_analytics.html" %}
 	{% include "templates/includes/app_analytics/mixpanel_analytics.html" %}
 
