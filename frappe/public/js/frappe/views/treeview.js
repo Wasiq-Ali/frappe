@@ -35,7 +35,10 @@ frappe.views.TreeFactory = class TreeFactory extends frappe.views.Factory {
 		 */
 		let route = frappe.get_route();
 		let treeview = frappe.views.trees[route[1]];
-		treeview && treeview.make_tree();
+
+		if (treeview?._needs_refresh) {
+			treeview && treeview.make_tree();
+		}
 	}
 
 	get view_name() {
@@ -64,6 +67,7 @@ frappe.views.TreeView = class TreeView {
 		this.onload();
 		this.set_menu_item();
 		this.set_primary_action();
+		this.setup_realtime_updates();
 
 		if (me.opts.get_tree_root) {
 			this.get_root();
@@ -180,6 +184,8 @@ frappe.views.TreeView = class TreeView {
 		});
 	}
 	make_tree() {
+		this._needs_refresh = false;
+
 		$(this.parent).find(".tree").remove();
 
 		var use_label = this.args[this.opts.root_label] || this.root_label || this.opts.root_label;
@@ -497,5 +503,23 @@ frappe.views.TreeView = class TreeView {
 				me.page.add_menu_item(menu_item["label"], menu_item["action"]);
 			}
 		});
+	}
+
+	setup_realtime_updates() {
+		if (this.realtime_events_setup) {
+			return;
+		}
+
+		this._needs_refresh = false;
+		frappe.socketio.doctype_subscribe(this.doctype);
+		frappe.realtime.on("list_update", (data) => {
+			console.log("list_update");
+			if (data?.doctype !== this.doctype) {
+				return;
+			}
+
+			this._needs_refresh = true;
+		});
+		this.realtime_events_setup = true;
 	}
 };
