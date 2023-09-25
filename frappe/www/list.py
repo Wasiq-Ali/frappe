@@ -25,9 +25,6 @@ def get_context(context, **dict_params):
 	context.txt = frappe.local.form_dict.txt
 	context.update(get(**frappe.local.form_dict))
 
-	if context.postprocess:
-		context.postprocess(context)
-
 
 @frappe.whitelist(allow_guest=True)
 def get(doctype, txt=None, limit_start=0, limit=20, pathname=None, **kwargs):
@@ -73,13 +70,17 @@ def get(doctype, txt=None, limit_start=0, limit=20, pathname=None, **kwargs):
 
 	from frappe.utils.response import json_handler
 
-	return {
+	out = frappe._dict({
 		"raw_result": json.dumps(raw_result, default=json_handler),
 		"list_count": list_data.list_count,
 		"result": result,
 		"show_more": show_more,
 		"next_start": limit_start + limit,
-	}
+	})
+
+	frappe.utils.call_hook_method("update_website_list_data", doctype, out)
+
+	return out
 
 
 @frappe.whitelist(allow_guest=True)
