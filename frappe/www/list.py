@@ -78,7 +78,7 @@ def get(doctype, txt=None, limit_start=0, limit=20, pathname=None, **kwargs):
 		"next_start": limit_start + limit,
 	})
 
-	frappe.utils.call_hook_method(doctype, out, "update_website_list_data")
+	frappe.utils.call_hook_method("update_website_list_data", out, doctype)
 
 	return out
 
