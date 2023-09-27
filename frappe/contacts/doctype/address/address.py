@@ -274,8 +274,8 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 	from frappe.desk.reportview import get_match_cond, get_filters_cond
 
 	doctype = "Address"
-	link_doctype = filters.pop("link_doctype")
-	link_name = filters.pop("link_name")
+	link_doctype = filters.pop("link_doctype", None)
+	link_name = filters.pop("link_name", None)
 
 	meta = frappe.get_meta(doctype)
 	searchfields = meta.get_search_fields()
