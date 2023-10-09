@@ -154,7 +154,8 @@
    "fieldname": "content_hash",
    "fieldtype": "Data",
    "label": "Content Hash",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "default": "0",
@@ -183,7 +184,7 @@
  "icon": "fa fa-file",
  "idx": 1,
  "links": [],
- "modified": "2023-05-02 15:42:14.274901",
+ "modified": "2023-10-09 14:28:21.595450",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "File",
