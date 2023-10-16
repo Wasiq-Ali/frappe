@@ -50,7 +50,7 @@ def apply_auto_value_setters(doc, parent=None):
 		names = [d.name for d in frappe.get_all('Auto Value Setter', filters={'enabled': 1, 'document_type': doc.doctype})]
 		frappe.cache().hset('auto_value_setters', doc.doctype, names)
 
-	is_submitted = doc.meta.is_submittable and doc.docstatus == 1
+	is_submitted = doc.meta.is_submittable and doc.docstatus == 1 and not doc.get("__islocal")
 	context = get_context(doc, parent)
 
 	for name in names:
