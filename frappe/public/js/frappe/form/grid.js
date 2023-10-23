@@ -287,7 +287,10 @@ export default class Grid {
 		this.remove_all_rows_button.toggleClass("hidden", !show_delete_all_btn);
 	}
 
-	debounced_refresh_remove_rows_button = frappe.utils.debounce(this.refresh_remove_rows_button, 100)
+	debounced_refresh_remove_rows_button = frappe.utils.debounce(
+		this.refresh_remove_rows_button,
+		100
+	);
 
 	get_selected_rows() {
 		return (this.grid_rows || [])
