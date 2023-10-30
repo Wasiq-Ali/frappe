@@ -342,7 +342,8 @@ def export_query():
 		result, column_widths, column_formats = build_xlsx_data({
 			"columns": columns, "result": report_data
 		}, visible_idx=visible_idx, include_indentation=include_indentation)
-		xlsx_file = make_xlsx(result, "Query Report", column_widths=column_widths, column_formats=column_formats)
+		xlsx_file = make_xlsx(result, "Query Report",
+			column_widths=column_widths, column_formats=column_formats, freeze="A2")
 
 		frappe.response['filename'] = _(report_name) + '.xlsx'
 		frappe.response['filecontent'] = xlsx_file.getvalue()

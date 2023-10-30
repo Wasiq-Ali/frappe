@@ -404,7 +404,7 @@ def export_query():
 
 		from frappe.utils.xlsxutils import make_xlsx
 
-		xlsx_file = make_xlsx(data, doctype)
+		xlsx_file = make_xlsx(data, doctype, freeze="A2")
 
 		frappe.response["filename"] = _(title) + ".xlsx"
 		frappe.response["filecontent"] = xlsx_file.getvalue()

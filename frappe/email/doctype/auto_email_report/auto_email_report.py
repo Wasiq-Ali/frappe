@@ -135,7 +135,8 @@ class AutoEmailReport(Document):
 			report_data["result"] = data
 
 			xlsx_data, column_widths, column_formats = build_xlsx_data(report_data, [], 1, ignore_visible_idx=True)
-			xlsx_file = make_xlsx(xlsx_data, "Auto Email Report", column_widths=column_widths, column_formats=column_formats)
+			xlsx_file = make_xlsx(xlsx_data, "Auto Email Report",
+				column_widths=column_widths, column_formats=column_formats, freeze="A2")
 			return xlsx_file.getvalue()
 
 		elif self.format == "CSV":
