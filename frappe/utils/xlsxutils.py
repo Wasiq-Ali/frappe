@@ -17,7 +17,7 @@ ILLEGAL_CHARACTERS_RE = re.compile(r"[\000-\010]|[\013-\014]|[\016-\037]")
 
 
 # return xlsx file object
-def make_xlsx(data, sheet_name, wb=None, column_widths=None):
+def make_xlsx(data, sheet_name, wb=None, column_widths=None, column_formats=None):
 	column_widths = column_widths or []
 	if wb is None:
 		wb = openpyxl.Workbook(write_only=True)
@@ -27,6 +27,11 @@ def make_xlsx(data, sheet_name, wb=None, column_widths=None):
 	for i, column_width in enumerate(column_widths):
 		if column_width:
 			ws.column_dimensions[get_column_letter(i + 1)].width = column_width
+
+	column_formats = column_formats or []
+	for i, column_format in enumerate(column_formats):
+		if column_format:
+			ws.column_dimensions[get_column_letter(i + 1)].number_format = column_format
 
 	row1 = ws.row_dimensions[1]
 	row1.font = Font(name="Calibri", bold=True)

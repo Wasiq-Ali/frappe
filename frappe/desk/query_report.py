@@ -335,13 +335,14 @@ def export_query():
 			)
 			return
 
-		columns_row = [c.get("label") or c.get("content") for c in columns]
 		report_data = json.loads(data.data) if isinstance(data.data, str) else data.data
 		format_duration_fields(report_data, columns)
 
 		from frappe.utils.xlsxutils import make_xlsx
-		xlsx_data = [columns_row] + report_data
-		xlsx_file = make_xlsx(xlsx_data, "Query Report")
+		result, column_widths, column_formats = build_xlsx_data({
+			"columns": columns, "result": report_data
+		}, visible_idx=visible_idx, include_indentation=include_indentation)
+		xlsx_file = make_xlsx(result, "Query Report", column_widths=column_widths, column_formats=column_formats)
 
 		frappe.response['filename'] = _(report_name) + '.xlsx'
 		frappe.response['filecontent'] = xlsx_file.getvalue()
@@ -372,7 +373,7 @@ def build_xlsx_data(data, visible_idx, include_indentation, ignore_visible_idx=F
 		datetime.timedelta,
 	)
 
-	if len(visible_idx) == len(data.result):
+	if len(visible_idx) == len(data["result"]):
 		# It's not possible to have same length and different content.
 		ignore_visible_idx = True
 	else:
@@ -381,23 +382,37 @@ def build_xlsx_data(data, visible_idx, include_indentation, ignore_visible_idx=F
 
 	result = [[]]
 	column_widths = []
+	column_formats = []
 
-	for column in data.columns:
+	for column in data["columns"]:
 		if column.get("hidden"):
 			continue
 		result[0].append(_(column.get("label")))
 		column_width = cint(column.get("width", 0))
 		# to convert into scale accepted by openpyxl
-		column_width /= 10
+		column_width /= 8
 		column_widths.append(column_width)
 
+		column_format = "General"
+		fieldtype = column.get("fieldtype")
+		if fieldtype in ("Currency", "Float", "Percent"):
+			from frappe.model.meta import get_field_precision
+			number_format = frappe.db.get_default("number_format") or "#,###.##"
+			decimal_str, comma_str, precision = frappe.utils.get_number_format_info(number_format)
+			precision = 1 if fieldtype == "Percent" else get_field_precision(column)
+			column_format = f"#{comma_str}##0{decimal_str}{'0' * cint(precision)}"
+			if fieldtype == "Percent":
+				column_format += "\\%"
+
+		column_formats.append(column_format)
+
 	# build table from result
-	for row_idx, row in enumerate(data.result):
+	for row_idx, row in enumerate(data["result"]):
 		# only pick up rows that are visible in the report
 		if ignore_visible_idx or row_idx in visible_idx:
 			row_data = []
 			if isinstance(row, dict):
-				for col_idx, column in enumerate(data.columns):
+				for col_idx, column in enumerate(data["columns"]):
 					if column.get("hidden"):
 						continue
 					label = column.get("label")
@@ -414,7 +429,7 @@ def build_xlsx_data(data, visible_idx, include_indentation, ignore_visible_idx=F
 
 			result.append(row_data)
 
-	return result, column_widths
+	return result, column_widths, column_formats
 
 
 def add_total_row(result, columns, meta=None, is_tree=False, parent_field=None):
