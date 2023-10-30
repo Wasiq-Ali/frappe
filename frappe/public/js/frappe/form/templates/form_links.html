@@ -3,7 +3,7 @@
 		{% for (let i=0; i < transactions.length; i++) { %}
 			<div class="col-6 col-md-3">
 				<div class="form-link-title">
-					<span>{{ __(transactions[i].label) }}<span>
+					<span>{{ __(transactions[i].label) }}</span>
 				</div>
 				{% for (let j=0; j < transactions[i].items.length; j++) { %}
 					{% let doctype = transactions[i].items[j]; %}

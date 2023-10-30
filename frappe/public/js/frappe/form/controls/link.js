@@ -169,7 +169,7 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 		frappe.route_options.name_field = this.get_label_value();
 
 		// reference to calling link
-		frappe._from_link = frappe.utils.deep_clone(this);
+		frappe._from_link = me.doc ? frappe.utils.deep_clone(this) : this;
 		frappe._from_link_scrollY = $(document).scrollTop();
 
 		frappe.ui.form.make_quick_entry(doctype, (doc) => {
@@ -624,13 +624,19 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 			let field_value = "";
 			for (const [target_field, source_field] of Object.entries(fetch_map)) {
 				if (value) field_value = response[source_field];
-				frappe.model.set_value(
-					df.parent,
-					docname,
-					target_field,
-					field_value,
-					df.fieldtype
-				);
+				let target_df = frappe.meta.get_docfield(df.parent, target_field);
+				let target_value = frappe.model.get_value(df.parent, docname, target_field);
+				if (target_df?.fetch_if_empty && target_value) {
+					continue;
+				} else {
+					frappe.model.set_value(
+						df.parent,
+						docname,
+						target_field,
+						field_value,
+						df.fieldtype
+					);
+				}
 			}
 		}
 

@@ -154,7 +154,8 @@
    "fieldname": "content_hash",
    "fieldtype": "Data",
    "label": "Content Hash",
-   "read_only": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "default": "0",
@@ -183,7 +184,7 @@
  "icon": "fa fa-file",
  "idx": 1,
  "links": [],
- "modified": "2023-05-22 17:25:33.796783",
+ "modified": "2023-10-10 18:20:10.815248",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "File",
@@ -205,14 +206,8 @@
   {
    "create": 1,
    "delete": 1,
-   "email": 1,
-   "export": 1,
-   "if_owner": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
    "role": "All",
-   "share": 1,
    "write": 1
   }
  ],

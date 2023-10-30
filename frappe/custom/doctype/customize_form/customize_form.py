@@ -181,7 +181,9 @@ class CustomizeForm(Document):
 
 		if self.flags.rebuild_doctype_for_global_search:
 			frappe.enqueue(
-				"frappe.utils.global_search.rebuild_for_doctype", now=True, doctype=self.doc_type
+				"frappe.utils.global_search.rebuild_for_doctype",
+				doctype=self.doc_type,
+				enqueue_after_commit=True,
 			)
 
 	def set_property_setters(self):
@@ -197,15 +199,44 @@ class CustomizeForm(Document):
 				continue
 			if meta_df[0].get("is_custom_field") and (not meta_df[0].get("is_system_generated") or frappe.conf.get("developer_mode")):
 				continue
+
 			self.set_property_setters_for_docfield(meta, df, meta_df)
 
 		# action and links
 		self.set_property_setters_for_actions_and_links(meta)
 
+	def set_property_setter_for_field_order(self, meta):
+		new_order = [df.fieldname for df in self.fields]
+		existing_order = getattr(meta, "field_order", None)
+		default_order = [
+			fieldname for fieldname, df in meta._fields.items() if not getattr(df, "is_custom_field", False)
+		]
+
+		if new_order == default_order:
+			if existing_order:
+				delete_property_setter(self.doc_type, "field_order")
+
+			return
+
+		if existing_order and new_order == json.loads(existing_order):
+			return
+
+		frappe.make_property_setter(
+			{
+				"doctype": self.doc_type,
+				"doctype_or_field": "DocType",
+				"property": "field_order",
+				"value": json.dumps(new_order),
+			},
+			is_system_generated=False,
+		)
+
 	def set_property_setters_for_doctype(self, meta):
 		for prop, prop_type in doctype_properties.items():
 			if self.get(prop) != meta.get(prop):
 				self.make_property_setter(prop, self.get(prop), prop_type)
+
+		self.set_property_setter_for_field_order(meta)
 
 	def set_property_setters_for_docfield(self, meta, df, meta_df):
 		for prop, prop_type in docfield_properties.items():
@@ -566,6 +597,10 @@ def reset_customization(doctype):
 	frappe.clear_cache(doctype=doctype)
 
 
+def is_standard_or_system_generated_field(df):
+	return not df.get("is_custom_field") or df.get("is_system_generated")
+
+
 doctype_properties = {
 	"search_fields": "Data",
 	"title_field": "Data",
@@ -604,6 +639,7 @@ docfield_properties = {
 	"label": "Data",
 	"fieldtype": "Select",
 	"options": "Text",
+	"sort_options": "Check",
 	"fetch_from": "Small Text",
 	"fetch_if_empty": "Check",
 	"show_dashboard": "Check",

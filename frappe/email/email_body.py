@@ -507,11 +507,12 @@ def replace_filename_with_cid(message):
 
 		# found match
 		img_path = groups[0]
-		filename = img_path.rsplit("/")[-1]
+		img_path_escaped = frappe.utils.html_utils.unescape_html(img_path)
+		filename = img_path_escaped.rsplit("/")[-1]
 
-		filecontent = get_filecontent_from_path(img_path)
+		filecontent = get_filecontent_from_path(img_path_escaped)
 		if not filecontent:
-			message = re.sub(f"""embed=['"]{img_path}['"]""", "", message)
+			message = re.sub(f"""embed=['"]{re.escape(img_path)}['"]""", "", message)
 			continue
 
 		content_id = random_string(10)
@@ -520,7 +521,7 @@ def replace_filename_with_cid(message):
 			{"filename": filename, "filecontent": filecontent, "content_id": content_id}
 		)
 
-		message = re.sub(f"""embed=['"]{img_path}['"]""", f'src="cid:{content_id}"', message)
+		message = re.sub(rf"""embed=['"]{re.escape(img_path)}['"]""", f'src="cid:{content_id}"', message)
 
 	return (message, inline_images)
 

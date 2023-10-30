@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2016-03-30 01:39:20.586927",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -9,7 +10,8 @@
   "route",
   "reference_doctype",
   "role",
-  "target"
+  "target",
+  "icon"
  ],
  "fields": [
   {
@@ -57,10 +59,16 @@
    "fieldtype": "Data",
    "label": "Target",
    "read_only": 1
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon"
   }
  ],
  "istable": 1,
- "modified": "2020-03-03 15:36:47.701356",
+ "links": [],
+ "modified": "2023-08-26 05:56:35.591587",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Portal Menu Item",
@@ -68,5 +76,6 @@
  "permissions": [],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

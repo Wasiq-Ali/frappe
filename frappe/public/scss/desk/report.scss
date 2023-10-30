@@ -101,11 +101,11 @@
 
 .group-by-button {
 	margin: 5px;
-	max-width: 125px;
 }
 
 .group-by-button.btn-primary-light {
 	color: var(--text-on-blue);
+	outline: 1px solid var(--bg-dark-blue);
 }
 
 .group-by-icon.active {
@@ -154,18 +154,17 @@
 
 	// SIZE & SPACING
 	margin: 1rem;
-	padding: 20px 15px;
+	padding: 15px;
 
 	// LAYOUT
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-evenly;
-	gap: 20px;
+	gap: 8px;
 
 	.summary-item {
 		// SIZE & SPACING
-		margin: 0px 20px;
 		min-width: 160px;
 		max-width: 300px;
 		height: 62px;
@@ -196,6 +195,7 @@
 
 		&.green { color: var(--green-500); }
 		&.red { color: var(--red-500); }
+		&.orange { color: var(--orange-500); }
 		&.blue { color: var(--blue-500); }
 
 		// SIZE & SPACING

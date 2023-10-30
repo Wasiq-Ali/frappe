@@ -10,8 +10,7 @@
   "custom",
   "package",
   "app_name",
-  "restrict_to_domain",
-  "connections_tab"
+  "restrict_to_domain"
  ],
  "fields": [
   {
@@ -51,12 +50,6 @@
    "fieldtype": "Link",
    "label": "Package",
    "options": "Package"
-  },
-  {
-   "fieldname": "connections_tab",
-   "fieldtype": "Tab Break",
-   "label": "Connections",
-   "show_dashboard": 1
   }
  ],
  "icon": "fa fa-sitemap",
@@ -123,7 +116,7 @@
    "link_fieldname": "module"
   }
  ],
- "modified": "2022-01-03 13:56:52.817954",
+ "modified": "2023-09-03 03:46:09.896835",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Module Def",
@@ -138,7 +131,6 @@
    "read": 1,
    "report": 1,
    "role": "Administrator",
-   "select": 1,
    "share": 1,
    "write": 1
   },
@@ -148,14 +140,12 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
-   "select": 1,
    "write": 1
   },
   {
    "read": 1,
    "report": 1,
-   "role": "All",
-   "select": 1
+   "role": "All"
   }
  ],
  "show_name_in_global_search": 1,

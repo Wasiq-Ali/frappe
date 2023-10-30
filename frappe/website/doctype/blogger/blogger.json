@@ -63,8 +63,7 @@
    "link_fieldname": "blogger"
   }
  ],
- "max_attachments": 1,
- "modified": "2020-05-28 19:22:40.959895",
+ "modified": "2023-09-08 16:45:38.442605",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Blogger",
@@ -95,6 +94,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "full_name",
  "track_changes": 1
 }

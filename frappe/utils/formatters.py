@@ -77,13 +77,15 @@ def format_value(value, df=None, doc=None, currency=None, translated=False, form
 		return ""
 
 	elif df.get("fieldtype") == "Currency":
+		precision = cint(precision) if precision is not None else get_field_precision(df, doc)
+
 		default_currency = frappe.db.get_default("currency")
 		currency = currency or get_field_currency(df, doc) or default_currency
-		return fmt_money(value, precision=cint(precision) or get_field_precision(df, doc), currency=currency, format=format,
+		return fmt_money(value, precision=precision, currency=currency, format=format,
 			force_symbol=cint(df.get("force_currency_symbol")))
 
 	elif df.get("fieldtype") == "Float":
-		precision = cint(precision) or get_field_precision(df, doc)
+		precision = cint(precision) if precision is not None else get_field_precision(df, doc)
 		# I don't know why we support currency option for float
 		currency = currency or get_field_currency(df, doc)
 
@@ -100,11 +102,16 @@ def format_value(value, df=None, doc=None, currency=None, translated=False, form
 		return fmt_money(value, precision=0)
 
 	elif df.get("fieldtype") == "Percent":
-		precision = cint(precision) or 2
+		precision = cint(precision) if precision is not None else 2
 		temp = cstr(flt(value, precision)).split(".")
 		if len(temp) == 1 or cint(temp[1]) == 0:
 			precision = 0
-		return f"{flt(value, precision)}%"
+
+		rounded = flt(value, precision)
+		if precision == 0:
+			rounded = cint(rounded)
+
+		return f"{rounded}%"
 
 	elif df.get("fieldtype") in ("Text", "Small Text"):
 		if not BLOCK_TAGS_PATTERN.search(cstr(value)):

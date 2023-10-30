@@ -68,7 +68,7 @@ frappe.number_format_info = {
 window.format_number = function (v, format, decimals) {
 	if (!format) {
 		format = get_number_format();
-		if (decimals == null) decimals = cint(frappe.defaults.get_default("float_precision")) || 3;
+		if (decimals == null) decimals = cint(frappe.defaults?.get_default("float_precision")) || 3;
 	}
 
 	var info = get_number_format_info(format);
@@ -178,7 +178,7 @@ function get_number_format_info(format) {
 
 function _round(num, precision, rounding_method) {
 	rounding_method =
-		rounding_method || frappe.boot.sysdefaults.rounding_method || "Banker's Rounding (legacy)";
+		rounding_method || frappe.boot.sysdefaults?.rounding_method || "Banker's Rounding (legacy)";
 
 	let is_negative = num < 0 ? true : false;
 

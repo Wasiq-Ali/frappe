@@ -778,6 +778,7 @@ class TestTBSanitization(FrappeTestCase):
 		try:
 			password = "42"
 			args = {"password": "42", "pwd": "42", "safe": "safe_value"}
+			args = frappe._dict({"password": "42", "pwd": "42", "safe": "safe_value"})
 			raise Exception
 		except Exception:
 			traceback = frappe.get_traceback(with_context=True)
@@ -876,6 +877,8 @@ class TestRounding(FrappeTestCase):
 		rounding_method = "Banker's Rounding"
 
 		self.assertEqual(rounded(0, 0, rounding_method=rounding_method), 0)
+		self.assertEqual(rounded(5.551115123125783e-17, 2, rounding_method=rounding_method), 0.0)
+
 		self.assertEqual(flt("0.5", 0, rounding_method=rounding_method), 0)
 		self.assertEqual(flt("0.3", rounding_method=rounding_method), 0.3)
 

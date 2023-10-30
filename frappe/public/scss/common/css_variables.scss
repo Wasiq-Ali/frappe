@@ -261,6 +261,10 @@ $input-height: calc(1.5em + 0.75rem);
 
 	--awesomplete-hover-bg: var(--gray-150);
 
+	// Error colors
+	--error-bg: var(--red-50);
+	--error-border: var(--red-400);
+
 	// Button Colors
 	--btn-default-bg: white;
 	--btn-default-hover-bg: var(--gray-100);

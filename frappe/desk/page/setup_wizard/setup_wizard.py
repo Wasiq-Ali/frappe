@@ -62,7 +62,7 @@ def setup_complete(args):
 		return process_setup_stages(stages, args)
 
 
-@frappe.task()
+@frappe.task(timeout=600)
 def process_setup_stages(stages, user_input, is_background_task=False):
 	from frappe.utils.telemetry import capture
 
@@ -376,7 +376,7 @@ def email_setup_wizard_exception(traceback, args):
 		traceback=traceback,
 		args="\n".join(pretty_args),
 		user=frappe.session.user,
-		headers=frappe.request.headers,
+		headers=frappe.request.headers if frappe.request else "[no request]",
 	)
 
 	frappe.sendmail(

@@ -123,7 +123,7 @@ def get_preferred_address(doctype, name, preferred_key="is_primary_address"):
 
 @frappe.whitelist()
 def get_default_address(
-	doctype: str, name: str, sort_key: str = "is_primary_address"
+	doctype: str, name: str | None, sort_key: str = "is_primary_address"
 ) -> str | None:
 	"""Returns default Address name for the given doctype, name"""
 	if sort_key not in ["is_shipping_address", "is_primary_address"]:
@@ -187,7 +187,7 @@ def get_list_context(context=None):
 	}
 
 
-def get_address_list(doctype, txt, filters, limit_start, limit_page_length=20, order_by=None):
+def get_address_list(doctype, txt, filters, limit_start, limit_page_length=20, fields=None, order_by=None):
 	from frappe.www.list import get_list
 
 	user = frappe.session.user
@@ -195,22 +195,47 @@ def get_address_list(doctype, txt, filters, limit_start, limit_page_length=20, o
 
 	if not filters:
 		filters = []
-	filters.append(("Address", "owner", "=", user))
+
+	contact_links = get_contact_links()
+
+	address_names = []
+	if contact_links:
+		address_names = frappe.db.sql_list("""
+			select addr.name
+			from `tabDynamic Link` l
+			inner join `tabAddress` addr on l.parenttype = 'Address' and l.parent = addr.name
+			where (l.link_doctype, l.link_name) in %s
+		""", [contact_links])
+
+	if not address_names:
+		return []
+
+	filters.append(["Address", "name", "in", address_names])
 
 	return get_list(
-		doctype, txt, filters, limit_start, limit_page_length, ignore_permissions=ignore_permissions
+		doctype, txt, filters, limit_start, limit_page_length,
+		ignore_permissions=ignore_permissions, fields=fields, order_by=order_by,
 	)
 
 
 def has_website_permission(doc, ptype, user, verbose=False):
 	"""Returns true if there is a related lead or contact related to this document"""
-	contact_name = frappe.db.get_value("Contact", {"email_id": frappe.session.user})
+	address_links = set([(link.link_doctype, link.link_name) for link in doc.links])
+	if not address_links:
+		return False
 
-	if contact_name:
-		contact = frappe.get_doc("Contact", contact_name)
-		return contact.has_common_link(doc)
+	contact_links = set(get_contact_links())
 
-	return False
+	return bool(contact_links.intersection(address_links))
+
+
+def get_contact_links():
+	return frappe.db.sql("""
+		select distinct l.link_doctype, l.link_name
+		from `tabDynamic Link` l
+		inner join `tabContact` c on l.parenttype = 'Contact' and l.parent = c.name
+		where c.user = %s
+	""", frappe.session.user)
 
 
 def get_address_templates(address):
@@ -249,8 +274,8 @@ def address_query(doctype, txt, searchfield, start, page_len, filters):
 	from frappe.desk.reportview import get_match_cond, get_filters_cond
 
 	doctype = "Address"
-	link_doctype = filters.pop("link_doctype")
-	link_name = filters.pop("link_name")
+	link_doctype = filters.pop("link_doctype", None)
+	link_name = filters.pop("link_name", None)
 
 	meta = frappe.get_meta(doctype)
 	searchfields = meta.get_search_fields()

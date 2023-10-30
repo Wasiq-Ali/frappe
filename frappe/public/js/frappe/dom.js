@@ -32,8 +32,22 @@ frappe.dom = {
 		// execute the script globally
 		document.getElementsByTagName("head")[0].appendChild(el);
 	},
+
 	remove_script_and_style: function (txt) {
 		const evil_tags = ["script", "style", "noscript", "title", "meta", "base", "head"];
+		const unsafe_tags = ["link"];
+
+		if (!this.unsafe_tags_regex) {
+			const evil_and_unsafe_tags = evil_tags.concat(unsafe_tags);
+			const regex_str = evil_and_unsafe_tags.map((t) => `<([\\s]*)${t}`).join("|");
+			this.unsafe_tags_regex = new RegExp(regex_str, "im");
+		}
+
+		// if no unsafe tags are present return as is to prevent unncessary expensive parsing
+		if (!txt || !this.unsafe_tags_regex.test(txt)) {
+			return txt;
+		}
+
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(txt, "text/html");
 		const body = doc.body;
@@ -359,8 +373,53 @@ frappe.is_online = function () {
 	return true;
 };
 
+frappe.create_shadow_element = function (wrapper, html, css, js) {
+	let random_id = "custom-block-" + frappe.utils.get_random(5).toLowerCase();
+
+	class CustomBlock extends HTMLElement {
+		constructor() {
+			super();
+
+			// html
+			let div = document.createElement("div");
+			div.innerHTML = frappe.dom.remove_script_and_style(html);
+
+			// link global desk css
+			let link = document.createElement("link");
+			link.rel = "stylesheet";
+			link.href = frappe.assets.bundled_asset("desk.bundle.css");
+
+			// css
+			let style = document.createElement("style");
+			style.textContent = css;
+
+			// javascript
+			let script = document.createElement("script");
+			script.textContent = `
+				(function() {
+					let cname = ${JSON.stringify(random_id)};
+					let root_element = document.querySelector(cname).shadowRoot;
+					${js}
+				})();
+			`;
+
+			this.attachShadow({ mode: "open" });
+			this.shadowRoot?.appendChild(link);
+			this.shadowRoot?.appendChild(div);
+			this.shadowRoot?.appendChild(style);
+			this.shadowRoot?.appendChild(script);
+		}
+	}
+
+	if (!customElements.get(random_id)) {
+		customElements.define(random_id, CustomBlock);
+	}
+	wrapper.innerHTML = `<${random_id}></${random_id}>`;
+};
+
 // bind online/offline events
 $(window).on("online", function () {
+	if (document.hidden) return;
 	frappe.show_alert({
 		indicator: "green",
 		message: __("You are connected to internet."),
@@ -368,6 +427,7 @@ $(window).on("online", function () {
 });
 
 $(window).on("offline", function () {
+	if (document.hidden) return;
 	frappe.show_alert({
 		indicator: "orange",
 		message: __("Connection lost. Some features might not work."),

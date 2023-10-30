@@ -154,6 +154,7 @@ frappe.palette = [
 ];
 
 frappe.get_palette = function (txt) {
+	if (!txt) return frappe.palette[8]; // breaks when undefined
 	var idx = cint((parseInt(md5(txt).substr(4, 2), 16) + 1) / 5.33);
 	return frappe.palette[idx % 8];
 };
@@ -212,7 +213,7 @@ window.strip = function (s, chars) {
 };
 
 window.lstrip = function lstrip(s, chars) {
-	if (!chars) chars = ["\n", "\t", " "];
+	if (!chars) chars = ["\n", "\r", "\t", " "];
 	// strip left
 	let first_char = s.substr(0, 1);
 	while (in_list(chars, first_char)) {
@@ -223,7 +224,7 @@ window.lstrip = function lstrip(s, chars) {
 };
 
 window.rstrip = function (s, chars) {
-	if (!chars) chars = ["\n", "\t", " "];
+	if (!chars) chars = ["\n", "\r", "\t", " "];
 	let last_char = s.substr(s.length - 1);
 	while (in_list(chars, last_char)) {
 		s = s.substr(0, s.length - 1);

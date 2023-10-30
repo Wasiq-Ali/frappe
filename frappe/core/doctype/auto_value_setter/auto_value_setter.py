@@ -7,6 +7,7 @@ from frappe import _
 from frappe.utils import cstr
 from frappe.model.document import Document
 from frappe.utils.jinja import validate_template
+from frappe.utils.safe_exec import get_safe_globals
 
 
 class AutoValueSetter(Document):
@@ -49,7 +50,7 @@ def apply_auto_value_setters(doc, parent=None):
 		names = [d.name for d in frappe.get_all('Auto Value Setter', filters={'enabled': 1, 'document_type': doc.doctype})]
 		frappe.cache().hset('auto_value_setters', doc.doctype, names)
 
-	is_submitted = doc.meta.is_submittable and doc.docstatus == 1
+	is_submitted = doc.meta.is_submittable and doc.docstatus == 1 and not doc.get("__islocal")
 	context = get_context(doc, parent)
 
 	for name in names:
@@ -69,12 +70,14 @@ def apply_auto_value_setters(doc, parent=None):
 		# if not doc.get("__islocal") and df.set_only_once and doc.get("_doc_before_save", {}).get(auto_value_setter.field_name):
 		# 	continue
 
+		eval_globals = get_safe_globals()
 		for d in auto_value_setter.conditions:
-			if not d.condition or frappe.safe_eval(d.condition, None, context):  # if condition is met
+			# if condition is met
+			if not d.condition or frappe.safe_eval(d.condition, eval_globals, context):
 				value = frappe.render_template(cstr(d.value), context)
 				doc.set(auto_value_setter.field_name, value)
 				break
 
+
 def get_context(doc, parent):
-	return {"doc": doc, "parent": parent, "nowdate": frappe.utils.nowdate, "frappe.utils": frappe.utils,
-		"frappe": frappe}
+	return {"doc": doc, "parent": parent, "nowdate": frappe.utils.nowdate}

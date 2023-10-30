@@ -55,6 +55,7 @@ frappe.ui.form.Form = class FrappeForm {
 		this.doctype_layout = frappe.get_doc("DocType Layout", doctype_layout_name);
 		this.undo_manager = new UndoManager({ frm: this });
 		this.setup_meta(doctype);
+		this.debounced_reload_doc = frappe.utils.debounce(this.reload_doc.bind(this), 1000);
 
 		this.beforeUnloadListener = (event) => {
 			event.preventDefault();
@@ -546,7 +547,7 @@ frappe.ui.form.Form = class FrappeForm {
 			this.doc.__last_sync_on &&
 			new Date() - this.doc.__last_sync_on > this.refresh_if_stale_for * 1000
 		) {
-			this.reload_doc();
+			this.debounced_reload_doc();
 			return true;
 		}
 	}
@@ -1143,7 +1144,7 @@ frappe.ui.form.Form = class FrappeForm {
 					"alert-warning"
 				);
 			} else {
-				this.reload_doc();
+				this.debounced_reload_doc();
 			}
 		}
 	}
@@ -1361,7 +1362,7 @@ frappe.ui.form.Form = class FrappeForm {
 	dirty() {
 		this.doc.__unsaved = 1;
 		this.$wrapper.trigger("dirty");
-		if (!frappe.boot.developer_mode) {
+		if (!frappe.boot.developer_mode && !this.ignore_close_confirmation) {
 			addEventListener("beforeunload", this.beforeUnloadListener, { capture: true });
 		}
 	}
@@ -1443,8 +1444,13 @@ frappe.ui.form.Form = class FrappeForm {
 			if (selector.length) {
 				frappe.utils.scroll_to(selector);
 			}
-		} else if (window.location.hash && $(window.location.hash).length) {
-			frappe.utils.scroll_to(window.location.hash, true, 200, null, null, true);
+		} else if (window.location.hash) {
+			if ($(window.location.hash).length) {
+				frappe.utils.scroll_to(window.location.hash, true, 200, null, null, true);
+			} else {
+				this.scroll_to_field(window.location.hash.replace("#", "")) &&
+					history.replaceState(null, null, " ");
+			}
 		}
 	}
 
@@ -1944,7 +1950,7 @@ frappe.ui.form.Form = class FrappeForm {
 		}
 
 		// scroll to input
-		frappe.utils.scroll_to($el, true, 60);
+		frappe.utils.scroll_to($el, true, 150);
 
 		// focus if text field
 		if (focus) {
@@ -1952,11 +1958,12 @@ frappe.ui.form.Form = class FrappeForm {
 		}
 
 		// highlight control inside field
-		let control_element = $el.find(".form-control");
+		let control_element = $el.closest(".frappe-control");
 		control_element.addClass("highlight");
 		setTimeout(() => {
 			control_element.removeClass("highlight");
 		}, 2000);
+		return true;
 	}
 
 	setup_docinfo_change_listener() {
@@ -2020,7 +2027,8 @@ frappe.ui.form.Form = class FrappeForm {
 		return new Promise((resolve) => {
 			frappe.model.with_doctype(reference_doctype, () => {
 				frappe.get_meta(reference_doctype).fields.map((df) => {
-					filter_function(df) && options.push({ label: df.label, value: df.fieldname });
+					filter_function(df) &&
+						options.push({ label: df.label || df.fieldname, value: df.fieldname });
 				});
 				options &&
 					this.set_df_property(

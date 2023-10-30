@@ -12,7 +12,6 @@ import traceback
 from collections.abc import Generator, Iterable, MutableMapping, MutableSequence, Sequence
 from email.header import decode_header, make_header
 from email.utils import formataddr, parseaddr
-from gzip import GzipFile
 from urllib.parse import quote, urlparse
 
 from redis.exceptions import ConnectionError
@@ -188,7 +187,7 @@ def validate_email_address(email_str, throw=False):
 			if throw:
 				invalid_email = frappe.utils.escape_html(e)
 				frappe.throw(
-					frappe._("{0} is not a valid Email Address").format(invalid_email),
+					frappe._("{0} is not a valid Email Address").format(frappe.bold(invalid_email)),
 					frappe.InvalidEmailAddressError,
 				)
 			return None
@@ -346,6 +345,7 @@ def _get_traceback_sanitizer():
 			*[(variable_name, lambda *a, **kw: placeholder) for variable_name in blocklist],
 			# redact dictionary keys
 			(["_secret", dict, lambda *a, **kw: False], dict_printer),
+			(["_secret", frappe._dict, lambda *a, **kw: False], dict_printer),
 		],
 	)
 
@@ -877,6 +877,8 @@ def gzip_compress(data, compresslevel=9):
 	"""Compress data in one shot and return the compressed string.
 	Optional argument is the compression level, in range of 0-9.
 	"""
+	from gzip import GzipFile
+
 	buf = io.BytesIO()
 	with GzipFile(fileobj=buf, mode="wb", compresslevel=compresslevel) as f:
 		f.write(data)
@@ -887,6 +889,8 @@ def gzip_decompress(data):
 	"""Decompress a gzip compressed string in one shot.
 	Return the decompressed string.
 	"""
+	from gzip import GzipFile
+
 	with GzipFile(fileobj=io.BytesIO(data)) as f:
 		return f.read()
 
@@ -976,7 +980,7 @@ def get_file_size(path, format=False):
 
 def get_build_version():
 	try:
-		return str(os.path.getmtime(os.path.join(frappe.local.sites_path, ".build")))
+		return str(os.path.getmtime(os.path.join(frappe.local.sites_path, "assets/assets.json")))
 	except OSError:
 		# .build can sometimes not exist
 		# this is not a major problem so send fallback

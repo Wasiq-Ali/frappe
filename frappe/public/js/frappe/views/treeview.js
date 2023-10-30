@@ -35,7 +35,10 @@ frappe.views.TreeFactory = class TreeFactory extends frappe.views.Factory {
 		 */
 		let route = frappe.get_route();
 		let treeview = frappe.views.trees[route[1]];
-		treeview && treeview.make_tree();
+
+		if (treeview?._needs_refresh) {
+			treeview && treeview.make_tree();
+		}
 	}
 
 	get view_name() {
@@ -61,13 +64,16 @@ frappe.views.TreeView = class TreeView {
 		this.make_filters();
 		this.root_value = null;
 
-		if (me.opts.get_tree_root) {
-			this.get_root();
-		}
-
 		this.onload();
 		this.set_menu_item();
 		this.set_primary_action();
+		this.setup_realtime_updates();
+
+		if (me.opts.get_tree_root) {
+			this.get_root();
+		} else {
+			this.make_tree();
+		}
 	}
 	get_permissions() {
 		this.can_read = frappe.model.can_read(this.doctype);
@@ -130,6 +136,12 @@ frappe.views.TreeView = class TreeView {
 				filter.default = frappe.route_options[filter.fieldname];
 			}
 
+			me.args[filter.fieldname] = filter.default;
+			if (me.args[filter.fieldname]) {
+				me.root_label = me.args[filter.fieldname];
+				me.set_title();
+			}
+
 			if (!filter.disable_onchange) {
 				filter.change = function () {
 					filter.onchange && filter.onchange();
@@ -172,6 +184,8 @@ frappe.views.TreeView = class TreeView {
 		});
 	}
 	make_tree() {
+		this._needs_refresh = false;
+
 		$(this.parent).find(".tree").remove();
 
 		var use_label = this.args[this.opts.root_label] || this.root_label || this.opts.root_label;
@@ -489,5 +503,23 @@ frappe.views.TreeView = class TreeView {
 				me.page.add_menu_item(menu_item["label"], menu_item["action"]);
 			}
 		});
+	}
+
+	setup_realtime_updates() {
+		if (this.realtime_events_setup) {
+			return;
+		}
+
+		this._needs_refresh = false;
+		frappe.socketio.doctype_subscribe(this.doctype);
+		frappe.realtime.on("list_update", (data) => {
+			console.log("list_update");
+			if (data?.doctype !== this.doctype) {
+				return;
+			}
+
+			this._needs_refresh = true;
+		});
+		this.realtime_events_setup = true;
 	}
 };
