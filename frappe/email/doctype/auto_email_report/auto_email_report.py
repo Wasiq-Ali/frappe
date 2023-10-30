@@ -170,7 +170,11 @@ class AutoEmailReport(Document):
 		)
 
 	def get_file_name(self):
-		return "{}.{}".format(self.report.replace(" ", "-").replace("/", "-"), self.format.lower())
+		return "{}-{}.{}".format(
+			self.name.replace(" ", "-").replace("/", "-"),
+			today(),
+			self.format.lower()
+		)
 
 	def prepare_dynamic_filters(self):
 		self.filters = frappe.parse_json(self.filters)
