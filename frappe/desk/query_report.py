@@ -915,6 +915,28 @@ def _group_report_data(
 	return out
 
 
+def flatten_grouped_report_data(data, result=None, parent_indent=None):
+	result = result or []
+
+	for obj in data:
+		if isinstance(obj, dict) and obj.get("_isGroup"):
+			if obj.get("totals"):
+				obj["totals"]["indent"] = obj["totals"].get("indent") or 0
+				parent_indent = obj["totals"]["indent"]
+
+				result.append(obj.get("totals"))
+
+			if obj.get("rows"):
+				flatten_grouped_report_data(obj.get("rows"), result=result, parent_indent=parent_indent)
+		else:
+			if parent_indent is not None:
+				obj["indent"] = parent_indent + 1
+
+			result.append(obj)
+
+	return result
+
+
 def hide_columns_if_filtered(columns, filters):
 	def condition(col):
 		if col.get('hide_if_filtered'):

@@ -112,15 +112,19 @@ class AutoEmailReport(Document):
 			are_default_filters=False,
 		)
 
-		# add serial numbers
-		columns.insert(0, frappe._dict(fieldname="idx", label="", width="30px"))
-		for i in range(len(data)):
-			data[i]["idx"] = i + 1
+		if self.report_type == "Script Report":
+			from frappe.desk.query_report import flatten_grouped_report_data
+			data = flatten_grouped_report_data(data)
 
 		if len(data) == 0 and self.send_if_data:
 			return None
 
 		if self.format == "HTML":
+			# add serial numbers
+			columns.insert(0, frappe._dict(fieldname="idx", label="", width="30px"))
+			for i in range(len(data)):
+				data[i]["idx"] = i + 1
+
 			columns, data = make_links(columns, data)
 			columns = update_field_types(columns)
 			return self.get_html_table(columns, data)
