@@ -601,7 +601,7 @@ export default class Grid {
 		} else {
 			data = this.frm
 				? this.frm.doc[this.df.fieldname] || []
-				: this.df.data || this.get_modal_data();
+				: this.get_modal_data() || this.df.data || [];
 		}
 		return data;
 	}
@@ -674,7 +674,7 @@ export default class Grid {
 						return data;
 					}
 			  })
-			: [];
+			: this.df.data || [];
 	}
 
 	set_column_disp(fieldname, show, do_not_refresh) {
