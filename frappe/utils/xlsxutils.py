@@ -56,13 +56,7 @@ def make_xlsx(data, sheet_name, wb=None, column_widths=None, column_formats=None
 				value = ILLEGAL_CHARACTERS_RE.sub("", value)
 
 			cell = WriteOnlyCell(ws, value)
-
-			# Number Format
-			column_format = column_formats[col_i] if col_i < len(column_formats) else None
-			if column_format:
-				cell.number_format = column_format
-
-			# Header Row Bold
+			cell.number_format = ws.column_dimensions[get_column_letter(col_i + 1)].number_format
 			if row_i == 0:
 				cell.font = Font(name="Calibri", bold=True)
 
