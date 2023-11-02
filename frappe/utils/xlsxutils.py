@@ -8,6 +8,7 @@ import xlrd
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
+from openpyxl.cell import WriteOnlyCell
 
 import frappe
 from frappe import _
@@ -27,21 +28,24 @@ def make_xlsx(data, sheet_name, wb=None, column_widths=None, column_formats=None
 	if freeze:
 		ws.freeze_panes = freeze
 
+	# Column widths
 	for i, column_width in enumerate(column_widths):
 		if column_width:
 			ws.column_dimensions[get_column_letter(i + 1)].width = column_width
 
+	# Column formats
 	column_formats = column_formats or []
 	for i, column_format in enumerate(column_formats):
 		if column_format:
 			ws.column_dimensions[get_column_letter(i + 1)].number_format = column_format
 
+	# Header Row Bold
 	row1 = ws.row_dimensions[1]
 	row1.font = Font(name="Calibri", bold=True)
 
-	for row in data:
+	for row_i, row in enumerate(data):
 		clean_row = []
-		for item in row:
+		for col_i, item in enumerate(row):
 			if isinstance(item, str) and (sheet_name not in ["Data Import Template", "Data Export"]):
 				value = handle_html(item)
 			else:
@@ -51,7 +55,18 @@ def make_xlsx(data, sheet_name, wb=None, column_widths=None, column_formats=None
 				# Remove illegal characters from the string
 				value = ILLEGAL_CHARACTERS_RE.sub("", value)
 
-			clean_row.append(value)
+			cell = WriteOnlyCell(ws, value)
+
+			# Number Format
+			column_format = column_formats[col_i] if col_i < len(column_formats) else None
+			if column_format:
+				cell.number_format = column_format
+
+			# Header Row Bold
+			if row_i == 0:
+				cell.font = Font(name="Calibri", bold=True)
+
+			clean_row.append(cell)
 
 		ws.append(clean_row)
 
