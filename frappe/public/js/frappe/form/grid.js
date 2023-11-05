@@ -210,8 +210,18 @@ export default class Grid {
 		selected_children.forEach((doc) => {
 			tasks.push(() => {
 				if (!this.frm) {
-					this.df.data = this.get_data();
-					this.df.data = this.df.data.filter((row) => row.idx != doc.idx);
+					let data = this.get_data();
+					const index = data.findIndex((row) => row.idx === doc.idx);
+					if (index > -1) {
+						data.splice(index, 1);
+					}
+
+					if (doc.name) {
+						if (!this.deleted_docs) {
+							this.deleted_docs = [];
+						}
+						this.deleted_docs.push(doc.name);
+					}
 				}
 				dirty = true;
 				return this.grid_rows_by_docname[doc.name].remove();
@@ -790,7 +800,7 @@ export default class Grid {
 	}
 
 	set_value(fieldname, value, doc) {
-		if (this.display_status !== "None" && this.grid_rows_by_docname[doc.name]) {
+		if (doc && this.display_status !== "None" && this.grid_rows_by_docname[doc.name]) {
 			this.grid_rows_by_docname[doc.name].refresh_field(fieldname, value);
 		}
 	}
