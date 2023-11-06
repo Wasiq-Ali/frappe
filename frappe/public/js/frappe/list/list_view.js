@@ -1507,7 +1507,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 					return_value = -1;
 				}
 
-				if (this.sort_order === "desc") {
+				if (cstr(this.sort_order).toLowerCase() === "desc") {
 					return_value = -return_value;
 				}
 				return return_value;
