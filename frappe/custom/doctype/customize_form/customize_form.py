@@ -206,6 +206,9 @@ class CustomizeForm(Document):
 		self.set_property_setters_for_actions_and_links(meta)
 
 	def set_property_setter_for_field_order(self, meta):
+		if frappe.conf.get("developer_mode"):
+			return
+
 		new_order = [df.fieldname for df in self.fields]
 		existing_order = getattr(meta, "field_order", None)
 		default_order = [
