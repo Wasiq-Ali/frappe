@@ -7,7 +7,6 @@ from frappe.utils import nowdate, cint, cstr
 from frappe.model.document import Document
 from frappe.core.doctype.notification_count.notification_count import add_notification_count, get_notification_count,\
 	set_notification_last_scheduled
-from six import string_types
 from frappe.model.base_document import get_controller
 import json
 
@@ -17,17 +16,19 @@ class SMSSettings(Document):
 
 
 @frappe.whitelist()
-def send_sms(receiver_list,
-		message,
-		success_msg=True,
-		notification_type=None,
-		reference_doctype=None,
-		reference_name=None,
-		child_doctype=None,
-		child_name=None,
-		party_doctype=None,
-		party=None):
-
+def send_sms(
+	receiver_list,
+	message,
+	success_msg=True,
+	notification_type=None,
+	reference_doctype=None,
+	reference_name=None,
+	child_doctype=None,
+	child_name=None,
+	party_doctype=None,
+	party=None,
+	is_promotional=False
+):
 	notification_type = cstr(notification_type)
 
 	receiver_list = clean_receiver_nos(receiver_list)
@@ -43,13 +44,22 @@ def send_sms(receiver_list,
 		'child_name': child_name,
 		'party_doctype': party_doctype,
 		'party': party,
+		'is_promotional': cint(is_promotional),
 	})
 
 	create_communication(args)
 	process_and_send(args)
 
 
-def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_already_sent=False, child_doctype=None, child_name=None, send_after=None):
+def enqueue_template_sms(
+	doc,
+	notification_type=None,
+	context=None,
+	allow_if_already_sent=False,
+	child_doctype=None,
+	child_name=None,
+	send_after=None
+):
 	from frappe.core.doctype.sms_queue.sms_queue import queue_sms
 
 	notification_type = cstr(notification_type)
@@ -86,7 +96,16 @@ def enqueue_template_sms(doc, notification_type=None, context=None, allow_if_alr
 	return True
 
 
-def send_template_sms(notification_type, reference_doctype=None, reference_name=None, child_doctype=None, child_name=None, doc=None, context=None, receiver_list=None):
+def send_template_sms(
+	notification_type,
+	reference_doctype=None,
+	reference_name=None,
+	child_doctype=None,
+	child_name=None,
+	doc=None,
+	context=None,
+	receiver_list=None
+):
 	args = get_template_sms_args(notification_type, reference_doctype=reference_doctype, reference_name=reference_name,
 		child_doctype=child_doctype, child_name=child_name, doc=doc, context=context, get_doc=True, throw=True)
 
@@ -97,12 +116,17 @@ def send_template_sms(notification_type, reference_doctype=None, reference_name=
 	process_and_send(args)
 
 
-def get_template_sms_args(notification_type,
-		reference_doctype=None, reference_name=None,
-		child_doctype=None, child_name=None,
-		doc=None, get_doc=False,
-		context=None,
-		is_automated_sms=True, throw=True
+def get_template_sms_args(
+	notification_type,
+	reference_doctype=None,
+	reference_name=None,
+	child_doctype=None,
+	child_name=None,
+	doc=None,
+	get_doc=False,
+	context=None,
+	is_automated_sms=True,
+	throw=True
 ):
 	from frappe.core.doctype.sms_template.sms_template import get_sms_template
 
@@ -289,8 +313,12 @@ def send_via_gateway(args):
 	}
 
 	for d in ss.get("parameters"):
-		if not d.header:
-			request_params[d.parameter] = d.value
+		if d.header:
+			continue
+		if d.promotional and not args.get("is_promotional"):
+			continue
+
+		request_params[d.parameter] = d.value
 
 	success_list = []
 	fail_list = []
@@ -406,7 +434,7 @@ def create_sms_log(args, sent_to):
 
 
 def clean_receiver_nos(receiver_list):
-	if isinstance(receiver_list, string_types):
+	if isinstance(receiver_list, str):
 		receiver_list = json.loads(receiver_list)
 		if not isinstance(receiver_list, list):
 			receiver_list = [receiver_list]
@@ -415,16 +443,20 @@ def clean_receiver_nos(receiver_list):
 	if not receiver_list:
 		return cleaned_receiver_list
 
-	invalid_characters = (' ', '\t', '-', '(', ')')
-
-	for d in receiver_list:
-		for char in invalid_characters:
-			d = cstr(d).replace(char, '')
-
-		if d:
-			cleaned_receiver_list.append(d)
+	for number in receiver_list:
+		number = clean_receiver_number(number)
+		if number:
+			cleaned_receiver_list.append(number)
 
 	return cleaned_receiver_list
+
+
+def clean_receiver_number(number):
+	invalid_characters = (' ', '\t', '-', '(', ')', '\xa0')
+	for char in invalid_characters:
+		number = cstr(number).replace(char, '')
+
+	return number
 
 
 @frappe.whitelist()

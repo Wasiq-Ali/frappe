@@ -6,11 +6,12 @@
  "engine": "InnoDB",
  "field_order": [
   "sms_gateway_url",
+  "use_post",
+  "column_break_w0ufm",
   "message_parameter",
   "receiver_parameter",
   "static_parameters_section",
   "parameters",
-  "use_post",
   "section_break_7",
   "response_validation",
   "column_break_9",
@@ -43,7 +44,7 @@
   },
   {
    "fieldname": "static_parameters_section",
-   "fieldtype": "Column Break",
+   "fieldtype": "Section Break",
    "width": "50%"
   },
   {
@@ -76,13 +77,17 @@
    "fieldname": "error_message",
    "fieldtype": "Code",
    "label": "Error Message Expression"
+  },
+  {
+   "fieldname": "column_break_w0ufm",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-09-21 19:45:26.809793",
+ "modified": "2023-11-22 12:09:24.425820",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Settings",
@@ -98,5 +103,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2013-02-22 01:27:58",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -6,10 +7,12 @@
  "field_order": [
   "parameter",
   "value",
-  "header"
+  "header",
+  "promotional"
  ],
  "fields": [
   {
+   "columns": 3,
    "fieldname": "parameter",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -19,6 +22,7 @@
    "width": "150px"
   },
   {
+   "columns": 5,
    "fieldname": "value",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -28,21 +32,31 @@
    "width": "150px"
   },
   {
+   "columns": 1,
    "default": "0",
    "fieldname": "header",
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Header"
+  },
+  {
+   "default": "0",
+   "fieldname": "promotional",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Promotional SMS"
   }
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-03-03 15:42:38.244346",
+ "links": [],
+ "modified": "2023-11-22 12:09:05.785044",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Parameter",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }
