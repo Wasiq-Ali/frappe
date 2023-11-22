@@ -28,7 +28,8 @@
   "party_doctype",
   "party",
   "column_break_19",
-  "communication"
+  "communication",
+  "is_promotional"
  ],
  "fields": [
   {
@@ -178,12 +179,19 @@
    "in_standard_filter": 1,
    "label": "Child Name",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_promotional",
+   "fieldtype": "Check",
+   "label": "Is Promotional",
+   "read_only": 1
   }
  ],
  "icon": "fa fa-mobile-phone",
  "in_create": 1,
  "links": [],
- "modified": "2023-06-09 16:46:19.583073",
+ "modified": "2023-11-22 15:35:43.974246",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Queue",

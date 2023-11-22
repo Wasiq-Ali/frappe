@@ -180,7 +180,8 @@ def prepare_sms(sms_queue, recipient):
 		'party': sms_queue.party,
 		'sms_queue': sms_queue.name,
 		'child_doctype': sms_queue.child_doctype,
-		'child_name': sms_queue.child_name
+		'child_name': sms_queue.child_name,
+		'is_promotional': sms_queue.is_promotional,
 	})
 
 	return args
