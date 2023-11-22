@@ -27,7 +27,9 @@ def send_sms(
 	child_name=None,
 	party_doctype=None,
 	party=None,
-	is_promotional=False
+	is_promotional=False,
+	enqueue=False,
+	send_after=None
 ):
 	notification_type = cstr(notification_type)
 
@@ -47,8 +49,18 @@ def send_sms(
 		'is_promotional': cint(is_promotional),
 	})
 
+	enqueue = cint(enqueue)
+	if send_after:
+		args['send_after'] = send_after
+		enqueue = True
+
 	create_communication(args)
-	process_and_send(args)
+
+	if enqueue:
+		from frappe.core.doctype.sms_queue.sms_queue import queue_sms
+		queue_sms(args)
+	else:
+		process_and_send(args)
 
 
 def enqueue_template_sms(
@@ -276,7 +288,7 @@ def run_validate_notification(doc, notification_type, child_doctype=None, child_
 
 def run_after_send_methods(args):
 	notification_type = cstr(args.get('notification_type'))
-	if args.get("reference_doctype") and args.get("reference_name"):
+	if args.get("reference_doctype") and args.get("reference_name") and notification_type:
 		add_notification_count(args.get("reference_doctype"), args.get("reference_name"), notification_type, 'SMS',
 			child_doctype=args.get("child_doctype"), child_name=args.get("child_name"))
 
