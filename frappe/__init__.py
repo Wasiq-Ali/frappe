@@ -1974,14 +1974,16 @@ def as_json(obj: dict | list, indent=1, separators=None) -> str:
 def are_emails_muted():
 	return flags.mute_emails or cint(conf.get("mute_emails") or 0) or False
 
+
 def are_sms_muted():
 	from frappe.core.doctype.sms_settings.sms_settings import is_automated_sms_enabled
 	from frappe.utils import cint
 
 	if not is_automated_sms_enabled():
-		return False
+		return True
 
 	return flags.mute_sms or cint(conf.get("mute_sms") or 0) or False
+
 
 def get_test_records(doctype):
 	"""Returns list of objects from `test_records.json` in the given doctype's folder."""
