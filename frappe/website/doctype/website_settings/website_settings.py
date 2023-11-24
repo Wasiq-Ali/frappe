@@ -185,6 +185,10 @@ def get_website_settings(context=None):
 
 	context.web_include_css = hooks.web_include_css or []
 
+	context.custom_theme_bundle = hooks.custom_theme_bundle or None
+	if context.custom_theme_bundle:
+		context.custom_theme_bundle = context.custom_theme_bundle[-1]
+
 	via_hooks = hooks.website_context or []
 	for key in via_hooks:
 		context[key] = via_hooks[key]
