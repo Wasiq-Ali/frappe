@@ -4,9 +4,10 @@
 from contextlib import suppress
 
 import frappe
-from frappe import _
+from frappe import _, unscrub
 from frappe.rate_limiter import rate_limit
-from frappe.utils import validate_email_address
+from frappe.utils import validate_email_address, cint, cstr
+import json
 
 sitemap = 1
 
@@ -20,30 +21,71 @@ def get_context(context):
 
 @frappe.whitelist(allow_guest=True)
 @rate_limit(limit=1000, seconds=60 * 60)
-def send_message(sender, message, subject="Website Query"):
+def send_message(sender, message, subject="Website Query", args=None, create_communication=1):
 	sender = validate_email_address(sender, throw=True)
 
+	if not args:
+		args = {}
+	if isinstance(args, str):
+		args = json.loads(args)
+
+	context = {
+		"sender": sender,
+		"subject": subject,
+	}
+	for key, value in args.items():
+		if not context.get(key):
+			context[key] = value
+
+	context["message"] = message
+
 	with suppress(frappe.OutgoingEmailError):
+		# Internal / Forward Email
 		if forward_to_email := frappe.db.get_single_value("Contact Us Settings", "forward_to_email"):
-			frappe.sendmail(recipients=forward_to_email, reply_to=sender, content=message, subject=subject)
+			forward_email_content = []
+			for key, value in context.items():
+				label = unscrub(key)
+
+				if isinstance(value, str):
+					value = frappe.format(value, df={"fieldtype": "Text"})
+				else:
+					value = frappe.format(value)
+
+				forward_email_content.append(f"<b>{label}:</b> {value}")
+
+			forward_email_content = "<br>".join(forward_email_content)
+
+			frappe.sendmail(recipients=forward_to_email, reply_to=sender, content=forward_email_content, subject=subject)
+
+		# Acknowledgement / Confirmation Email
+		subject = "We've received your query!"
+		content = f"<div style='white-space: pre-wrap'>Thank you for reaching out to us. We will get back to you at the earliest.\n\n\nYour query:\n\n{message}</div>"
+
+		if email_template := frappe.db.get_single_value("Contact Us Settings", "confirmation_email_template"):
+			email_template_doc = frappe.get_cached_doc("Email Template", email_template)
+			formatted_template = email_template_doc.get_formatted_email(context)
+
+			subject = formatted_template['subject']
+			content = formatted_template['message']
 
 		frappe.sendmail(
 			recipients=sender,
-			content=f"<div style='white-space: pre-wrap'>Thank you for reaching out to us. We will get back to you at the earliest.\n\n\nYour query:\n\n{message}</div>",
-			subject="We've received your query!",
+			subject=subject,
+			content=content,
 		)
 
 	# for clearing outgoing email error message
 	frappe.clear_last_message()
 
 	# add to to-do ?
-	frappe.get_doc(
-		dict(
-			doctype="Communication",
-			sender=sender,
-			subject=_("New Message from Website Contact Page"),
-			sent_or_received="Received",
-			content=message,
-			status="Open",
-		)
-	).insert(ignore_permissions=True)
+	if cint(create_communication):
+		frappe.get_doc(
+			dict(
+				doctype="Communication",
+				sender=sender,
+				subject=_("New Message from Website Contact Page"),
+				sent_or_received="Received",
+				content=message,
+				status="Open",
+			)
+		).insert(ignore_permissions=True)
