@@ -18,7 +18,7 @@ class SMSQueue(Document):
 			frappe.throw(_('Only Administrator can delete SMS Queue'))
 
 
-def queue_sms(args, now=False):
+def queue_sms(args, delayed=False, now=False):
 	if not args.get('receiver_list'):
 		return
 
@@ -30,11 +30,12 @@ def queue_sms(args, now=False):
 	doc.update(args)
 	doc.insert(ignore_permissions=True)
 
-	if not doc.get('send_after'):
+	if not delayed and not doc.get('send_after'):
 		if now:
 			send_one(doc.name, now=now, auto_commit=not now)
 		else:
-			frappe.enqueue("frappe.core.doctype.sms_queue.sms_queue.send_one", sms_queue=doc.name, enqueue_after_commit=True)
+			frappe.enqueue("frappe.core.doctype.sms_queue.sms_queue.send_one",
+				sms_queue=doc.name, enqueue_after_commit=True)
 
 
 def flush(from_test=False):
@@ -51,20 +52,17 @@ def flush(from_test=False):
 
 
 def send_one(sms_queue, auto_commit=True, now=False, from_test=False):
+	if frappe.are_sms_muted():
+		frappe.msgprint(_("SMS are muted"))
+		return
+
 	sms_queue = frappe.db.sql('''
 		select name, status, message, sender, reference_doctype, reference_name, retry, party_doctype, party,
 			child_doctype, child_name, notification_type, communication
 		from `tabSMS Queue`
-		where name=%s
+		where name = %s
 		for update
 	''', sms_queue, as_dict=True)[0]
-
-	recipients_list = frappe.db.sql('''select name, recipient, status from `tabSMS Queue Recipient` where parent=%s''',
-		sms_queue.name, as_dict=1)
-
-	if frappe.are_sms_muted():
-		frappe.msgprint(_("SMS are muted"))
-		return
 
 	if sms_queue.status not in ('Not Sent', 'Partially Sent'):
 		# rollback to release lock and return
@@ -72,13 +70,19 @@ def send_one(sms_queue, auto_commit=True, now=False, from_test=False):
 			frappe.db.rollback()
 		return
 
-	frappe.db.sql("update `tabSMS Queue` set status='Sending', modified=%s where name=%s",
-		(now_datetime(), sms_queue.name), auto_commit=auto_commit)
+	recipients_list = frappe.db.sql("""
+		select name, recipient, status
+		from `tabSMS Queue Recipient`
+		where parent = %s
+		order by idx
+	""", sms_queue.name, as_dict=1)
+
+	frappe.db.sql("""
+		update `tabSMS Queue` set status='Sending', modified=%s where name=%s
+	""", (now_datetime(), sms_queue.name), auto_commit=auto_commit)
 
 	if sms_queue.communication:
 		frappe.get_doc('Communication', sms_queue.communication).set_delivery_status(commit=auto_commit)
-
-	sms_sent_to_any_recipient = None
 
 	try:
 		for recipient in recipients_list:
@@ -92,8 +96,8 @@ def send_one(sms_queue, auto_commit=True, now=False, from_test=False):
 			frappe.db.sql("""update `tabSMS Queue Recipient` set status='Sent', modified=%s where name=%s""",
 				(now_datetime(), recipient.name), auto_commit=auto_commit)
 
-		sms_sent_to_any_recipient = any("Sent" == s.status for s in recipients_list)
-		sms_sent_to_all_recipients = all("Sent" == s.status for s in recipients_list)
+		sms_sent_to_any_recipient = any(s.status == "Sent" for s in recipients_list)
+		sms_sent_to_all_recipients = all(s.status == "Sent" for s in recipients_list)
 
 		# if all are sent set status
 		if sms_sent_to_all_recipients:
@@ -109,50 +113,56 @@ def send_one(sms_queue, auto_commit=True, now=False, from_test=False):
 		if sms_queue.communication:
 			frappe.get_doc('Communication', sms_queue.communication).set_delivery_status(commit=auto_commit)
 
-	except (ConnectionError,
-			Timeout,
-			JobTimeoutException):
-
+	except (ConnectionError, Timeout, JobTimeoutException):
 		# bad connection/timeout, retry later
-
-		if sms_sent_to_any_recipient:
-			frappe.db.sql("""update `tabSMS Queue` set status='Partially Sent', modified=%s where name=%s""",
-				(now_datetime(), sms_queue.name), auto_commit=auto_commit)
-		else:
-			frappe.db.sql("""update `tabSMS Queue` set status='Not Sent', modified=%s where name=%s""",
-				(now_datetime(), sms_queue.name), auto_commit=auto_commit)
-
-		if sms_queue.communication:
-			frappe.get_doc('Communication', sms_queue.communication).set_delivery_status(commit=auto_commit)
-
-		# no need to attempt further
-		return
+		handle_timeout(sms_queue, recipients_list, auto_commit)
 
 	except Exception as e:
-		if auto_commit:
-			frappe.db.rollback()
+		handle_error(e, sms_queue, recipients_list, auto_commit, now)
 
-		if sms_queue.retry < 3:
-			frappe.db.sql("""update `tabSMS Queue` set status='Not Sent', modified=%s, retry=retry+1 where name=%s""",
-				(now_datetime(), sms_queue.name), auto_commit=auto_commit)
+
+def handle_timeout(sms_queue, recipients_list, auto_commit):
+	sms_sent_to_any_recipient = any(s.status == "Sent" for s in recipients_list)
+	if sms_sent_to_any_recipient:
+		frappe.db.sql(
+			"""update `tabSMS Queue` set status='Partially Sent', modified=%s where name=%s""",
+			(now_datetime(), sms_queue.name), auto_commit=auto_commit)
+	else:
+		frappe.db.sql("""update `tabSMS Queue` set status='Not Sent', modified=%s where name=%s""",
+			(now_datetime(), sms_queue.name), auto_commit=auto_commit)
+
+	if sms_queue.communication:
+		frappe.get_doc('Communication', sms_queue.communication).set_delivery_status(
+			commit=auto_commit)
+
+
+def handle_error(e, sms_queue, recipients_list, auto_commit, now):
+	if auto_commit:
+		frappe.db.rollback()
+
+	sms_sent_to_any_recipient = any(s.status == "Sent" for s in recipients_list)
+
+	if sms_queue.retry < 3:
+		frappe.db.sql("""
+			update `tabSMS Queue` set status='Not Sent', modified=%s, retry=retry+1 where name=%s
+		""", (now_datetime(), sms_queue.name), auto_commit=auto_commit)
+	else:
+		if sms_sent_to_any_recipient:
+			frappe.db.sql("""
+				update `tabSMS Queue` set status='Partially Errored', error=%s where name=%s
+			""", (text_type(e), sms_queue.name), auto_commit=auto_commit)
 		else:
-			if sms_sent_to_any_recipient:
-				frappe.db.sql("""update `tabSMS Queue` set status='Partially Errored', error=%s where name=%s""",
-					(text_type(e), sms_queue.name), auto_commit=auto_commit)
-			else:
-				frappe.db.sql("""update `tabSMS Queue` set status='Error', error=%s
-					where name=%s""", (text_type(e), sms_queue.name), auto_commit=auto_commit)
+			frappe.db.sql("""update `tabSMS Queue` set status='Error', error=%s
+				where name=%s""", (text_type(e), sms_queue.name), auto_commit=auto_commit)
 
-		if sms_queue.communication:
-			frappe.get_doc('Communication', sms_queue.communication).set_delivery_status(commit=auto_commit)
+	if sms_queue.communication:
+		frappe.get_doc('Communication', sms_queue.communication).set_delivery_status(commit=auto_commit)
 
-		if now:
-			print(frappe.get_traceback())
-			raise e
-
-		else:
-			# log to Error Log
-			frappe.log_error(reference_doctype="SMS Queue", reference_name=sms_queue.name)
+	if now:
+		print(frappe.get_traceback())
+		raise e
+	else:
+		frappe.log_error(reference_doctype="SMS Queue", reference_name=sms_queue.name)
 
 
 def get_queue():
@@ -197,21 +207,20 @@ def clear_queue():
 	Note: Used separate query to avoid deadlock
 	"""
 
-	sms_queues = frappe.db.sql_list("""SELECT `name` FROM `tabSMS Queue`
-		WHERE `priority`=0 AND `modified` < (NOW() - INTERVAL '31' DAY)""")
+	sms_queues = frappe.db.sql_list("""
+		SELECT `name`
+		FROM `tabSMS Queue`
+		WHERE `priority` <= 1 AND `modified` < (NOW() - INTERVAL '31' DAY)
+	""")
 
 	if sms_queues:
-		frappe.db.sql("""DELETE FROM `tabSMS Queue` WHERE `name` IN ({0})""".format(
-			','.join(['%s']*len(sms_queues)
-		)), tuple(sms_queues))
-
-		frappe.db.sql("""DELETE FROM `tabSMS Queue Recipient` WHERE `parent` IN ({0})""".format(
-			','.join(['%s']*len(sms_queues)
-		)), tuple(sms_queues))
+		frappe.db.sql("""DELETE FROM `tabSMS Queue` WHERE `name` IN %s""", [sms_queues])
+		frappe.db.sql("""DELETE FROM `tabSMS Queue Recipient` WHERE `parent` IN %s""", [sms_queues])
 
 	frappe.db.sql("""
 		UPDATE `tabSMS Queue`
 		SET `status`='Expired'
 		WHERE `modified` < (NOW() - INTERVAL '7' DAY)
 		AND `status`='Not Sent'
-		AND (`send_after` IS NULL OR `send_after` < %(now)s)""", { 'now': now_datetime() })
+		AND (`send_after` IS NULL OR `send_after` < %(now)s)
+	""", {'now': now_datetime()})

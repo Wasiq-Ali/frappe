@@ -235,6 +235,7 @@ scheduler_events = {
 	],
 	"daily": [
 		"frappe.email.queue.set_expiry_for_email_queue",
+		"frappe.core.doctype.sms_queue.sms_queue.clear_queue",
 		"frappe.desk.notifications.clear_notifications",
 		"frappe.desk.doctype.event.event.send_event_digest",
 		"frappe.sessions.clear_expired_sessions",

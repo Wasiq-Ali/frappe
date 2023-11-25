@@ -28,7 +28,8 @@ def send_sms(
 	party_doctype=None,
 	party=None,
 	is_promotional=False,
-	enqueue=False,
+	queue=False,
+	queue_separately=False,
 	send_after=None
 ):
 	notification_type = cstr(notification_type)
@@ -49,16 +50,24 @@ def send_sms(
 		'is_promotional': cint(is_promotional),
 	})
 
-	enqueue = cint(enqueue)
+	queue = cint(queue)
+	queue_separately = cint(queue_separately)
 	if send_after:
 		args['send_after'] = send_after
-		enqueue = True
+		queue = True
 
 	create_communication(args)
 
-	if enqueue:
+	if queue:
 		from frappe.core.doctype.sms_queue.sms_queue import queue_sms
-		queue_sms(args)
+		if queue_separately:
+			for r in receiver_list:
+				receiver_args = args.copy()
+				receiver_args["communication"] = None
+				receiver_args["receiver_list"] = [r]
+				queue_sms(receiver_args, delayed=True)
+		else:
+			queue_sms(args)
 	else:
 		process_and_send(args)
 
