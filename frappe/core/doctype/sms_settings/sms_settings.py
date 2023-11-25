@@ -30,7 +30,8 @@ def send_sms(
 	is_promotional=False,
 	queue=False,
 	queue_separately=False,
-	send_after=None
+	send_after=None,
+	priority=1,
 ):
 	notification_type = cstr(notification_type)
 
@@ -48,6 +49,7 @@ def send_sms(
 		'party_doctype': party_doctype,
 		'party': party,
 		'is_promotional': cint(is_promotional),
+		'priority': cint(priority),
 	})
 
 	queue = cint(queue)
@@ -79,7 +81,8 @@ def enqueue_template_sms(
 	allow_if_already_sent=False,
 	child_doctype=None,
 	child_name=None,
-	send_after=None
+	send_after=None,
+	priority=1,
 ):
 	from frappe.core.doctype.sms_queue.sms_queue import queue_sms
 
@@ -109,6 +112,9 @@ def enqueue_template_sms(
 
 	if send_after:
 		args['send_after'] = send_after
+
+	if priority is not None:
+		args['priority'] = cint(priority)
 
 	set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS", child_doctype=child_doctype, child_name=child_name)
 	create_communication(args, automated=True)
