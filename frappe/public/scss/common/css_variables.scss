@@ -275,9 +275,8 @@ $input-height: calc(1.5em + 0.75rem);
 	--btn-secondary-active-bg: var(--gray-400);
 
 	--btn-primary-bg: var(--primary);
-	--btn-primary-hover-bg: #0051d8;
-	--btn-primary-active-bg: #0048bf;
-
+	--btn-primary-hover-bg: #{$btn-primary-hover-bg};
+	--btn-primary-active-bg: #{$btn-primary-active-bg};
 
 	// badge color
 	--badge-bg: var(--gray-200);
@@ -304,11 +303,11 @@ $input-height: calc(1.5em + 0.75rem);
 	--code-block-text: var(--gray-400);
 
 	// Border Sizes
-	--border-radius-sm: 4px;
-	--border-radius: 6px;
-	--border-radius-md: 8px;
-	--border-radius-lg: 12px;
-	--border-radius-full: 999px;
+	--border-radius-sm: #{$border-radius-sm};
+	--border-radius: #{$border-radius};
+	--border-radius-md: #{$border-radius-md};
+	--border-radius-lg: #{$border-radius-lg};
+	--border-radius-full: #{$border-radius-full};
 
 	--primary-color: #0060FF;
 	--btn-height: 30px;

@@ -27,9 +27,11 @@ $card-box-shadow: 0px 0px 1px rgba(17, 43, 66, 0.16), 0px 1px 3px rgba(17, 43, 6
 $border-color: var(--border-color);
 $code-color: var(--purple-600);
 
-$border-radius: var(--border-radius);
-$border-radius-sm: var(--border-radius-sm);
-$border-radius-lg: var(--border-radius-lg);
+$border-radius-sm: 4px !default;
+$border-radius: 6px !default;
+$border-radius-md: 8px !default;
+$border-radius-lg: 12px !default;
+$border-radius-full: 999px !default;
 
 $nav-divider-margin-y: 4px;
 
@@ -80,6 +82,8 @@ $dropdown-divider-bg: var(--border-color);
 $dropdown-min-width: 200px;
 
 // button
+$btn-primary-hover-bg: #0051d8 !default;
+$btn-primary-active-bg: #0048bf !default;
 $btn-padding-y-lg: 1rem !default;
 $btn-padding-x-lg: 2.5rem !default;
 $btn-font-size-lg: 1.125rem !default;
