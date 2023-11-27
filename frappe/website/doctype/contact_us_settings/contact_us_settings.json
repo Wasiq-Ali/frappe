@@ -5,8 +5,11 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "introduction_section",
+  "settings_section",
   "forward_to_email",
+  "column_break_qqzzd",
+  "confirmation_email_template",
+  "introduction_section",
   "heading",
   "introduction",
   "query_options",
@@ -15,15 +18,17 @@
   "address_line1",
   "address_line2",
   "city",
+  "column_break_14",
   "state",
   "pincode",
   "country",
-  "column_break_14",
+  "contact_information_section",
   "phone",
+  "column_break_dclhh",
   "email_id",
-  "skype",
-  "map_iframe",
-  "map_url"
+  "map_location_section",
+  "map_url",
+  "map_iframe"
  ],
  "fields": [
   {
@@ -113,26 +118,51 @@
    "options": "Email"
   },
   {
-   "fieldname": "skype",
-   "fieldtype": "Data",
-   "label": "Skype"
-  },
-  {
    "fieldname": "map_iframe",
    "fieldtype": "Small Text",
-   "label": "Map Iframe"
+   "label": "Map Embedding Code"
   },
   {
    "fieldname": "map_url",
    "fieldtype": "Data",
    "label": "Map URL"
+  },
+  {
+   "fieldname": "contact_information_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "column_break_dclhh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "map_location_section",
+   "fieldtype": "Section Break",
+   "label": "Map Location"
+  },
+  {
+   "fieldname": "settings_section",
+   "fieldtype": "Section Break",
+   "label": "Settings"
+  },
+  {
+   "description": "Email to send to visitor after receiving query",
+   "fieldname": "confirmation_email_template",
+   "fieldtype": "Link",
+   "label": "Confirmation Email Template",
+   "options": "Email Template"
+  },
+  {
+   "fieldname": "column_break_qqzzd",
+   "fieldtype": "Column Break"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-04-11 01:02:44.532889",
+ "modified": "2023-11-14 13:33:58.500256",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Contact Us Settings",

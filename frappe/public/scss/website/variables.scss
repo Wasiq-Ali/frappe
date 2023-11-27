@@ -48,9 +48,11 @@ $font-sizes: (
 	}
 }
 
-$border-radius: var(--border-radius);
-$border-radius-sm: var(--border-radius-sm);
-$border-radius-lg: var(--border-radius-lg);
+$border-radius-sm: 4px !default;
+$border-radius: 6px !default;
+$border-radius-md: 8px !default;
+$border-radius-lg: 12px !default;
+$border-radius-full: 999px !default;
 
 $font-size-xs: 0.75rem !default;
 $font-size-sm: 0.875rem !default;
@@ -63,6 +65,8 @@ $font-size-4xl: 2.5rem !default;
 $font-size-5xl: 3rem !default;
 $font-size-6xl: 4rem !default;
 
+$btn-primary-hover-bg: null !default;
+$btn-primary-active-bg: null !default;
 $btn-padding-y-lg: 1rem !default;
 $btn-padding-x-lg: 2.5rem !default;
 $btn-font-size-lg: 1.125rem !default;

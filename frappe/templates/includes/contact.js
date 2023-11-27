@@ -24,9 +24,11 @@ frappe.ready(function() {
 
 		$("#contact-alert").toggle(false);
 		frappe.send_message({
-			subject: $('[name="subject"]').val(),
-			sender: email,
-			message: message,
+			args: {
+				subject: $('[name="subject"]').val(),
+				sender: email,
+				message: message,
+			},
 			callback: function(r) {
 				if (!r.exc) {
 					frappe.msgprint('{{ _("Thank you for your message") }}');

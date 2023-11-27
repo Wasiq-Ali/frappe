@@ -92,12 +92,16 @@
 	--icon-fill-bg: var(--btn-primary-bg);
 
 	&:hover {
-		color: var(--white);
-		background-color: var(--btn-primary-hover-bg);
+		@if $btn-primary-hover-bg {
+			color: var(--white);
+			background-color: var(--btn-primary-hover-bg);
+		}
 	}
 	&:not(:disabled):not(.disabled):active {
-		color: var(--white);
-		background-color: var(--btn-primary-active-bg);
+		@if $btn-primary-active-bg {
+			color: var(--white);
+			background-color: var(--btn-primary-active-bg);
+		}
 	}
 }
 
