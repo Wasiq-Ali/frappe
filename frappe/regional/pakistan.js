@@ -133,4 +133,19 @@ Object.assign(frappe.regional.pakistan, {
 			frm.refresh_field(fieldname);
 		}
 	},
+
+	validate_duplicate_tax_id: function (doc, fieldname) {
+		let value = doc[fieldname];
+		if (value) {
+			return frappe.call({
+				method: "frappe.regional.pakistan.validate_duplicate_tax_id",
+				args: {
+					doctype: doc.doctype,
+					fieldname: fieldname,
+					value: value,
+					exclude: doc.__islocal ? null : doc.name
+				}
+			});
+		}
+	},
 });
