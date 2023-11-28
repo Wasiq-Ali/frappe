@@ -294,7 +294,12 @@ def get_open_count(doctype, name, items=None):
 	}
 
 	if not meta.custom:
+		from frappe.model.base_document import get_controller
+		controller = get_controller(doctype)
 		module = frappe.get_meta_module(doctype)
+
+		if hasattr(controller, "get_timeline_data"):
+			out["timeline_data"] = controller.get_timeline_data(name)
 		if hasattr(module, "get_timeline_data"):
 			out["timeline_data"] = module.get_timeline_data(doctype, name)
 
