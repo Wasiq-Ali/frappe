@@ -1,16 +1,17 @@
 import frappe
 from frappe import _
+import re
+
+cnic_regex = re.compile(r'^.....-.......-.$')
+ntn_regex = re.compile(r'^.......-.$')
+strn_regex = re.compile(r'^..-..-....-...-..$')
+
+mobile_regex = re.compile(r'^03\d\d-\d\d\d\d\d\d\d$')
 
 
 def validate_ntn_cnic_strn(ntn=None, cnic=None, strn=None):
-	import re
-
 	if frappe.db.get_default("country") != 'Pakistan':
 		return
-
-	cnic_regex = re.compile(r'^.....-.......-.$')
-	ntn_regex = re.compile(r'^.......-.$')
-	strn_regex = re.compile(r'^..-..-....-...-..$')
 
 	if ntn and not ntn_regex.match(ntn):
 		frappe.throw(_("Invalid NTN. NTN must be in the format #######-#"))
@@ -21,19 +22,15 @@ def validate_ntn_cnic_strn(ntn=None, cnic=None, strn=None):
 
 
 def validate_mobile_pakistan(mobile_no, throw=True):
-	import re
-
 	if frappe.db.get_default("country") != 'Pakistan':
-		return
+		return True
 
 	if not mobile_no:
-		return
+		return False
 
 	# do not check mobile number validity for international numbers
 	if mobile_no[:1] == "+" or mobile_no[:2] == "00":
-		return
-
-	mobile_regex = re.compile(r'^03\d\d-\d\d\d\d\d\d\d$')
+		return True
 
 	if not mobile_regex.match(mobile_no):
 		if throw:

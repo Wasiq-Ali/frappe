@@ -1,12 +1,13 @@
 frappe.provide('frappe.ui.form');
 
-frappe.ui.form._ContactQuickEntryForm = class ContactQuickEntryForm extends frappe.ui.form.QuickEntryForm {
+frappe.ui.form.ContactQuickEntryForm = class ContactQuickEntryForm extends frappe.ui.form.QuickEntryForm {
 	init(doctype, after_insert) {
 		this._super(doctype, after_insert);
 	}
 
 	render_dialog() {
 		super.render_dialog();
+
 		const last_doc = frappe.contacts.get_last_doc(this.doc);
 		if(frappe.dynamic_link && frappe.dynamic_link.doc && frappe.dynamic_link.doc.name == last_doc.docname) {
 			this.doc.links = [
@@ -17,7 +18,28 @@ frappe.ui.form._ContactQuickEntryForm = class ContactQuickEntryForm extends frap
 				}
 			]
 		}
+
+		if (this.dialog.fields_dict["tax_cnic"]) {
+			this.dialog.fields_dict["tax_cnic"].df.onchange = () => {
+				var value = this.dialog.get_value('tax_cnic');
+				value = frappe.regional.pakistan.get_formatted_cnic(value);
+				this.dialog.doc.tax_cnic = value;
+				this.dialog.get_field('tax_cnic').refresh();
+			};
+		}
+
+		this.dialog.fields_dict["mobile_no"].df.onchange = () => {
+			var value = this.dialog.get_value('mobile_no');
+			value = frappe.regional.pakistan.get_formatted_mobile_no(value);
+			this.dialog.doc.mobile_no = value;
+			this.dialog.get_field('mobile_no').refresh();
+		};
+
+		this.dialog.fields_dict["mobile_no_2"].df.onchange = () => {
+			var value = this.dialog.get_value('mobile_no_2');
+			value = frappe.regional.pakistan.get_formatted_mobile_no(value);
+			this.dialog.doc.mobile_no_2 = value;
+			this.dialog.get_field('mobile_no_2').refresh();
+		};
 	}
 }
-
-frappe.ui.form.ContactQuickEntryForm = frappe.ui.form._ContactQuickEntryForm;

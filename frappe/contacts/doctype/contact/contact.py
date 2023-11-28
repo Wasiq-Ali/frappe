@@ -16,6 +16,7 @@ class Contact(Document):
 		self.set_primary_email()
 		self.set_primary_phone()
 		self.validate_phone_nos()
+		self.validate_regional()
 
 		self.set_user()
 
@@ -99,6 +100,22 @@ class Contact(Document):
 		# 	if not d.get('is_primary_phone') and not d.get('is_primary_mobile_no'):
 		# 		frappe.throw(_("Row #{0}: Please mark contact number {1} as either a Mobile Number or a Phone Number")
 		# 			.format(d.idx, frappe.bold(d.phone)))
+
+	def validate_regional(self):
+		from frappe.regional.pakistan import validate_ntn_cnic_strn, validate_mobile_pakistan
+
+		if self.get('tax_cnic'):
+			validate_ntn_cnic_strn(cnic=self.tax_cnic)
+
+		if self.get('mobile_no'):
+			validate_mobile_pakistan(self.mobile_no)
+		if self.get('mobile_no_2'):
+			validate_mobile_pakistan(self.mobile_no_2)
+
+		for d in self.phone_nos:
+			if d.is_primary_mobile_no:
+				if not validate_mobile_pakistan(d.phone, throw=False):
+					d.is_primary_mobile_no = 0
 
 	def set_primary_email(self):
 		if self.email_id:
