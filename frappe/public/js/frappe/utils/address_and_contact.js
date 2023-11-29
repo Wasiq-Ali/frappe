@@ -238,4 +238,38 @@ $.extend(frappe.contacts, {
 		}
 		return contacts;
 	},
+
+	address_query: function(doc) {
+		if (frappe.dynamic_link) {
+			if(!doc[frappe.dynamic_link.fieldname]) {
+				frappe.throw(__("Please set {0}",
+					[__(frappe.meta.get_label(doc.doctype, frappe.dynamic_link.fieldname, doc.name))]));
+			}
+
+			return {
+				query: 'frappe.contacts.doctype.address.address.address_query',
+				filters: {
+					link_doctype: frappe.dynamic_link.doctype,
+					link_name: doc[frappe.dynamic_link.fieldname]
+				}
+			};
+		}
+	},
+
+	contact_query: function(doc) {
+		if (frappe.dynamic_link) {
+			if(!doc[frappe.dynamic_link.fieldname]) {
+				frappe.throw(__("Please set {0}",
+					[__(frappe.meta.get_label(doc.doctype, frappe.dynamic_link.fieldname, doc.name))]));
+			}
+
+			return {
+				query: 'frappe.contacts.doctype.contact.contact.contact_query',
+				filters: {
+					link_doctype: frappe.dynamic_link.doctype,
+					link_name: doc[frappe.dynamic_link.fieldname]
+				}
+			};
+		}
+	},
 })
