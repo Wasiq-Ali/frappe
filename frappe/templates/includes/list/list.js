@@ -1,6 +1,39 @@
 window.list_view = {
 	next_start: {{ next_start or 0 }},
 	loading: false,
+
+	events: {
+		on_reload: [],
+		on_load_more: [],
+	},
+
+	bind_on_reload: function(callback) {
+		list_view._bind_event("on_reload", callback);
+	},
+	trigger_on_reload: function(r) {
+		list_view._trigger_event("on_reload", r);
+	},
+
+	bind_on_load_more: function(callback) {
+		list_view._bind_event("load_more", callback);
+	},
+	trigger_on_load_more: function(r) {
+		list_view._trigger_event("load_more", r);
+	},
+
+	_bind_event: function(event, callback) {
+		if (event && callback) {
+			if (!list_view.events[event]) {
+				list_view.events[event] = [];
+			}
+			list_view.events[event].push(callback);
+		}
+	},
+	_trigger_event: function(event, r) {
+		for (let callback of list_view.events[event] || []) {
+			callback(r);
+		}
+	},
 }
 
 $.extend(list_view, {
@@ -42,6 +75,7 @@ $.extend(list_view, {
 					list_view.toggle_show_more_button(r.message.show_more);
 					list_view.toggle_empty_result(!r.message.result.length);
 
+					list_view.trigger_on_reload(r);
 					opts.callback && opts.callback(r);
 				}
 			}
@@ -50,7 +84,7 @@ $.extend(list_view, {
 		});
 	},
 
-	load_more: function(btn) {
+	load_more: function(btn, callback) {
 		if (list_view.loading) {
 			return;
 		}
@@ -69,6 +103,9 @@ $.extend(list_view, {
 
 					list_view.append_list(r.message.result);
 					list_view.toggle_show_more_button(r.message.show_more);
+
+					list_view.trigger_on_load_more(r);
+					callback && callback(r);
 				}
 			}
 		}).always(function() {
