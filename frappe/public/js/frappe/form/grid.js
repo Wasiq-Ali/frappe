@@ -877,8 +877,15 @@ export default class Grid {
 			d.idx = index + 1;
 			$item.attr("data-idx", d.idx);
 
-			if (this.frm) this.frm.doc[this.df.fieldname][index] = d;
-			this.data[index] = d;
+			if (this.frm) {
+				this.frm.doc[this.df.fieldname][index] = d;
+				this.data[index] = d;
+			} else {
+				if (!this.df.data) {
+					this.df.data = this.get_data() || [];
+				}
+				this.df.data[index] = d;
+			}
 			this.grid_rows[index] = this.grid_rows_by_docname[d.name];
 		});
 	}
