@@ -250,6 +250,15 @@ class CardDialog extends WidgetDialog {
 						get_options: (df) => {
 							return df.doc.link_type;
 						},
+						get_query: (doc) => {
+							if (doc.link_type == "DocType") {
+								return {
+									filters: {
+										"istable": 0
+									}
+								}
+							}
+						}
 					},
 					{
 						fieldname: "label",
