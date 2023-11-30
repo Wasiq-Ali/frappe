@@ -247,11 +247,8 @@ def get_address_templates(address):
 		result = frappe.db.get_value("Address Template", {"is_default": 1}, ["name", "template"])
 
 	if not result:
-		frappe.throw(
-			_(
-				"No default Address Template found. Please create a new one from Setup > Printing and Branding > Address Template."
-			)
-		)
+		from frappe.contacts.doctype.address_template.address_template import get_default_address_template
+		return None, get_default_address_template()
 	else:
 		return result
 
