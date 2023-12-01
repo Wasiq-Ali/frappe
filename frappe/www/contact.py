@@ -44,6 +44,9 @@ def send_message(sender, message, subject="Website Query", args=None, create_com
 		if forward_to_email := frappe.db.get_single_value("Contact Us Settings", "forward_to_email"):
 			forward_email_content = []
 			for key, value in context.items():
+				if not value:
+					continue
+
 				label = unscrub(key)
 
 				if isinstance(value, str):
