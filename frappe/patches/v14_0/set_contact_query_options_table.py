@@ -13,6 +13,7 @@ def execute():
 	do_not_set_default_option = 1 if query_options[0] else 0
 
 	frappe.reload_doc("doctype", "website", "contact_us_settings")
+	frappe.reload_doc("doctype", "website", "contact_query_option")
 
 	doc = frappe.get_single("Contact Us Settings")
 
