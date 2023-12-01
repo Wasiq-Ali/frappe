@@ -3,6 +3,10 @@ import frappe
 
 def execute():
 	options_str = frappe.db.get_single_value("Contact Us Settings", "query_options", cache=False)
+
+	frappe.reload_doc("website", "doctype", "contact_us_settings")
+	frappe.reload_doc("website", "doctype", "contact_query_option")
+
 	if not options_str:
 		return
 
@@ -11,9 +15,6 @@ def execute():
 	query_options = [opt for i, opt in enumerate(query_options) if opt or i == 0]
 
 	do_not_set_default_option = 1 if query_options[0] else 0
-
-	frappe.reload_doc("doctype", "website", "contact_us_settings")
-	frappe.reload_doc("doctype", "website", "contact_query_option")
 
 	doc = frappe.get_single("Contact Us Settings")
 
