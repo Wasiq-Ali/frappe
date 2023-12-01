@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-12-01 11:26:32.683950",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "option"
+ ],
+ "fields": [
+  {
+   "fieldname": "option",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Option",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-12-01 11:40:58.888008",
+ "modified_by": "Administrator",
+ "module": "Website",
+ "name": "Contact Query Option",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -9,10 +9,12 @@
   "forward_to_email",
   "column_break_qqzzd",
   "confirmation_email_template",
+  "section_break_ihchy",
+  "query_options",
+  "do_not_set_default_option",
   "introduction_section",
   "heading",
   "introduction",
-  "query_options",
   "address",
   "address_title",
   "address_line1",
@@ -28,6 +30,7 @@
   "email_id",
   "map_location_section",
   "map_url",
+  "column_break_xkmqh",
   "map_iframe"
  ],
  "fields": [
@@ -56,10 +59,11 @@
    "label": "Introduction"
   },
   {
-   "description": "Contact options, like \"Sales Query, Support Query\" etc each on a new line or separated by commas.",
+   "description": "Contact options, like \"Sales Query, Support Query\" etc.",
    "fieldname": "query_options",
-   "fieldtype": "Small Text",
-   "label": "Query Options"
+   "fieldtype": "Table",
+   "label": "Query Options",
+   "options": "Contact Query Option"
   },
   {
    "fieldname": "address",
@@ -156,13 +160,28 @@
   {
    "fieldname": "column_break_qqzzd",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ihchy",
+   "fieldtype": "Section Break",
+   "label": "Query Options"
+  },
+  {
+   "fieldname": "column_break_xkmqh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "do_not_set_default_option",
+   "fieldtype": "Check",
+   "label": "Do Not Set Default Option"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-14 13:33:58.500256",
+ "modified": "2023-12-01 11:41:53.441095",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Contact Us Settings",
