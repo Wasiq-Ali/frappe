@@ -10,6 +10,8 @@
  "field_order": [
   "title",
   "total_subscribers",
+  "require_email_verification",
+  "column_break_h3fu5",
   "confirmation_email_template",
   "welcome_email_template"
  ],
@@ -31,6 +33,7 @@
    "read_only": 1
   },
   {
+   "depends_on": "require_email_verification",
    "fieldname": "confirmation_email_template",
    "fieldtype": "Link",
    "label": "Confirmation Email Template",
@@ -41,6 +44,16 @@
    "fieldtype": "Link",
    "label": "Welcome Email Template",
    "options": "Email Template"
+  },
+  {
+   "fieldname": "column_break_h3fu5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "require_email_verification",
+   "fieldtype": "Check",
+   "label": "Require Email Verification"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -51,10 +64,11 @@
    "link_fieldname": "email_group"
   }
  ],
- "modified": "2021-06-15 11:25:13.556201",
+ "modified": "2023-12-02 12:58:06.469607",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Email Group",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
@@ -75,5 +89,6 @@
  "show_name_in_global_search": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

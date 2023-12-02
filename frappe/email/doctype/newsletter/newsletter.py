@@ -250,6 +250,25 @@ def subscribe(email, email_group=None):  # noqa
 	if email_group is None:
 		email_group = _("Website")
 
+	require_email_verification = frappe.db.get_value(
+		"Email Group", email_group, "require_email_verification"
+	)
+
+	if require_email_verification:
+		parsed_email = frappe.utils.validate_email_address(email, True)
+		if frappe.db.get_value("Email Group Member", {"email_group": email_group, "email": parsed_email}):
+			return "subscribed"
+
+		send_subscription_confirmation_email(parsed_email, email_group)
+		return "confirmation"
+	else:
+		create_missing_email_group(email_group)
+		frappe.flags.ignore_permissions = True
+		add_subscribers(email_group, email)
+		return "subscribed"
+
+
+def send_subscription_confirmation_email(email, email_group):
 	# build subscription confirmation URL
 	api_endpoint = frappe.utils.get_url(
 		"/api/method/frappe.email.doctype.newsletter.newsletter.confirm_subscription"
@@ -298,8 +317,7 @@ def confirm_subscription(email, email_group=_("Website")):  # noqa
 	if not verify_request():
 		return
 
-	if not frappe.db.exists("Email Group", email_group):
-		frappe.get_doc({"doctype": "Email Group", "title": email_group}).insert(ignore_permissions=True)
+	create_missing_email_group(email_group)
 
 	frappe.flags.ignore_permissions = True
 
@@ -311,6 +329,11 @@ def confirm_subscription(email, email_group=_("Website")):  # noqa
 		_("{0} has been successfully added to the Email Group.").format(email),
 		indicator_color="green",
 	)
+
+
+def create_missing_email_group(email_group):
+	if not frappe.db.exists("Email Group", email_group):
+		frappe.get_doc({"doctype": "Email Group", "title": email_group}).insert(ignore_permissions=True)
 
 
 def get_list_context(context=None):
