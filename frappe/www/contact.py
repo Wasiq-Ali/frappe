@@ -20,7 +20,7 @@ def get_context(context):
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(limit=1000, seconds=60 * 60)
+@rate_limit(limit=10, seconds=60 * 60)
 def send_message(sender, message, subject="Website Query", args=None, create_communication=1):
 	if not sender:
 		frappe.throw(_("Please enter your email address"))
