@@ -2,11 +2,12 @@
 @import "../common/mixins.scss";
 @import "../common/global.scss";
 @import "../common/icons.scss";
-@import "../common/alert.scss";
+@import "alert";
 
 @import "~bootstrap/scss/bootstrap";
 @import "global";
 @import "../common/buttons";
+@import "buttons";
 @import "../common/flex";
 @import "mobile";
 @import "module.scss";

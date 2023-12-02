@@ -109,6 +109,8 @@ $.extend(frappe, {
 				}
 			}
 			frappe.process_response(opts, data);
+		}).fail(function (xhr) {
+			opts.error && opts.error(xhr);
 		});
 	},
 	prepare_call: function (opts) {
@@ -212,6 +214,7 @@ $.extend(frappe, {
 			btn: btn,
 			args: opts.args,
 			callback: opts.callback,
+			error: opts.error,
 		});
 	},
 	has_permission: function (doctype, docname, perm_type, callback) {
