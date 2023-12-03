@@ -246,8 +246,7 @@ def confirmed_unsubscribe(email, group):
 @rate_limit(limit=10, seconds=60 * 60)
 def subscribe(email, email_group=None):  # noqa
 	"""API endpoint to subscribe an email to a particular email group. Triggers a confirmation email."""
-
-	if email_group is None:
+	if not email_group:
 		email_group = _("Website")
 
 	require_email_verification = frappe.db.get_value(
