@@ -11,7 +11,7 @@ from frappe.desk.form.load import get_attachments
 from frappe.desk.query_report import generate_report_result
 from frappe.model.document import Document
 from frappe.monitor import add_data_to_monitor
-from frappe.utils import gzip_compress, gzip_decompress
+from frappe.utils import gzip_compress, gzip_decompress, cint
 from frappe.utils.background_jobs import enqueue
 
 
@@ -40,9 +40,9 @@ class PreparedReport(Document):
 	def after_insert(self):
 		enqueue(
 			generate_report,
-			queue="long",
+			queue=self.flags.queue or "long",
 			prepared_report=self.name,
-			timeout=1500,
+			timeout=cint(self.flags.timeout) or 1500,
 			enqueue_after_commit=True,
 		)
 
