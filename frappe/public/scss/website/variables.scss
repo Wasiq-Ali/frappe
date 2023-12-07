@@ -27,7 +27,7 @@ $container-max-widths: (
 	md: 840px,
 	lg: 1090px,
 	xl: 1290px
-);
+) !default;
 
 $font-sizes: (
 	"xs": 0.75rem,
