@@ -4,4 +4,8 @@
 	border: 0;
 	font-size: inherit;
 	background-color: inherit;
+
+	&:focus {
+		outline: 0;
+	}
 }
