@@ -372,17 +372,23 @@ frappe.show_progress = (title, count, total = 100, description, hide_on_completi
 	}
 	dialog.percent = cint((flt(count) * 100) / total);
 	dialog.progress_bar.css({ width: dialog.percent + "%" });
-	if (hide_on_completion && dialog.percent === 100) {
+	if (hide_on_completion && dialog.percent >= 100) {
 		// timeout to avoid abrupt hide
-		setTimeout(frappe.hide_progress, 500);
+		setTimeout(() => frappe.hide_progress(dialog), 500);
 	}
 	return dialog;
 };
 
-frappe.hide_progress = function () {
-	if (frappe.cur_progress) {
-		frappe.cur_progress.hide();
-		frappe.cur_progress = null;
+frappe.hide_progress = function (progress_dialog) {
+	if (!progress_dialog) {
+		progress_dialog = frappe.cur_progress;
+	}
+	if (progress_dialog) {
+		progress_dialog.hide();
+
+		if (frappe.cur_progress && frappe.cur_progress == progress_dialog) {
+			frappe.cur_progress = null;
+		}
 	}
 };
 
