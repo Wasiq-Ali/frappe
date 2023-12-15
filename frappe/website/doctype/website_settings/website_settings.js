@@ -33,7 +33,7 @@ frappe.ui.form.on("Website Settings", {
 		frm.fields_dict.top_bar_items.grid.update_docfield_property(
 			"parent_label",
 			"options",
-			frm.events.get_parent_options(frm, "top_bar_items")
+			frm.events.get_parent_options(frm, "top_bar_items", true)
 		);
 	},
 
@@ -73,12 +73,12 @@ frappe.ui.form.on("Website Settings", {
 		}
 	},
 
-	get_parent_options: function (frm, table_field) {
+	get_parent_options: function (frm, table_field, allow_parent_url) {
 		var items = frm.doc[table_field] || [];
 		var main_items = [""];
 		for (var i in items) {
 			var d = items[i];
-			if (!d.url && d.label) {
+			if ((!d.url || allow_parent_url) && d.label) {
 				main_items.push(d.label);
 			}
 		}

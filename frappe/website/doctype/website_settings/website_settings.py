@@ -41,13 +41,13 @@ class WebsiteSettings(Document):
 						_("{0} does not exist in row {1}").format(top_bar_item.parent_label, top_bar_item.idx)
 					)
 
-				elif not parent_label_item[0] or parent_label_item[0].url:
-					# parent cannot have url
-					frappe.throw(
-						_("{0} in row {1} cannot have both URL and child items").format(
-							top_bar_item.parent_label, top_bar_item.idx
-						)
-					)
+				# elif not parent_label_item[0] or parent_label_item[0].url:
+				# 	# parent cannot have url
+				# 	frappe.throw(
+				# 		_("{0} in row {1} cannot have both URL and child items").format(
+				# 			top_bar_item.parent_label, top_bar_item.idx
+				# 		)
+				# 	)
 
 	def validate_footer_items(self):
 		"""validate url in top bar items"""
