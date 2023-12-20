@@ -47,9 +47,10 @@ frappe.ui.form.Control = class BaseControl {
 		if (this.df.get_status) {
 			return this.df.get_status(this);
 		}
-		if (this.df.is_virtual) {
-			return "Read";
-		}
+		// added virtual read only in frappe.perm.get_field_display_status
+		// if (this.df.is_virtual) {
+		// 	return "Read";
+		// }
 
 		if (
 			(!this.doctype && !this.docname) ||
