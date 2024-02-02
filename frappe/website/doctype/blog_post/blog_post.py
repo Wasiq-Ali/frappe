@@ -312,9 +312,9 @@ def get_blog_list(
 						comment_type='Comment'
 						and reference_doctype='Blog Post'
 						and reference_name=t1.name) as comments
-		from `tabBlog Post` t1, `tabBlogger` t2
+		from `tabBlog Post` t1
+		left join `tabBlogger` t2 on t1.blogger = t2.name
 		where ifnull(t1.published,0)=1
-		and t1.blogger = t2.name
 		{condition}
 		order by featured desc, published_on desc, name asc
 		limit {page_len} OFFSET {start}""".format(
