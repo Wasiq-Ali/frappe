@@ -27,6 +27,7 @@
 				{%- endif -%}
 				<p class="post-description text-muted">{{ post.intro }}</p>
 			</div>
+			{% if post.blogger %}
 			<div class="blog-card-footer">
 				{{  avatar(full_name=post.full_name, image=post.avatar, size='avatar-medium') }}
 				<div class="text-muted">
@@ -37,6 +38,7 @@
 					</div>
 				</div>
 			</div>
+			{% endif %}
 		</div>
 		<a class="stretched-link" href="/{{ post.route }}"></a>
 	</div>
