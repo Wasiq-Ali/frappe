@@ -124,7 +124,6 @@
    "label": "Landline No (Primary)",
    "oldfieldname": "contact_no",
    "oldfieldtype": "Data",
-   "options": "Phone",
    "read_only": 1
   },
   {
@@ -293,7 +292,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-11-22 13:13:38.795932",
+ "modified": "2024-02-04 15:42:30.516256",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
