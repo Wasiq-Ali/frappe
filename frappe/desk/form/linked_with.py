@@ -609,6 +609,9 @@ def get_linked_fields(doctype, without_ignore_user_permissions_enabled=False):
 	for parent, options in frappe.get_all(
 		"DocField", fields=["parent", "options"], filters=child_filters, as_list=1
 	):
+		if ret.get(parent):
+			continue
+
 		ret[parent] = {"child_doctype": options, "fieldname": links_dict[options]}
 		if options in ret:
 			del ret[options]
