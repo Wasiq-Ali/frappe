@@ -204,7 +204,7 @@ def import_file(doctype, file_path, import_type, submit_after_import=False, cons
 	i.import_data()
 
 
-def import_doc(path, pre_process=None):
+def import_doc(path, pre_process=None, force=True):
 	if os.path.isdir(path):
 		files = [os.path.join(path, f) for f in os.listdir(path)]
 	else:
@@ -214,7 +214,7 @@ def import_doc(path, pre_process=None):
 		if f.endswith(".json"):
 			frappe.flags.mute_emails = True
 			import_file_by_path(
-				f, data_import=True, force=True, pre_process=pre_process, reset_permissions=True
+				f, data_import=True, force=force, pre_process=pre_process, reset_permissions=True
 			)
 			frappe.flags.mute_emails = False
 			frappe.db.commit()
@@ -222,7 +222,7 @@ def import_doc(path, pre_process=None):
 			raise NotImplementedError("Only .json files can be imported")
 
 
-def export_json(doctype, path, filters=None, or_filters=None, name=None, order_by="creation asc"):
+def export_json(doctype, path, filters=None, or_filters=None, name=None, order_by="creation asc", export_creation=False):
 	def post_process(out):
 		# Note on Tree DocTypes:
 		# The tree structure is maintained in the database via the fields "lft"
@@ -230,6 +230,9 @@ def export_json(doctype, path, filters=None, or_filters=None, name=None, order_b
 		# them would destroy any existing tree structure. For this reason they
 		# are not exported as well.
 		del_keys = ("modified_by", "creation", "owner", "idx", "lft", "rgt")
+		if export_creation:
+			del_keys = tuple(k for k in del_keys if k != "creation")
+
 		for doc in out:
 			for key in del_keys:
 				if key in doc:

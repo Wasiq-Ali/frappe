@@ -426,7 +426,7 @@ class CustomizeForm(Document):
 		custom_field = frappe.get_doc("Custom Field", meta_df[0].name)
 		changed = False
 		for prop in docfield_properties:
-			if df.get(prop) != custom_field.get(prop):
+			if custom_field.meta.has_field(prop) and df.get(prop) != custom_field.get(prop):
 				if prop == "fieldtype":
 					self.validate_fieldtype_change(df, meta_df[0].get(prop), df.get(prop))
 				if prop == "in_global_search":
@@ -444,6 +444,7 @@ class CustomizeForm(Document):
 				changed = True
 
 		if changed:
+			custom_field.set_user_and_timestamp()
 			custom_field.db_update()
 			self.flags.update_db = True
 			# custom_field.save()
