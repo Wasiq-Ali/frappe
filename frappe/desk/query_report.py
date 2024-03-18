@@ -535,7 +535,7 @@ def get_data_for_custom_report(columns, result):
 		names = None
 		if link_field:
 			row_key = link_field.get("fieldname")
-			names = list({row[row_key] for row in result}) or None
+			names = list({row.get(row_key) for row in result}) or None
 
 		doc_field_value_map[(doctype, fieldname)] = get_data_for_custom_field(doctype, fieldname, names)
 
