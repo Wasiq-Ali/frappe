@@ -32,9 +32,9 @@
 	}
 
 	/* mozilla hack for images in table */
-	body:last-child .print-format td img {
+	/* body:last-child .print-format td img {
 		width: 100% !important;
-	}
+	} */
 
 	@media(max-width: 767px) {
 		.print-format {
