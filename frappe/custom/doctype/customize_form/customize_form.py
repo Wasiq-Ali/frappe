@@ -210,12 +210,15 @@ class CustomizeForm(Document):
 			return
 
 		new_order = [df.fieldname for df in self.fields]
-		existing_order = getattr(meta, "field_order", None)
-		default_order = [
+		new_order_without_custom_fields = [df.fieldname for df in self.fields if not getattr(df, "is_custom_field", False)]
+
+		default_order_without_custom_fields = [
 			fieldname for fieldname, df in meta._fields.items() if not getattr(df, "is_custom_field", False)
 		]
 
-		if new_order == default_order:
+		existing_order = getattr(meta, "field_order", None)
+
+		if new_order_without_custom_fields == default_order_without_custom_fields:
 			if existing_order:
 				delete_property_setter(self.doc_type, "field_order")
 
