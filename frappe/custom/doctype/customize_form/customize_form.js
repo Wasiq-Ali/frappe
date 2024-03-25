@@ -226,7 +226,7 @@ frappe.ui.form.on("Customize Form Field", {
 	before_fields_remove: function (frm, doctype, name) {
 		const row = frappe.get_doc(doctype, name);
 
-		if (row.is_system_generated) {
+		if (row.is_system_generated && !frappe.boot.developer_mode) {
 			frappe.throw(
 				__(
 					"Cannot delete system generated field <strong>{0}</strong>. You can hide it instead.",
