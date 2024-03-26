@@ -372,7 +372,7 @@ def send_via_gateway(args):
 
 def get_headers(sms_settings=None):
 	if not sms_settings:
-		sms_settings = frappe.get_doc("SMS Settings", "SMS Settings")
+		sms_settings = frappe.get_cached_doc("SMS Settings", None)
 
 	headers = {"Accept": "text/plain, text/html, */*"}
 	for d in sms_settings.get("parameters"):
@@ -406,7 +406,7 @@ def send_request(gateway_url, params, headers=None, use_post=False, use_json=Fal
 
 def validate_response(response, sms_settings=None):
 	if not sms_settings:
-		sms_settings = frappe.get_doc('SMS Settings', 'SMS Settings')
+		sms_settings = frappe.get_cached_doc("SMS Settings", None)
 
 	if not (200 <= response.status_code < 300):
 		return False
@@ -421,7 +421,7 @@ def validate_response(response, sms_settings=None):
 
 def get_error_message(response, sms_settings=None):
 	if not sms_settings:
-		sms_settings = frappe.get_doc('SMS Settings', 'SMS Settings')
+		sms_settings = frappe.get_cached_doc("SMS Settings", None)
 
 	if sms_settings.error_message:
 		return frappe.safe_eval(sms_settings.error_message, eval_locals={'response': response})
@@ -482,6 +482,12 @@ def clean_receiver_number(number):
 	invalid_characters = (' ', '\t', '-', '(', ')', '\xa0')
 	for char in invalid_characters:
 		number = cstr(number).replace(char, '')
+
+	sms_settings = frappe.get_cached_doc("SMS Settings", None)
+	if sms_settings.number_formatter:
+		formatted_number = frappe.safe_eval(sms_settings.number_formatter, eval_locals={'number': number})
+		if formatted_number:
+			number = formatted_number
 
 	return number
 

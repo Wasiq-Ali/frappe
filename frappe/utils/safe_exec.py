@@ -635,6 +635,8 @@ WHITELISTED_SAFE_EVAL_GLOBALS = {
 	"float": float,
 	"long": int,
 	"round": round,
+	"len": len,
+	"abs": abs,
 	# RestrictedPython specific overrides
 	"_getattr_": _get_attr_for_eval,
 	"_getitem_": _getitem,

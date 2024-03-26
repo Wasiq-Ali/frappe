@@ -15,7 +15,9 @@
   "section_break_7",
   "response_validation",
   "column_break_9",
-  "error_message"
+  "error_message",
+  "number_formatting_section",
+  "number_formatter"
  ],
  "fields": [
   {
@@ -45,6 +47,7 @@
   {
    "fieldname": "static_parameters_section",
    "fieldtype": "Section Break",
+   "label": "Static Parameters",
    "width": "50%"
   },
   {
@@ -67,7 +70,8 @@
   },
   {
    "fieldname": "section_break_7",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Response Validation"
   },
   {
    "fieldname": "column_break_9",
@@ -81,13 +85,23 @@
   {
    "fieldname": "column_break_w0ufm",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "number_formatting_section",
+   "fieldtype": "Section Break",
+   "label": "Number Formatting"
+  },
+  {
+   "fieldname": "number_formatter",
+   "fieldtype": "Code",
+   "label": "Number Formatting Expression"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-22 12:09:24.425820",
+ "modified": "2024-03-26 15:52:20.667929",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Settings",
