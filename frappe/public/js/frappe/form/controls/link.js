@@ -515,7 +515,7 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 
 		let filter_string = filter_array.map(get_filter_description).join(", ");
 
-		return __("Filters applied for {0}", [filter_string]);
+		return filter_string ? __("Filters applied for {0}", [filter_string]) : "";
 	}
 
 	set_custom_query(args) {
