@@ -13,6 +13,7 @@
   "enabled",
   "set_if_empty",
   "set_for_new_document",
+  "unique_value_reqd",
   "section_break_5",
   "conditions"
  ],
@@ -65,10 +66,16 @@
    "fieldname": "set_for_new_document",
    "fieldtype": "Check",
    "label": "Set Only For New Document"
+  },
+  {
+   "default": "0",
+   "fieldname": "unique_value_reqd",
+   "fieldtype": "Check",
+   "label": "Unique Value Required"
   }
  ],
  "links": [],
- "modified": "2023-08-10 13:39:56.827803",
+ "modified": "2024-03-28 14:38:58.179792",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Auto Value Setter",

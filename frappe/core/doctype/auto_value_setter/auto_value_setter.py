@@ -75,6 +75,16 @@ def apply_auto_value_setters(doc, parent=None):
 			# if condition is met
 			if not d.condition or frappe.safe_eval(d.condition, eval_globals, context):
 				value = frappe.render_template(cstr(d.value), context)
+
+				if auto_value_setter.unique_value_reqd:
+					max_retries = 5
+					while max_retries:
+						if not frappe.db.get_value(doc.doctype, {auto_value_setter.field_name: value}):
+							break
+
+						value = frappe.render_template(cstr(d.value), context)
+						max_retries -= 1
+
 				doc.set(auto_value_setter.field_name, value)
 				break
 
