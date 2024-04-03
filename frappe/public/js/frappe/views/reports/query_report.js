@@ -67,11 +67,15 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	get_url_with_filters() {
 		const query_params = Object.entries(this.get_filter_values(false, true))
 			.filter(([field, value]) => {
+				let filter = this.get_filter(field);
+				if (filter?.df?.hidden || filter?.df?.read_only) {
+					return false;
+				}
+
 				if (value) {
 					return true;
 				}
 
-				let filter = this.get_filter(field);
 				if (filter?.df?.default && cstr(filter.df.default) != cstr(value)) {
 					return true;
 				}
