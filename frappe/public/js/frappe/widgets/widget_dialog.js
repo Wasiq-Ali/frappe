@@ -419,7 +419,7 @@ class ShortcutDialog extends WidgetDialog {
 							if (response?.message?.name) views.push("Kanban");
 
 							this.dialog.set_df_property("doc_view", "options", views.join("\n"));
-							this.dialog.refresh_fields();
+							this.dialog.refresh();
 						});
 					} else {
 						this.hide_filters();
@@ -554,7 +554,7 @@ class ShortcutDialog extends WidgetDialog {
 	process_data(data) {
 		if (this.dialog.get_value("type") == "DocType" && this.filter_group) {
 			let filters = this.filter_group.get_filters();
-			data.stats_filter = frappe.utils.get_filter_as_json(filters);
+			data.stats_filter = JSON.stringify(filters);
 		}
 
 		data.label = data.label ? data.label : frappe.model.unscrub(data.link_to);

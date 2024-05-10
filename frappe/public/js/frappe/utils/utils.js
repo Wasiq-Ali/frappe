@@ -1685,6 +1685,10 @@ Object.assign(frappe.utils, {
 				return filters_json || [];
 			}
 
+			if (Array.isArray(filters_json)) {
+				return filters_json;
+			}
+
 			// e.g. return [
 			//    ['ToDo', 'status', '=', 'Open', false],
 			//    ['ToDo', 'priority', '=', 'Medium', false]
