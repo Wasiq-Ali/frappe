@@ -8,7 +8,7 @@ from frappe.core.doctype.data_import.data_import import export_json, import_doc
 from frappe.utils.deprecations import deprecation_warning
 
 
-def sync_fixtures(app=None):
+def sync_fixtures(app=None, force=False):
 	"""Import, overwrite fixtures from `[app]/fixtures`"""
 	if app:
 		apps = [app]
@@ -18,13 +18,13 @@ def sync_fixtures(app=None):
 	frappe.flags.in_fixtures = True
 
 	for app in apps:
-		import_fixtures(app)
+		import_fixtures(app, force=force)
 		import_custom_scripts(app)
 
 	frappe.flags.in_fixtures = False
 
 
-def import_fixtures(app):
+def import_fixtures(app, force=False):
 	fixtures_path = frappe.get_app_path(app, "fixtures")
 	if not os.path.exists(fixtures_path):
 		return
@@ -37,7 +37,7 @@ def import_fixtures(app):
 
 		file_path = frappe.get_app_path(app, "fixtures", fname)
 		try:
-			import_doc(file_path, force=False)
+			import_doc(file_path, force=force)
 		except (ImportError, frappe.DoesNotExistError) as e:
 			# fixture syncing for missing doctypes
 			print(f"Skipping fixture syncing from the file {fname}. Reason: {e}")
