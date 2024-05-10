@@ -388,7 +388,11 @@ class Document(BaseDocument):
 				}
 			)
 			_file.flags.is_amended = True
-			_file.save()
+
+			try:
+				_file.save()
+			except Exception:
+				self.log_error("Error Attaching File")
 
 	def update_children(self):
 		"""update child tables"""
