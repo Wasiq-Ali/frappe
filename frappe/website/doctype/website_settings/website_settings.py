@@ -159,6 +159,7 @@ def get_website_settings(context=None):
 	if not frappe.conf.developer_mode:
 		for k in [
 			"google_analytics_id",
+			"google_tag_manager_id",
 			"google_analytics_anonymize_ip",
 		]:
 			if setting_value := settings.get(k):

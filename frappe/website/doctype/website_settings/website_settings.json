@@ -54,9 +54,10 @@
   "authorize_api_indexing_access",
   "indexing_refresh_token",
   "indexing_authorization_code",
+  "google_analytics_anonymize_ip",
   "column_break_17",
   "google_analytics_id",
-  "google_analytics_anonymize_ip",
+  "google_tag_manager_id",
   "misc_section",
   "app_name",
   "app_logo",
@@ -364,7 +365,7 @@
    "label": "Edit Values"
   },
   {
-   "default": "1",
+   "default": "0",
    "fieldname": "google_analytics_anonymize_ip",
    "fieldtype": "Check",
    "label": "Google Analytics Anonymize IP"
@@ -420,6 +421,11 @@
    "fieldname": "splash_image",
    "fieldtype": "Attach Image",
    "label": "Splash Image"
+  },
+  {
+   "fieldname": "google_tag_manager_id",
+   "fieldtype": "Data",
+   "label": "Google Tag Manager ID"
   }
  ],
  "icon": "fa fa-cog",
@@ -428,7 +434,7 @@
  "issingle": 1,
  "links": [],
  "make_attachments_public": 1,
- "modified": "2023-12-14 11:44:50.145473",
+ "modified": "2024-05-21 18:19:07.973615",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Website Settings",
