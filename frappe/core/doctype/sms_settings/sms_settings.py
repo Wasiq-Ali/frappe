@@ -400,15 +400,22 @@ def send_request(gateway_url, params, headers=None, use_post=False, use_json=Fal
 		response = requests.post(gateway_url, **kwargs)
 	else:
 		response = requests.get(gateway_url, **kwargs)
-	response.raise_for_status()
+
 	return response
 
 
 def validate_response(response, sms_settings=None):
+	import requests
+
 	if not sms_settings:
 		sms_settings = frappe.get_cached_doc("SMS Settings", None)
 
 	if not (200 <= response.status_code < 300):
+		return False
+
+	try:
+		response.raise_for_status()
+	except requests.exceptions.HTTPError:
 		return False
 
 	if sms_settings.response_validation:
