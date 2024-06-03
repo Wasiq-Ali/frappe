@@ -353,6 +353,7 @@ class NotificationsView extends BaseNotificationsView {
 
 	setup_notification_listeners() {
 		frappe.realtime.on("notification", () => {
+			frappe.utils.play_sound("alert");
 			this.toggle_notification_icon(false);
 			this.update_dropdown();
 		});

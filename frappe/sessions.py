@@ -142,7 +142,7 @@ def clear_expired_sessions():
 
 def get():
 	"""get session boot info"""
-	from frappe.boot import get_bootinfo, get_unseen_notes
+	from frappe.boot import get_bootinfo, get_unseen_notes, get_notification_settings
 	from frappe.utils.change_log import get_change_log
 
 	bootinfo = None
@@ -152,6 +152,7 @@ def get():
 		if bootinfo:
 			bootinfo["from_cache"] = 1
 			bootinfo["user"]["recent"] = json.dumps(frappe.cache().hget("user_recent", frappe.session.user))
+			bootinfo["notification_settings"] = get_notification_settings()
 
 	if not bootinfo:
 		# if not create it
