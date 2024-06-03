@@ -301,15 +301,16 @@ class User(Document):
 
 	def reset_password(self, send_email=False, password_expired=False):
 		from frappe.utils import get_url
+		from urllib.parse import quote
 
 		key = frappe.generate_hash()
 		hashed_key = sha256_hash(key)
 		self.db_set("reset_password_key", hashed_key)
 		self.db_set("last_reset_password_key_generated_on", now_datetime())
 
-		url = "/update-password?key=" + key
+		url = "/update-password?key=" + quote(key)
 		if password_expired:
-			url = "/update-password?key=" + key + "&password_expired=true"
+			url = "/update-password?key=" + quote(key) + "&password_expired=true"
 
 		link = get_url(url)
 		if send_email:
