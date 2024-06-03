@@ -770,13 +770,26 @@ export default class GridRow {
 	}
 
 	set_dependant_property(df) {
+		let changed = false;
 		if (df.mandatory_depends_on) {
+			let prev_reqd = cint(df.reqd);
 			df.reqd = cint(this.evaluate_depends_on_value(df.mandatory_depends_on));
+
+			if (df.reqd != prev_reqd) {
+				changed = true;
+			}
 		}
 
 		if (df.read_only_depends_on) {
+			let prev_read_only = cint(df.read_only);
 			df.read_only = cint(this.evaluate_depends_on_value(df.read_only_depends_on));
+
+			if (df.read_only != prev_read_only) {
+				changed = true;
+			}
 		}
+
+		return changed;
 	}
 
 	evaluate_depends_on_value(expression) {
@@ -1497,6 +1510,12 @@ export default class GridRow {
 			df.onchange = function (e) {
 				field_on_change_function && field_on_change_function.apply(this, [e]);
 				me.refresh_field(df.fieldname);
+
+				for (let df of me.get_visible_columns()) {
+					if (me.set_dependant_property(df)) {
+						me.refresh_field(df.fieldname);
+					}
+				}
 			}
 
 			df.onchange_modified = true;
