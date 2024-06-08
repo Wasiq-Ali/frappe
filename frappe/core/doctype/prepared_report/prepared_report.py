@@ -44,6 +44,7 @@ class PreparedReport(Document):
 			prepared_report=self.name,
 			timeout=cint(self.flags.timeout) or 1500,
 			enqueue_after_commit=True,
+			now=self.flags.now or False
 		)
 
 	def get_prepared_data(self, with_file_name=False):
