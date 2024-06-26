@@ -696,6 +696,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 			control.set_value(value);
 			control.toggle_label(false);
 			control.toggle_description(false);
+			control.set_focus();
 		}
 
 		return control;
