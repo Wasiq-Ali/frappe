@@ -513,7 +513,6 @@ frappe.views.TreeView = class TreeView {
 		this._needs_refresh = false;
 		frappe.socketio.doctype_subscribe(this.doctype);
 		frappe.realtime.on("list_update", (data) => {
-			console.log("list_update");
 			if (data?.doctype !== this.doctype) {
 				return;
 			}
