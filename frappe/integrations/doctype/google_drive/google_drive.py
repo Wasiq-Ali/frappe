@@ -3,7 +3,6 @@
 
 import os
 from urllib.parse import quote
-
 from apiclient.http import MediaFileUpload
 from googleapiclient.errors import HttpError
 
@@ -19,7 +18,7 @@ from frappe.model.document import Document
 from frappe.utils import get_backups_path, get_bench_path
 from frappe.utils.background_jobs import enqueue
 from frappe.utils.backups import new_backup
-
+from dateutil.parser import isoparse
 
 class GoogleDrive(Document):
 	def validate(self):
@@ -79,6 +78,7 @@ def get_google_drive_object():
 		account.get_access_token(),
 		account.get_password(fieldname="indexing_refresh_token", raise_exception=False),
 	)
+
 
 	return google_drive, account
 
@@ -183,6 +183,7 @@ def upload_system_backup_to_google_drive():
 			google_drive.files().create(body=file_metadata, media_body=media, fields="id").execute()
 		except HttpError as e:
 			send_email(False, "Google Drive", "Google Drive", "email", error_status=e)
+			raise e
 
 	set_progress(3, "Uploading successful.")
 	frappe.db.set_single_value("Google Drive", "last_backup_on", frappe.utils.now_datetime())
@@ -194,13 +195,32 @@ def daily_backup():
 	drive_settings = frappe.get_single('Google Drive')
 	if drive_settings.enable and drive_settings.frequency == "Daily":
 		upload_system_backup_to_google_drive()
+		delete_backup_from_google_drive()
+
 
 
 def weekly_backup():
 	drive_settings = frappe.get_single('Google Drive')
 	if drive_settings.enable and drive_settings.frequency == "Weekly":
 		upload_system_backup_to_google_drive()
+		delete_backup_from_google_drive()
 
+def delete_backup_from_google_drive():
+	drive, account = get_google_drive_object()
+	backup_files = drive.files().list(q=f"'{account.backup_folder_id}' in parents and trashed=false", fields = "files(id, name, createdTime)").execute()
+	backup_files = backup_files['files']
+
+	# converted utc time to local time
+
+	for individual_file in backup_files:
+		individual_file['createdTime'] = frappe.utils.convert_utc_to_system_timezone(isoparse(individual_file['createdTime']).replace(tzinfo = None))
+		individual_file['createdTime'] = individual_file['createdTime'].replace(tzinfo = None)
+
+	current_date = frappe.utils.getdate()
+	if account.auto_delete_older_backups and account.delete_older_days_backup > 0:
+		for individual_file in backup_files:
+			if frappe.utils.date_diff(current_date, individual_file['createdTime']) > account.delete_older_days_backup:
+				drive.files().delete(fileId=individual_file['id']).execute()
 
 def get_absolute_path(filename):
 	file_path = os.path.join(get_backups_path()[2:], os.path.basename(filename))

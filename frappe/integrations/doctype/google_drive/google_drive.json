@@ -16,7 +16,9 @@
   "backup_folder_id",
   "last_backup_on",
   "refresh_token",
-  "authorization_code"
+  "authorization_code",
+  "auto_delete_older_backups",
+  "delete_older_days_backup"
  ],
  "fields": [
   {
@@ -98,11 +100,24 @@
    "label": "Send Notification To",
    "options": "Email",
    "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_delete_older_backups",
+   "fieldtype": "Check",
+   "label": "Auto Delete Older Backups"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.auto_delete_older_backups",
+   "fieldname": "delete_older_days_backup",
+   "fieldtype": "Int",
+   "label": "Delete older days backup"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2022-12-04 15:53:58.702389",
+ "modified": "2024-07-05 16:06:32.434305",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Google Drive",
