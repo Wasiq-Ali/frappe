@@ -5,7 +5,7 @@
 .datepicker {
 	direction: ltr;
 	font-family: inherit;
-	z-index: 5;
+	z-index: 9999 !important;
 	background: var(--fg-color);
 	color: var(--text-color);
 	border-radius: var(--border-radius);
