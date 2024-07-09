@@ -3,10 +3,8 @@
 
 import os
 from urllib.parse import quote
-
-from apiclient.http import MediaFileUpload
+from googleapiclient.http import MediaFileUpload
 from googleapiclient.errors import HttpError
-
 import frappe
 from frappe import _
 from frappe.integrations.google_oauth import GoogleOAuth
@@ -16,9 +14,10 @@ from frappe.integrations.offsite_backup_utils import (
 	validate_file_size,
 )
 from frappe.model.document import Document
-from frappe.utils import get_backups_path, get_bench_path
+from frappe.utils import get_backups_path, get_bench_path, cint
 from frappe.utils.background_jobs import enqueue
 from frappe.utils.backups import new_backup
+from dateutil.parser import isoparse
 
 
 class GoogleDrive(Document):
@@ -183,11 +182,34 @@ def upload_system_backup_to_google_drive():
 			google_drive.files().create(body=file_metadata, media_body=media, fields="id").execute()
 		except HttpError as e:
 			send_email(False, "Google Drive", "Google Drive", "email", error_status=e)
+			return False
 
 	set_progress(3, "Uploading successful.")
 	frappe.db.set_single_value("Google Drive", "last_backup_on", frappe.utils.now_datetime())
 	send_email(True, "Google Drive", "Google Drive", "email")
+
+	delete_backup_from_google_drive()
+
 	return _("Google Drive Backup Successful.")
+
+
+def delete_backup_from_google_drive():
+	drive, account = get_google_drive_object()
+	if not account.auto_delete_older_backups or cint(account.delete_backups_older_than_days) <= 0:
+		return
+
+	backup_files = drive.files().list(q=f"'{account.backup_folder_id}' in parents and trashed=false", fields="files(id, name, createdTime)").execute()
+	backup_files = backup_files['files']
+
+	# converted utc time to local time
+	for individual_file in backup_files:
+		individual_file['createdTime'] = frappe.utils.convert_utc_to_system_timezone(isoparse(individual_file['createdTime']).replace(tzinfo=None))
+		individual_file['createdTime'] = individual_file['createdTime'].replace(tzinfo=None)
+
+	current_date = frappe.utils.getdate()
+	for individual_file in backup_files:
+		if frappe.utils.date_diff(current_date, individual_file['createdTime']) > account.delete_backups_older_than_days:
+			drive.files().delete(fileId=individual_file['id']).execute()
 
 
 def daily_backup():
