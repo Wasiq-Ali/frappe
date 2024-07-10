@@ -188,12 +188,12 @@ def upload_system_backup_to_google_drive():
 	frappe.db.set_single_value("Google Drive", "last_backup_on", frappe.utils.now_datetime())
 	send_email(True, "Google Drive", "Google Drive", "email")
 
-	delete_backup_from_google_drive()
+	delete_older_backups()
 
 	return _("Google Drive Backup Successful.")
 
 
-def delete_backup_from_google_drive():
+def delete_older_backups():
 	drive, account = get_google_drive_object()
 	if not account.auto_delete_older_backups or cint(account.delete_backups_older_than_days) <= 0:
 		return
