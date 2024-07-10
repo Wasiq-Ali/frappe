@@ -14,7 +14,14 @@ from frappe.integrations.offsite_backup_utils import (
 	validate_file_size,
 )
 from frappe.model.document import Document
-from frappe.utils import get_backups_path, get_bench_path, cint
+from frappe.utils import (
+	get_backups_path,
+	get_bench_path,
+	cint,
+	date_diff,
+	convert_utc_to_system_timezone,
+	getdate,
+)
 from frappe.utils.background_jobs import enqueue
 from frappe.utils.backups import new_backup
 from dateutil.parser import isoparse
@@ -195,21 +202,44 @@ def upload_system_backup_to_google_drive():
 
 def delete_older_backups():
 	drive, account = get_google_drive_object()
-	if not account.auto_delete_older_backups or cint(account.delete_backups_older_than_days) <= 0:
+	if (
+		not account.auto_delete_old_backups
+		or (cint(account.delete_db_backups_older_than_days) <= 0 and cint(account.delete_file_backups_older_than_days) <= 0)
+	):
 		return
 
-	backup_files = drive.files().list(q=f"'{account.backup_folder_id}' in parents and trashed=false", fields="files(id, name, createdTime)").execute()
+	backup_files = drive.files().list(
+		q=f"'{account.backup_folder_id}' in parents and trashed=false",
+		fields="files(id, name, createdTime)"
+	).execute()
 	backup_files = backup_files['files']
 
-	# converted utc time to local time
-	for individual_file in backup_files:
-		individual_file['createdTime'] = frappe.utils.convert_utc_to_system_timezone(isoparse(individual_file['createdTime']).replace(tzinfo=None))
-		individual_file['createdTime'] = individual_file['createdTime'].replace(tzinfo=None)
+	# create list of files to delete
+	files_to_delete = []
+	current_date = getdate()
+	for file in backup_files:
+		creation_date = getdate(convert_utc_to_system_timezone(
+			isoparse(file['createdTime']).replace(tzinfo=None)
+		).replace(tzinfo=None))
 
-	current_date = frappe.utils.getdate()
-	for individual_file in backup_files:
-		if frappe.utils.date_diff(current_date, individual_file['createdTime']) > account.delete_backups_older_than_days:
-			drive.files().delete(fileId=individual_file['id']).execute()
+		# Database files and JSON files
+		if file["name"].endswith(".sql.gz") or file["name"].endswith(".sql") or file["name"].endswith(".json"):
+			if (
+				cint(account.delete_db_backups_older_than_days) > 0
+				and date_diff(current_date, creation_date) > account.delete_db_backups_older_than_days
+			):
+				files_to_delete.append(file)
+
+		# All other files
+		else:
+			if (
+				cint(account.delete_file_backups_older_than_days) > 0
+				and date_diff(current_date, creation_date) > account.delete_file_backups_older_than_days
+			):
+				files_to_delete.append(file)
+
+	for file in files_to_delete:
+		drive.files().delete(fileId=file['id']).execute()
 
 
 def daily_backup():

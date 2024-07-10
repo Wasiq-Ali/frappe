@@ -17,8 +17,9 @@
   "last_backup_on",
   "refresh_token",
   "authorization_code",
-  "auto_delete_older_backups",
-  "delete_backups_older_than_days"
+  "auto_delete_old_backups",
+  "delete_db_backups_older_than_days",
+  "delete_file_backups_older_than_days"
  ],
  "fields": [
   {
@@ -103,21 +104,30 @@
   },
   {
    "default": "0",
-   "fieldname": "auto_delete_older_backups",
-   "fieldtype": "Check",
-   "label": "Auto Delete Older Backups"
+   "depends_on": "auto_delete_old_backups",
+   "fieldname": "delete_db_backups_older_than_days",
+   "fieldtype": "Int",
+   "label": "Delete Database Backups Older Than Days",
+   "non_negative": 1
   },
   {
    "default": "0",
-   "depends_on": "eval:doc.auto_delete_older_backups",
-   "fieldname": "delete_backups_older_than_days",
+   "depends_on": "auto_delete_old_backups",
+   "fieldname": "delete_file_backups_older_than_days",
    "fieldtype": "Int",
-   "label": "Delete Backups Older Than Days"
+   "label": "Delete File Backups Older Than Days",
+   "non_negative": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_delete_old_backups",
+   "fieldtype": "Check",
+   "label": "Auto Delete Old Backups"
   }
  ],
  "issingle": 1,
  "links": [],
- "modified": "2024-07-09 12:00:49.051085",
+ "modified": "2024-07-10 19:48:51.782322",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Google Drive",
