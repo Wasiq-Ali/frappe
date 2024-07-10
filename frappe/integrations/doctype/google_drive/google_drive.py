@@ -205,6 +205,7 @@ def delete_older_backups():
 	if (
 		not account.auto_delete_old_backups
 		or (cint(account.delete_db_backups_older_than_days) <= 0 and cint(account.delete_file_backups_older_than_days) <= 0)
+		or not account.backup_folder_id
 	):
 		return
 
