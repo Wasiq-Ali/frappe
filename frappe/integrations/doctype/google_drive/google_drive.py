@@ -226,7 +226,7 @@ def delete_older_backups():
 		if file["name"].endswith(".sql.gz") or file["name"].endswith(".sql") or file["name"].endswith(".json"):
 			if (
 				cint(account.delete_db_backups_older_than_days) > 0
-				and date_diff(current_date, creation_date) > account.delete_db_backups_older_than_days
+				and date_diff(current_date, creation_date) >= account.delete_db_backups_older_than_days
 			):
 				files_to_delete.append(file)
 
@@ -234,7 +234,7 @@ def delete_older_backups():
 		else:
 			if (
 				cint(account.delete_file_backups_older_than_days) > 0
-				and date_diff(current_date, creation_date) > account.delete_file_backups_older_than_days
+				and date_diff(current_date, creation_date) >= account.delete_file_backups_older_than_days
 			):
 				files_to_delete.append(file)
 
