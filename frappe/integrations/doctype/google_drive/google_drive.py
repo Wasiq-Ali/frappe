@@ -211,7 +211,8 @@ def delete_older_backups():
 
 	backup_files = drive.files().list(
 		q=f"'{account.backup_folder_id}' in parents and trashed=false",
-		fields="files(id, name, createdTime)"
+		fields="files(id, name, createdTime)",
+		pageSize=500,
 	).execute()
 	backup_files = backup_files['files']
 
