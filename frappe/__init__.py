@@ -2291,10 +2291,12 @@ def log_error(title=None, message=None, reference_doctype=None, reference_name=N
 
 
 def get_desk_link(doctype, name):
+	from frappe.utils import get_url_to_form
+	url = get_url_to_form(doctype, name)
 	html = (
-		'<a href="/app/Form/{doctype}/{name}" style="font-weight: bold;">{doctype_local} {name}</a>'
+		'<a href="{url}" style="font-weight: bold;">{doctype_local} {name}</a>'
 	)
-	return html.format(doctype=doctype, name=name, doctype_local=_(doctype))
+	return html.format(doctype=doctype, name=name, doctype_local=_(doctype), url=url)
 
 
 def bold(text):
