@@ -409,18 +409,7 @@ export default class Grid {
 
 		this.setup_fields();
 
-		if (this.frm) {
-			this.display_status = frappe.perm.get_field_display_status(
-				this.df,
-				this.frm.doc,
-				this.perm
-			);
-		} else if (this.df.is_web_form && this.control) {
-			this.display_status = this.control.get_status();
-		} else {
-			// not in form
-			this.display_status = "Write";
-		}
+		this.set_display_status();
 
 		if (this.display_status === "None") return;
 
@@ -458,6 +447,21 @@ export default class Grid {
 		this.refresh_remove_rows_button();
 
 		this.wrapper.trigger("change");
+	}
+
+	set_display_status() {
+		if (this.frm) {
+			this.display_status = frappe.perm.get_field_display_status(
+				this.df,
+				this.frm.doc,
+				this.perm
+			);
+		} else if (this.df.is_web_form && this.control) {
+			this.display_status = this.control.get_status();
+		} else {
+			// not in form
+			this.display_status = "Write";
+		}
 	}
 
 	render_result_rows($rows, append_row) {

@@ -109,6 +109,7 @@ frappe.ui.form.Control = class BaseControl {
 			(this.grid || (this.layout && this.layout.grid && !cint(this.df.allow_on_submit)))
 		) {
 			var grid = this.grid || this.layout.grid;
+			grid.set_display_status();
 			if (grid.display_status == "Read") {
 				status = "Read";
 				if (explain) console.log("By Parent Grid Read-only: Read"); // eslint-disable-line no-console
