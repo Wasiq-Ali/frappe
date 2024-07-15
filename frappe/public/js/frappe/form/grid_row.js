@@ -1097,6 +1097,10 @@ export default class GridRow {
 
 			this.row.toggleClass("editable-row", true);
 
+			if (this.frm) {
+				this.frm.script_manager.trigger(this.doc.parentfield + "_before_row_focused", this.doc.doctype, this.doc.name);
+			}
+
 			// setup controls
 			this.columns_list.forEach(function (column) {
 				me.make_control(column);
@@ -1111,6 +1115,10 @@ export default class GridRow {
 			return false;
 		} else {
 			this.row.toggleClass("editable-row", false);
+
+			if (this.frm && this.doc) {
+				this.frm.script_manager.trigger(this.doc.parentfield + "_before_row_blurred", this.doc.doctype, this.doc.name);
+			}
 
 			this.columns_list.forEach((column, index) => {
 				if (!this.frm) {
@@ -1547,14 +1555,17 @@ export default class GridRow {
 		});
 		return visible_columns;
 	}
-	set_field_property(fieldname, property, value) {
+	set_field_property(fieldname, property, value, do_not_refresh) {
 		// set a field property for open form / grid form
 		var me = this;
 
 		var set_property = function (field) {
 			if (!field) return;
 			field.df[property] = value;
-			field.refresh();
+
+			if (!do_not_refresh) {
+				field.refresh();
+			}
 		};
 
 		// set property in grid form
@@ -1566,13 +1577,13 @@ export default class GridRow {
 		// set property in on grid fields
 		set_property(this.on_grid_fields_dict[fieldname]);
 	}
-	toggle_reqd(fieldname, reqd) {
-		this.set_field_property(fieldname, "reqd", reqd ? 1 : 0);
+	toggle_reqd(fieldname, reqd, do_not_refresh) {
+		this.set_field_property(fieldname, "reqd", reqd ? 1 : 0, do_not_refresh);
 	}
-	toggle_display(fieldname, show) {
-		this.set_field_property(fieldname, "hidden", show ? 0 : 1);
+	toggle_display(fieldname, show, do_not_refresh) {
+		this.set_field_property(fieldname, "hidden", show ? 0 : 1, do_not_refresh);
 	}
-	toggle_editable(fieldname, editable) {
-		this.set_field_property(fieldname, "read_only", editable ? 0 : 1);
+	toggle_editable(fieldname, editable, do_not_refresh) {
+		this.set_field_property(fieldname, "read_only", editable ? 0 : 1, do_not_refresh);
 	}
 }
