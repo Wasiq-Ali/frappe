@@ -163,9 +163,9 @@ acorn@^7.1.1:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
 
-"air-datepicker@github:ParaLogicTech/air-datepicker#f5594d5be322325cf043dfe0ab7971f46e1c3a76":
-  version "2.2.3"
-  resolved "https://codeload.github.com/ParaLogicTech/air-datepicker/tar.gz/f5594d5be322325cf043dfe0ab7971f46e1c3a76"
+"air-datepicker@github:ParaLogicTech/air-datepicker#2.2.4":
+  version "2.2.4"
+  resolved "https://codeload.github.com/ParaLogicTech/air-datepicker/tar.gz/92e450f3b7a1195626f67cce1b601cd1d1116082"
   dependencies:
     jquery ">=2.0.0 <4.0.0"
 
