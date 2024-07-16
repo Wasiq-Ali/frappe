@@ -10,11 +10,7 @@
 	color: var(--text-color);
 	border-radius: var(--border-radius);
 	border: 1px solid var(--border-color);
-	position: fixed;
-
-	&.active {
-		position: absolute;
-	}
+	position: absolute;
 
 	&--nav {
 		border-bottom: 1px solid var(--border-color);

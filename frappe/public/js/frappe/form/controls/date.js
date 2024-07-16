@@ -96,35 +96,38 @@ frappe.ui.form.ControlDate = class ControlDate extends frappe.ui.form.ControlDat
 		});
 	}
 	update_datepicker_position() {
-		if (!this.frm) return;
 		// show datepicker above or below the input
 		// based on scroll position
-		// We have to bodge around the timepicker getting its position
-		// wrong by 42px when opening upwards.
-		const pickerWidth = this.datepicker.$datepicker.outerWidth() + 15;
-		const pickerHeight = this.datepicker.$datepicker.outerHeight() + 15;
-		const inputOffset = this.$input.offset();
-		const windowHeight = $(window).height();
-		const windowWidth = $(window).width();
-		const windowScrollTop = $(window).scrollTop();
+		const picker_width = this.datepicker.$datepicker.outerWidth() + 25;
+		const picker_height = this.datepicker.$datepicker.outerHeight() + 25;
 
-		const inputBottomSpace = windowHeight - (inputOffset.top - windowScrollTop);
-		const inputRightSpace = windowWidth - inputOffset.left;
+		const input_offset = this.$input.offset();
+		const input_height = this.$input.outerHeight();
+
+		const window_height = $(window).height();
+		const window_width = $(window).width();
+		const scroll_top = $(window).scrollTop();
+		const scroll_left = $(window).scrollLeft();
+
+		const bottom_space = window_height - (input_offset.top + input_height - scroll_top);
+		const right_space = window_width - (input_offset.left - scroll_left);
 
 		let position;
-
-		if(inputBottomSpace < pickerHeight && inputRightSpace > pickerWidth) {
-			position = "top left";
-		} else if (inputBottomSpace < pickerHeight && inputRightSpace < pickerWidth) {
-			position = "top right";
-		} else if (inputBottomSpace > pickerHeight && inputRightSpace > pickerWidth) {
-			position = "bottom left";
-		} else if (inputBottomSpace > pickerHeight && inputRightSpace < pickerWidth) {
-			position = "bottom right";
+		if (bottom_space < picker_height) {
+			if (right_space < picker_width) {
+				position = "top right";
+			} else {
+				position = "top left";
+			}
+		} else {
+			if (right_space < picker_width) {
+				position = "bottom right";
+			} else {
+				position = "bottom left";
+			}
 		}
 
-		this.datepicker._setPositionClasses(position);
-		this.datepicker.setPosition(position);
+		this.datepicker.update("position", position, true);
 	}
 	get_now_date() {
 		return frappe.datetime
