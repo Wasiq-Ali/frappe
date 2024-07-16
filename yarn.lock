@@ -83,6 +83,15 @@
   dependencies:
     jquery ">=2.0.0 <4.0.0"
 
+"@paralogic/frappe-datatable@^1.17.4":
+  version "1.17.4"
+  resolved "https://registry.yarnpkg.com/@paralogic/frappe-datatable/-/frappe-datatable-1.17.4.tgz#435ae208e15100c30fe3b0e3b39fc38599c9ba60"
+  integrity sha512-MrLA/WaLJzTv2lLugKpXRNsdAHiZa2OI8ec9bWLf7Shs+AtCqyLE1BHftC1fnMQaEA3a8Uc2u2LQRFt4J19UBw==
+  dependencies:
+    hyperlist "^1.0.0-beta"
+    lodash "^4.17.5"
+    sortablejs "^1.7.0"
+
 "@snyk/protect@^1.1107.0":
   version "1.1107.0"
   resolved "https://registry.yarnpkg.com/@snyk/protect/-/protect-1.1107.0.tgz#09834fd87f537d7e8da3c33751925cddd372487d"
@@ -1266,14 +1275,6 @@ frappe-charts@2.0.0-rc22:
   version "2.0.0-rc22"
   resolved "https://registry.yarnpkg.com/frappe-charts/-/frappe-charts-2.0.0-rc22.tgz#9a5a747febdc381a1d4d7af96e89cf519dfba8c0"
   integrity sha512-N7f/8979wJCKjusOinaUYfMxB80YnfuVLrSkjpj4LtyqS0BGS6SuJxUnb7Jl4RWUFEIs7zEhideIKnyLeFZF4Q==
-
-"frappe-datatable@github:ParaLogicTech/datatable#v1.17.3":
-  version "0.0.0-development"
-  resolved "https://codeload.github.com/ParaLogicTech/datatable/tar.gz/82797d29b5793fdc60679b86b1f4ed8611c7ff53"
-  dependencies:
-    hyperlist "^1.0.0-beta"
-    lodash "^4.17.5"
-    sortablejs "^1.7.0"
 
 frappe-gantt@^0.6.0:
   version "0.6.0"

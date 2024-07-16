@@ -1,7 +1,7 @@
 /**
  * frappe.views.ReportView
  */
-import DataTable from "frappe-datatable";
+import DataTable from "@paralogic/frappe-datatable";
 
 window.DataTable = DataTable;
 frappe.provide("frappe.views");

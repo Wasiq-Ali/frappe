@@ -1,4 +1,4 @@
-import DataTable from "frappe-datatable";
+import DataTable from "@paralogic/frappe-datatable";
 import { get_columns_for_picker } from "./data_exporter";
 
 frappe.provide("frappe.data_import");
