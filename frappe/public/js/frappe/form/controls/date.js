@@ -101,19 +101,26 @@ frappe.ui.form.ControlDate = class ControlDate extends frappe.ui.form.ControlDat
 		// based on scroll position
 		// We have to bodge around the timepicker getting its position
 		// wrong by 42px when opening upwards.
-		const picker_height = this.datepicker.$datepicker.outerHeight() + 12;
-		const input_offset_top = this.$input.offset().top;
-		const input_height = this.$input.outerHeight();
-		const window_height = $(window).height();
-		const window_scroll_top = $(window).scrollTop();
-		const input_bottom_space = window_height - (input_offset_top - window_scroll_top + input_height);
-		const input_top_space = input_offset_top - window_scroll_top;
+		const pickerWidth = this.datepicker.$datepicker.outerWidth() + 15;
+		const pickerHeight = this.datepicker.$datepicker.outerHeight() + 15;
+		const inputOffset = this.$input.offset();
+		const windowHeight = $(window).height();
+		const windowWidth = $(window).width();
+		const windowScrollTop = $(window).scrollTop();
 
-		let position = "bottom left";
-		if (input_bottom_space < picker_height) {
-			if (input_top_space >= picker_height) {
-				position = "top left";
-			}
+		const inputBottomSpace = windowHeight - (inputOffset.top - windowScrollTop);
+		const inputRightSpace = windowWidth - inputOffset.left;
+
+		let position;
+
+		if(inputBottomSpace < pickerHeight && inputRightSpace > pickerWidth) {
+			position = "top left";
+		} else if (inputBottomSpace < pickerHeight && inputRightSpace < pickerWidth) {
+			position = "top right";
+		} else if (inputBottomSpace > pickerHeight && inputRightSpace > pickerWidth) {
+			position = "bottom left";
+		} else if (inputBottomSpace > pickerHeight && inputRightSpace < pickerWidth) {
+			position = "bottom right";
 		}
 
 		this.datepicker._setPositionClasses(position);
