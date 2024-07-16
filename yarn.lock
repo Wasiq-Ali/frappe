@@ -76,6 +76,13 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@paralogic/air-datepicker@^2.2.5":
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@paralogic/air-datepicker/-/air-datepicker-2.2.5.tgz#8f58f32098282579f5a296bf964e94cc863dc02c"
+  integrity sha512-TRDy+Zm1Q1F8fC5LZZcjzKQUx1YKmbLxTUDqw/2mZhUiSIjzoI7y+9+biF4jh5929fV9zryGm+NUjTaG0blKag==
+  dependencies:
+    jquery ">=2.0.0 <4.0.0"
+
 "@snyk/protect@^1.1107.0":
   version "1.1107.0"
   resolved "https://registry.yarnpkg.com/@snyk/protect/-/protect-1.1107.0.tgz#09834fd87f537d7e8da3c33751925cddd372487d"
@@ -162,12 +169,6 @@ acorn@^7.1.1:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
-
-"air-datepicker@github:ParaLogicTech/air-datepicker#2.2.4":
-  version "2.2.4"
-  resolved "https://codeload.github.com/ParaLogicTech/air-datepicker/tar.gz/92e450f3b7a1195626f67cce1b601cd1d1116082"
-  dependencies:
-    jquery ">=2.0.0 <4.0.0"
 
 ansi-regex@^2.0.0:
   version "2.1.1"
