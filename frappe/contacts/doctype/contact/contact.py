@@ -31,9 +31,9 @@ class Contact(Document):
 		deduplicate_dynamic_links(self)
 
 	def on_update(self):
-		self.update_primary_address_in_linked_docs()
+		self.update_primary_contact_in_linked_docs()
 
-	def update_primary_address_in_linked_docs(self):
+	def update_primary_contact_in_linked_docs(self):
 		from frappe.model.base_document import get_controller
 
 		for d in self.links:
@@ -41,6 +41,7 @@ class Contact(Document):
 				try:
 					if hasattr(get_controller(d.link_doctype), "update_primary_contact"):
 						doc = frappe.get_doc(d.link_doctype, d.link_name)
+						doc.flags.from_contact = True
 						doc.flags.pull_contact = True
 						doc.update_primary_contact()
 						doc.notify_update()

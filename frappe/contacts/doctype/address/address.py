@@ -52,6 +52,7 @@ class Address(Document):
 				try:
 					if hasattr(get_controller(d.link_doctype), "update_primary_address"):
 						doc = frappe.get_doc(d.link_doctype, d.link_name)
+						doc.flags.from_address = True
 						doc.flags.pull_address = True
 						doc.update_primary_address()
 						doc.notify_update()
