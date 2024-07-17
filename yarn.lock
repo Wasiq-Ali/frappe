@@ -76,10 +76,10 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@paralogic/air-datepicker@^2.2.6":
-  version "2.2.6"
-  resolved "https://registry.yarnpkg.com/@paralogic/air-datepicker/-/air-datepicker-2.2.6.tgz#0c595e34c3c94b84d117146b2db129705733f29e"
-  integrity sha512-2asOCDjBnShtHwSwWJrwlQLC3qTErPMT7CIpuGYqwrOnbVx4pRfvq3yrQPsUdcsw3zUfyKc24tLiOuftcBft5w==
+"@paralogic/air-datepicker@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@paralogic/air-datepicker/-/air-datepicker-2.2.7.tgz#3bca5146afd098f71c971f6d726b9514ccc3ac01"
+  integrity sha512-klPWcgFFgVHfbjSU5YdU3qrP3KaBsSX4/2ML/JMUdcBD6qQrqSj1jYE6IsDYpD8X8SKQZ/x0gBBZlTNCO/j02g==
   dependencies:
     jquery ">=2.0.0 <4.0.0"
 
