@@ -113,7 +113,13 @@ frappe.ui.form.ControlDate = class ControlDate extends frappe.ui.form.ControlDat
 		const right_space = window_width - (input_offset.left - scroll_left);
 
 		let position;
+
+		this.datepicker.opts["offset"] = 12;
 		if (bottom_space < picker_height) {
+			if (this.timepicker_only) {
+				this.datepicker.opts["offset"] = -30;
+			}
+
 			if (right_space < picker_width) {
 				position = "top right";
 			} else {
