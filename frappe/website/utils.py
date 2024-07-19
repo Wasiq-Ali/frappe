@@ -96,8 +96,12 @@ def get_home_page():
 	def _get_home_page():
 		home_page = None
 
+		# by hooks
+		if not home_page:
+			home_page = get_home_page_via_hooks()
+
 		# for user
-		if frappe.session.user != "Guest":
+		if frappe.session.user != "Guest" and not home_page:
 			# by role
 			for role in frappe.get_roles():
 				home_page = frappe.db.get_value("Role", role, "home_page")
@@ -107,10 +111,6 @@ def get_home_page():
 			# portal default
 			if not home_page:
 				home_page = frappe.db.get_single_value("Portal Settings", "default_portal_home")
-
-		# by hooks
-		if not home_page:
-			home_page = get_home_page_via_hooks()
 
 		# global
 		if not home_page:
