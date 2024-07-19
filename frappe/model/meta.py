@@ -140,6 +140,7 @@ class Meta(Document):
 		self.sort_fields()
 		self.get_valid_columns()
 		self.set_custom_permissions()
+		self.add_additional_permissions()
 		self.add_custom_links_and_actions()
 
 	def as_dict(self, no_nulls=False):
@@ -536,6 +537,21 @@ class Meta(Document):
 			)
 			if custom_perms:
 				self.permissions = [Document(d) for d in custom_perms]
+
+	def add_additional_permissions(self):
+		if frappe.flags.in_patch or frappe.flags.in_install:
+			return
+		if self.name in ("DocType", "DocField", "DocPerm", "Custom DocPerm"):
+			return
+
+		permissions = frappe.get_hooks("additional_doctype_permissions", {}).get(self.name, [])
+		for d in permissions:
+			d.update({
+				"doctype": "Custom DocPerm",
+				"name": None,
+				"parent": self.name,
+			})
+			self.permissions.append(frappe.get_doc(d))
 
 	def get_fieldnames_with_value(self, with_field_meta=False, with_virtual_fields=False):
 		def is_value_field(docfield):
