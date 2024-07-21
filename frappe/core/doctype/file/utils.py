@@ -100,15 +100,17 @@ def get_local_image(file_url: str) -> tuple["ImageFile", str, str]:
 
 	try:
 		filename, extn = file_url.rsplit(".", 1)
+		file_path_without_extension = file_path.rsplit(".", 1)[0]
 	except ValueError:
 		# no extn
 		with open(file_path) as f:
 			content = f.read()
 
 		filename = file_url
+		file_path_without_extension = file_path
 		extn = None
 
-	extn = get_extension(filename, extn, content)
+	extn = get_extension(file_path_without_extension, extn, content)
 
 	return image, filename, extn
 
