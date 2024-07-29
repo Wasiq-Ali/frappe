@@ -88,7 +88,7 @@ def get_diff(old, new, for_child=False):
 		if df.fieldtype in no_value_fields and df.fieldtype not in table_fields:
 			continue
 
-		old_value, new_value = old.get(df.fieldname), new.get(df.fieldname)
+		old_value, new_value = old.get_value(df.fieldname), new.get_value(df.fieldname)
 
 		if not for_child and df.fieldtype in table_fields:
 			old_rows_by_name = {}
