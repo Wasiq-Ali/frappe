@@ -338,8 +338,11 @@ frappe.views.TreeView = class TreeView {
 			fields: me.fields,
 		});
 
-		var args = $.extend({}, me.args);
-		args["parent_" + me.doctype.toLowerCase().replace(/ /g, "_")] = me.args["parent"];
+		let parent_field = me.opts.meta.nsm_parent_field || "parent_" + me.doctype.toLowerCase().replace(/ /g, "_");
+		let parent = node?.data?.value || me.args["parent"];
+
+		let args = $.extend({}, me.args);
+		args[parent_field] = parent;
 
 		d.set_value("is_group", 0);
 
