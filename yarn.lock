@@ -83,10 +83,10 @@
   dependencies:
     jquery ">=2.0.0 <4.0.0"
 
-"@paralogic/frappe-datatable@^1.17.4":
-  version "1.17.4"
-  resolved "https://registry.yarnpkg.com/@paralogic/frappe-datatable/-/frappe-datatable-1.17.4.tgz#435ae208e15100c30fe3b0e3b39fc38599c9ba60"
-  integrity sha512-MrLA/WaLJzTv2lLugKpXRNsdAHiZa2OI8ec9bWLf7Shs+AtCqyLE1BHftC1fnMQaEA3a8Uc2u2LQRFt4J19UBw==
+"@paralogic/frappe-datatable@^1.17.6":
+  version "1.17.6"
+  resolved "https://registry.yarnpkg.com/@paralogic/frappe-datatable/-/frappe-datatable-1.17.6.tgz#4c1cb7ad1eca200d3b32272d4a4b49d62e03c403"
+  integrity sha512-Wyjlb3AS/nXB4nv6dC2/pnKdaSfO/4LdXzDM2XZ+uSExxrVMnHUuJtxyedyJh7le7ippXTKctTmOIvXE2l+HqQ==
   dependencies:
     hyperlist "^1.0.0-beta"
     lodash "^4.17.5"
