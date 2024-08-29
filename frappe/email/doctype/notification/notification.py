@@ -21,7 +21,7 @@ class Notification(Document):
 	def onload(self):
 		"""load message"""
 		if self.is_standard:
-			self.message = self.get_template()
+			self.message = self.get_template() or self.message
 
 	def autoname(self):
 		if not self.name:
@@ -351,17 +351,20 @@ def get_context(context):
 			]
 
 	def get_template(self):
-		module = get_doc_module(self.module, self.doctype, self.name)
+		try:
+			module = get_doc_module(self.module, self.doctype, self.name)
 
-		def load_template(extn):
-			template = ""
-			template_path = os.path.join(os.path.dirname(module.__file__), frappe.scrub(self.name) + extn)
-			if os.path.exists(template_path):
-				with open(template_path) as f:
-					template = f.read()
-			return template
+			def load_template(extn):
+				template = ""
+				template_path = os.path.join(os.path.dirname(module.__file__), frappe.scrub(self.name) + extn)
+				if os.path.exists(template_path):
+					with open(template_path) as f:
+						template = f.read()
+				return template		
 
-		return load_template(".html") or load_template(".md")
+			return load_template(".html") or load_template(".md")
+		except ImportError:
+			return None
 
 	def load_standard_properties(self, context):
 		"""load templates and run get_context"""
@@ -372,7 +375,7 @@ def get_context(context):
 				if out:
 					context.update(out)
 
-		self.message = self.get_template()
+		self.message = self.get_template() or self.message
 
 		if not is_html(self.message):
 			self.message = frappe.utils.md_to_html(self.message)
