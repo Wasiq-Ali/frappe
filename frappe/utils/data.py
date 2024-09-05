@@ -1524,9 +1524,9 @@ def pdf_to_base64(filename: str) -> bytes | None:
 _striptags_re = re.compile(r"(<!--.*?-->|<[^>]*>)")
 
 
-def strip_html(text: str) -> str:
+def strip_html(text: str, repl="") -> str:
 	"""removes anything enclosed in and including <>"""
-	return _striptags_re.sub("", cstr(text))
+	return _striptags_re.sub(repl, cstr(text))
 
 
 def escape_html(text: str) -> str:
