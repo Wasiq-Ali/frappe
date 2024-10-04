@@ -180,6 +180,7 @@ def get_safe_globals():
 			get_meta=frappe.get_meta,
 			new_doc=frappe.new_doc,
 			get_doc=frappe.get_doc,
+			get_single=frappe.get_single,
 			get_mapped_doc=get_mapped_doc,
 			get_last_doc=frappe.get_last_doc,
 			get_cached_doc=frappe.get_cached_doc,
