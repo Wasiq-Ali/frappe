@@ -1,6 +1,8 @@
 # Copyright (c) 2022, Frappe Technologies Pvt. Ltd. and Contributors
 # License: MIT. See LICENSE
 
+import contextlib
+import functools
 import json
 import os
 from textwrap import dedent
@@ -36,14 +38,18 @@ BENCH_START_MESSAGE = dedent(
 
 
 def atomic(method):
+	@functools.wraps(method)
 	def wrapper(*args, **kwargs):
 		try:
 			ret = method(*args, **kwargs)
 			frappe.db.commit()
 			return ret
-		except Exception:
-			frappe.db.rollback()
-			raise
+		except Exception as e:
+			# database itself can be gone while attempting rollback.
+			# We should preserve original exception in this case.
+			with contextlib.suppress(Exception):
+				frappe.db.rollback()
+			raise e
 
 	return wrapper
 
@@ -70,6 +76,7 @@ class SiteMigration:
 		"""Complete setup required for site migration"""
 		frappe.flags.touched_tables = set()
 		self.touched_tables_file = frappe.get_site_path("touched_tables.json")
+		frappe.clear_cache()
 		add_column(doctype="DocType", column_name="migration_hash", fieldtype="Data")
 
 		clear_global_cache()
@@ -142,6 +149,7 @@ class SiteMigration:
 		sync_customizations()
 		sync_languages()
 		flush_deferred_inserts()
+		frappe.model.sync.remove_orphan_doctypes()
 
 		frappe.get_single("Portal Settings").sync_menu()
 		frappe.get_single("Installed Applications").update_versions()
@@ -169,6 +177,8 @@ class SiteMigration:
 		"""Run Migrate operation on site specified. This method initializes
 		and destroys connections to the site database.
 		"""
+		from frappe.utils.synchronization import filelock
+
 		if site:
 			frappe.init(site=site)
 			frappe.connect()
@@ -176,11 +186,12 @@ class SiteMigration:
 		if not self.required_services_running():
 			raise SystemExit(1)
 
-		self.setUp()
-		try:
-			self.pre_schema_updates()
-			self.run_schema_updates()
-			self.post_schema_updates()
-		finally:
-			self.tearDown()
-			frappe.destroy()
+		with filelock("bench_migrate", timeout=1):
+			self.setUp()
+			try:
+				self.pre_schema_updates()
+				self.run_schema_updates()
+				self.post_schema_updates()
+			finally:
+				self.tearDown()
+				frappe.destroy()

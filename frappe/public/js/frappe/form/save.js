@@ -134,7 +134,7 @@ frappe.ui.form.save = function (frm, action, callback, btn) {
 						!frappe.model.has_value(doc.doctype, doc.name, df.fieldname)
 					) {
 						has_errors = true;
-						error_fields[error_fields.length] = __(df.label);
+						error_fields[error_fields.length] = __(df.label, null, df.parent);
 						// scroll to field
 						if (!frm.scroll_set) {
 							scroll_to(doc.parentfield || df.fieldname);
@@ -155,6 +155,7 @@ frappe.ui.form.save = function (frm, action, callback, btn) {
 
 			if (error_fields.length) {
 				let meta = frappe.get_meta(doc.doctype);
+				let message;
 				if (meta.istable) {
 					const table_field = frappe.meta.docfield_map[doc.parenttype][doc.parentfield];
 
@@ -162,12 +163,12 @@ frappe.ui.form.save = function (frm, action, callback, btn) {
 						table_field.label || frappe.unscrub(table_field.fieldname)
 					).bold();
 
-					var message = __("Mandatory fields required in table {0}, Row {1}", [
+					message = __("Mandatory fields required in table {0}, Row {1}", [
 						table_label,
 						doc.idx,
 					]);
 				} else {
-					var message = __("Mandatory fields required in {0}", [__(doc.doctype)]);
+					message = __("Mandatory fields required in {0}", [__(doc.doctype)]);
 				}
 				message = message + "<br><br><ul><li>" + error_fields.join("</li><li>") + "</ul>";
 				frappe.msgprint({

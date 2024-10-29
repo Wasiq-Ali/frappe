@@ -6,6 +6,31 @@ from frappe.model.document import Document
 
 
 class NotificationSettings(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.desk.doctype.notification_subscribed_document.notification_subscribed_document import (
+			NotificationSubscribedDocument,
+		)
+		from frappe.types import DF
+
+		enable_email_assignment: DF.Check
+		enable_email_energy_point: DF.Check
+		enable_email_event_reminders: DF.Check
+		enable_email_mention: DF.Check
+		enable_email_notifications: DF.Check
+		enable_email_share: DF.Check
+		enable_email_threads_on_assigned_document: DF.Check
+		enabled: DF.Check
+		energy_points_system_notifications: DF.Check
+		seen: DF.Check
+		subscribed_documents: DF.TableMultiSelect[NotificationSubscribedDocument]
+		user: DF.Link | None
+
+	# end: auto-generated types
 	def on_update(self):
 		from frappe.desk.notifications import clear_notification_config
 
@@ -34,9 +59,10 @@ def is_email_notifications_enabled_for_type(user, notification_type):
 		return False
 
 	fieldname = "enable_email_" + frappe.scrub(notification_type)
-	enabled = frappe.db.get_value("Notification Settings", user, fieldname)
+	enabled = frappe.db.get_value("Notification Settings", user, fieldname, ignore=True)
 	if enabled is None:
 		return True
+
 	return enabled
 
 
@@ -91,6 +117,24 @@ def get_permission_query_conditions(user):
 	return f"""(`tabNotification Settings`.name = {frappe.db.escape(user)})"""
 
 
+def has_permission(doc, ptype="read", user=None):
+	# - Administrator can access everything.
+	# - System managers can access everything except admin.
+	# - Everyone else can only access their document.
+	user = user or frappe.session.user
+
+	if user == "Administrator":
+		return True
+
+	if "System Manager" in frappe.get_roles(user):
+		return doc.name != "Administrator"
+
+	return doc.name == user
+
+
 @frappe.whitelist()
 def set_seen_value(value, user):
+	if frappe.flags.read_only:
+		return
+
 	frappe.db.set_value("Notification Settings", user, "seen", value, update_modified=False)

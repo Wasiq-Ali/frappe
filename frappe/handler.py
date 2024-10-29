@@ -10,10 +10,12 @@ from werkzeug.wrappers import Response
 import frappe
 import frappe.sessions
 import frappe.utils
-from frappe import _, is_whitelisted
+from frappe import _, is_whitelisted, ping
 from frappe.core.doctype.server_script.server_script_utils import get_server_script_map
+from frappe.monitor import add_data_to_monitor
 from frappe.utils import cint
 from frappe.utils.csvutils import build_csv_response
+from frappe.utils.deprecations import deprecation_warning
 from frappe.utils.image import optimize_image
 from frappe.utils.response import build_response
 
@@ -55,13 +57,11 @@ def handle():
 		# add the response to `message` label
 		frappe.response["message"] = data
 
-	return build_response("json")
-
 
 def execute_cmd(cmd, from_async=False):
 	"""execute a request as python module"""
-	for hook in frappe.get_hooks("override_whitelisted_methods", {}).get(cmd, []):
-		# override using the first hook
+	for hook in reversed(frappe.get_hooks("override_whitelisted_methods", {}).get(cmd, [])):
+		# override using the last hook
 		cmd = hook
 		break
 
@@ -110,11 +110,6 @@ def throw_permission_error():
 
 
 @frappe.whitelist(allow_guest=True)
-def version():
-	return frappe.__version__
-
-
-@frappe.whitelist(allow_guest=True)
 def logout():
 	frappe.local.login_manager.logout()
 	frappe.db.commit()
@@ -131,7 +126,11 @@ def web_logout():
 
 @frappe.whitelist()
 def uploadfile():
+	deprecation_warning(
+		"uploadfile is deprecated and will be removed in v16. Use upload_file instead.",
+	)
 	ret = None
+	check_write_permission(frappe.form_dict.doctype, frappe.form_dict.docname)
 
 	try:
 		if frappe.form_dict.get("from_form"):
@@ -191,6 +190,21 @@ def upload_file():
 	optimize = frappe.form_dict.optimize
 	content = None
 
+	if library_file := frappe.form_dict.get("library_file_name"):
+		frappe.has_permission("File", doc=library_file, throw=True)
+		doc = frappe.get_value(
+			"File",
+			frappe.form_dict.library_file_name,
+			["is_private", "file_url", "file_name"],
+			as_dict=True,
+		)
+		is_private = doc.is_private
+		file_url = doc.file_url
+		filename = doc.file_name
+
+	if not ignore_permissions:
+		check_write_permission(doctype, docname)
+
 	if "file" in files:
 		file = files["file"]
 		content = file.stream.read()
@@ -208,9 +222,7 @@ def upload_file():
 	frappe.local.uploaded_file = content
 	frappe.local.uploaded_filename = filename
 
-	if content is not None and (
-		frappe.session.user == "Guest" or (user and not user.has_desk_access())
-	):
+	if content is not None and (frappe.session.user == "Guest" or (user and not user.has_desk_access())):
 		filetype = guess_type(filename)[0]
 		if filetype not in ALLOWED_MIMETYPES:
 			frappe.throw(_("You can only upload JPG, PNG, PDF, TXT or Microsoft documents."))
@@ -233,6 +245,21 @@ def upload_file():
 				"content": content,
 			}
 		).save(ignore_permissions=ignore_permissions)
+
+
+def check_write_permission(doctype: str | None = None, name: str | None = None):
+	check_doctype = doctype and not name
+	if doctype and name:
+		try:
+			doc = frappe.get_doc(doctype, name)
+			doc.has_permission("write")
+		except frappe.DoesNotExistError:
+			# doc has not been inserted yet, name is set to "new-some-doctype"
+			# If doc inserts fine then only this attachment will be linked see file/utils.py:relink_mismatched_files
+			return
+
+	if check_doctype:
+		frappe.has_permission(doctype, "write", throw=True)
 
 
 @frappe.whitelist(allow_guest=True)
@@ -259,19 +286,16 @@ def get_attr(cmd):
 	if "." in cmd:
 		method = frappe.get_attr(cmd)
 	else:
+		deprecation_warning(
+			f"Calling shorthand for {cmd} is deprecated, please specify full path in RPC call."
+		)
 		method = globals()[cmd]
-	frappe.log("method:" + cmd)
 	return method
-
-
-@frappe.whitelist(allow_guest=True)
-def ping():
-	return "pong"
 
 
 def run_doc_method(method, docs=None, dt=None, dn=None, arg=None, args=None):
 	"""run a whitelisted controller method"""
-	from inspect import getfullargspec
+	from inspect import signature
 
 	if not args and arg:
 		args = arg
@@ -300,7 +324,7 @@ def run_doc_method(method, docs=None, dt=None, dn=None, arg=None, args=None):
 	is_whitelisted(fn)
 	is_valid_http_method(fn)
 
-	fnargs = getfullargspec(method_obj).args
+	fnargs = list(signature(method_obj).parameters)
 
 	if not fnargs or (len(fnargs) == 1 and fnargs[0] == "self"):
 		response = doc.run_method(method)
@@ -321,6 +345,8 @@ def run_doc_method(method, docs=None, dt=None, dn=None, arg=None, args=None):
 		return
 
 	frappe.response["message"] = response
+
+	add_data_to_monitor(methodname=method)
 
 
 # for backwards compatibility

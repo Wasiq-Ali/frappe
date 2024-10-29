@@ -2,45 +2,16 @@
 # License: MIT. See LICENSE
 
 import smtplib
+from contextlib import suppress
 
 import frappe
 from frappe import _
 from frappe.email.oauth import Oauth
-from frappe.utils import cint, cstr
+from frappe.utils import cint, cstr, get_traceback
 
 
 class InvalidEmailCredentials(frappe.ValidationError):
 	pass
-
-
-def send(email, append_to=None, retry=1):
-	"""Deprecated: Send the message or add it to Outbox Email"""
-
-	def _send(retry):
-		from frappe.email.doctype.email_account.email_account import EmailAccount
-
-		try:
-			email_account = EmailAccount.find_outgoing(match_by_doctype=append_to)
-			smtpserver = email_account.get_smtp_server()
-
-			# validate is called in as_string
-			email_body = email.as_string()
-
-			smtpserver.sess.sendmail(email.sender, email.recipients + (email.cc or []), email_body)
-		except smtplib.SMTPSenderRefused:
-			frappe.throw(_("Invalid login or password"), title="Email Failed")
-			raise
-		except smtplib.SMTPRecipientsRefused:
-			frappe.msgprint(_("Invalid recipient address"), title="Email Failed")
-			raise
-		except (smtplib.SMTPServerDisconnected, smtplib.SMTPAuthenticationError):
-			if not retry:
-				raise
-			else:
-				retry = retry - 1
-				_send(retry)
-
-	_send(retry)
 
 
 class SMTPServer:
@@ -69,9 +40,7 @@ class SMTPServer:
 
 		if not self.server:
 			frappe.msgprint(
-				_(
-					"Email Account not setup. Please create a new Email Account from Setup > Email > Email Account"
-				),
+				_("Email Account not setup. Please create a new Email Account from Settings > Email Account"),
 				raise_exception=frappe.OutgoingEmailError,
 			)
 
@@ -93,13 +62,17 @@ class SMTPServer:
 
 	@property
 	def session(self):
+		"""Get SMTP session.
+
+		We make best effort to revive connection if it's disconnected by checking the connection
+		health before returning it to user."""
 		if self.is_session_active():
 			return self._session
 
 		SMTP = smtplib.SMTP_SSL if self.use_ssl else smtplib.SMTP
 
 		try:
-			_session = SMTP(self.server, self.port)
+			_session = SMTP(self.server, self.port, timeout=2 * 60)
 			if not _session:
 				frappe.msgprint(
 					_("Could not connect to outgoing email server"), raise_exception=frappe.OutgoingEmailError
@@ -118,14 +91,29 @@ class SMTPServer:
 					frappe.msgprint(res[1], raise_exception=frappe.OutgoingEmailError)
 
 			self._session = _session
+			self._enqueue_connection_closure()
 			return self._session
 
 		except smtplib.SMTPAuthenticationError:
 			self.throw_invalid_credentials_exception()
 
-		except OSError:
+		except OSError as e:
 			# Invalid mail server -- due to refusing connection
-			frappe.throw(_("Invalid Outgoing Mail Server or Port"), title=_("Incorrect Configuration"))
+			frappe.throw(
+				_("Invalid Outgoing Mail Server or Port: {0}").format(str(e)),
+				title=_("Incorrect Configuration"),
+			)
+
+	def _enqueue_connection_closure(self):
+		if frappe.request and hasattr(frappe.request, "after_response"):
+			frappe.request.after_response.add(self.quit)
+		elif frappe.job:
+			frappe.job.after_job.add(self.quit)
+		elif not frappe.flags.in_test:
+			# Console?
+			import atexit
+
+			atexit.register(self.quit)
 
 	def is_session_active(self):
 		if self._session:
@@ -135,13 +123,15 @@ class SMTPServer:
 				return False
 
 	def quit(self):
-		if self.is_session_active():
-			self._session.quit()
+		with suppress(TimeoutError):
+			if self.is_session_active():
+				self._session.quit()
 
 	@classmethod
 	def throw_invalid_credentials_exception(cls):
+		original_exception = get_traceback() or "\n"
 		frappe.throw(
-			_("Please check your email login credentials."),
+			_("Please check your email login credentials.") + " " + original_exception.splitlines()[-1],
 			title=_("Invalid Credentials"),
 			exc=InvalidEmailCredentials,
 		)

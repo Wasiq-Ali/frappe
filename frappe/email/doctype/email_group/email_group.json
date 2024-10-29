@@ -9,11 +9,14 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "column_break_oyyj",
   "total_subscribers",
+  "sign_up_and_confirmation_section",
   "require_email_verification",
-  "column_break_h3fu5",
   "confirmation_email_template",
-  "welcome_email_template"
+  "welcome_email_template",
+  "welcome_url",
+  "add_query_parameters"
  ],
  "fields": [
   {
@@ -46,7 +49,7 @@
    "options": "Email Template"
   },
   {
-   "fieldname": "column_break_h3fu5",
+   "fieldname": "column_break_oyyj",
    "fieldtype": "Column Break"
   },
   {
@@ -54,6 +57,25 @@
    "fieldname": "require_email_verification",
    "fieldtype": "Check",
    "label": "Require Email Verification"
+  },
+  {
+   "fieldname": "sign_up_and_confirmation_section",
+   "fieldtype": "Section Break",
+   "label": "Sign Up and Confirmation"
+  },
+  {
+   "description": "Redirect to this URL after successful confirmation.",
+   "fieldname": "welcome_url",
+   "fieldtype": "Data",
+   "label": "Welcome URL",
+   "options": "URL"
+  },
+  {
+   "default": "0",
+   "depends_on": "welcome_url",
+   "fieldname": "add_query_parameters",
+   "fieldtype": "Check",
+   "label": "Add Query Parameters"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -64,7 +86,7 @@
    "link_fieldname": "email_group"
   }
  ],
- "modified": "2023-12-02 12:58:06.469607",
+ "modified": "2023-11-24 18:35:17.268492",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Email Group",

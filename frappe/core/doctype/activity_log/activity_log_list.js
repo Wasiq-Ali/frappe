@@ -1,4 +1,4 @@
-frappe.listview_settings['Activity Log'] = {
+frappe.listview_settings["Activity Log"] = {
 	add_fields: ['status', 'operation'],
 	get_indicator: function(doc) {
 		if(doc.operation == "Login" && doc.status == "Success")

@@ -9,15 +9,6 @@ from frappe.tests.utils import FrappeTestCase
 
 
 class TestVersion(FrappeTestCase):
-	def setUp(self):
-		self.pre_test_time_format = frappe.db.get_default("time_format")
-		frappe.db.set_default("time_format", "24 Hour")
-		frappe.local.user_time_format = None
-
-	def tearDown(self):
-		frappe.db.set_default("time_format", self.pre_test_time_format)
-		frappe.local.user_time_format = None
-
 	def test_get_diff(self):
 		frappe.set_user("Administrator")
 		test_records = make_test_objects("Event", reset=True)
@@ -30,7 +21,7 @@ class TestVersion(FrappeTestCase):
 		diff = get_diff(old_doc, new_doc)["changed"]
 
 		self.assertEqual(get_fieldnames(diff)[0], "color")
-		self.assertTrue(get_old_values(diff)[0] == "")
+		self.assertTrue(get_old_values(diff)[0] is None)
 		self.assertEqual(get_new_values(diff)[0], "#fafafa")
 
 		new_doc.starts_on = "2017-07-20"

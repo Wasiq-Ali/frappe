@@ -1,18 +1,24 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: MIT. See LICENSE
+import base64
+import contextlib
 import io
+import mimetypes
 import os
-import re
 import subprocess
-from distutils.version import LooseVersion
+from urllib.parse import parse_qs, urlparse
 
+import cssutils
 import pdfkit
 from bs4 import BeautifulSoup
-from PyPDF2 import PdfReader, PdfWriter
+from packaging.version import Version
+from pypdf import PdfReader, PdfWriter
 
 import frappe
 from frappe import _
-from frappe.utils import scrub_urls
+from frappe.core.doctype.file.utils import find_file_by_url
+from frappe.utils import cstr, scrub_urls
+from frappe.utils.caching import redis_cache
 from frappe.utils.jinja_globals import bundled_asset, is_rtl
 
 PDF_CONTENT_ERRORS = [
@@ -23,6 +29,52 @@ PDF_CONTENT_ERRORS = [
 ]
 
 
+def pdf_header_html(soup, head, content, styles, html_id, css):
+	return frappe.render_template(
+		"templates/print_formats/pdf_header_footer.html",
+		{
+			"head": head,
+			"content": content,
+			"styles": styles,
+			"html_id": html_id,
+			"css": css,
+			"lang": frappe.local.lang,
+			"layout_direction": "rtl" if is_rtl() else "ltr",
+		},
+	)
+
+
+def pdf_body_html(template, args, **kwargs):
+	try:
+		return template.render(args, filters={"len": len})
+	except Exception as e:
+		# Guess line number ?
+		frappe.throw(
+			_("Error in print format on line {0}: {1}").format(
+				_guess_template_error_line_number(template), e
+			),
+			exc=frappe.PrintFormatError,
+			title=_("Print Format Error"),
+		)
+
+
+def _guess_template_error_line_number(template) -> int | None:
+	"""Guess line on which exception occured from current traceback."""
+	with contextlib.suppress(Exception):
+		import sys
+		import traceback
+
+		_, _, tb = sys.exc_info()
+
+		for frame in reversed(traceback.extract_tb(tb)):
+			if template.filename in frame.filename:
+				return frame.lineno
+
+
+def pdf_footer_html(soup, head, content, styles, html_id, css):
+	return pdf_header_html(soup=soup, head=head, content=content, styles=styles, html_id=html_id, css=css)
+
+
 def get_pdf(html, options=None, output: PdfWriter | None = None):
 	html = scrub_urls(html)
 	html, options = prepare_options(html, options)
@@ -30,7 +82,7 @@ def get_pdf(html, options=None, output: PdfWriter | None = None):
 	options.update({"disable-javascript": "", "disable-local-file-access": ""})
 
 	filedata = ""
-	if LooseVersion(get_wkhtmltopdf_version()) > LooseVersion("0.12.3"):
+	if Version(get_wkhtmltopdf_version()) > Version("0.12.3"):
 		options.update({"disable-smart-shrinking": ""})
 
 	try:
@@ -72,7 +124,6 @@ def get_pdf(html, options=None, output: PdfWriter | None = None):
 
 
 def get_file_data_from_writer(writer_obj):
-
 	# https://docs.python.org/3/library/io.html
 	stream = io.BytesIO()
 	writer_obj.write(stream)
@@ -111,6 +162,7 @@ def prepare_options(html, options):
 
 	# cookies
 	options.update(get_cookie_options())
+	html = inline_private_images(html)
 
 	# page size
 	pdf_page_size = (
@@ -155,8 +207,9 @@ def read_options_from_html(html):
 
 	toggle_visible_pdf(soup)
 
-	# use regex instead of soup-parser
-	for attr in (
+	valid_styles = get_print_format_styles(soup)
+
+	attrs = (
 		"margin-top",
 		"margin-bottom",
 		"margin-left",
@@ -167,19 +220,78 @@ def read_options_from_html(html):
 		"orientation",
 		"page-width",
 		"page-height",
-	):
-		try:
-			pattern = re.compile(r"(\.print-format)([\S|\s][^}]*?)(" + str(attr) + r":)(.*?)(mm;)")
-			match = pattern.findall(html)
-			if match:
-				options[attr] = str(match[-1][3]).strip()
-		except Exception:
-			pass
-
+	)
+	options |= {style.name: style.value for style in valid_styles if style.name in attrs}
 	return str(soup), options
 
 
-def prepare_header_footer(soup):
+def get_print_format_styles(soup: BeautifulSoup) -> list[cssutils.css.Property]:
+	"""
+	Get styles purely on class 'print-format'.
+	Valid:
+	1) .print-format { ... }
+	2) .print-format, p { ... } | p, .print-format { ... }
+
+	Invalid (applied on child elements):
+	1) .print-format p { ... } | .print-format > p { ... }
+	2) .print-format #abc { ... }
+
+	Returns:
+	[cssutils.css.Property(name='margin-top', value='50mm', priority=''), ...]
+	"""
+	stylesheet = ""
+	style_tags = soup.find_all("style")
+
+	# Prepare a css stylesheet from all the style tags' contents
+	for style_tag in style_tags:
+		stylesheet += cstr(style_tag.string)
+
+	# Use css parser to tokenize the classes and their styles
+	parsed_sheet = cssutils.parseString(stylesheet)
+
+	# Get all styles that are only for .print-format
+	valid_styles = []
+	for rule in parsed_sheet:
+		if not isinstance(rule, cssutils.css.CSSStyleRule):
+			continue
+
+		# Allow only .print-format { ... } and .print-format, p { ... }
+		# Disallow .print-format p { ... } and .print-format > p { ... }
+		if ".print-format" in [x.strip() for x in rule.selectorText.split(",")]:
+			valid_styles.extend(entry for entry in rule.style)
+
+	return valid_styles
+
+
+def inline_private_images(html) -> str:
+	soup = BeautifulSoup(html, "html.parser")
+	for img in soup.find_all("img"):
+		if b64 := _get_base64_image(img["src"]):
+			img["src"] = b64
+	return str(soup)
+
+
+def _get_base64_image(src):
+	"""Return base64 version of image if user has permission to view it"""
+	try:
+		parsed_url = urlparse(src)
+		path = parsed_url.path
+		query = parse_qs(parsed_url.query)
+		mime_type = mimetypes.guess_type(path)[0]
+		if mime_type is None or not mime_type.startswith("image/"):
+			return
+		filename = query.get("fid") and query["fid"][0] or None
+		file = find_file_by_url(path, name=filename)
+		if not file or not file.is_private:
+			return
+
+		b64_encoded_image = base64.b64encode(file.get_content()).decode()
+		return f"data:{mime_type};base64,{b64_encoded_image}"
+	except Exception:
+		frappe.logger("pdf").error("Failed to convert inline images to base64", exc_info=True)
+
+
+def prepare_header_footer(soup: BeautifulSoup):
 	options = {}
 
 	head = soup.find("head").contents
@@ -190,24 +302,24 @@ def prepare_header_footer(soup):
 
 	# extract header and footer
 	for html_id in ("header-html", "footer-html"):
-		content = soup.find(id=html_id)
-		if content:
-			# there could be multiple instances of header-html/footer-html
+		if content := soup.find(id=html_id):
+			content = content.extract()
+			# `header/footer-html` are extracted, rendered as html
+			# and passed in wkhtmltopdf options (as '--header/footer-html')
+			# Remove instances of them from main content for render_template
 			for tag in soup.find_all(id=html_id):
 				tag.extract()
 
 			toggle_visible_pdf(content)
-			html = frappe.render_template(
-				"templates/print_formats/pdf_header_footer.html",
-				{
-					"head": head,
-					"content": content,
-					"styles": styles,
-					"html_id": html_id,
-					"css": css,
-					"lang": frappe.local.lang,
-					"layout_direction": "rtl" if is_rtl() else "ltr",
-				},
+			id_map = {"header-html": "pdf_header_html", "footer-html": "pdf_footer_html"}
+			hook_func = frappe.get_hooks(id_map.get(html_id))
+			html = frappe.get_attr(hook_func[-1])(
+				soup=soup,
+				head=head,
+				content=content,
+				styles=styles,
+				html_id=html_id,
+				css=css,
 			)
 
 			# create temp file
@@ -242,14 +354,24 @@ def toggle_visible_pdf(soup):
 		tag.extract()
 
 
+@frappe.whitelist()
+@redis_cache(ttl=60 * 60)
+def is_wkhtmltopdf_valid():
+	try:
+		output = subprocess.check_output(["wkhtmltopdf", "--version"])
+		return "qt" in output.decode("utf-8").lower()
+	except Exception:
+		return False
+
+
 def get_wkhtmltopdf_version():
-	wkhtmltopdf_version = frappe.cache().hget("wkhtmltopdf_version", None)
+	wkhtmltopdf_version = frappe.cache.hget("wkhtmltopdf_version", None)
 
 	if not wkhtmltopdf_version:
 		try:
 			res = subprocess.check_output(["wkhtmltopdf", "--version"])
 			wkhtmltopdf_version = res.decode("utf-8").split(" ")[1]
-			frappe.cache().hset("wkhtmltopdf_version", None, wkhtmltopdf_version)
+			frappe.cache.hset("wkhtmltopdf_version", None, wkhtmltopdf_version)
 		except Exception:
 			pass
 

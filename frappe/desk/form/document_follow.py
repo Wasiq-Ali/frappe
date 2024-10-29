@@ -10,7 +10,7 @@ from frappe.utils import get_url_to_form
 
 
 @frappe.whitelist()
-def update_follow(doctype, doc_name, following):
+def update_follow(doctype: str, doc_name: str, following: bool):
 	if following:
 		return follow_document(doctype, doc_name, frappe.session.user)
 	else:
@@ -141,7 +141,9 @@ def get_message_for_user(frequency, user):
 				{
 					"reference_docname": document_follow.ref_docname,
 					"reference_doctype": document_follow.ref_doctype,
-					"reference_url": get_url_to_form(document_follow.ref_doctype, document_follow.ref_docname),
+					"reference_url": get_url_to_form(
+						document_follow.ref_doctype, document_follow.ref_docname
+					),
 				}
 			)
 	return message, valid_document_follows
@@ -263,19 +265,17 @@ def get_row_changed(row_changed, time, doctype, doc_name, v):
 
 
 def get_added_row(added, time, doctype, doc_name, v):
-	items = []
-	for d in added:
-		items.append(
-			{
-				"time": v.modified,
-				"data": {"to": d[0], "time": time},
-				"doctype": doctype,
-				"doc_name": doc_name,
-				"type": "row added",
-				"by": v.modified_by,
-			}
-		)
-	return items
+	return [
+		{
+			"time": v.modified,
+			"data": {"to": d[0], "time": time},
+			"doctype": doctype,
+			"doc_name": doc_name,
+			"type": "row added",
+			"by": v.modified_by,
+		}
+		for d in added
+	]
 
 
 def get_field_changed(changed, time, doctype, doc_name, v):

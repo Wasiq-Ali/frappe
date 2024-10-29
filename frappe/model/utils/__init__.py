@@ -30,9 +30,8 @@ def set_default(doc, key):
 		frappe.db.set(doc, "is_default", 1)
 
 	frappe.db.sql(
-		"""update `tab%s` set `is_default`=0
-		where `%s`=%s and name!=%s"""
-		% (doc.doctype, key, "%s", "%s"),
+		"""update `tab{}` set `is_default`=0
+		where `{}`={} and name!={}""".format(doc.doctype, key, "%s", "%s"),
 		(doc.get(key), doc.name),
 	)
 
@@ -62,7 +61,7 @@ def render_include(content):
 	content = cstr(content)
 
 	# try 5 levels of includes
-	for i in range(5):
+	for _ignore in range(5):
 		if "{% include" in content:
 			paths = INCLUDE_DIRECTIVE_PATTERN.findall(content)
 			if not paths:
@@ -75,7 +74,9 @@ def render_include(content):
 					if path.endswith(".html"):
 						include = html_to_js_template(path, include)
 
-					content = re.sub(rf"""{{% include\s['"]{path}['"]\s%}}""", include, content)
+					content = re.sub(
+						rf"""{{% include\s['"]{path}['"]\s%}}""", include.replace("\\", "\\\\"), content
+					)
 
 		else:
 			break
@@ -133,3 +134,13 @@ def is_virtual_doctype(doctype: str):
 	if frappe.db.has_column("DocType", "is_virtual"):
 		return frappe.db.get_value("DocType", doctype, "is_virtual")
 	return False
+
+
+@site_cache()
+def is_single_doctype(doctype: str) -> bool:
+	from frappe.model.base_document import DOCTYPES_FOR_DOCTYPE
+
+	if doctype in DOCTYPES_FOR_DOCTYPE:
+		return False
+
+	return frappe.db.get_value("DocType", doctype, "issingle")

@@ -10,7 +10,9 @@ import frappe.utils
 from frappe import _
 from frappe.desk.reportview import validate_args
 from frappe.model.db_query import check_parent_permission
+from frappe.model.utils import is_virtual_doctype
 from frappe.utils import get_safe_filters
+from frappe.utils.deprecations import deprecated
 
 if TYPE_CHECKING:
 	from frappe.model.document import Document
@@ -32,8 +34,8 @@ def get_list(
 	limit_start=None,
 	limit_page_length=20,
 	parent=None,
-	debug=False,
-	as_dict=True,
+	debug: bool = False,
+	as_dict: bool = True,
 	or_filters=None,
 ):
 	"""Returns a list of records by filters, fields, ordering and limit
@@ -52,8 +54,8 @@ def get_list(
 		parent_doctype=parent,
 		fields=fields,
 		filters=filters,
-		group_by=group_by,
 		or_filters=or_filters,
+		group_by=group_by,
 		order_by=order_by,
 		limit_start=limit_start,
 		limit_page_length=limit_page_length,
@@ -88,9 +90,7 @@ def get(doctype, name=None, filters=None, parent=None):
 		doc = frappe.get_doc(doctype)  # single
 
 	doc.check_permission()
-
-	if frappe.get_system_settings("apply_perm_level_on_api_calls"):
-		doc.apply_fieldlevel_read_permissions()
+	doc.apply_fieldlevel_read_permissions()
 
 	return doc.as_dict()
 
@@ -212,11 +212,7 @@ def insert_many(docs=None):
 	if len(docs) > 200:
 		frappe.throw(_("Only 200 inserts allowed in one request"))
 
-	out = []
-	for doc in docs:
-		out.append(insert_doc(doc).name)
-
-	return out
+	return [insert_doc(doc).name for doc in docs]
 
 
 @frappe.whitelist(methods=["POST", "PUT"])
@@ -333,6 +329,7 @@ def get_password(doctype, name, fieldname):
 
 
 @frappe.whitelist()
+@deprecated
 def get_js(items):
 	"""Load JS code files.  Will also append translations
 	and extend `frappe._messages`
@@ -435,6 +432,18 @@ def validate_link(doctype: str, docname: str, fields=None):
 		)
 
 	values = frappe._dict()
+
+	if is_virtual_doctype(doctype):
+		try:
+			frappe.get_doc(doctype, docname)
+			values.name = docname
+		except frappe.DoesNotExistError:
+			frappe.clear_last_message()
+			frappe.msgprint(
+				_("Document {0} {1} does not exist").format(frappe.bold(doctype), frappe.bold(docname)),
+			)
+		return values
+
 	values.name = frappe.db.get_value(doctype, docname, cache=True)
 
 	fields = frappe.parse_json(fields)

@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2012-12-27 11:51:24",
  "description": "Script to attach to all web pages.",
  "doctype": "DocType",
@@ -18,7 +19,8 @@
  "icon": "fa fa-code",
  "idx": 1,
  "issingle": 1,
- "modified": "2020-03-03 15:44:53.365790",
+ "links": [],
+ "modified": "2022-08-03 12:20:49.917059",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Website Script",
@@ -36,5 +38,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "ASC",
+ "states": [],
  "track_changes": 1
 }

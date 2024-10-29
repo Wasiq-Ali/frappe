@@ -38,6 +38,7 @@ def export_data(
 	file_type="CSV",
 	template=False,
 	filters=None,
+	export_without_column_meta=False,
 ):
 	_doctype = doctype
 	if isinstance(_doctype, list):
@@ -49,6 +50,15 @@ def export_data(
 		filters=filters,
 		method=parent_doctype,
 	)
+
+	template_bool = template
+	if isinstance(template, str):
+		template_bool = template.lower() == "true"
+
+	export_without_column_meta_bool = export_without_column_meta
+	if isinstance(export_without_column_meta, str):
+		export_without_column_meta_bool = export_without_column_meta.lower() == "true"
+
 	exporter = DataExporter(
 		doctype=doctype,
 		parent_doctype=parent_doctype,
@@ -56,8 +66,9 @@ def export_data(
 		with_data=with_data,
 		select_columns=select_columns,
 		file_type=file_type,
-		template=template,
+		template=template_bool,
 		filters=filters,
+		export_without_column_meta=export_without_column_meta_bool,
 	)
 	exporter.build_response()
 
@@ -73,6 +84,7 @@ class DataExporter:
 		file_type="CSV",
 		template=False,
 		filters=None,
+		export_without_column_meta=False,
 	):
 		self.doctype = doctype
 		self.parent_doctype = parent_doctype
@@ -82,6 +94,7 @@ class DataExporter:
 		self.file_type = file_type
 		self.template = template
 		self.filters = filters
+		self.export_without_column_meta = export_without_column_meta
 		self.data_keys = get_data_keys()
 
 		self.prepare_args()
@@ -107,9 +120,10 @@ class DataExporter:
 		self.column_start_end = {}
 
 		if self.all_doctypes:
-			self.child_doctypes = []
-			for df in frappe.get_meta(self.doctype).get_table_fields():
-				self.child_doctypes.append(dict(doctype=df.options, parentfield=df.fieldname))
+			self.child_doctypes = [
+				dict(doctype=df.options, parentfield=df.fieldname)
+				for df in frappe.get_meta(self.doctype).get_table_fields()
+			]
 
 	def build_response(self):
 		self.writer = UnicodeWriter()
@@ -118,7 +132,10 @@ class DataExporter:
 		if self.template:
 			self.add_main_header()
 
-		self.writer.writerow([""])
+		# No need of empty row at the start
+		if not self.export_without_column_meta:
+			self.writer.writerow([""])
+
 		self.tablerow = [self.data_keys.doctype]
 		self.labelrow = [_("Column Labels:")]
 		self.fieldrow = [self.data_keys.columns]
@@ -166,9 +183,7 @@ class DataExporter:
 		self.writer.writerow([_("Notes:")])
 		self.writer.writerow([_("Please do not change the template headings.")])
 		self.writer.writerow([_("First data column must be blank.")])
-		self.writer.writerow(
-			[_('If you are uploading new records, leave the "name" (ID) column blank.')]
-		)
+		self.writer.writerow([_('If you are uploading new records, leave the "name" (ID) column blank.')])
 		self.writer.writerow(
 			[_('If you are uploading new records, "Naming Series" becomes mandatory, if present.')]
 		)
@@ -195,8 +210,23 @@ class DataExporter:
 		# build list of valid docfields
 		tablecolumns = []
 		table_name = "tab" + dt
+
 		for f in frappe.db.get_table_columns_description(table_name):
 			field = meta.get_field(f.name)
+			if f.name in ["owner", "creation"]:
+				std_field = next((x for x in frappe.model.std_fields if x["fieldname"] == f.name), None)
+				if std_field:
+					field = frappe._dict(
+						{
+							"fieldname": std_field.get("fieldname"),
+							"label": std_field.get("label"),
+							"fieldtype": std_field.get("fieldtype"),
+							"options": std_field.get("options"),
+							"idx": 0,
+							"parent": dt,
+						}
+					)
+
 			if field and (
 				(self.select_columns and f.name in self.select_columns[dt]) or not self.select_columns
 			):
@@ -220,7 +250,9 @@ class DataExporter:
 							"label": "Parent",
 							"fieldtype": "Data",
 							"reqd": 1,
-							"info": _("Parent is the name of the document to which the data will get added to."),
+							"info": _(
+								"Parent is the name of the document to which the data will get added to."
+							),
 						}
 					),
 					True,
@@ -274,7 +306,7 @@ class DataExporter:
 
 		self.tablerow.append("")
 		self.fieldrow.append(docfield.fieldname)
-		self.labelrow.append(_(docfield.label))
+		self.labelrow.append(_(docfield.label, context=docfield.parent))
 		self.mandatoryrow.append(docfield.reqd and "Yes" or "No")
 		self.typerow.append(docfield.fieldtype)
 		self.inforow.append(self.getinforow(docfield))
@@ -311,12 +343,18 @@ class DataExporter:
 			return ""
 
 	def add_field_headings(self):
-		self.writer.writerow(self.tablerow)
+		if not self.export_without_column_meta:
+			self.writer.writerow(self.tablerow)
+
+		# Just include Labels in the first row
 		self.writer.writerow(self.labelrow)
-		self.writer.writerow(self.fieldrow)
-		self.writer.writerow(self.mandatoryrow)
-		self.writer.writerow(self.typerow)
-		self.writer.writerow(self.inforow)
+
+		if not self.export_without_column_meta:
+			self.writer.writerow(self.fieldrow)
+			self.writer.writerow(self.mandatoryrow)
+			self.writer.writerow(self.typerow)
+			self.writer.writerow(self.inforow)
+
 		if self.template:
 			self.writer.writerow([self.data_keys.data_separator])
 
@@ -381,7 +419,6 @@ class DataExporter:
 					)
 					for ci, child in enumerate(data_row.run(as_dict=True)):
 						self.add_data_row(rows, c["doctype"], c["parentfield"], child, ci)
-
 			for row in rows:
 				self.writer.writerow(row)
 
@@ -413,23 +450,20 @@ class DataExporter:
 				row[_column_start_end.start + i + 1] = value
 
 	def build_response_as_excel(self):
+		from frappe.desk.utils import provide_binary_file
+		from frappe.utils.xlsxutils import make_xlsx
+
 		filename = frappe.generate_hash(length=10)
 		with open(filename, "wb") as f:
 			f.write(cstr(self.writer.getvalue()).encode("utf-8"))
 		f = open(filename)
 		reader = csv.reader(f)
-
-		from frappe.utils.xlsxutils import make_xlsx
-
 		xlsx_file = make_xlsx(reader, "Data Import Template" if self.template else "Data Export")
 
 		f.close()
 		os.remove(filename)
 
-		# write out response as a xlsx type
-		frappe.response["filename"] = _(self.doctype) + ".xlsx"
-		frappe.response["filecontent"] = xlsx_file.getvalue()
-		frappe.response["type"] = "binary"
+		provide_binary_file(self.doctype, "xlsx", xlsx_file.getvalue())
 
 	def _append_name_column(self, dt=None):
 		self.append_field_column(

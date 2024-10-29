@@ -1,12 +1,8 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # License: MIT. See LICENSE
 
-import string
-
 from cryptography.fernet import Fernet, InvalidToken
 from passlib.context import CryptContext
-from passlib.hash import mysql41, pbkdf2_sha256
-from passlib.registry import register_crypt_handler
 from pypika.terms import Values
 
 import frappe
@@ -17,30 +13,10 @@ from frappe.utils import cstr, encode
 Auth = Table("__Auth")
 
 
-class LegacyPassword(pbkdf2_sha256):
-	name = "frappe_legacy"
-	ident = "$frappel$"
-
-	def _calc_checksum(self, secret):
-		# check if this is a mysql hash
-		# it is possible that we will generate a false positive if the users password happens to be 40 hex chars proceeded
-		# by an * char, but this seems highly unlikely
-		if not (
-			secret[0] == "*" and len(secret) == 41 and all(c in string.hexdigits for c in secret[1:])
-		):
-			secret = mysql41.hash(secret + self.salt.decode("utf-8"))
-		return super()._calc_checksum(secret)
-
-
-register_crypt_handler(LegacyPassword, force=True)
 passlibctx = CryptContext(
 	schemes=[
 		"pbkdf2_sha256",
 		"argon2",
-		"frappe_legacy",
-	],
-	deprecated=[
-		"frappe_legacy",
 	],
 )
 
@@ -59,7 +35,7 @@ def get_decrypted_password(doctype, name, fieldname="password", raise_exception=
 	).run()
 
 	if result and result[0][0]:
-		return decrypt(result[0][0])
+		return decrypt(result[0][0], key=f"{doctype}.{name}.{fieldname}")
 
 	elif raise_exception:
 		frappe.throw(
@@ -128,9 +104,9 @@ def check_password(user, pwd, doctype="User", fieldname="password", delete_track
 
 
 def delete_login_failed_cache(user):
-	frappe.cache().hdel("last_login_tried", user)
-	frappe.cache().hdel("login_failed_count", user)
-	frappe.cache().hdel("locked_account_time", user)
+	frappe.cache.hdel("last_login_tried", user)
+	frappe.cache.hdel("login_failed_count", user)
+	frappe.cache.hdel("locked_account_time", user)
 
 
 def update_password(user, pwd, doctype="User", fieldname="password", logout_all_sessions=False):
@@ -207,11 +183,10 @@ def encrypt(txt, encryption_key=None):
 		# encryption_key is not in 32 url-safe base64-encoded format
 		frappe.throw(_("Encryption key is in invalid format!"))
 
-	cipher_text = cstr(cipher_suite.encrypt(encode(txt)))
-	return cipher_text
+	return cstr(cipher_suite.encrypt(encode(txt)))
 
 
-def decrypt(txt, encryption_key=None):
+def decrypt(txt, encryption_key=None, key: str | None = None):
 	# Only use encryption_key value generated with Fernet.generate_key().decode()
 
 	try:
@@ -220,11 +195,16 @@ def decrypt(txt, encryption_key=None):
 	except InvalidToken:
 		# encryption_key in site_config is changed and not valid
 		frappe.throw(
-			_("Encryption key is invalid! Please check site_config.json")
-			+ "<br>"
+			(_("Failed to decrypt key {0}").format(key) + "<br><br>" if key else "")
+			+ _("Encryption key is invalid! Please check site_config.json")
+			+ "<br><br>"
 			+ _(
 				"If you have recently restored the site you may need to copy the site config contaning original Encryption Key."
 			)
+			+ "<br><br>"
+			+ _(
+				"Please visit https://frappecloud.com/docs/sites/migrate-an-existing-site#encryption-key for more information."
+			),
 		)
 
 
@@ -240,4 +220,4 @@ def get_encryption_key():
 
 
 def get_password_reset_limit():
-	return frappe.db.get_single_value("System Settings", "password_reset_limit") or 0
+	return frappe.get_system_settings("password_reset_limit") or 3

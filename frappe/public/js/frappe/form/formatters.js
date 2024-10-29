@@ -252,6 +252,10 @@ frappe.form.formatters = {
 		let original_value = value;
 		let link_title = frappe.utils.get_link_title(doctype, value);
 
+		if (link_title === value) {
+			link_title = null;
+		}
+
 		if (value && value.match && value.match(/^['"].*['"]$/)) {
 			value.replace(/^.(.*).$/, "$1");
 		}
@@ -474,7 +478,9 @@ frappe.form.formatters = {
 		const link_field = meta.fields.find((df) => df.fieldtype === "Link");
 		const formatted_values = rows.map((row) => {
 			const value = row[link_field.fieldname];
-			return frappe.format(value, link_field, options, row);
+			return `<span class="text-nowrap">
+				${frappe.format(value, link_field, options, row)}
+			</span>`;
 		});
 		return formatted_values.join(", ");
 	},
@@ -512,7 +518,7 @@ frappe.form.get_formatter = function (fieldtype) {
 
 frappe.format = function (value, df, options, doc, standard) {
 	if (!df) df = { fieldtype: "Data" };
-	if (df.fieldname == "_user_tags") df.fieldtype = "Tag";
+	if (df.fieldname == "_user_tags") df = { ...df, fieldtype: "Tag" };
 	var fieldtype = df.fieldtype || "Data";
 
 	// format Dynamic Link as a Link

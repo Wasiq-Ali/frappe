@@ -75,7 +75,7 @@ frappe.call = function (opts) {
 	var callback = function (data, response_text) {
 		if (data.task_id) {
 			// async call, subscribe
-			frappe.socketio.subscribe(data.task_id, opts);
+			frappe.realtime.subscribe(data.task_id, opts);
 
 			if (opts.queued) {
 				opts.queued(data);
@@ -88,7 +88,11 @@ frappe.call = function (opts) {
 
 	let url = opts.url;
 	if (!url) {
-		url = "/api/method/" + args.cmd;
+		let prefix = "/api/method/";
+		if (opts.api_version) {
+			prefix = `/api/${opts.api_version}/method/`;
+		}
+		url = prefix + args.cmd;
 		if (window.cordova) {
 			let host = frappe.request.url;
 			host = host.slice(0, host.length - 1);
@@ -116,6 +120,7 @@ frappe.call = function (opts) {
 		// show_spinner: !opts.no_spinner,
 		async: opts.async,
 		silent: opts.silent,
+		api_version: opts.api_version,
 		url,
 	});
 };
@@ -300,8 +305,8 @@ frappe.request.call = function (opts) {
 					status_code_handler(data, xhr);
 				}
 			} catch (e) {
-				console.log("Unable to handle success response", data); // eslint-disable-line
-				console.error(e); // eslint-disable-line
+				console.log("Unable to handle success response", data);
+				console.error(e);
 			}
 		})
 		.always(function (data, textStatus, xhr) {
@@ -310,7 +315,7 @@ frappe.request.call = function (opts) {
 					data = JSON.parse(data);
 				}
 				if (data.responseText) {
-					var xhr = data;
+					var xhr = data; // eslint-disable-line
 					data = JSON.parse(data.responseText);
 				}
 			} catch (e) {
@@ -354,8 +359,8 @@ frappe.request.call = function (opts) {
 				// if not handled by error handler!
 				opts.error_callback && opts.error_callback(xhr);
 			} catch (e) {
-				console.log("Unable to handle failed response"); // eslint-disable-line
-				console.error(e); // eslint-disable-line
+				console.log("Unable to handle failed response");
+				console.error(e);
 			}
 		});
 };
@@ -372,7 +377,6 @@ frappe.request.is_fresh = function (args, threshold) {
 			new Date() - past_request.timestamp < threshold &&
 			frappe.utils.deep_equal(args, past_request.args)
 		) {
-			// eslint-disable-next-line no-console
 			console.log("throttled");
 			return true;
 		}
@@ -445,12 +449,18 @@ frappe.request.cleanup = function (opts, r) {
 		}
 
 		// show messages
-		if (r._server_messages && !opts.silent) {
+		//
+		let messages;
+		if (opts.api_version == "v2") {
+			messages = r.messages;
+		} else if (r._server_messages) {
+			messages = JSON.parse(r._server_messages);
+		}
+		if (messages && !opts.silent) {
 			// show server messages if no handlers exist
 			if (handlers.length === 0) {
-				r._server_messages = JSON.parse(r._server_messages);
 				frappe.hide_msgprint();
-				frappe.msgprint(r._server_messages);
+				frappe.msgprint(messages);
 			}
 		}
 
@@ -473,8 +483,8 @@ frappe.request.cleanup = function (opts, r) {
 			if (opts.args) {
 				console.log("======== arguments ========");
 				console.log(opts.args);
-				console.log("========");
 			}
+			console.log("======== debug messages ========");
 			$.each(JSON.parse(r._debug_messages), function (i, v) {
 				console.log(v);
 			});
@@ -530,6 +540,9 @@ frappe.request.report_error = function (xhr, request_opts) {
 
 	const copy_markdown_to_clipboard = () => {
 		const code_block = (snippet) => "```\n" + snippet + "\n```";
+
+		let request_data = Object.assign({}, request_opts);
+		request_data.request_id = xhr.getResponseHeader("X-Frappe-Request-Id");
 		const traceback_info = [
 			"### App Versions",
 			code_block(JSON.stringify(frappe.boot.versions, null, "\t")),
@@ -538,7 +551,7 @@ frappe.request.report_error = function (xhr, request_opts) {
 			"### Traceback",
 			code_block(exc),
 			"### Request Data",
-			code_block(JSON.stringify(request_opts, null, "\t")),
+			code_block(JSON.stringify(request_data, null, "\t")),
 			"### Response Data",
 			code_block(JSON.stringify(data, null, "\t")),
 		].join("\n");
@@ -591,27 +604,32 @@ frappe.request.report_error = function (xhr, request_opts) {
 		if (!frappe.error_dialog) {
 			frappe.error_dialog = new frappe.ui.Dialog({
 				title: __("Server Error"),
-				primary_action_label: __("Report"),
-				primary_action: () => {
-					if (error_report_email) {
-						show_communication();
-					} else {
-						frappe.msgprint(__("Support Email Address Not Specified"));
-					}
+			});
+
+			if (error_report_email) {
+				frappe.error_dialog.set_primary_action(__("Report"), () => {
+					show_communication();
 					frappe.error_dialog.hide();
-				},
-				secondary_action_label: __("Copy error to clipboard"),
-				secondary_action: () => {
+				});
+			} else {
+				frappe.error_dialog.set_primary_action(__("Copy error to clipboard"), () => {
 					copy_markdown_to_clipboard();
 					frappe.error_dialog.hide();
-				},
-			});
+				});
+			}
 			frappe.error_dialog.wrapper.classList.add("msgprint-dialog");
 		}
 
 		let parts = strip(exc).split("\n");
 
-		frappe.error_dialog.$body.html(parts[parts.length - 1]);
+		let dialog_html = parts[parts.length - 1];
+
+		if (data._exc_source) {
+			dialog_html += "<br>";
+			dialog_html += `Possible source of error: ${data._exc_source.bold()} `;
+		}
+
+		frappe.error_dialog.$body.html(dialog_html);
 		frappe.error_dialog.show();
 	}
 };

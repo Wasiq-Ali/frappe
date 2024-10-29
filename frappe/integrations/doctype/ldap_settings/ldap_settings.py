@@ -13,6 +13,7 @@ from ldap3.core.exceptions import (
 	LDAPInvalidFilterError,
 	LDAPNoSuchObjectResult,
 )
+from ldap3.utils.conv import escape_filter_chars
 from ldap3.utils.hashed import hashed
 
 import frappe
@@ -25,6 +26,45 @@ if TYPE_CHECKING:
 
 
 class LDAPSettings(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.integrations.doctype.ldap_group_mapping.ldap_group_mapping import LDAPGroupMapping
+		from frappe.types import DF
+
+		base_dn: DF.Data
+		default_role: DF.Link | None
+		default_user_type: DF.Link
+		do_not_create_new_user: DF.Check
+		enabled: DF.Check
+		ldap_custom_group_search: DF.Data | None
+		ldap_directory_server: DF.Literal["", "Active Directory", "OpenLDAP", "Custom"]
+		ldap_email_field: DF.Data
+		ldap_first_name_field: DF.Data
+		ldap_group_field: DF.Data | None
+		ldap_group_member_attribute: DF.Data | None
+		ldap_group_objectclass: DF.Data | None
+		ldap_groups: DF.Table[LDAPGroupMapping]
+		ldap_last_name_field: DF.Data | None
+		ldap_middle_name_field: DF.Data | None
+		ldap_mobile_field: DF.Data | None
+		ldap_phone_field: DF.Data | None
+		ldap_search_path_group: DF.Data
+		ldap_search_path_user: DF.Data
+		ldap_search_string: DF.Data
+		ldap_server_url: DF.Data
+		ldap_username_field: DF.Data
+		local_ca_certs_file: DF.Data | None
+		local_private_key_file: DF.Data | None
+		local_server_certificate_file: DF.Data | None
+		password: DF.Password
+		require_trusted_certificate: DF.Literal["No", "Yes"]
+		ssl_tls_mode: DF.Literal["Off", "StartTLS"]
+
+	# end: auto-generated types
 	def validate(self):
 		self.default_user_type = self.default_user_type or "Website User"
 
@@ -39,7 +79,6 @@ class LDAPSettings(Document):
 				and self.ldap_search_string
 				and "{0}" in self.ldap_search_string
 			):
-
 				conn = self.connect_to_ldap(
 					base_dn=self.base_dn, password=self.get_password(raise_exception=False)
 				)
@@ -53,7 +92,9 @@ class LDAPSettings(Document):
 						)
 
 						conn.search(
-							search_base=self.ldap_search_path_group, search_filter="(objectClass=*)", attributes=["cn"]
+							search_base=self.ldap_search_path_group,
+							search_filter="(objectClass=*)",
+							attributes=["cn"],
 						)
 
 				except LDAPAttributeError as ex:
@@ -143,7 +184,7 @@ class LDAPSettings(Document):
 			setattr(user, key, value)
 		user.save(ignore_permissions=True)
 
-	def sync_roles(self, user: "User", additional_groups: list = None):
+	def sync_roles(self, user: "User", additional_groups: list | None = None):
 		current_roles = {d.role for d in user.get("roles")}
 		if self.default_user_type == "System User":
 			needed_roles = {self.default_role}
@@ -152,9 +193,7 @@ class LDAPSettings(Document):
 		lower_groups = [g.lower() for g in additional_groups or []]
 
 		all_mapped_roles = {r.erpnext_role for r in self.ldap_groups}
-		matched_roles = {
-			r.erpnext_role for r in self.ldap_groups if r.ldap_group.lower() in lower_groups
-		}
+		matched_roles = {r.erpnext_role for r in self.ldap_groups if r.ldap_group.lower() in lower_groups}
 		unmatched_roles = all_mapped_roles.difference(matched_roles)
 		needed_roles.update(matched_roles)
 		roles_to_remove = current_roles.intersection(unmatched_roles)
@@ -165,7 +204,7 @@ class LDAPSettings(Document):
 
 		user.remove_roles(*roles_to_remove)
 
-	def create_or_update_user(self, user_data: dict, groups: list = None):
+	def create_or_update_user(self, user_data: dict, groups: list | None = None):
 		user: "User" = None
 		role: str = None
 
@@ -234,7 +273,7 @@ class LDAPSettings(Document):
 		if self.ldap_directory_server.lower() == "active directory":
 			ldap_object_class = "Group"
 			ldap_group_members_attribute = "member"
-			user_search_str = user.entry_dn
+			user_search_str = escape_filter_chars(user.entry_dn)
 
 		elif self.ldap_directory_server.lower() == "openldap":
 			ldap_object_class = "posixgroup"
@@ -262,10 +301,7 @@ class LDAPSettings(Document):
 			)  # Build search query
 
 		if len(conn.entries) >= 1:
-			fetch_ldap_groups = []
-			for group in conn.entries:
-				fetch_ldap_groups.append(group["cn"].value)
-
+			fetch_ldap_groups = [group["cn"].value for group in conn.entries]
 		return fetch_ldap_groups
 
 	def authenticate(self, username: str, password: str):
@@ -302,9 +338,7 @@ class LDAPSettings(Document):
 	def reset_password(self, user, password, logout_sessions=False):
 		search_filter = f"({self.ldap_email_field}={user})"
 
-		conn = self.connect_to_ldap(
-			self.base_dn, self.get_password(raise_exception=False), read_only=False
-		)
+		conn = self.connect_to_ldap(self.base_dn, self.get_password(raise_exception=False), read_only=False)
 
 		if conn.search(
 			search_base=self.ldap_search_path_user,

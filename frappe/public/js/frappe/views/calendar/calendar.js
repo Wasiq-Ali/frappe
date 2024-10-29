@@ -11,6 +11,7 @@ frappe.views.CalendarView = class CalendarView extends frappe.views.ListView {
 			const doctype = route[1];
 			const user_settings = frappe.get_user_settings(doctype)["Calendar"] || {};
 			route.push(user_settings.last_calendar || "default");
+			frappe.route_flags.replace_route = true;
 			frappe.set_route(route);
 			return true;
 		} else {
@@ -106,7 +107,7 @@ frappe.views.CalendarView = class CalendarView extends frappe.views.ListView {
 			"assets/frappe/js/lib/fullcalendar/fullcalendar.min.css",
 			"assets/frappe/js/lib/fullcalendar/fullcalendar.min.js",
 		];
-		let user_language = frappe.boot.user.language;
+		let user_language = frappe.boot.lang;
 		if (user_language && user_language !== "en") {
 			assets.push("assets/frappe/js/lib/fullcalendar/locale-all.js");
 		}
@@ -248,13 +249,13 @@ frappe.views.Calendar = class Calendar {
 
 	get_system_datetime(date) {
 		date._offset = moment(date).tz(frappe.sys_defaults.time_zone)._offset;
-		return frappe.datetime.convert_to_system_tz(date);
+		return frappe.datetime.convert_to_system_tz(moment(date).locale("en"));
 	}
 	setup_options(defaults) {
 		var me = this;
 		defaults.meridiem = "false";
 		this.cal_options = {
-			locale: frappe.boot.user.language || "en",
+			locale: frappe.boot.lang,
 			header: {
 				left: "prev, title, next",
 				right: "today, month, agendaWeek, agendaDay",
@@ -382,7 +383,10 @@ frappe.views.Calendar = class Calendar {
 				d[target] = d[source];
 			});
 
-			if (!me.field_map.allDay) d.allDay = 1;
+			if (typeof d.allDay === "undefined") {
+				d.allDay = me.field_map.allDay;
+			}
+
 			if (!me.field_map.convertToUserTz) d.convertToUserTz = 1;
 
 			// convert to user tz

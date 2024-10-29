@@ -3,6 +3,7 @@
 
 import json
 import os
+from collections import namedtuple
 
 import frappe
 from frappe import _
@@ -12,12 +13,62 @@ from frappe.desk.doctype.notification_log.notification_log import enqueue_create
 from frappe.integrations.doctype.slack_webhook_url.slack_webhook_url import send_slack_message
 from frappe.model.document import Document
 from frappe.modules.utils import export_module_json, get_doc_module
-from frappe.utils import add_to_date, cast, is_html, nowdate, validate_email_address
+from frappe.utils import add_to_date, cast, nowdate, validate_email_address
 from frappe.utils.jinja import validate_template
 from frappe.utils.safe_exec import get_safe_globals
 
+FORMATS = {"HTML": ".html", "Markdown": ".md", "Plain Text": ".txt"}
+FORBIDDEN_DOCUMENT_TYPES = frozenset(("Email Queue",))
+DATE_BASED_EVENTS = frozenset(("Days Before", "Days After"))
+
 
 class Notification(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.email.doctype.notification_recipient.notification_recipient import NotificationRecipient
+		from frappe.types import DF
+
+		attach_print: DF.Check
+		channel: DF.Literal["Email", "Slack", "System Notification", "SMS"]
+		condition: DF.Code | None
+		date_changed: DF.Literal[None]
+		days_in_advance: DF.Int
+		document_type: DF.Link
+		enabled: DF.Check
+		event: DF.Literal[
+			"",
+			"New",
+			"Save",
+			"Submit",
+			"Cancel",
+			"Days After",
+			"Days Before",
+			"Value Change",
+			"Method",
+			"Custom",
+		]
+		is_standard: DF.Check
+		message: DF.Code | None
+		message_type: DF.Literal["Markdown", "HTML", "Plain Text"]
+		method: DF.Data | None
+		module: DF.Link | None
+		print_format: DF.Link | None
+		property_value: DF.Data | None
+		recipients: DF.Table[NotificationRecipient]
+		send_system_notification: DF.Check
+		send_to_all_assignees: DF.Check
+		sender: DF.Link | None
+		sender_email: DF.Data | None
+		set_property_after_alert: DF.Literal[None]
+		slack_webhook_url: DF.Link | None
+		subject: DF.Data | None
+		value_changed: DF.Literal[None]
+	# end: auto-generated types
+
 	def onload(self):
 		"""load message"""
 		if self.is_standard:
@@ -39,19 +90,19 @@ class Notification(Document):
 		if self.event == "Value Change" and not self.value_changed:
 			frappe.throw(_("Please specify which value field must be checked"))
 
-		self.validate_forbidden_types()
+		self.validate_forbidden_document_types()
 		self.validate_condition()
 		self.validate_standard()
-		frappe.cache().hdel("notifications", self.document_type)
+		frappe.cache.hdel("notifications", self.document_type)
 
 	def on_update(self):
-		frappe.cache().hdel("notifications", self.document_type)
+		frappe.cache.hdel("notifications", self.document_type)
 		path = export_module_json(self, self.is_standard, self.module)
-		if path:
-			# js
-			if not os.path.exists(path + ".md") and not os.path.exists(path + ".html"):
-				with open(path + ".md", "w") as f:
-					f.write(self.message)
+		if path and self.message:
+			extension = FORMATS.get(self.message_type, ".md")
+			file_path = path + extension
+			with open(file_path, "w") as f:
+				f.write(self.message)
 
 			# py
 			if not os.path.exists(path + ".py"):
@@ -79,12 +130,16 @@ def get_context(context):
 			except Exception:
 				frappe.throw(_("The Condition '{0}' is invalid").format(self.condition))
 
-	def validate_forbidden_types(self):
-		forbidden_document_types = ("Email Queue",)
-		if self.document_type in forbidden_document_types or frappe.get_meta(self.document_type).istable:
-			# currently notifications don't work on child tables as events are not fired for each record of child table
-
-			frappe.throw(_("Cannot set Notification on Document Type {0}").format(self.document_type))
+	def validate_forbidden_document_types(self):
+		if self.document_type in FORBIDDEN_DOCUMENT_TYPES or (
+			frappe.get_meta(self.document_type).istable and self.event not in DATE_BASED_EVENTS
+		):
+			# only date based events are allowed for child tables
+			frappe.throw(
+				_("Cannot set Notification with event {0} on Document Type {1}").format(
+					_(self.event), _(self.document_type)
+				)
+			)
 
 	def get_documents_for_today(self):
 		"""get list of documents that will be triggered today"""
@@ -186,8 +241,8 @@ def get_context(context):
 
 		notification_doc = {
 			"type": "Alert",
-			"document_type": doc.doctype,
-			"document_name": doc.name,
+			"document_type": get_reference_doctype(doc),
+			"document_name": get_reference_name(doc),
 			"subject": subject,
 			"from_user": doc.modified_by or doc.owner,
 			"email_content": frappe.render_template(self.message, context),
@@ -213,26 +268,14 @@ def get_context(context):
 		message = frappe.render_template(self.message, context)
 		if self.sender and self.sender_email:
 			sender = formataddr((self.sender, self.sender_email))
-		frappe.sendmail(
-			recipients=recipients,
-			subject=subject,
-			sender=sender,
-			cc=cc,
-			bcc=bcc,
-			message=message,
-			reference_doctype=doc.doctype,
-			reference_name=doc.name,
-			attachments=attachments,
-			expose_recipients="header",
-			print_letterhead=((attachments and attachments[0].get("print_letterhead")) or False),
-		)
 
+		communication = None
 		# Add mail notification to communication list
 		# No need to add if it is already a communication.
 		if doc.doctype != "Communication":
-			make_communication(
-				doctype=doc.doctype,
-				name=doc.name,
+			communication = make_communication(
+				doctype=get_reference_doctype(doc),
+				name=get_reference_name(doc),
 				content=message,
 				subject=subject,
 				sender=sender,
@@ -243,14 +286,29 @@ def get_context(context):
 				cc=cc,
 				bcc=bcc,
 				communication_type="Automated Message",
-			)
+			).get("name")
+
+		frappe.sendmail(
+			recipients=recipients,
+			subject=subject,
+			sender=sender,
+			cc=cc,
+			bcc=bcc,
+			message=message,
+			reference_doctype=get_reference_doctype(doc),
+			reference_name=get_reference_name(doc),
+			attachments=attachments,
+			expose_recipients="header",
+			print_letterhead=((attachments and attachments[0].get("print_letterhead")) or False),
+			communication=communication,
+		)
 
 	def send_a_slack_msg(self, doc, context):
 		send_slack_message(
 			webhook_url=self.slack_webhook_url,
 			message=frappe.render_template(self.message, context),
-			reference_doctype=doc.doctype,
-			reference_name=doc.name,
+			reference_doctype=get_reference_doctype(doc),
+			reference_name=get_reference_name(doc),
 		)
 
 	def send_sms(self, doc, context):
@@ -314,7 +372,9 @@ def get_context(context):
 
 			# For sending messages to specified role
 			if recipient.receiver_by_role:
-				receiver_list += get_info_based_on_role(recipient.receiver_by_role, "mobile_no")
+				receiver_list += get_info_based_on_role(
+					recipient.receiver_by_role, "mobile_no", ignore_permissions=True
+				)
 
 		return receiver_list
 
@@ -327,7 +387,6 @@ def get_context(context):
 		if (doc.docstatus == 0 and not print_settings.allow_print_for_draft) or (
 			doc.docstatus == 2 and not print_settings.allow_print_for_cancelled
 		):
-
 			# ignoring attachment as draft and cancelled documents are not allowed to print
 			status = "Draft" if doc.docstatus == 0 else "Cancelled"
 			frappe.throw(
@@ -350,21 +409,26 @@ def get_context(context):
 				}
 			]
 
-	def get_template(self):
-		try:
-			module = get_doc_module(self.module, self.doctype, self.name)
+	def get_template(self, md_as_html=False):
+		module = get_doc_module(self.module, self.doctype, self.name)
 
-			def load_template(extn):
-				template = ""
-				template_path = os.path.join(os.path.dirname(module.__file__), frappe.scrub(self.name) + extn)
-				if os.path.exists(template_path):
-					with open(template_path) as f:
-						template = f.read()
-				return template		
+		path = os.path.join(os.path.dirname(module.__file__), frappe.scrub(self.name))
+		extension = FORMATS.get(self.message_type, ".md")
+		file_path = path + extension
 
-			return load_template(".html") or load_template(".md")
-		except ImportError:
-			return None
+		template = ""
+
+		if os.path.exists(file_path):
+			with open(file_path) as f:
+				template = f.read()
+
+		if not template:
+			return
+
+		if extension == ".md":
+			return frappe.utils.md_to_html(template)
+
+		return template
 
 	def load_standard_properties(self, context):
 		"""load templates and run get_context"""
@@ -375,13 +439,10 @@ def get_context(context):
 				if out:
 					context.update(out)
 
-		self.message = self.get_template() or self.message
-
-		if not is_html(self.message):
-			self.message = frappe.utils.md_to_html(self.message)
+		self.message = self.get_template(md_as_html=True)
 
 	def on_trash(self):
-		frappe.cache().hdel("notifications", self.document_type)
+		frappe.cache.hdel("notifications", self.document_type)
 
 
 @frappe.whitelist()
@@ -451,18 +512,18 @@ def evaluate_alert(doc: Document, alert, event):
 		frappe.throw(message, title=_("Error in Notification"))
 	except Exception as e:
 		title = str(e)
-		message = frappe.get_traceback()
-		frappe.log_error(message=message, title=title)
-
+		message = frappe.get_traceback(with_context=True)
+		frappe.log_error(title=title, message=message)
 		msg = f"<details><summary>{title}</summary>{message}</details>"
 		frappe.throw(msg, title=_("Error in Notification"))
 
 
 def get_context(doc):
+	Frappe = namedtuple("frappe", ["utils"])
 	return {
 		"doc": doc,
 		"nowdate": nowdate,
-		"frappe": frappe._dict(utils=get_safe_globals().get("frappe").get("utils")),
+		"frappe": Frappe(utils=get_safe_globals().get("frappe").get("utils")),
 	}
 
 
@@ -474,9 +535,7 @@ def get_assignees(doc):
 		fields=["allocated_to"],
 	)
 
-	recipients = [d.allocated_to for d in assignees]
-
-	return recipients
+	return [d.allocated_to for d in assignees]
 
 
 def get_emails_from_template(template, context):
@@ -485,3 +544,11 @@ def get_emails_from_template(template, context):
 
 	emails = frappe.render_template(template, context) if "{" in template else template
 	return filter(None, emails.replace(",", "\n").split("\n"))
+
+
+def get_reference_doctype(doc):
+	return doc.parenttype if doc.meta.istable else doc.doctype
+
+
+def get_reference_name(doc):
+	return doc.parent if doc.meta.istable else doc.name

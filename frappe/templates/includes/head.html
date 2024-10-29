@@ -4,9 +4,9 @@
 
 {%- if custom_theme_bundle %}
 {{ include_style(custom_theme_bundle) }}
-{%- elif theme.name != 'Standard' %}
+{%- elif theme and theme.name != 'Standard' %}
 <link type="text/css" rel="stylesheet" href="{{ theme.theme_url }}">
-{%- else %}
+{%- else -%}
 {{ include_style('website.bundle.css') }}
 {%- endif -%}
 

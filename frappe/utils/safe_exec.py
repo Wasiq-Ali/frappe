@@ -1,6 +1,7 @@
 import ast
 import copy
 import inspect
+import io
 import json
 import mimetypes
 import types
@@ -8,7 +9,7 @@ from contextlib import contextmanager
 from functools import lru_cache
 
 import RestrictedPython.Guards
-from RestrictedPython import compile_restricted, safe_globals
+from RestrictedPython import PrintCollector, compile_restricted, safe_globals
 from RestrictedPython.transformer import RestrictingNodeTransformer
 
 import frappe
@@ -26,7 +27,7 @@ from frappe.model.rename_doc import rename_doc
 from frappe.modules import scrub
 from frappe.utils import get_user_date_format, get_user_time_format
 from frappe.utils.background_jobs import enqueue, get_jobs
-from frappe.website.utils import get_next_link, get_shade, get_toc
+from frappe.website.utils import get_next_link, get_toc
 from frappe.www.printview import get_visible_columns
 from collections import OrderedDict
 import datetime
@@ -37,6 +38,9 @@ class ServerScriptNotEnabled(frappe.PermissionError):
 
 
 ARGUMENT_NOT_SET = object()
+
+SAFE_EXEC_CONFIG_KEY = "server_script_enabled"
+SERVER_SCRIPT_FILE_PREFIX = "<serverscript>"
 
 
 class NamespaceDict(frappe._dict):
@@ -61,16 +65,34 @@ class FrappeTransformer(RestrictingNodeTransformer):
 		return super().check_name(node, name, *args, **kwargs)
 
 
-def safe_exec(script, _globals=None, _locals=None, restrict_commit_rollback=False):
-	# server scripts can be disabled via site_config.json
-	# they are enabled by default
-	if "server_script_enabled" in frappe.conf:
-		enabled = frappe.conf.server_script_enabled
-	else:
-		enabled = True
+class FrappePrintCollector(PrintCollector):
+	"""Collect written text, and return it when called."""
 
-	if not enabled:
-		frappe.throw(_("Please Enable Server Scripts"), ServerScriptNotEnabled)
+	def _call_print(self, *objects, **kwargs):
+		output = io.StringIO()
+		print(*objects, file=output, **kwargs)
+		frappe.log(output.getvalue().strip())
+		output.close()
+
+
+def is_safe_exec_enabled() -> bool:
+	# server scripts can only be enabled via common_site_config.json
+	return bool(frappe.get_common_site_config().get(SAFE_EXEC_CONFIG_KEY))
+
+
+def safe_exec(
+	script: str,
+	_globals: dict | None = None,
+	_locals: dict | None = None,
+	*,
+	restrict_commit_rollback: bool = False,
+	script_filename: str | None = None,
+):
+	if not is_safe_exec_enabled():
+		msg = _("Server Scripts are disabled. Please enable server scripts from bench configuration.")
+		docs_cta = _("Read the documentation to know more")
+		msg += f"<br><a href='https://frappeframework.com/docs/user/en/desk/scripting/server-script'>{docs_cta}</a>"
+		frappe.throw(msg, ServerScriptNotEnabled, title="Server Scripts Disabled")
 
 	# build globals
 	exec_globals = get_safe_globals()
@@ -83,10 +105,14 @@ def safe_exec(script, _globals=None, _locals=None, restrict_commit_rollback=Fals
 		exec_globals.frappe.db.pop("rollback", None)
 		exec_globals.frappe.db.pop("add_index", None)
 
+	filename = SERVER_SCRIPT_FILE_PREFIX
+	if script_filename:
+		filename += f": {frappe.scrub(script_filename)}"
+
 	with safe_exec_flags(), patched_qb():
 		# execute script compiled by RestrictedPython
 		exec(
-			compile_restricted(script, filename="<serverscript>", policy=FrappeTransformer),
+			compile_restricted(script, filename=filename, policy=FrappeTransformer),
 			exec_globals,
 			_locals,
 		)
@@ -125,9 +151,16 @@ def _validate_safe_eval_syntax(code):
 
 @contextmanager
 def safe_exec_flags():
-	frappe.flags.in_safe_exec = True
-	yield
-	frappe.flags.in_safe_exec = False
+	if not frappe.flags.in_safe_exec:
+		frappe.flags.in_safe_exec = 0
+
+	frappe.flags.in_safe_exec += 1
+
+	try:
+		yield
+	finally:
+		# Always ensure that the flag is decremented
+		frappe.flags.in_safe_exec -= 1
 
 
 def get_safe_globals():
@@ -215,6 +248,8 @@ def get_safe_globals():
 			make_get_request=frappe.integrations.utils.make_get_request,
 			make_post_request=frappe.integrations.utils.make_post_request,
 			make_put_request=frappe.integrations.utils.make_put_request,
+			make_patch_request=frappe.integrations.utils.make_patch_request,
+			make_delete_request=frappe.integrations.utils.make_delete_request,
 			socketio_port=frappe.conf.socketio_port,
 			get_hooks=get_hooks,
 			original_name=frappe.utils.original_name,
@@ -237,6 +272,10 @@ def get_safe_globals():
 				sql=read_sql,
 				commit=frappe.db.commit,
 				rollback=frappe.db.rollback,
+				after_commit=frappe.db.after_commit,
+				before_commit=frappe.db.before_commit,
+				after_rollback=frappe.db.after_rollback,
+				before_rollback=frappe.db.before_rollback,
 				add_index=frappe.db.add_index,
 			),
 			lang=getattr(frappe.local, "lang", "en"),
@@ -249,7 +288,6 @@ def get_safe_globals():
 		get_toc=get_toc,
 		get_next_link=get_next_link,
 		_=frappe._,
-		get_shade=get_shade,
 		scrub=scrub,
 		guess_mimetype=mimetypes.guess_type,
 		html2text=html2text,
@@ -272,6 +310,9 @@ def get_safe_globals():
 	out._write_ = _write
 	out._getitem_ = _getitem
 	out._getattr_ = _getattr_for_safe_exec
+
+	# Allow using `print()` calls with `safe_exec()`
+	out._print_ = FrappePrintCollector
 
 	# allow iterators and list comprehension
 	out._getiter_ = iter
@@ -316,9 +357,7 @@ def call_whitelisted_function(function, **kwargs):
 def run_script(script, **kwargs):
 	"""run another server script"""
 
-	return call_with_form_dict(
-		lambda: frappe.get_doc("Server Script", script).execute_method(), kwargs
-	)
+	return call_with_form_dict(lambda: frappe.get_doc("Server Script", script).execute_method(), kwargs)
 
 
 def call_with_form_dict(function, kwargs):
@@ -473,7 +512,7 @@ def _validate_attribute_read(object, name):
 	if isinstance(name, str) and (name in UNSAFE_ATTRIBUTES):
 		raise SyntaxError(f"{name} is an unsafe attribute")
 
-	if isinstance(object, (types.ModuleType, types.CodeType, types.TracebackType, types.FrameType)):
+	if isinstance(object, types.ModuleType | types.CodeType | types.TracebackType | types.FrameType):
 		raise SyntaxError(f"Reading {object} attributes is not allowed")
 
 	if name.startswith("_"):
@@ -484,16 +523,14 @@ def _write(obj):
 	# guard function for RestrictedPython
 	if isinstance(
 		obj,
-		(
-			types.ModuleType,
-			types.CodeType,
-			types.TracebackType,
-			types.FrameType,
-			type,
-			types.FunctionType,  # covers lambda
-			types.MethodType,
-			types.BuiltinFunctionType,  # covers methods
-		),
+		types.ModuleType
+		| types.CodeType
+		| types.TracebackType
+		| types.FrameType
+		| type
+		| types.FunctionType
+		| types.MethodType
+		| types.BuiltinFunctionType,
 	):
 		raise SyntaxError(f"Not allowed to write to object {obj} of type {type(obj)}")
 	return obj
@@ -538,9 +575,7 @@ VALID_UTILS = (
 	"now_datetime",
 	"get_timestamp",
 	"get_eta",
-	"get_time_zone",
 	"get_system_timezone",
-	"convert_utc_to_user_timezone",
 	"convert_utc_to_system_timezone",
 	"now",
 	"nowdate",
@@ -548,6 +583,7 @@ VALID_UTILS = (
 	"nowtime",
 	"get_first_day",
 	"get_quarter_start",
+	"get_quarter_ending",
 	"get_first_day_of_week",
 	"get_year_start",
 	"get_last_day_of_week",

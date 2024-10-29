@@ -30,6 +30,7 @@ frappe.ui.Filter = class {
 
 		this.nested_set_conditions = [
 			["descendants of", __("Descendants Of")],
+			["descendants of (inclusive)", __("Descendants Of (inclusive)")],
 			["not descendants of", __("Not Descendants Of")],
 			["ancestors of", __("Ancestors Of")],
 			["not ancestors of", __("Not Ancestors Of")],
@@ -53,6 +54,7 @@ frappe.ui.Filter = class {
 			"Markdown Editor": ["Between", "Timespan", ">", "<", ">=", "<=", "in", "not in"],
 			Password: ["Between", "Timespan", ">", "<", ">=", "<=", "in", "not in"],
 			Rating: ["like", "not like", "Between", "in", "not in", "Timespan"],
+			Float: ["like", "not like", "Between", "in", "not in", "Timespan"],
 		};
 	}
 
@@ -134,12 +136,7 @@ frappe.ui.Filter = class {
 				fieldtype = "MultiSelect";
 			}
 
-			this.set_field(
-				this.field.df.parent,
-				this.field.df.fieldname,
-				fieldtype,
-				condition
-			);
+			this.set_field(this.field.df.parent, this.field.df.fieldname, fieldtype, condition);
 		});
 	}
 
@@ -260,7 +257,7 @@ frappe.ui.Filter = class {
 			let args = {};
 			if (this.filters_config[condition].depends_on) {
 				const field_name = this.filters_config[condition].depends_on;
-				const filter_value = this.filter_list.get_filter_value(fieldname);
+				const filter_value = this.filter_list.get_filter_value(field_name);
 				args[field_name] = filter_value;
 			}
 			let setup_field = (field) => {
@@ -368,10 +365,7 @@ frappe.ui.Filter = class {
 
 		let filter_button = this.$filter_tag.find(".toggle-filter");
 		filter_button.on("click", () => {
-			filter_button
-			.closest(".tag-filters-area")
-			.find(".filter-edit-area")
-			.show();
+			filter_button.closest(".tag-filters-area").find(".filter-edit-area").show();
 			this.filter_edit_area.toggle();
 		});
 	}
@@ -437,7 +431,13 @@ frappe.ui.filter_utils = {
 	get_selected_value(field, condition) {
 		if (!field) return;
 
-		let val = field.get_value() || field.value;
+		let val = field.get_value() ?? field.value;
+
+		if (!val && ["Link", "Dynamic Link"].includes(field.df.fieldtype)) {
+			// HACK: link field with show title are async so their input value is "" but they have
+			// some actual value set.
+			val = field.value;
+		}
 
 		if (typeof val === "string") {
 			val = strip(val);
@@ -471,7 +471,7 @@ frappe.ui.filter_utils = {
 	},
 
 	get_selected_label(field) {
-		if (in_list(["Link", "Dynamic Link"], field.df.fieldtype)) {
+		if (["Link", "Dynamic Link"].includes(field.df.fieldtype)) {
 			return field.get_label_value();
 		}
 	},
@@ -493,6 +493,7 @@ frappe.ui.filter_utils = {
 
 		df.description = "";
 		df.reqd = 0;
+		df.length = 1000; // this won't be saved, no need to apply 140 character limit here
 		df.ignore_link_validation = true;
 
 		// given
@@ -543,6 +544,7 @@ frappe.ui.filter_utils = {
 				"=",
 				"!=",
 				"descendants of",
+				"descendants of (inclusive)",
 				"ancestors of",
 				"not descendants of",
 				"not ancestors of",

@@ -8,12 +8,7 @@ if (!window.frappe) window.frappe = {};
 function flt(v, decimals, number_format, rounding_method) {
 	if (v == null || v == "") return 0;
 
-	if (!(typeof v === "number" || cstr(parseFloat(v)) == v)) {
-		// cases in which this block should not run
-		// 1. 'v' is already a number
-		// 2. v is already parsed but in string form
-		// if (typeof v !== "number") {
-
+	if (typeof v !== "number") {
 		v = v + "";
 		v = strip(v);
 
@@ -30,7 +25,6 @@ function flt(v, decimals, number_format, rounding_method) {
 		if (isNaN(v)) v = 0;
 	}
 
-	v = parseFloat(v);
 	if (decimals != null) return _round(v, decimals, rounding_method);
 	return v;
 }
@@ -47,6 +41,35 @@ function strip_number_groups(v, number_format) {
 	if (info.decimal_str !== "." && info.decimal_str !== "") {
 		var decimal_regex = new RegExp(info.decimal_str, "g");
 		v = v.replace(decimal_regex, ".");
+	}
+
+	return v;
+}
+
+function convert_old_to_new_number_format(v, old_number_format, new_number_format) {
+	if (!new_number_format) new_number_format = get_number_format();
+	let new_info = get_number_format_info(new_number_format);
+
+	if (!old_number_format) old_number_format = "#,###.##";
+	let old_info = get_number_format_info(old_number_format);
+
+	if (old_number_format === new_number_format) return v;
+
+	if (new_info.decimal_str == "") {
+		return strip_number_groups(v);
+	}
+
+	let v_parts = v.split(old_info.decimal_str);
+	let v_before_decimal = v_parts[0];
+	let v_after_decimal = v_parts[1] || "";
+
+	// replace old group separator with new group separator in v_before_decimal
+	let old_group_regex = new RegExp(old_info.group_sep === "." ? "\\." : old_info.group_sep, "g");
+	v_before_decimal = v_before_decimal.replace(old_group_regex, new_info.group_sep);
+
+	v = v_before_decimal;
+	if (v_after_decimal) {
+		v = v + new_info.decimal_str + v_after_decimal;
 	}
 
 	return v;
@@ -157,8 +180,12 @@ function get_currency_symbol(currency) {
 }
 
 function get_number_format(currency) {
+	let sysdefaults = frappe?.boot?.sysdefaults;
 	return (
-		(frappe.boot && frappe.boot.sysdefaults && frappe.boot.sysdefaults.number_format) ||
+		(sysdefaults.use_number_format_from_currency &&
+			currency &&
+			frappe.model.get_value(":Currency", currency, "number_format")) ||
+		sysdefaults.number_format ||
 		"#,###.##"
 	);
 }
@@ -255,10 +282,11 @@ function in_list(list, item) {
 function remainder(numerator, denominator, precision) {
 	precision = cint(precision);
 	var multiplier = Math.pow(10, precision);
+	let _remainder;
 	if (precision) {
-		var _remainder = ((numerator * multiplier) % (denominator * multiplier)) / multiplier;
+		_remainder = ((numerator * multiplier) % (denominator * multiplier)) / multiplier;
 	} else {
-		var _remainder = numerator % denominator;
+		_remainder = numerator % denominator;
 	}
 
 	return flt(_remainder, precision);
@@ -292,6 +320,7 @@ Object.assign(window, {
 	flt,
 	cint,
 	strip_number_groups,
+	convert_old_to_new_number_format,
 	format_currency,
 	fmt_money,
 	get_currency_symbol,

@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_rename": 1,
  "autoname": "field:print_style_name",
  "creation": "2017-08-17 01:25:56.910716",
@@ -47,7 +48,8 @@
   }
  ],
  "image_field": "preview",
- "modified": "2020-03-03 15:42:47.113519",
+ "links": [],
+ "modified": "2022-08-03 12:20:51.295775",
  "modified_by": "Administrator",
  "module": "Printing",
  "name": "Print Style",
@@ -68,5 +70,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

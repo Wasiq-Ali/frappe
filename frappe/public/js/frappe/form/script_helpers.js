@@ -1,6 +1,5 @@
 // Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 // MIT License. See license.txt
-/* eslint-disable no-console */
 
 window.refresh_many = function (flist, dn, table_field) {
 	for (var i in flist) {
@@ -34,7 +33,7 @@ window.refresh_field = function (n, docname, table_field) {
 };
 
 window.set_field_options = function (n, txt) {
-	cur_frm.set_df_property(n, "options", txt);
+	cur_frm?.set_df_property(n, "options", txt);
 };
 
 window.toggle_field = function (n, hidden) {

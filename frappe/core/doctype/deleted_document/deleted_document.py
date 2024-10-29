@@ -11,7 +11,30 @@ from frappe.model.workflow import get_workflow_name
 
 
 class DeletedDocument(Document):
-	pass
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		data: DF.Code | None
+		deleted_doctype: DF.Data | None
+		deleted_name: DF.Data | None
+		new_name: DF.ReadOnly | None
+		restored: DF.Check
+	# end: auto-generated types
+
+	no_feed_on_delete = True
+
+	@staticmethod
+	def clear_old_logs(days=180):
+		from frappe.query_builder import Interval
+		from frappe.query_builder.functions import Now
+
+		table = frappe.qb.DocType("Deleted Document")
+		frappe.db.delete(table, filters=(table.modified < (Now() - Interval(days=days))))
 
 
 @frappe.whitelist()
@@ -59,11 +82,11 @@ def bulk_restore(docnames):
 			restored.append(d)
 
 		except frappe.DocumentAlreadyRestored:
-			frappe.message_log.pop()
+			frappe.clear_last_message()
 			invalid.append(d)
 
 		except Exception:
-			frappe.message_log.pop()
+			frappe.clear_last_message()
 			failed.append(d)
 			frappe.db.rollback()
 

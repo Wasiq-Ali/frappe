@@ -12,6 +12,44 @@ from frappe.utils.weasyprint import download_pdf, get_html
 
 
 class PrintFormat(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		absolute_value: DF.Check
+		align_labels_right: DF.Check
+		css: DF.Code | None
+		custom_format: DF.Check
+		default_print_language: DF.Link | None
+		disabled: DF.Check
+		doc_type: DF.Link
+		font: DF.Data | None
+		font_size: DF.Int
+		format_data: DF.Code | None
+		html: DF.Code | None
+		line_breaks: DF.Check
+		margin_bottom: DF.Float
+		margin_left: DF.Float
+		margin_right: DF.Float
+		margin_top: DF.Float
+		module: DF.Link | None
+		page_number: DF.Literal[
+			"Hide", "Top Left", "Top Center", "Top Right", "Bottom Left", "Bottom Center", "Bottom Right"
+		]
+		print_format_builder: DF.Check
+		print_format_builder_beta: DF.Check
+		print_format_type: DF.Literal["Jinja", "JS"]
+		raw_commands: DF.Code | None
+		raw_printing: DF.Check
+		show_section_headings: DF.Check
+		standard: DF.Literal["No", "Yes"]
+
+	# end: auto-generated types
+
 	def onload(self):
 		templates = frappe.get_all(
 			"Print Format Field Template",
@@ -30,9 +68,10 @@ class PrintFormat(Document):
 		if (
 			self.standard == "Yes"
 			and not frappe.local.conf.get("developer_mode")
-			and not (frappe.flags.in_import or frappe.flags.in_test)
+			and not frappe.flags.in_migrate
+			and not frappe.flags.in_install
+			and not frappe.flags.in_test
 		):
-
 			frappe.throw(frappe._("Standard Print Format cannot be updated"))
 
 		# old_doc_type is required for clearing item cache
@@ -47,9 +86,7 @@ class PrintFormat(Document):
 			validate_template(self.html)
 
 		if self.custom_format and self.raw_printing and not self.raw_commands:
-			frappe.throw(
-				_("{0} are required").format(frappe.bold(_("Raw Commands"))), frappe.MandatoryError
-			)
+			frappe.throw(_("{0} are required").format(frappe.bold(_("Raw Commands"))), frappe.MandatoryError)
 
 		if self.custom_format and not self.html and not self.raw_printing:
 			frappe.throw(_("{0} is required").format(frappe.bold(_("HTML"))), frappe.MandatoryError)
@@ -95,7 +132,7 @@ class PrintFormat(Document):
 	def export_doc(self):
 		from frappe.modules.utils import export_module_json
 
-		export_module_json(self, self.standard == "Yes", self.module)
+		return export_module_json(self, self.standard == "Yes", self.module)
 
 	def on_trash(self):
 		if self.doc_type:

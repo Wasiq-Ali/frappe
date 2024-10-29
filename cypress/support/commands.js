@@ -34,14 +34,30 @@ Cypress.Commands.add("login", (email, password) => {
 	if (!password) {
 		password = Cypress.env("adminPassword");
 	}
-	cy.request({
-		url: "/api/method/login",
-		method: "POST",
-		body: {
-			usr: email,
-			pwd: password,
-		},
-	});
+	// cy.session clears all localStorage on new login, so we need to retain the last route
+	const session_last_route = window.localStorage.getItem("session_last_route");
+	return cy
+		.session(
+			[email, password] || "",
+			() => {
+				return cy.request({
+					url: "/api/method/login",
+					method: "POST",
+					body: {
+						usr: email,
+						pwd: password,
+					},
+				});
+			},
+			{
+				cacheAcrossSpecs: true,
+			}
+		)
+		.then(() => {
+			if (session_last_route) {
+				window.localStorage.setItem("session_last_route", session_last_route);
+			}
+		});
 });
 
 Cypress.Commands.add("call", (method, args) => {
@@ -62,6 +78,9 @@ Cypress.Commands.add("call", (method, args) => {
 				})
 				.then((res) => {
 					expect(res.status).eq(200);
+					if (method === "logout") {
+						Cypress.session.clearAllSavedSessions();
+					}
 					return res.body;
 				});
 		});
@@ -235,8 +254,15 @@ Cypress.Commands.add("awesomebar", (text) => {
 Cypress.Commands.add("new_form", (doctype) => {
 	let dt_in_route = doctype.toLowerCase().replace(/ /g, "-");
 	cy.visit(`/app/${dt_in_route}/new`);
-	cy.get("body").should("have.attr", "data-route", `Form/${doctype}/new-${dt_in_route}-1`);
+	cy.get("body").should(($body) => {
+		const dataRoute = $body.attr("data-route");
+		expect(dataRoute).to.match(new RegExp(`^Form/${doctype}/new-${dt_in_route}-`));
+	});
 	cy.get("body").should("have.attr", "data-ajax-state", "complete");
+});
+
+Cypress.Commands.add("select_form_tab", (label) => {
+	cy.get(".form-tabs-list [data-toggle='tab']").contains(label).click().wait(500);
 });
 
 Cypress.Commands.add("go_to_list", (doctype) => {
@@ -369,7 +395,9 @@ Cypress.Commands.add("update_doc", (doctype, docname, args) => {
 
 Cypress.Commands.add("switch_to_user", (user) => {
 	cy.call("logout");
+	cy.wait(200);
 	cy.login(user);
+	cy.reload();
 });
 
 Cypress.Commands.add("add_role", (user, role) => {
@@ -427,27 +455,8 @@ Cypress.Commands.add("click_menu_button", (name) => {
 });
 
 Cypress.Commands.add("clear_filters", () => {
-	let has_filter = false;
-	cy.intercept({
-		method: "POST",
-		url: "api/method/frappe.model.utils.user_settings.save",
-	}).as("filter-saved");
-	cy.get(".filter-section .filter-button").click({ force: true });
-	cy.wait(300);
-	cy.get(".filter-popover").should("exist");
-	cy.get(".filter-popover").then((popover) => {
-		if (popover.find("input.input-with-feedback")[0].value != "") {
-			has_filter = true;
-		}
-	});
-	cy.get(".filter-popover").find(".clear-filters").click();
-	cy.get(".filter-section .filter-button").click();
-	cy.window()
-		.its("cur_list")
-		.then((cur_list) => {
-			cur_list && cur_list.filter_area && cur_list.filter_area.clear();
-			has_filter && cy.wait("@filter-saved");
-		});
+	cy.get(".filter-x-button").click({ force: true });
+	cy.wait(1000);
 });
 
 Cypress.Commands.add("click_modal_primary_button", (btn_name) => {
@@ -518,33 +527,5 @@ Cypress.Commands.add("compare_document", (expected_document) => {
 			// Don't remove this, cypress can't magically wait for events it has no control over.
 			cy.wait(1000);
 			compare_document(expected_document, frm.doc);
-		});
-});
-
-Cypress.Commands.add('insert_doc', (doctype, args, ignore_duplicate) => {
-	return cy
-		.window()
-		.its('frappe.csrf_token')
-		.then(csrf_token => {
-			return cy
-				.request({
-					method: 'POST',
-					url: `/api/resource/${doctype}`,
-					body: args,
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-						'X-Frappe-CSRF-Token': csrf_token
-					},
-					failOnStatusCode: !ignore_duplicate
-				})
-				.then(res => {
-					let status_codes = [200];
-					if (ignore_duplicate) {
-						status_codes.push(409);
-					}
-					expect(res.status).to.be.oneOf(status_codes);
-					return res.body.data;
-				});
 		});
 });

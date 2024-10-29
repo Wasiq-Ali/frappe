@@ -14,6 +14,46 @@ from frappe.utils import cint, clean_whitespace
 
 
 class Address(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.core.doctype.dynamic_link.dynamic_link import DynamicLink
+		from frappe.types import DF
+
+		address_line1: DF.Data
+		address_line2: DF.Data | None
+		address_title: DF.Data | None
+		address_type: DF.Literal[
+			"Billing",
+			"Shipping",
+			"Office",
+			"Personal",
+			"Plant",
+			"Postal",
+			"Shop",
+			"Subsidiary",
+			"Warehouse",
+			"Current",
+			"Permanent",
+			"Other",
+		]
+		city: DF.Data
+		country: DF.Link
+		county: DF.Data | None
+		disabled: DF.Check
+		email_id: DF.Data | None
+		fax: DF.Data | None
+		is_primary_address: DF.Check
+		is_shipping_address: DF.Check
+		links: DF.Table[DynamicLink]
+		phone: DF.Data | None
+		pincode: DF.Data | None
+		state: DF.Data | None
+
+	# end: auto-generated types
 	def __setup__(self):
 		self.flags.linked = False
 
@@ -107,11 +147,10 @@ def get_preferred_address(doctype, name, preferred_key="is_primary_address"):
 			FROM
 				`tabAddress` addr, `tabDynamic Link` dl
 			WHERE
-				dl.parent = addr.name and dl.link_doctype = %s and
-				dl.link_name = %s and ifnull(addr.disabled, 0) = 0 and
-				%s = %s
-			"""
-			% ("%s", "%s", preferred_key, "%s"),
+				dl.parent = addr.name and dl.link_doctype = {} and
+				dl.link_name = {} and ifnull(addr.disabled, 0) = 0 and
+				{} = {}
+			""".format("%s", "%s", preferred_key, "%s"),
 			(doctype, name, 1),
 			as_dict=1,
 		)
@@ -123,9 +162,7 @@ def get_preferred_address(doctype, name, preferred_key="is_primary_address"):
 
 
 @frappe.whitelist()
-def get_default_address(
-	doctype: str, name: str | None, sort_key: str = "is_primary_address"
-) -> str | None:
+def get_default_address(doctype: str, name: str | None, sort_key: str = "is_primary_address") -> str | None:
 	"""Returns default Address name for the given doctype, name"""
 	if sort_key not in ["is_shipping_address", "is_primary_address"]:
 		return None
@@ -146,17 +183,24 @@ def get_default_address(
 
 
 @frappe.whitelist()
-def get_address_display(address_dict: dict | str | None = None) -> str | None:
-	if not address_dict:
+def get_address_display(address_dict: dict | str | None) -> str | None:
+	return render_address(address_dict)
+
+
+def render_address(address: dict | str | None, check_permissions=True) -> str | None:
+	if not address:
 		return
 
-	if not isinstance(address_dict, dict):
-		address_dict = frappe.db.get_value("Address", address_dict, "*", as_dict=True, cache=True) or {}
+	if not isinstance(address, dict):
+		address = frappe.get_cached_doc("Address", address)
+		if check_permissions:
+			address.check_permission()
+		address = address.as_dict()
 
-	name, template = get_address_templates(address_dict)
+	name, template = get_address_templates(address)
 
 	try:
-		return frappe.render_template(template, address_dict)
+		return frappe.render_template(template, address)
 	except TemplateSyntaxError:
 		frappe.throw(_("There is an error in your Address Template {0}").format(name))
 
@@ -261,7 +305,7 @@ def get_company_address(company, shipping_address=False):
 	sort_key = "is_shipping_address" if cint(shipping_address) else "is_primary_address"
 
 	ret.company_address = get_default_address("Company", company, sort_key=sort_key)
-	ret.company_address_display = get_address_display(ret.company_address)
+	ret.company_address_display = render_address(ret.company_address, check_permissions=False)
 
 	return ret
 
@@ -326,3 +370,23 @@ def get_condensed_address(doc):
 
 def update_preferred_address(address, field):
 	frappe.db.set_value("Address", address, field, 0)
+
+
+def get_address_display_list(doctype: str, name: str) -> list[dict]:
+	if not frappe.has_permission("Address", "read"):
+		return []
+
+	address_list = frappe.get_list(
+		"Address",
+		filters=[
+			["Dynamic Link", "link_doctype", "=", doctype],
+			["Dynamic Link", "link_name", "=", name],
+			["Dynamic Link", "parenttype", "=", "Address"],
+		],
+		fields=["*"],
+		order_by="is_primary_address DESC, `tabAddress`.creation ASC",
+	)
+	for a in address_list:
+		a["display"] = get_address_display(a)
+
+	return address_list

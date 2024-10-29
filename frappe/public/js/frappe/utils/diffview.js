@@ -16,10 +16,15 @@ frappe.ui.DiffView = class DiffView {
 	make_dialog() {
 		const get_query = () => ({
 			query: "frappe.utils.diff.version_query",
-			filters: { docname: this.docname, ref_doctype: this.doctype },
+			filters: {
+				docname: this.docname,
+				ref_doctype: this.doctype,
+				fieldname: this.fieldname,
+				page_len: 100,
+			},
 		});
 		const onchange = () => this.compute_diff();
-		let dialog = new frappe.ui.Dialog({
+		return new frappe.ui.Dialog({
 			title: __("Compare Versions"),
 			fields: [
 				{
@@ -56,7 +61,6 @@ frappe.ui.DiffView = class DiffView {
 			],
 			size: "extra-large",
 		});
-		return dialog;
 	}
 
 	compute_diff() {

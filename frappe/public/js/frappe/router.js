@@ -38,6 +38,10 @@ $("body").on("click", "a", function (e) {
 	const href = target_element.getAttribute("href");
 	const is_on_same_host = target_element.hostname === window.location.hostname;
 
+	if (target && target != "_self") {
+		return;
+	}
+
 	const override = (route) => {
 		e.preventDefault();
 		frappe.set_route(route);
@@ -52,10 +56,6 @@ $("body").on("click", "a", function (e) {
 		e.metaKey || // open in a new tab
 		href === "#" // hash is home
 	) {
-		return;
-	}
-
-	if (target && target != "_self") {
 		return;
 	}
 
@@ -112,6 +112,7 @@ frappe.router = {
 	layout_mapped: {},
 
 	is_app_route(path) {
+		if (!path) return;
 		// desk paths must begin with /app or doctype route
 		if (path.substr(0, 1) === "/") path = path.substr(1);
 		path = path.split("/");
@@ -177,13 +178,12 @@ frappe.router = {
 		// /app/user/user-001 = ["Form", "User", "user-001"]
 		// /app/event/view/calendar/default = ["List", "Event", "Calendar", "Default"]
 
-		let private_workspace = route[1] && `${route[1]}-${frappe.user.name.toLowerCase()}`;
-
 		if (frappe.workspaces[route[0]]) {
 			// public workspace
 			route = ["Workspaces", frappe.workspaces[route[0]].title];
 		} else if (route[0] == "private") {
 			// private workspace
+			let private_workspace = route[1] && `${route[1]}-${frappe.user.name.toLowerCase()}`;
 			if (!frappe.workspaces[private_workspace] && localStorage.new_workspace) {
 				let new_workspace = JSON.parse(localStorage.new_workspace);
 				if (frappe.router.slug(new_workspace.title) === route[1]) {
@@ -251,29 +251,29 @@ frappe.router = {
 		let new_route = this.list_views_route[_route.toLowerCase()];
 		let re_route = cstr(route[2]).toLowerCase() !== new_route.toLowerCase();
 
-		if (re_route) {
-			/**
-			 * In case of force_re_route, the url of the route should change,
-			 * if the _route and route[2] are different, it means there is a default_view
-			 * with force_re_route enabled.
-			 *
-			 * To change the url, to the correct view, the route[2] is changed with default_view
-			 *
-			 * Eg: If default_view is set to Report with force_re_route enabled and user routes
-			 * to List,
-			 * route: [todo, view, list]
-			 * default_view: report
-			 *
-			 * replaces the list to report and re-routes to the new route but should be replaced in
-			 * the history since the list route should not exist in history as we are rerouting it to
-			 * report
-			 */
-			frappe.route_flags.replace_route = true;
+			if (re_route) {
+				/**
+				 * In case of force_re_route, the url of the route should change,
+				 * if the _route and route[2] are different, it means there is a default_view
+				 * with force_re_route enabled.
+				 *
+				 * To change the url, to the correct view, the route[2] is changed with default_view
+				 *
+				 * Eg: If default_view is set to Report with force_re_route enabled and user routes
+				 * to List,
+				 * route: [todo, view, list]
+				 * default_view: report
+				 *
+				 * replaces the list to report and re-routes to the new route but should be replaced in
+				 * the history since the list route should not exist in history as we are rerouting it to
+				 * report
+				 */
+				frappe.route_flags.replace_route = true;
 
-			route[1] = "view"
-			route[2] = _route.toLowerCase();
-			this.set_route(route);
-		}
+				route[1] = "view"
+				route[2] = _route.toLowerCase();
+				this.set_route(route);
+			}
 
 		if (cstr(route[2]).toLowerCase() == "tree") {
 			standard_route = [
@@ -458,22 +458,37 @@ frappe.router = {
 				frappe.route_options = a;
 				return null;
 			} else {
-				return encodeURIComponent(cstr(a));
+				return encodeURIComponent(String(a));
 			}
 		}).join("/");
-		let private_home = frappe.workspaces[`home-${frappe.user.name.toLowerCase()}`];
 
-		let workspace_name = private_home || frappe.workspaces["home"] ? "home" : "";
-		let is_private = !!private_home;
-		let first_workspace = Object.keys(frappe.workspaces)[0];
-
-		if (!workspace_name && first_workspace) {
-			workspace_name = frappe.workspaces[first_workspace].title;
-			is_private = !frappe.workspaces[first_workspace].public;
+		if (path_string) {
+			return "/app/" + path_string;
 		}
 
-		let default_page = (is_private ? "private/" : "") + frappe.router.slug(workspace_name);
-		return "/app/" + (path_string || default_page);
+		// Resolution order
+		// 1. User's default workspace in user doctype
+		// 2. Private home
+		// 3. Public home
+		// 4. First workspace in list
+		let private_home = `home-${frappe.user.name.toLowerCase()}`;
+		let default_workspace = frappe.router.slug(frappe.boot.user.default_workspace?.name || "");
+
+		let workspace =
+			frappe.workspaces[default_workspace] ||
+			frappe.workspaces[private_home] ||
+			frappe.workspaces["home"] ||
+			Object.values(frappe.workspaces)[0];
+
+		if (workspace) {
+			return (
+				"/app/" +
+				(workspace.public ? "" : "private/") +
+				frappe.router.slug(workspace.title)
+			);
+		}
+
+		return "/app";
 	},
 
 	push_state(url) {
@@ -504,8 +519,8 @@ frappe.router = {
 
 	strip_prefix(route) {
 		if (route.substr(0, 1) == "/") route = route.substr(1); // for /app/sub
+		if (route == "app") route = route.substr(4); // for app
 		if (route.startsWith("app/")) route = route.substr(4); // for desk/sub
-		if (route == "app") route = route.substr(4); // for /app
 		if (route.substr(0, 1) == "/") route = route.substr(1);
 		if (route.substr(0, 1) == "#") route = route.substr(1);
 		if (route.substr(0, 1) == "!") route = route.substr(1);

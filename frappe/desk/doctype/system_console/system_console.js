@@ -10,7 +10,6 @@ frappe.ui.form.on("System Console", {
 			description: __("Execute Console script"),
 			ignore_inputs: true,
 		});
-		frm.set_value("type", "Python");
 	},
 
 	refresh: function (frm) {
@@ -22,6 +21,16 @@ frappe.ui.form.on("System Console", {
 				.then(() => frm.trigger("render_sql_output"))
 				.finally(() => $btn.text(__("Execute")));
 		});
+		if (
+			window.localStorage.getItem("system_console_code") &&
+			window.localStorage.getItem("system_console_type")
+		) {
+			frm.set_value("type", localStorage.getItem("system_console_type"));
+			frm.set_value("console", localStorage.getItem("system_console_code"));
+			frm.set_value("output", "");
+			window.localStorage.removeItem("system_console_code");
+			window.localStorage.removeItem("system_console_type");
+		}
 	},
 
 	type: function (frm) {
@@ -94,11 +103,11 @@ frappe.ui.form.on("System Console", {
 				<p class='text-muted'>Requested on: ${timestamp}</p>
 				<table class='table-bordered' style='width: 100%'>
 				<thead><tr>
-					<th width='5%'>Id</ht>
-					<th width='10%'>Time</ht>
-					<th width='10%'>State</ht>
-					<th width='60%'>Info</ht>
-					<th width='15%'>Progress / Wait Event</ht>
+					<th width='5%'>Id</th>
+					<th width='10%'>Time</th>
+					<th width='10%'>State</th>
+					<th width='60%'>Info</th>
+					<th width='15%'>Progress / Wait Event</th>
 				</tr></thead>
 				<tbody>${rows}</thead>`);
 			});

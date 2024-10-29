@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2016-04-14 09:41:45.892975",
  "doctype": "DocType",
  "document_type": "Setup",
@@ -41,7 +42,8 @@
   }
  ],
  "in_create": 1,
- "modified": "2020-03-03 15:42:43.156935",
+ "links": [],
+ "modified": "2022-08-03 12:20:51.822287",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Unhandled Email",
@@ -53,5 +55,6 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

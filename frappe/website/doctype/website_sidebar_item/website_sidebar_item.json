@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2016-12-29 07:42:26.246725",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -30,7 +31,8 @@
   }
  ],
  "istable": 1,
- "modified": "2020-03-03 15:44:55.842726",
+ "links": [],
+ "modified": "2022-08-03 12:20:49.377257",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Website Sidebar Item",
@@ -39,5 +41,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

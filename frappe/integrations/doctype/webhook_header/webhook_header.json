@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2017-09-08 16:27:39.195379",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -10,19 +11,20 @@
  "fields": [
   {
    "fieldname": "key",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Key"
   },
   {
    "fieldname": "value",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Value"
   }
  ],
  "istable": 1,
- "modified": "2020-03-03 15:42:44.161706",
+ "links": [],
+ "modified": "2023-12-11 12:20:51.949422",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Webhook Header",
@@ -31,5 +33,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

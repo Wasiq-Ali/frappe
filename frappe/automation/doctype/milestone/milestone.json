@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2019-04-17 09:39:15.647817",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -51,7 +52,8 @@
   }
  ],
  "in_create": 1,
- "modified": "2020-03-03 15:37:33.801862",
+ "links": [],
+ "modified": "2023-12-08 15:52:37.525003",
  "modified_by": "Administrator",
  "module": "Automation",
  "name": "Milestone",
@@ -72,7 +74,8 @@
  ],
  "quick_entry": 1,
  "sort_field": "modified",
- "sort_order": "ASC",
+ "sort_order": "DESC",
+ "states": [],
  "title_field": "reference_type",
  "track_changes": 1
 }

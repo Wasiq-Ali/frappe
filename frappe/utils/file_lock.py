@@ -9,6 +9,7 @@ Use `frappe.utils.synchroniztion.filelock` for process synchroniztion.
 """
 
 import os
+from pathlib import Path
 from time import time
 
 import frappe
@@ -41,6 +42,11 @@ def lock_exists(name):
 	return os.path.exists(get_lock_path(name))
 
 
+def lock_age(name) -> float:
+	"""Return time in seconds since lock was created."""
+	return time() - Path(get_lock_path(name)).stat().st_mtime
+
+
 def check_lock(path, timeout=600):
 	if not os.path.exists(path):
 		return False
@@ -59,9 +65,7 @@ def delete_lock(name):
 
 
 def get_lock_path(name):
-	name = name.lower()
-	lock_path = get_site_path(LOCKS_DIR, name + ".lock")
-	return lock_path
+	return get_site_path(LOCKS_DIR, f"{name.lower()}.lock")
 
 
 def release_document_locks():

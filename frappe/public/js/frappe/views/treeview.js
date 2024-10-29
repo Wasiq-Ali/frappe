@@ -60,12 +60,17 @@ frappe.views.TreeView = class TreeView {
 		this.get_tree_nodes = me.opts.get_tree_nodes || "frappe.desk.treeview.get_children";
 
 		this.get_permissions();
+
 		this.make_page();
 		this.make_filters();
 		this.root_value = null;
 
 		this.onload();
-		this.set_menu_item();
+
+		if (!this.opts.do_not_setup_menu) {
+			this.set_menu_item();
+		}
+
 		this.set_primary_action();
 		this.setup_realtime_updates();
 
@@ -85,23 +90,27 @@ frappe.views.TreeView = class TreeView {
 	}
 	make_page() {
 		var me = this;
-		this.parent = frappe.container.add_page(this.page_name);
-		frappe.ui.make_app_page({ parent: this.parent, single_column: true });
+		if (!this.opts || !this.opts.do_not_make_page) {
+			this.parent = frappe.container.add_page(this.page_name);
+			frappe.ui.make_app_page({ parent: this.parent, single_column: true });
+			this.page = this.parent.page;
+			frappe.container.change_to(this.page_name);
+			frappe.breadcrumbs.add(
+				me.opts.breadcrumb || locals.DocType[me.doctype].module,
+				me.doctype
+			);
 
-		this.page = this.parent.page;
-		frappe.container.change_to(this.page_name);
-		frappe.breadcrumbs.add(
-			me.opts.breadcrumb || locals.DocType[me.doctype].module,
-			me.doctype
-		);
+			this.set_title();
 
-		this.set_title();
+			this.page.main.css({
+				"min-height": "300px",
+			});
 
-		this.page.main.css({
-			"min-height": "300px",
-		});
-
-		this.page.main.addClass("frappe-card");
+			this.page.main.addClass("frappe-card");
+		} else {
+			this.page = this.opts.page;
+			$(this.page[0]).addClass("frappe-card");
+		}
 
 		if (this.opts.show_expand_all) {
 			this.page.add_inner_button(__("Expand All"), function () {
@@ -166,6 +175,7 @@ frappe.views.TreeView = class TreeView {
 	}
 	get_root() {
 		var me = this;
+
 		frappe.call({
 			method: me.get_tree_nodes,
 			args: me.args,
@@ -225,7 +235,6 @@ frappe.views.TreeView = class TreeView {
 			method: "frappe.utils.nestedset.rebuild_tree",
 			args: {
 				doctype: me.doctype,
-				parent_field: "parent_" + me.doctype.toLowerCase().replace(/ /g, "_"),
 			},
 			callback: function (r) {
 				if (!r.exc) {
@@ -514,7 +523,7 @@ frappe.views.TreeView = class TreeView {
 		}
 
 		this._needs_refresh = false;
-		frappe.socketio.doctype_subscribe(this.doctype);
+		frappe.realtime.doctype_subscribe(this.doctype);
 		frappe.realtime.on("list_update", (data) => {
 			if (data?.doctype !== this.doctype) {
 				return;

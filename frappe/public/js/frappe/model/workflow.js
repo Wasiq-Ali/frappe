@@ -6,11 +6,15 @@ frappe.provide("frappe.workflow");
 frappe.workflow = {
 	state_fields: {},
 	workflows: {},
+	avoid_status_override: {},
 	setup: function (doctype) {
 		var wf = frappe.get_list("Workflow", { document_type: doctype });
 		if (wf.length) {
 			frappe.workflow.workflows[doctype] = wf[0];
 			frappe.workflow.state_fields[doctype] = wf[0].workflow_state_field;
+			frappe.workflow.avoid_status_override[doctype] = wf[0].states
+				.filter((row) => row.avoid_status_override)
+				.map((d) => d.state);
 		} else {
 			frappe.workflow.state_fields[doctype] = null;
 		}
@@ -41,8 +45,7 @@ frappe.workflow = {
 		let workflow_states =
 			frappe.get_children(frappe.workflow.workflows[doctype], "states", { state: state }) ||
 			[];
-		let allow_edit_list = workflow_states.map((d) => d.allow_edit);
-		return allow_edit_list;
+		return workflow_states.map((d) => d.allow_edit);
 	},
 	is_self_approval_enabled: function (doctype) {
 		return frappe.workflow.workflows[doctype].allow_self_approval;
@@ -56,10 +59,9 @@ frappe.workflow = {
 
 			var state =
 				doc[state_fieldname] || frappe.workflow.get_default_state(doctype, doc.docstatus);
+			if (!state) return false;
 
-			let allow_edit_roles = state
-				? frappe.workflow.get_document_state_roles(doctype, state)
-				: null;
+			let allow_edit_roles = frappe.workflow.get_document_state_roles(doctype, state);
 			let has_common_role = frappe.user_roles.some((role) =>
 				allow_edit_roles.includes(role)
 			);

@@ -111,6 +111,10 @@ frappe.search.AwesomeBar = class AwesomeBar {
 				if (event.ctrlKey || event.metaKey) {
 					frappe.open_in_new_tab = true;
 				}
+				if (item.route[0].startsWith("https://")) {
+					window.open(item.route[0], "_blank");
+					return;
+				}
 				frappe.set_route(item.route);
 			}
 			$input.val("");
@@ -201,7 +205,8 @@ frappe.search.AwesomeBar = class AwesomeBar {
 				frappe.search.utils.get_workspaces(txt),
 				frappe.search.utils.get_dashboards(txt),
 				frappe.search.utils.get_recent_pages(txt || ""),
-				frappe.search.utils.get_executables(txt)
+				frappe.search.utils.get_executables(txt),
+				frappe.search.utils.get_marketplace_apps(txt)
 			);
 		if (txt.charAt(0) === "#") {
 			options = frappe.tags.utils.get_tags(txt);
@@ -301,7 +306,9 @@ frappe.search.AwesomeBar = class AwesomeBar {
 		var route = frappe.get_route();
 		if (route[0] === "List" && txt.indexOf(" in") === -1) {
 			// search in title field
-			var meta = frappe.get_meta(frappe.container.page.list_view.doctype);
+			const doctype = frappe.container.page?.list_view?.doctype;
+			if (!doctype) return;
+			var meta = frappe.get_meta(doctype);
 			var search_field = meta.title_field || "name";
 			var options = {};
 			options[search_field] = ["like", "%" + txt + "%"];
@@ -337,8 +344,8 @@ frappe.search.AwesomeBar = class AwesomeBar {
 						index: 80,
 						default: "Calculator",
 						onclick: function () {
-							frappe.msgprint(formatted_value, "Result");
-						}
+							frappe.msgprint(formatted_value, __("Result"));
+						},
 					});
 				} catch (e) {
 					// pass

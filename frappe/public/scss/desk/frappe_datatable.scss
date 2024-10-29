@@ -16,12 +16,17 @@
 	--dt-selection-highlight-color: var(--highlight-color);
 	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;
 
-	background-color: var(--fg-color);
+	background-color: var(--bg-color);
 	margin-left: -5px;
 	margin-top: 0px;
-	font-size: 12px;
+	@include get_textstyle("base", "regular");
 
-	.frappe-control, .form-control {
+	.dt-cell {
+		color: var(--text-color) !important;
+	}
+
+	.frappe-control,
+	.form-control {
 		margin: 0;
 		border-radius: 0px;
 		border: none;
@@ -43,13 +48,16 @@
 	}
 
 	.dt-header {
-
 		.dt-row[data-is-filter] {
 			display: flex !important;
+		}
+		.dt-row-header {
+			background-color: var(--subtle-fg);
 		}
 
 		.dt-cell--header .dt-cell__content {
 			font-weight: normal;
+			background-color: var(--subtle-fg);
 		}
 	}
 
@@ -119,6 +127,10 @@
 			height: 100%;
 			background-color: var(--control-bg);
 			padding: 0 var(--padding-xs);
+
+			&:focus {
+				box-shadow: var(--focus-default);
+			}
 		}
 	}
 
@@ -138,7 +150,8 @@
 		font-feature-settings: "tnum";
 	}
 
-	.dt-cell__content--header-0, .dt-cell__content--col-0 {
+	.dt-cell__content--header-0,
+	.dt-cell__content--col-0 {
 		padding: 0.5rem;
 	}
 
@@ -149,7 +162,7 @@
 	}
 
 	.dt-cell--focus .dt-cell__content {
-		border-color: var(--blue-200);
+		border-color: var(--gray-200);
 	}
 }
 

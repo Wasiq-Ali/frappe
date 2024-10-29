@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "field:ref_doctype",
  "creation": "2018-04-15 18:07:35.316870",
  "doctype": "DocType",
@@ -56,7 +57,8 @@
   }
  ],
  "hide_toolbar": 1,
- "modified": "2020-03-03 15:36:46.933931",
+ "links": [],
+ "modified": "2022-08-03 12:20:54.532708",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Success Action",
@@ -77,5 +79,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

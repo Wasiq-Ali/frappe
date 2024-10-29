@@ -2,21 +2,23 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "Prompt",
- "creation": "2023-07-21 14:45:28.016864",
+ "creation": "2013-02-18 13:36:19",
  "description": "DocType is a Table / Form in the application.",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
  "field_order": [
+  "form_builder_tab",
+  "form_builder",
+  "settings_tab",
   "sb0",
   "module",
   "is_submittable",
   "istable",
-  "editable_grid",
   "issingle",
-  "column_break_6",
   "is_tree",
   "is_calendar_and_gantt",
+  "editable_grid",
   "quick_entry",
   "cb01",
   "track_changes",
@@ -25,12 +27,10 @@
   "custom",
   "beta",
   "is_virtual",
-  "fields_section_break",
-  "fields",
+  "queue_in_background",
   "sb1",
   "naming_rule",
   "autoname",
-  "name_case",
   "allow_rename",
   "column_break_15",
   "description",
@@ -69,6 +69,7 @@
   "column_break_51",
   "email_append_to",
   "sender_field",
+  "sender_name_field",
   "subject_field",
   "sb2",
   "permissions",
@@ -90,7 +91,10 @@
   "website_search_field",
   "advanced",
   "engine",
-  "migration_hash"
+  "migration_hash",
+  "fields_section",
+  "fields",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -193,17 +197,10 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:!doc.istable",
    "fieldname": "beta",
    "fieldtype": "Check",
    "label": "Beta"
-  },
-  {
-   "collapsible": 1,
-   "collapsible_depends_on": "eval:true",
-   "fieldname": "fields_section_break",
-   "fieldtype": "Section Break",
-   "label": "Fields",
-   "oldfieldtype": "Section Break"
   },
   {
    "fieldname": "fields",
@@ -227,15 +224,6 @@
    "label": "Auto Name",
    "oldfieldname": "autoname",
    "oldfieldtype": "Data"
-  },
-  {
-   "depends_on": "eval:doc.naming_rule !== \"Autoincrement\"",
-   "fieldname": "name_case",
-   "fieldtype": "Select",
-   "label": "Name Case",
-   "oldfieldname": "name_case",
-   "oldfieldtype": "Select",
-   "options": "\nTitle Case\nUPPER CASE"
   },
   {
    "fieldname": "column_break_15",
@@ -284,7 +272,7 @@
    "default": "0",
    "fieldname": "hide_toolbar",
    "fieldtype": "Check",
-   "label": "Hide Sidebar and Menu",
+   "label": "Hide Sidebar, Menu, and Comments",
    "oldfieldname": "hide_toolbar",
    "oldfieldtype": "Check"
   },
@@ -488,6 +476,7 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:!doc.istable",
    "description": "Tree structures are implemented using Nested Set",
    "fieldname": "is_tree",
    "fieldtype": "Check",
@@ -549,7 +538,7 @@
    "depends_on": "email_append_to",
    "fieldname": "sender_field",
    "fieldtype": "Data",
-   "label": "Sender Field",
+   "label": "Sender Email Field",
    "mandatory_depends_on": "email_append_to"
   },
   {
@@ -639,6 +628,14 @@
    "label": "Make Attachments Public by Default"
   },
   {
+   "default": "0",
+   "depends_on": "eval: doc.is_submittable",
+   "description": "Enabling this will submit documents in background",
+   "fieldname": "queue_in_background",
+   "fieldtype": "Check",
+   "label": "Queue in Background (BETA)"
+  },
+  {
    "fieldname": "default_view",
    "fieldtype": "Select",
    "label": "Default View"
@@ -651,14 +648,45 @@
   },
   {
    "default": "0",
+   "depends_on": "eval:!doc.istable",
    "description": "Enables Calendar and Gantt views.",
    "fieldname": "is_calendar_and_gantt",
    "fieldtype": "Check",
    "label": "Is Calendar and Gantt"
   },
   {
-   "fieldname": "column_break_6",
-   "fieldtype": "Column Break"
+   "fieldname": "settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Settings"
+  },
+  {
+   "depends_on": "eval:!doc.__islocal",
+   "fieldname": "form_builder_tab",
+   "fieldtype": "Tab Break",
+   "label": "Form"
+  },
+  {
+   "fieldname": "form_builder",
+   "fieldtype": "HTML",
+   "label": "Form Builder"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "fields_section",
+   "fieldtype": "Section Break",
+   "label": "Fields"
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
+  },
+  {
+   "depends_on": "email_append_to",
+   "fieldname": "sender_name_field",
+   "fieldtype": "Data",
+   "label": "Sender Name Field"
   }
  ],
  "icon": "fa fa-bolt",
@@ -746,7 +774,7 @@
    "link_fieldname": "reference_doctype"
   }
  ],
- "modified": "2023-08-14 17:32:23.824794",
+ "modified": "2023-12-01 18:37:16.799471",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocType",

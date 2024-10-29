@@ -4,6 +4,48 @@
 frappe.provide("frappe.model");
 
 $.extend(frappe.model, {
+	all_fieldtypes: [
+		"Autocomplete",
+		"Attach",
+		"Attach Image",
+		"Barcode",
+		"Button",
+		"Check",
+		"Code",
+		"Color",
+		"Currency",
+		"Data",
+		"Date",
+		"Datetime",
+		"Duration",
+		"Dynamic Link",
+		"Float",
+		"Geolocation",
+		"Heading",
+		"HTML",
+		"HTML Editor",
+		"Icon",
+		"Image",
+		"Int",
+		"JSON",
+		"Link",
+		"Long Text",
+		"Markdown Editor",
+		"Password",
+		"Percent",
+		"Phone",
+		"Read Only",
+		"Rating",
+		"Select",
+		"Signature",
+		"Small Text",
+		"Table",
+		"Table MultiSelect",
+		"Text",
+		"Text Editor",
+		"Time",
+	],
+
 	no_value_type: [
 		"Section Break",
 		"Column Break",
@@ -64,6 +106,16 @@ $.extend(frappe.model, {
 		"file_list",
 		"flags",
 		"docstatus",
+	],
+
+	html_fieldtypes: [
+		"Text Editor",
+		"Text",
+		"Small Text",
+		"Long Text",
+		"HTML Editor",
+		"Markdown Editor",
+		"Code",
 	],
 
 	std_fields: [
@@ -236,21 +288,18 @@ $.extend(frappe.model, {
 
 	init_doctype: function (doctype) {
 		var meta = locals.DocType[doctype];
-		if (meta.__list_js) {
-			eval(meta.__list_js);
+		for (const asset_key of [
+			"__list_js",
+			"__custom_list_js",
+			"__calendar_js",
+			"__map_js",
+			"__tree_js",
+		]) {
+			if (meta[asset_key]) {
+				new Function(meta[asset_key])();
+			}
 		}
-		if (meta.__custom_list_js) {
-			eval(meta.__custom_list_js);
-		}
-		if (meta.__calendar_js) {
-			eval(meta.__calendar_js);
-		}
-		if (meta.__map_js) {
-			eval(meta.__map_js);
-		}
-		if (meta.__tree_js) {
-			eval(meta.__tree_js);
-		}
+
 		if (meta.__templates) {
 			$.extend(frappe.templates, meta.__templates);
 		}
@@ -309,11 +358,9 @@ $.extend(frappe.model, {
 	},
 
 	unscrub: function (txt) {
-		return __(txt || "")
-			.replace(/-|_/g, " ")
-			.replace(/\w*/g, function (keywords) {
-				return keywords.charAt(0).toUpperCase() + keywords.substr(1).toLowerCase();
-			});
+		return (txt || "").replace(/-|_/g, " ").replace(/\w*/g, function (keywords) {
+			return keywords.charAt(0).toUpperCase() + keywords.substr(1).toLowerCase();
+		});
 	},
 
 	can_create: function (doctype) {
@@ -343,6 +390,11 @@ $.extend(frappe.model, {
 	can_delete: function (doctype) {
 		if (!doctype) return false;
 		return frappe.boot.user.can_delete.indexOf(doctype) !== -1;
+	},
+
+	can_submit: function (doctype) {
+		if (!doctype) return false;
+		return frappe.boot.user.can_submit.indexOf(doctype) !== -1;
 	},
 
 	can_cancel: function (doctype) {
@@ -420,21 +472,14 @@ $.extend(frappe.model, {
 		return frappe.boot.user.can_share.indexOf(doctype) !== -1;
 	},
 
-	can_set_user_permissions: function (doctype, frm) {
-		// system manager can always set user permissions
-		if (frappe.user_roles.includes("System Manager")) return true;
-
-		if (frm) return frm.perm[0].set_user_permissions === 1;
-		return frappe.boot.user.can_set_user_permissions.indexOf(doctype) !== -1;
-	},
-
 	has_value: function (dt, dn, fn) {
 		// return true if property has value
 		var val = locals[dt] && locals[dt][dn] && locals[dt][dn][fn];
 		var df = frappe.meta.get_docfield(dt, fn, dn);
 
+		let ret;
 		if (frappe.model.table_fields.includes(df.fieldtype)) {
-			var ret = false;
+			ret = false;
 			$.each(locals[df.options] || {}, function (k, d) {
 				if (d.parent == dn && d.parenttype == dt && d.parentfield == df.fieldname) {
 					ret = true;
@@ -442,7 +487,7 @@ $.extend(frappe.model, {
 				}
 			});
 		} else {
-			var ret = !is_null(val);
+			ret = !is_null(val);
 		}
 		return ret ? true : false;
 	},
@@ -520,7 +565,7 @@ $.extend(frappe.model, {
 				tasks.push(() => frappe.model.trigger(key, value, doc, skip_dirty_trigger));
 			} else {
 				// execute link triggers (want to reselect to execute triggers)
-				if (in_list(["Link", "Dynamic Link"], fieldtype) && doc) {
+				if (["Link", "Dynamic Link"].includes(fieldtype) && doc) {
 					tasks.push(() => frappe.model.trigger(key, value, doc, skip_dirty_trigger));
 				}
 			}
@@ -587,12 +632,13 @@ $.extend(frappe.model, {
 	},
 
 	get_children: function (doctype, parent, parentfield, filters) {
+		let doc;
 		if ($.isPlainObject(doctype)) {
-			var doc = doctype;
-			var filters = parentfield;
-			var parentfield = parent;
+			doc = doctype;
+			filters = parentfield;
+			parentfield = parent;
 		} else {
-			var doc = frappe.get_doc(doctype, parent);
+			doc = frappe.get_doc(doctype, parent);
 		}
 
 		var children = doc[parentfield] || [];
@@ -604,8 +650,7 @@ $.extend(frappe.model, {
 	},
 
 	clear_table: function (doc, parentfield) {
-		for (var i = 0, l = (doc[parentfield] || []).length; i < l; i++) {
-			var d = doc[parentfield][i];
+		for (const d of doc[parentfield] || []) {
 			delete locals[d.doctype][d.name];
 		}
 		doc[parentfield] = [];
@@ -623,7 +668,7 @@ $.extend(frappe.model, {
 		if (!doc) return;
 
 		var parent = null, parenttype = null, parentfield = null;
-		if(doc.parenttype) {
+		if (doc.parenttype) {
 			parent = doc.parent;
 			parenttype = doc.parenttype;
 			parentfield = doc.parentfield;
@@ -738,9 +783,13 @@ $.extend(frappe.model, {
 	},
 
 	round_floats_in: function(doc, fieldnames, excluding) {
-		if(!fieldnames) {
-			fieldnames = frappe.meta.get_fieldnames(doc.doctype, doc.parent,
-				{"fieldtype": ["in", ["Currency", "Float"]]});
+		if (!doc) {
+			return;
+		}
+		if (!fieldnames) {
+			fieldnames = frappe.meta.get_fieldnames(doc.doctype, doc.parent, {
+				fieldtype: ["in", ["Currency", "Float"]],
+			});
 		}
 		for (var i = 0, j = fieldnames.length; i < j; i++) {
 			var fieldname = fieldnames[i];
@@ -811,9 +860,9 @@ $.extend(frappe.model, {
 			}
 
 			if (
-				(frm.doc.fields.find((i) => i.fieldname === "latitude") &&
-					frm.doc.fields.find((i) => i.fieldname === "longitude")) ||
-				frm.doc.fields.find(
+				(frm.doc.fields?.find((i) => i.fieldname === "latitude") &&
+					frm.doc.fields?.find((i) => i.fieldname === "longitude")) ||
+				frm.doc.fields?.find(
 					(i) => i.fieldname === "location" && i.fieldtype == "Geolocation"
 				)
 			) {

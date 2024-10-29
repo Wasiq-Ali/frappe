@@ -15,6 +15,7 @@ frappe.ui.Notifications = class Notifications {
 		this.body = this.dropdown_list.find(".notification-list-body");
 		this.panel_events = this.dropdown_list.find(".panel-events");
 		this.panel_notifications = this.dropdown_list.find(".panel-notifications");
+		this.panel_changelog_feed = this.dropdown_list.find(".panel-changelog-feed");
 
 		this.user = frappe.session.user;
 
@@ -52,22 +53,26 @@ frappe.ui.Notifications = class Notifications {
 				el: this.panel_notifications,
 			},
 			{
-				label: __("Today's Events"),
+				label: __("Events"),
 				id: "todays_events",
 				view: EventsView,
 				el: this.panel_events,
+			},
+			{
+				label: __("What's New"),
+				id: "changelog_feed",
+				view: ChangelogFeedView,
+				el: this.panel_changelog_feed,
 			},
 		];
 
 		let get_headers_html = (item) => {
 			let active = item.id == "notifications" ? "active" : "";
 
-			let html = `<li class="notifications-category ${active}"
-					id="${item.id}"
-					data-toggle="collapse"
-				>${item.label}</li>`;
-
-			return html;
+			return `<li class="notifications-category ${active}"
+   					id="${item.id}"
+   					data-toggle="collapse"
+   				>${item.label}</li>`;
 		};
 
 		let navitem = $(`<ul class="notification-item-tabs nav nav-tabs" role="tablist"></ul>`);
@@ -237,18 +242,18 @@ class NotificationsView extends BaseNotificationsView {
 		this.change_activity_status();
 	}
 
-	get_dropdown_item_html(field) {
-		let doc_link = this.get_item_link(field);
+	get_dropdown_item_html(notification_log) {
+		let doc_link = this.get_item_link(notification_log);
 
-		let read_class = field.read ? "" : "unread";
-		let message = field.subject;
+		let read_class = notification_log.read ? "" : "unread";
+		let message = notification_log.subject;
 
 		let title = message.match(/<b class="subject-title">(.*?)<\/b>/);
 		message = title
 			? message.replace(title[1], frappe.ellipsis(strip_html(title[1]), 100))
 			: message;
 
-		let timestamp = frappe.datetime.comment_when(field.creation);
+		let timestamp = frappe.datetime.comment_when(notification_log.creation);
 		let message_html = `<div class="message">
 			<div>${message}</div>
 			<div class="notification-timestamp text-muted">
@@ -256,12 +261,12 @@ class NotificationsView extends BaseNotificationsView {
 			</div>
 		</div>`;
 
-		let user = field.from_user;
+		let user = notification_log.from_user;
 		let user_avatar = frappe.avatar(user, "avatar-medium user-avatar");
 
 		let item_html = $(`<a class="recent-item notification-item ${read_class}"
 				href="${doc_link}"
-				data-name="${field.name}"
+				data-name="${notification_log.name}"
 			>
 				<div class="notification-body">
 					${user_avatar}
@@ -271,18 +276,18 @@ class NotificationsView extends BaseNotificationsView {
 				</div>
 			</a>`);
 
-		if (!field.read) {
+		if (!notification_log.read) {
 			let mark_btn = item_html.find(".mark-as-read");
 			mark_btn.tooltip({ delay: { show: 600, hide: 100 }, trigger: "hover" });
 			mark_btn.on("click", (e) => {
 				e.preventDefault();
 				e.stopImmediatePropagation();
-				this.mark_as_read(field.name, item_html);
+				this.mark_as_read(notification_log.name, item_html);
 			});
 		}
 
 		item_html.on("click", () => {
-			!field.read && this.mark_as_read(field.name, item_html);
+			!notification_log.read && this.mark_as_read(notification_log.name, item_html);
 			this.notifications_icon.trigger("click");
 		});
 
@@ -298,8 +303,8 @@ class NotificationsView extends BaseNotificationsView {
 		} else {
 			if (this.dropdown_items.length) {
 				this.container.empty();
-				this.dropdown_items.forEach((field) => {
-					this.container.append(this.get_dropdown_item_html(field));
+				this.dropdown_items.forEach((notification_log) => {
+					this.container.append(this.get_dropdown_item_html(notification_log));
 				});
 				this.container.append(`<a class="list-footer"
 					href="/app/List/Notification Log">
@@ -327,6 +332,9 @@ class NotificationsView extends BaseNotificationsView {
 	}
 
 	get_item_link(notification_doc) {
+		if (notification_doc.link) {
+			return notification_doc.link;
+		}
 		const link_doctype = notification_doc.document_type
 			? notification_doc.document_type
 			: "Notification Log";
@@ -436,6 +444,56 @@ class EventsView extends BaseNotificationsView {
 			`;
 		}
 
+		this.container.html(html);
+	}
+}
+
+class ChangelogFeedView extends BaseNotificationsView {
+	make() {
+		this.render_changelog_feed_html(frappe.boot.changelog_feed || []);
+	}
+
+	render_changelog_feed_html(changelog_feed) {
+		let html = "";
+		if (changelog_feed.length) {
+			this.container.empty();
+			const get_changelog_feed_html = (changelog_feed_item) => {
+				const timestamp = frappe.datetime.prettyDate(
+					changelog_feed_item.posting_timestamp
+				);
+				const message_html = `<div class="message">
+							<div>${changelog_feed_item.title}</div>
+							<div class="notification-timestamp text-muted">
+							${changelog_feed_item.app_title} | ${timestamp}
+							</div>
+						</div>`;
+
+				const item_html = `<a class="recent-item notification-item"
+								href="${changelog_feed_item.link}"
+								data-name="${changelog_feed_item.title}"
+								target="_blank" rel="noopener noreferrer"
+							>
+							<div class="notification-body">
+								${message_html}
+							</div>
+							</div>
+						</a>`;
+
+				return item_html;
+			};
+			html = changelog_feed.map(get_changelog_feed_html).join("");
+		} else {
+			html = `<div class="notification-null-state">
+						<div class="text-center">
+							<img src="/assets/frappe/images/ui-states/notification-empty-state.svg" alt="Generic Empty State" class="null-state">
+							<div class="title">${__("Nothing New")}</div>
+							<div class="subtitle">
+								${__("There is nothing new to show you right now.")}
+							</div>
+						</div>
+					</div>
+					`;
+		}
 		this.container.html(html);
 	}
 }

@@ -22,9 +22,7 @@ frappe._.get_data_uri = (element) => {
 	const context = $canvas[0].getContext("2d");
 	context.drawImage(element, 0, 0, width, height);
 
-	const data_uri = $canvas[0].toDataURL("image/png");
-
-	return data_uri;
+	return $canvas[0].toDataURL("image/png");
 };
 
 function get_file_input() {
@@ -100,13 +98,16 @@ frappe.ui.Capture = class {
 					fieldname: "total_count",
 				},
 			],
-			on_hide: this.stop_media_stream(),
+			on_hide: () => {
+				this.stop_media_stream();
+			},
 		});
 
 		me.$template = $(frappe.ui.Capture.TEMPLATE);
 
 		let field = me.dialog.get_field("capture");
 		$(field.wrapper).html(me.$template);
+		me.update_count();
 
 		me.dialog.get_close_btn().on("click", () => {
 			me.hide();
@@ -233,7 +234,7 @@ frappe.ui.Capture = class {
 
 	setup_remove_action() {
 		let me = this;
-		let elements = this.$template[0].getElementsByClassName("capture-remove-btn");
+		let elements = Array.from(this.$template[0].getElementsByClassName("capture-remove-btn"));
 
 		elements.forEach((el) => {
 			el.onclick = () => {

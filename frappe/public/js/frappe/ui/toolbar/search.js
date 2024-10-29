@@ -59,7 +59,6 @@ frappe.search.SearchDialog = class {
 							callback(results, keywords);
 						},
 						(err) => {
-							// eslint-disable-next-line no-console
 							console.error(err);
 						}
 					);
@@ -78,7 +77,6 @@ frappe.search.SearchDialog = class {
 							callback(results, keywords);
 						},
 						(err) => {
-							// eslint-disable-next-line no-console
 							console.error(err);
 						}
 					);
@@ -177,7 +175,6 @@ frappe.search.SearchDialog = class {
 							doctype_results.length && this.add_more_results(doctype_results);
 						},
 						(err) => {
-							// eslint-disable-next-line no-console
 							console.error(err);
 						}
 					);
@@ -320,7 +317,7 @@ frappe.search.SearchDialog = class {
 	get_link(result) {
 		let link = "";
 		if (result.route) {
-			link = `href="/app/${result.route.join("/")}"`;
+			link = `href="${frappe.router.make_url(result.route)}"`;
 		} else if (result.data_path) {
 			link = `data-path=${result.data_path}"`;
 		}

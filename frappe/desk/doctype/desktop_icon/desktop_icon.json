@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2016-02-22 03:47:45.387068",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -145,7 +146,8 @@
   }
  ],
  "in_create": 1,
- "modified": "2020-03-03 15:37:54.626127",
+ "links": [],
+ "modified": "2022-08-03 12:20:50.577580",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Desktop Icon",
@@ -167,6 +169,7 @@
  "read_only": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "module_name",
  "track_changes": 1
 }

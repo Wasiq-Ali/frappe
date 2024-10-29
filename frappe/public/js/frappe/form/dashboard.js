@@ -256,6 +256,7 @@ frappe.ui.form.Dashboard = class FormDashboard {
 		this.data = this.frm.meta.__dashboard || {};
 		if (!this.data.transactions) this.data.transactions = [];
 		if (!this.data.internal_links) this.data.internal_links = {};
+		if (!this.data.internal_and_external_links) this.data.internal_and_external_links = {};
 		this.filter_permissions();
 	}
 
@@ -579,7 +580,7 @@ frappe.ui.form.Dashboard = class FormDashboard {
 				.addClass("indicator-column");
 		}
 
-		let indicator = $(
+		return $(
 			'<div class="col-sm-' +
 				colspan +
 				' indicator-column"><span class="indicator ' +
@@ -588,8 +589,6 @@ frappe.ui.form.Dashboard = class FormDashboard {
 				label +
 				"</span></div>"
 		).appendTo(this.stats_area_row);
-
-		return indicator;
 	}
 
 	// graphs

@@ -25,7 +25,7 @@ def clean_html(html):
 
 	return bleach.clean(
 		clean_script_and_style(html),
-		tags=[
+		tags={
 			"div",
 			"p",
 			"br",
@@ -42,9 +42,8 @@ def clean_html(html):
 			"tbody",
 			"td",
 			"tr",
-		],
+		},
 		attributes=[],
-		styles=["color", "border", "border-color"],
 		strip=True,
 		strip_comments=True,
 	)
@@ -52,44 +51,13 @@ def clean_html(html):
 
 def clean_email_html(html):
 	import bleach
+	from bleach.css_sanitizer import CSSSanitizer
 
 	if not isinstance(html, str):
 		return html
 
-	return bleach.clean(
-		clean_script_and_style(html),
-		tags=[
-			"div",
-			"p",
-			"br",
-			"ul",
-			"ol",
-			"li",
-			"strong",
-			"b",
-			"em",
-			"i",
-			"u",
-			"a",
-			"table",
-			"thead",
-			"tbody",
-			"td",
-			"tr",
-			"th",
-			"pre",
-			"code",
-			"h1",
-			"h2",
-			"h3",
-			"h4",
-			"h5",
-			"h6",
-			"button",
-			"img",
-		],
-		attributes=["border", "colspan", "rowspan", "src", "href", "style", "id"],
-		styles=[
+	css_sanitizer = CSSSanitizer(
+		allowed_css_properties=[
 			"color",
 			"border-color",
 			"width",
@@ -121,7 +89,43 @@ def clean_email_html(html):
 			"text-align",
 			"vertical-align",
 			"display",
-		],
+		]
+	)
+
+	return bleach.clean(
+		clean_script_and_style(html),
+		tags={
+			"div",
+			"p",
+			"br",
+			"ul",
+			"ol",
+			"li",
+			"strong",
+			"b",
+			"em",
+			"i",
+			"u",
+			"a",
+			"table",
+			"thead",
+			"tbody",
+			"td",
+			"tr",
+			"th",
+			"pre",
+			"code",
+			"h1",
+			"h2",
+			"h3",
+			"h4",
+			"h5",
+			"h6",
+			"button",
+			"img",
+		},
+		attributes=["border", "colspan", "rowspan", "src", "href", "style", "id"],
+		css_sanitizer=css_sanitizer,
 		protocols=["cid", "http", "https", "mailto", "data"],
 		strip=True,
 		strip_comments=True,
@@ -138,24 +142,26 @@ def clean_script_and_style(html):
 	return frappe.as_unicode(soup)
 
 
-def sanitize_html(html, linkify=False):
+def sanitize_html(html, linkify=False, always_sanitize=False):
 	"""
 	Sanitize HTML tags, attributes and style to prevent XSS attacks
 	Based on bleach clean, bleach whitelist and html5lib's Sanitizer defaults
 
-	Does not sanitize JSON, as it could lead to future problems
+	Does not sanitize JSON unless explicitly specified, as it could lead to future problems
 	"""
 	import bleach
+	from bleach.css_sanitizer import CSSSanitizer
 	from bs4 import BeautifulSoup
 
 	if not isinstance(html, str):
 		return html
 
-	elif is_json(html):
-		return html
+	if not always_sanitize:
+		if is_json(html):
+			return html
 
-	if not bool(BeautifulSoup(html, "html.parser").find()):
-		return html
+		if not bool(BeautifulSoup(html, "html.parser").find()):
+			return html
 
 	tags = (
 		acceptable_elements
@@ -170,17 +176,16 @@ def sanitize_html(html, linkify=False):
 		return name in acceptable_attributes
 
 	attributes = {"*": attributes_filter, "svg": svg_attributes}
-	styles = bleach_allowlist.all_styles
-	strip_comments = False
+	css_sanitizer = CSSSanitizer(allowed_css_properties=bleach_allowlist.all_styles)
 
 	# returns html with escaped tags, escaped orphan >, <, etc.
 	escaped_html = bleach.clean(
 		html,
 		tags=tags,
 		attributes=attributes,
-		styles=styles,
-		strip_comments=strip_comments,
-		protocols=["cid", "http", "https", "mailto"],
+		css_sanitizer=css_sanitizer,
+		strip_comments=False,
+		protocols={"cid", "http", "https", "mailto"},
 	)
 
 	return escaped_html
@@ -280,6 +285,7 @@ acceptable_elements = [
 	"li",
 	"m",
 	"map",
+	"mark",
 	"menu",
 	"meter",
 	"multicol",

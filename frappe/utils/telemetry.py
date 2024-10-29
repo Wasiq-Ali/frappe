@@ -16,20 +16,21 @@ POSTHOG_HOST_FIELD = "posthog_host"
 
 
 def add_bootinfo(bootinfo):
+	bootinfo.telemetry_site_age = site_age()
+
 	if not frappe.get_system_settings("enable_telemetry"):
 		return
 
+	bootinfo.enable_telemetry = True
 	bootinfo.posthog_host = frappe.conf.get(POSTHOG_HOST_FIELD)
 	bootinfo.posthog_project_id = frappe.conf.get(POSTHOG_PROJECT_FIELD)
-	bootinfo.enable_telemetry = True
-	bootinfo.telemetry_site_age = site_age()
 
 
 @site_cache(ttl=60 * 60 * 12)
 def site_age():
 	try:
 		est_creation = frappe.db.get_value("User", "Administrator", "creation")
-		return (getdate() - getdate(est_creation)).days
+		return (getdate() - getdate(est_creation)).days + 1
 	except Exception:
 		pass
 

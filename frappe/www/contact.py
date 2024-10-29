@@ -6,7 +6,7 @@ from contextlib import suppress
 import frappe
 from frappe import _, unscrub
 from frappe.rate_limiter import rate_limit
-from frappe.utils import validate_email_address, cint, cstr
+from frappe.utils import validate_email_address, cint
 import json
 
 sitemap = 1
@@ -20,7 +20,7 @@ def get_context(context):
 
 
 @frappe.whitelist(allow_guest=True)
-@rate_limit(limit=10, seconds=60 * 60)
+@rate_limit(limit=100, seconds=60 * 60)
 def send_message(sender, message, subject="Website Query", args=None, create_communication=1):
 	if not sender:
 		frappe.throw(_("Please enter your email address"))
@@ -83,13 +83,14 @@ def send_message(sender, message, subject="Website Query", args=None, create_com
 	# for clearing outgoing email error message
 	frappe.clear_last_message()
 
+	system_language = frappe.db.get_single_value("System Settings", "language")
 	# add to to-do ?
 	if cint(create_communication):
 		frappe.get_doc(
 			dict(
 				doctype="Communication",
 				sender=sender,
-				subject=_("New Message from Website Contact Page"),
+				subject=_("New Message from Website Contact Page", system_language),
 				sent_or_received="Received",
 				content=message,
 				status="Open",

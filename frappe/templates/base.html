@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!-- Built on Frappe. https://frappeframework.com/ -->
-<html lang="en">
+<html lang="{{boot.lang}}">
 <head>
 	{% if google_analytics_id -%}
 	<!-- Google tag (gtag.js) -->
@@ -42,8 +42,6 @@
 	>
 	{% endblock %}
 
-	<link rel="canonical" href="{{ canonical }}">
-
 	{%- block head -%}
 		{% include "templates/includes/head.html" %}
 	{%- endblock -%}
@@ -58,6 +56,14 @@
 		{%- endif %}
 	{%- endblock -%}
 
+	{% if boot.lang == "eo" %}
+	<script type="text/javascript">
+		var _jipt = [];
+		_jipt.push(['project', 'frappe']);
+	</script>
+	<script type="text/javascript" src="https://cdn.crowdin.com/jipt/jipt.js"></script>
+	{% endif %}
+
 	<script>
 		window.frappe = {};
 		frappe.ready_events = [];
@@ -65,7 +71,7 @@
 			frappe.ready_events.push(fn);
 		}
 		window.dev_server = {{ dev_server }};
-		window.socketio_port = {{ (frappe.socketio_port or 'null') }};
+		window.socketio_port = {{ (frappe.socketio_port or 9000) }};
 		window.show_language_picker = {{ show_language_picker or 'false' }};
 	</script>
 </head>
@@ -77,6 +83,7 @@
 	{%- endif %}
 
 	{% include "public/icons/timeless/icons.svg" %}
+	{% include "public/icons/espresso/icons.svg" %}
 	{%- block banner -%}
 		{% include "templates/includes/banner_extension.html" ignore missing %}
 

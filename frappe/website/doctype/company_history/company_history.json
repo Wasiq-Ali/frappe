@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2013-02-22 01:28:08",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -25,12 +26,14 @@
  ],
  "idx": 1,
  "istable": 1,
- "modified": "2020-03-03 15:45:04.515295",
+ "links": [],
+ "modified": "2022-08-03 12:20:50.361022",
  "modified_by": "Administrator",
  "module": "Website",
  "name": "Company History",
  "owner": "Administrator",
  "permissions": [],
  "sort_field": "modified",
- "sort_order": "DESC"
+ "sort_order": "DESC",
+ "states": []
 }

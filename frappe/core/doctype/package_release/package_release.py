@@ -11,6 +11,23 @@ from frappe.query_builder.functions import Max
 
 
 class PackageRelease(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		major: DF.Int
+		minor: DF.Int
+		package: DF.Link
+		patch: DF.Int
+		path: DF.SmallText | None
+		publish: DF.Check
+		release_notes: DF.MarkdownEditor | None
+
+	# end: auto-generated types
 	def set_version(self):
 		# set the next patch release by default
 		doctype = frappe.qb.DocType("Package Release")
@@ -106,6 +123,9 @@ class PackageRelease(Document):
 				attached_to_name=self.name,
 			)
 		)
+
+		# Set path to tarball
+		self.path = file.file_url
 
 		file.flags.ignore_duplicate_entry_error = True
 		file.insert()

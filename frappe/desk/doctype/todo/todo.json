@@ -63,8 +63,10 @@
    "label": "Color"
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "date",
    "fieldtype": "Date",
+   "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Due Date",
    "oldfieldname": "date",
@@ -166,7 +168,7 @@
  "idx": 2,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2022-12-20 15:41:11.946103",
+ "modified": "2023-10-05 07:44:38.476400",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "ToDo",

@@ -12,10 +12,16 @@ from frappe.website.utils import build_response, clear_website_cache, get_home_p
 class TestWebsite(FrappeTestCase):
 	def setUp(self):
 		frappe.set_user("Guest")
+		self._clearRequest()
 
 	def tearDown(self):
 		frappe.db.delete("Access Log")
 		frappe.set_user("Administrator")
+		self._clearRequest()
+
+	def _clearRequest(self):
+		if hasattr(frappe.local, "request"):
+			delattr(frappe.local, "request")
 
 	def test_home_page(self):
 		frappe.set_user("Administrator")
@@ -44,20 +50,20 @@ class TestWebsite(FrappeTestCase):
 		frappe.db.set_value("Role", "home-page-test", "home_page", "")
 
 		# home page via portal settings
-		frappe.db.set_value("Portal Settings", None, "default_portal_home", "test-portal-home")
+		frappe.db.set_single_value("Portal Settings", "default_portal_home", "test-portal-home")
 
 		frappe.set_user("test-user-for-home-page@example.com")
-		frappe.cache().hdel("home_page", frappe.session.user)
+		frappe.cache.hdel("home_page", frappe.session.user)
 		self.assertEqual(get_home_page(), "test-portal-home")
 
-		frappe.db.set_value("Portal Settings", None, "default_portal_home", "")
+		frappe.db.set_single_value("Portal Settings", "default_portal_home", "")
 		clear_website_cache()
 
 		# home page via website settings
-		frappe.db.set_value("Website Settings", None, "home_page", "contact")
+		frappe.db.set_single_value("Website Settings", "home_page", "contact")
 		self.assertEqual(get_home_page(), "contact")
 
-		frappe.db.set_value("Website Settings", None, "home_page", None)
+		frappe.db.set_single_value("Website Settings", "home_page", None)
 		clear_website_cache()
 
 		# fallback homepage
@@ -161,13 +167,23 @@ class TestWebsite(FrappeTestCase):
 			dict(source=r"/testfrom", target=r"://testto1"),
 			dict(source=r"/testfromregex.*", target=r"://testto2"),
 			dict(source=r"/testsub/(.*)", target=r"://testto3/\1"),
+			dict(source=r"/courses/course\?course=(.*)", target=r"/courses/\1", match_with_query_string=True),
 			dict(
-				source=r"/courses/course\?course=(.*)", target=r"/courses/\1", match_with_query_string=True
+				source="/test307",
+				target="/test",
+				redirect_http_status=307,
 			),
 		]
 
 		website_settings = frappe.get_doc("Website Settings")
-		website_settings.append("route_redirects", {"source": "/testsource", "target": "/testtarget"})
+		website_settings.append(
+			"route_redirects",
+			{"source": "/testsource", "target": "/testtarget"},
+		)
+		website_settings.append(
+			"route_redirects",
+			{"source": "/testdoc307", "target": "/testtarget", "redirect_http_status": 307},
+		)
 		website_settings.save()
 
 		set_request(method="GET", path="/testfrom")
@@ -194,13 +210,28 @@ class TestWebsite(FrappeTestCase):
 		self.assertEqual(response.status_code, 301)
 		self.assertEqual(response.headers.get("Location"), "/testtarget")
 
+		set_request(method="GET", path="/testdoc307")
+		response = get_response()
+		self.assertEqual(response.status_code, 307)
+		self.assertEqual(response.headers.get("Location"), "/testtarget")
+
 		set_request(method="GET", path="/courses/course?course=data")
 		response = get_response()
 		self.assertEqual(response.status_code, 301)
 		self.assertEqual(response.headers.get("Location"), "/courses/data")
 
+		set_request(method="GET", path="/test307")
+		response = get_response()
+		self.assertEqual(response.status_code, 307)
+		self.assertEqual(response.headers.get("Location"), "/test")
+
+		set_request(method="POST", path="/test307")
+		response = get_response()
+		self.assertEqual(response.status_code, 307)
+		self.assertEqual(response.headers.get("Location"), "/test")
+
 		delattr(frappe.hooks, "website_redirects")
-		frappe.cache().delete_key("app_hooks")
+		frappe.cache.delete_key("app_hooks")
 
 	def test_custom_page_renderer(self):
 		from frappe import get_hooks
@@ -228,7 +259,7 @@ class TestWebsite(FrappeTestCase):
 		frappe.db.value_cache[("DocType", "Language", "name")] = (("Language",),)
 		frappe.set_user("Administrator")
 		content = get_response_content("/Language/ru")
-		self.assertIn('<div class="print-format" style="margin: 0 auto;">', content)
+		self.assertIn('<div class="print-format">', content)
 		self.assertIn("<div>Language</div>", content)
 
 	def test_custom_base_template_path(self):
@@ -267,9 +298,7 @@ class TestWebsite(FrappeTestCase):
 
 		content = get_response_content("/_test/_test_folder/_test_page")
 		# test if {next} was rendered
-		self.assertIn(
-			'Next: <a class="btn-next" href="/_test/_test_folder/_test_toc">Test TOC</a>', content
-		)
+		self.assertIn('Next: <a class="btn-next" href="/_test/_test_folder/_test_toc">Test TOC</a>', content)
 
 	def test_colocated_assets(self):
 		content = get_response_content("/_test/_test_folder/_test_page")
@@ -330,8 +359,9 @@ class TestWebsite(FrappeTestCase):
 		FILES_TO_SKIP = choices(list(WWW.glob("**/*.py*")), k=10)
 
 		for suffix in FILES_TO_SKIP:
-			content = get_response_content(suffix.relative_to(WWW))
-			self.assertIn("404", content)
+			path: str = suffix.relative_to(WWW).as_posix()
+			content = get_response_content(path)
+			self.assertIn("<title>Not Found</title>", content)
 
 	def test_metatags(self):
 		content = get_response_content("/_test/_test_metatags")
@@ -379,7 +409,8 @@ class TestWebsite(FrappeTestCase):
 			)
 			self.assertIn('<link type="text/css" rel="stylesheet" href="/test_app_include.css">', content)
 			self.assertIn(
-				'<link type="text/css" rel="stylesheet" href="/test_app_include_via_site_config.css">', content
+				'<link type="text/css" rel="stylesheet" href="/test_app_include_via_site_config.css">',
+				content,
 			)
 			delattr(frappe.local, "request")
 			frappe.set_user("Guest")

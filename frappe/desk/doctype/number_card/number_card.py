@@ -10,10 +10,39 @@ from frappe.model.naming import append_number_if_name_exists
 from frappe.modules.export_file import export_to_files
 from frappe.query_builder import Criterion
 from frappe.query_builder.utils import DocType
-from frappe.utils import cint
+from frappe.utils import cint, flt
 
 
 class NumberCard(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		aggregate_function_based_on: DF.Literal[None]
+		color: DF.Color | None
+		document_type: DF.Link | None
+		dynamic_filters_json: DF.Code | None
+		filters_config: DF.Code | None
+		filters_json: DF.Code | None
+		function: DF.Literal["Count", "Sum", "Average", "Minimum", "Maximum"]
+		is_public: DF.Check
+		is_standard: DF.Check
+		label: DF.Data
+		method: DF.Data | None
+		module: DF.Link | None
+		parent_document_type: DF.Link | None
+		report_field: DF.Literal[None]
+		report_function: DF.Literal["Sum", "Average", "Minimum", "Maximum"]
+		report_name: DF.Link | None
+		show_percentage_stats: DF.Check
+		stats_time_interval: DF.Literal["Daily", "Weekly", "Monthly", "Yearly"]
+		type: DF.Literal["Document Type", "Report", "Custom"]
+
+	# end: auto-generated types
 	def autoname(self):
 		if not self.name:
 			self.name = self.label
@@ -59,9 +88,7 @@ def get_permission_query_conditions(user=None):
 	doctype_condition = False
 	module_condition = False
 
-	allowed_doctypes = [
-		frappe.db.escape(doctype) for doctype in frappe.permissions.get_doctypes_with_read()
-	]
+	allowed_doctypes = [frappe.db.escape(doctype) for doctype in frappe.permissions.get_doctypes_with_read()]
 	allowed_modules = [
 		frappe.db.escape(module.get("module_name")) for module in get_modules_from_all_apps_for_user()
 	]
@@ -72,17 +99,13 @@ def get_permission_query_conditions(user=None):
 		)
 	if allowed_modules:
 		module_condition = """`tabNumber Card`.`module` in ({allowed_modules})
-			or `tabNumber Card`.`module` is NULL""".format(
-			allowed_modules=",".join(allowed_modules)
-		)
+			or `tabNumber Card`.`module` is NULL""".format(allowed_modules=",".join(allowed_modules))
 
-	return """
+	return f"""
 		{doctype_condition}
 		and
 		{module_condition}
-	""".format(
-		doctype_condition=doctype_condition, module_condition=module_condition
-	)
+	"""
 
 
 def has_permission(doc, ptype, user):
@@ -118,11 +141,7 @@ def get_result(doc, filters, to_date=None):
 	if function == "count":
 		fields = [f"{function}(*) as result"]
 	else:
-		fields = [
-			"{function}({based_on}) as result".format(
-				function=function, based_on=doc.aggregate_function_based_on
-			)
-		]
+		fields = [f"{function}({doc.aggregate_function_based_on}) as result"]
 
 	if not filters:
 		filters = []
@@ -137,7 +156,7 @@ def get_result(doc, filters, to_date=None):
 	)
 	number = res[0]["result"] if res else 0
 
-	return cint(number)
+	return flt(number)
 
 
 @frappe.whitelist()
@@ -173,8 +192,7 @@ def calculate_previous_result(doc, filters):
 	else:
 		previous_date = add_to_date(current_date, years=-1)
 
-	number = get_result(doc, filters, previous_date)
-	return number
+	return get_result(doc, filters, previous_date)
 
 
 @frappe.whitelist()

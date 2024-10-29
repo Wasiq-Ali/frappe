@@ -59,8 +59,7 @@
    "in_global_search": 1,
    "label": "First Name",
    "oldfieldname": "first_name",
-   "oldfieldtype": "Data",
-   "reqd": 1
+   "oldfieldtype": "Data"
   },
   {
    "allow_in_quick_entry": 1,
@@ -292,7 +291,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-04 15:42:30.516256",
+ "modified": "2023-12-08 15:52:37.525003",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
@@ -309,7 +308,6 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
-   "set_user_permissions": 1,
    "share": 1,
    "write": 1
   },

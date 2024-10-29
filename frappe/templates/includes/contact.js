@@ -38,7 +38,6 @@ frappe.ready(function() {
 		}, this);
 		return false;
 	});
-
 });
 
 var msgprint = function(txt) {

@@ -112,7 +112,7 @@ frappe.ui.form.ControlTable = class ControlTable extends frappe.ui.form.Control 
 	get_field(field_name) {
 		let fieldname;
 		field_name = field_name.toLowerCase();
-		this.grid.meta.fields.some((field) => {
+		this.grid?.meta?.fields.some((field) => {
 			if (frappe.model.no_value_type.includes(field.fieldtype)) {
 				return false;
 			}
@@ -121,7 +121,7 @@ frappe.ui.form.ControlTable = class ControlTable extends frappe.ui.form.Control 
 				return (
 					field.fieldname.toLowerCase() === field_name ||
 					(field.label || "").toLowerCase() === field_name ||
-					(__(field.label) || "").toLowerCase() === field_name
+					(__(field.label, null, field.parent) || "").toLowerCase() === field_name
 				);
 			};
 

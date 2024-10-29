@@ -9,6 +9,8 @@ EVENT_MAP = {
 	"before_validate": "Before Validate",
 	"validate": "Before Save",
 	"on_update": "After Save",
+	"before_rename": "Before Rename",
+	"after_rename": "After Rename",
 	"before_submit": "Before Submit",
 	"on_submit": "After Submit",
 	"before_cancel": "Before Cancel",
@@ -17,6 +19,7 @@ EVENT_MAP = {
 	"after_delete": "After Delete",
 	"before_update_after_submit": "Before Save (Submitted Document)",
 	"on_update_after_submit": "After Save (Submitted Document)",
+	"before_print": "Before Print",
 	"on_payment_authorized": "On Payment Authorization",
 	"on_change": "On Change",
 }
@@ -24,7 +27,7 @@ EVENT_MAP = {
 
 def run_server_script_for_doc_event(doc, event):
 	# run document event method
-	if not event in EVENT_MAP:
+	if event not in EVENT_MAP:
 		return
 
 	if frappe.flags.in_install:
@@ -56,7 +59,7 @@ def get_server_script_map():
 	if frappe.flags.in_patch and not frappe.db.table_exists("Server Script"):
 		return {}
 
-	script_map = frappe.cache().get_value("server_script_map")
+	script_map = frappe.cache.get_value("server_script_map")
 	if script_map is None:
 		script_map = {"permission_query": {}}
 		enabled_server_scripts = frappe.get_all(
@@ -74,6 +77,6 @@ def get_server_script_map():
 			else:
 				script_map.setdefault("_api", {})[script.api_method] = script.name
 
-		frappe.cache().set_value("server_script_map", script_map)
+		frappe.cache.set_value("server_script_map", script_map)
 
 	return script_map
