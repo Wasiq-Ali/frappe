@@ -176,6 +176,9 @@ frappe.form.formatters = {
 		}
 	},
 	Int: function(value, docfield, options, doc) {
+		if (cstr(docfield.options).trim() === "File Size") {
+			return frappe.form.formatters.FileSize(value, docfield, options, doc);
+		}
 		value = frappe.form.formatters._format_number(value, null, 0);
 		return frappe.form.formatters._style(value, docfield, options, doc, true);
 	},
@@ -464,13 +467,16 @@ frappe.form.formatters = {
 	Email: function (value) {
 		return $("<div></div>").text(value).html();
 	},
-	FileSize: function (value) {
+	FileSize: function (value, docfield, options, doc) {
+		value = cint(value);
 		if (value > 1048576) {
-			value = flt(flt(value) / 1048576, 1) + "M";
+			value = frappe.form.formatters._format_number(value / 1048576, null, 1) + "M";
 		} else if (value > 1024) {
-			value = flt(flt(value) / 1024, 1) + "K";
+			value = frappe.form.formatters._format_number(value / 1024, null, 1) + "K";
+		} else {
+			value = frappe.form.formatters._format_number(value, null, 0);
 		}
-		return value;
+		return frappe.form.formatters._style(value, docfield, options, doc, true);
 	},
 	TableMultiSelect: function (rows, df, options) {
 		rows = rows || [];

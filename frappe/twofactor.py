@@ -192,7 +192,6 @@ def confirm_otp_token(login_manager, otp=None, tmp_id=None):
 def get_verification_obj(user, token, otp_secret):
 	otp_issuer = frappe.db.get_single_value("System Settings", "otp_issuer_name")
 	verification_method = get_verification_method()
-
 	verification_obj = None
 	if verification_method == "SMS":
 		verification_obj = process_2fa_for_sms(user, token, otp_secret)

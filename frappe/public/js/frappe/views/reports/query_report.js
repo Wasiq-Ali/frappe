@@ -1701,7 +1701,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					file_format_type: file_format,
 					filters: filters,
 					applied_filters: applied_filters,
-					date: data,
+					data: data,
 					columns: columns,
 					visible_idx,
 					csv_delimiter,

@@ -92,11 +92,6 @@ frappe.views.CommunicationComposer = class {
 				hidden: 1,
 			},
 			{
-				fieldtype: "Section Break",
-				fieldname: "email_template_section_break",
-				hidden: 1,
-			},
-			{
 				label: __("Email Template"),
 				fieldtype: "Link",
 				options: "Email Template",

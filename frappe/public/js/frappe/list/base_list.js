@@ -607,8 +607,8 @@ class FilterArea {
 			? this.list_view.page.custom_actions
 			: this.list_view.page.page_form;
 
-		this.list_view.$filter_section = $('<div class="filter-list">').appendTo(
-			this.list_view.$frappe_list
+		this.list_view.$filter_section = $('<div class="filter-section flex">').appendTo(
+			filter_area
 		);
 
 		this.$filter_list_wrapper = this.list_view.$filter_section;
@@ -843,7 +843,7 @@ class FilterArea {
 
 		fields = fields.map(df => {
 			let options = df.options;
-			let condition = df.filter_condition || '=';
+			let condition = df.filter_condition || "=";
 			let fieldtype = df.fieldtype;
 
 			if (
@@ -860,8 +860,8 @@ class FilterArea {
 					"Read Only",
 				].includes(fieldtype)
 			) {
-				fieldtype = 'Data';
-				condition = 'like';
+				fieldtype = "Data";
+				condition = "like";
 			}
 
 			if (df.fieldtype == "Select" && df.options) {
@@ -873,7 +873,7 @@ class FilterArea {
 			}
 
 			if (df.fieldtype == "Check" && !df.force_checkbox_filter) {
-				fieldtype = 'Select';
+				fieldtype = "Select";
 				options = [
 					'',
 					{label: `${__('Yes')}: ${__(df.label)}`, value: 1},

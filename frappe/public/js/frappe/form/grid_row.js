@@ -130,35 +130,36 @@ export default class GridRow {
 	remove() {
 		var me = this;
 		if (this.grid.is_editable()) {
+			if (this.get_open_form()) {
+				this.hide_form();
+			}
 			if (this.frm) {
-				if (this.get_open_form()) {
-					this.hide_form();
-				}
-
-				return frappe.run_serially([
-					() => {
-						return this.frm.script_manager.trigger(
-							"before_" + this.grid.df.fieldname + "_remove",
-							this.doc.doctype,
-							this.doc.name
-						);
-					},
-					() => frappe.model.clear_doc(this.doc.doctype, this.doc.name),
-					() => {
-						return this.frm.script_manager.trigger(
-							this.grid.df.fieldname + "_remove",
-							this.doc.doctype,
-							this.doc.name
-						);
-					},
-					() => {
-						this.frm.dirty();
-						this.grid.refresh();
-					},
-				]).catch((e) => {
-					// aborted
-					console.trace(e); // eslint-disable-line
-				});
+				return frappe
+					.run_serially([
+						() => {
+							return this.frm.script_manager.trigger(
+								"before_" + this.grid.df.fieldname + "_remove",
+								this.doc.doctype,
+								this.doc.name
+							);
+						},
+						() => frappe.model.clear_doc(this.doc.doctype, this.doc.name),
+						() => {
+							return this.frm.script_manager.trigger(
+								this.grid.df.fieldname + "_remove",
+								this.doc.doctype,
+								this.doc.name
+							);
+						},
+						() => {
+							this.frm.dirty();
+							this.grid.refresh();
+						},
+					])
+					.catch((e) => {
+						// aborted
+						console.trace(e);
+					});
 			} else {
 				let data = null;
 				if (this.grid.df.get_data) {
@@ -370,8 +371,6 @@ export default class GridRow {
 				}, 500)
 			);
 			frappe.utils.only_allow_num_decimal(this.row_index.find("input"));
-		} else {
-			this.row_index.find("span").html(txt);
 		}
 
 		this.setup_columns();

@@ -74,7 +74,7 @@ frappe.ui.form.PrintView = class {
 			icon: "refresh",
 		});
 
-		this.page.set_primary_action(__("PDF"), () => this.render_pdf(), { icon: "file" });
+		this.page.set_primary_action(__("PDF"), () => this.render_pdf(), { icon: "es-line-filetype" });
 		this.page.add_menu_item(__("Get PDF"), () => this.render_pdf(), true, "Ctrl+P");
 
 		// hide print view on pressing escape, only if there is no focus on any input

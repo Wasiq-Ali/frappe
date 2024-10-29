@@ -103,7 +103,9 @@ def search_widget(
 				as_dict=as_dict,
 				reference_doctype=reference_doctype,
 			)
-			values = format_response_values(values, as_dict)
+			if format_values:
+				values = format_response_values(values, as_dict)
+
 			return values
 		except (frappe.PermissionError, frappe.AppNotInstalledError, ImportError):
 			if frappe.local.conf.developer_mode:
@@ -231,7 +233,9 @@ def search_widget(
 		else:
 			values = [r[:-1] for r in values]
 
-	values = format_response_values(values, as_dict)
+	if format_values:
+		values = format_response_values(values, as_dict)
+
 	return values
 
 

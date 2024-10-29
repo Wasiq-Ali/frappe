@@ -319,7 +319,7 @@ def get_eta(from_time, percent_complete):
 
 def get_system_timezone() -> str:
 	"""Return the system timezone."""
-	return frappe.db.get_system_setting("time_zone") or "Asia/Karachi"  # Default to Pakistan ?!
+	return frappe.get_system_settings("time_zone") or "Asia/Karachi"  # Default to Pakistan ?!
 
 
 def convert_utc_to_timezone(utc_timestamp, time_zone):

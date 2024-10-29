@@ -13,7 +13,6 @@ from frappe import _
 from frappe.model import log_types
 from frappe.query_builder import DocType
 from frappe.utils import cint, cstr, now_datetime
-from frappe.utils.caching import redis_cache
 
 if TYPE_CHECKING:
 	from frappe.model.document import Document

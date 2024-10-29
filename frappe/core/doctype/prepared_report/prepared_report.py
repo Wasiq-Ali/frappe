@@ -7,8 +7,6 @@ from typing import Any
 
 from rq import get_current_job
 
-from rq import get_current_job
-
 import frappe
 from frappe.database.utils import dangerously_reconnect_on_connection_abort
 from frappe.desk.form.load import get_attachments

@@ -2,7 +2,6 @@
 # License: MIT. See LICENSE
 import json
 from contextlib import contextmanager
-from unittest import skip
 
 import responses
 from responses.matchers import json_params_matcher
@@ -205,7 +204,6 @@ class TestWebhook(FrappeTestCase):
 
 		self.assertTrue(frappe.get_all("Webhook Request Log", pluck="name"))
 
-	@skip("flaky because of network call, tested on develop branch")
 	def test_webhook_with_array_body(self):
 		"""Check if array request body are supported."""
 		wh_config = {

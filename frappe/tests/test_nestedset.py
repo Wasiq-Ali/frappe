@@ -216,16 +216,6 @@ class TestNestedSet(FrappeTestCase):
 		# Rename doctype
 		frappe.rename_doc("DocType", doctype.name, "Test " + random_string(10), force=True)
 
-	def test_remove_subtree(self):
-		remove_subtree("Test Tree DocType", "Parent 2")
-		self.test_basic_tree()
-
-	def test_rename_nestedset(self):
-		doctype = new_doctype(is_tree=True).insert()
-
-		# Rename doctype
-		frappe.rename_doc("DocType", doctype.name, "Test " + random_string(10), force=True)
-
 	def test_merge_groups(self):
 		global records
 		el = {"some_fieldname": "Parent 2", "parent_test_tree_doctype": "Root Node", "is_group": 1}

@@ -730,10 +730,9 @@ export default class Grid {
 
 	set_column_disp(fieldname, show, do_not_refresh) {
 		if (Array.isArray(fieldname)) {
-			for (let i = 0, l = fieldname.length; i<l; i++) {
-				let fname = fieldname[i];
-				this.update_docfield_property(fname, "hidden", show ? 0 : 1, do_not_refresh);
-				this.set_editable_grid_column_disp(fname, show, do_not_refresh);
+			for (let field of fieldname) {
+				this.update_docfield_property(field, "hidden", show ? 0 : 1, do_not_refresh);
+				this.set_editable_grid_column_disp(field, show, do_not_refresh);
 			}
 		} else {
 			this.update_docfield_property(fieldname, "hidden", show ? 0 : 1, do_not_refresh);
@@ -1065,15 +1064,17 @@ export default class Grid {
 
 		let user_settings = frappe.get_user_settings(this.frm.doctype, "GridView");
 		if (user_settings && user_settings[this.doctype] && user_settings[this.doctype].length) {
-			this.user_defined_columns = user_settings[this.doctype].map((row) => {
-				let column = frappe.meta.get_docfield(this.doctype, row.fieldname);
+			this.user_defined_columns = user_settings[this.doctype]
+				.map((row) => {
+					let column = frappe.meta.get_docfield(this.doctype, row.fieldname);
 
-				if (column) {
-					column.in_list_view = 1;
-					column.columns = row.columns;
-					return column;
-				}
-			});
+					if (column) {
+						column.in_list_view = 1;
+						column.columns = row.columns;
+						return column;
+					}
+				})
+				.filter(Boolean);
 		}
 	}
 
@@ -1133,109 +1134,114 @@ export default class Grid {
 
 			// upload
 			frappe.flags.no_socketio = true;
-			$(this.wrapper).find(".grid-upload").removeClass('hidden').on("click", function() {
-				new frappe.ui.FileUploader({
-					as_dataurl: true,
-					allow_multiple: false,
-					on_success(file) {
-						if (file.file_obj.type !== "text/csv") {
-							let msg = __(`Your file could not be processed. It should be a standard CSV file.`);
-							frappe.throw(msg);
-						}
-						var data = frappe.utils.csv_to_array(frappe.utils.get_decoded_string(file.dataurl));
-						// row #2 contains fieldnames;
-						var fieldnames = data[4];
-
-						me.frm.clear_table(me.df.fieldname);
-						$.each(data, function(i, row) {
-							if(i > 6) {
-								var blank_row = true;
-								$.each(row, function(ci, value) {
-									if(value) {
-										blank_row = false;
-										return false;
-									}
-								});
-
-								if (!blank_row) {
-									var d = me.frm.add_child(me.df.fieldname);
-									$.each(row, (ci, value) => {
-										var fieldname = fieldnames[ci];
-										var df = frappe.meta.get_docfield(
-											me.df.options,
-											fieldname
-										);
-										if (df) {
-											d[fieldnames[ci]] = value_formatter_map[
-												df.fieldtype
-											]
-												? value_formatter_map[df.fieldtype](value)
-												: value;
+			$(this.wrapper)
+				.find(".grid-upload")
+				.removeClass("hidden")
+				.on("click", () => {
+					new frappe.ui.FileUploader({
+						as_dataurl: true,
+						allow_multiple: false,
+						restrictions: {
+							allowed_file_types: [".csv"],
+						},
+						on_success(file) {
+							var data = frappe.utils.csv_to_array(
+								frappe.utils.get_decoded_string(file.dataurl)
+							);
+							// row #2 contains fieldnames;
+							var fieldnames = data[4];
+							me.frm.clear_table(me.df.fieldname);
+							$.each(data, (i, row) => {
+								if (i > 6) {
+									var blank_row = true;
+									$.each(row, function (ci, value) {
+										if (value) {
+											blank_row = false;
+											return false;
 										}
 									});
-								}
-							}
-						});
 
-						me.frm.trigger(me.df.fieldname + '_after_bulk_upload');
-						me.frm.refresh_field(me.df.fieldname);
+									if (!blank_row) {
+										var d = me.frm.add_child(me.df.fieldname);
+										$.each(row, (ci, value) => {
+											var fieldname = fieldnames[ci];
+											var df = frappe.meta.get_docfield(
+												me.df.options,
+												fieldname
+											);
+											if (df) {
+												d[fieldnames[ci]] = value_formatter_map[
+													df.fieldtype
+												]
+													? value_formatter_map[df.fieldtype](value)
+													: value;
+											}
+										});
+									}
+								}
+							});
+
+							me.frm.trigger(me.df.fieldname + '_after_bulk_upload');
+							me.frm.refresh_field(me.df.fieldname);
 							frappe.msgprint({
 								message: __("Table updated"),
 								title: __("Success"),
 								indicator: "green",
 							});
-					}
+						},
+					});
 				});
-			});
 		}
 	}
 
 	setup_download() {
-		let me = this;
-		let title = me.df.label || frappe.model.unscrub(me.df.fieldname);
-		$(this.wrapper).find(".grid-download").removeClass('hidden').on("click", function() {
-			var data = [];
-			var docfields = [];
-			data.push([__("Bulk Edit {0}", [title])]);
-			data.push([__("The CSV format is case sensitive")]);
-			data.push([__("Do not edit headers which are preset in the template")]);
-			data.push([]);
-			data.push([]);
-			data.push([]);
-			data.push(["----- Insert After This Line -----"]);
-			$.each(frappe.get_meta(me.df.options).fields, function (i, df) {
-				// don't include the read-only field in the template
-				if (frappe.model.is_value_type(df.fieldtype) && !df.read_only) {
-					data[3].push(df.label);
-					data[4].push(df.fieldname);
-					let description = (df.description || "") + ' ';
-					if (df.fieldtype === "Date") {
-						description += frappe.boot.sysdefaults.date_format;
+		let title = this.df.label || frappe.model.unscrub(this.df.fieldname);
+		$(this.wrapper)
+			.find(".grid-download")
+			.removeClass("hidden")
+			.on("click", () => {
+				var data = [];
+				var docfields = [];
+				data.push([__("Bulk Edit {0}", [title])]);
+				data.push([__("The CSV format is case sensitive")]);
+				data.push([__("Do not edit headers which are preset in the template")]);
+				data.push([]);
+				data.push([]);
+				data.push([]);
+				data.push(["----- Insert After This Line -----"]);
+				$.each(frappe.get_meta(this.df.options).fields, (i, df) => {
+					// don't include the read-only field in the template
+					if (frappe.model.is_value_type(df.fieldtype) && !df.read_only) {
+						data[3].push(df.label);
+						data[4].push(df.fieldname);
+						let description = (df.description || "") + " ";
+						if (df.fieldtype === "Date") {
+							description += frappe.boot.sysdefaults.date_format;
+						}
+						data[5].push(description);
+						docfields.push(df);
 					}
-					data[5].push(description);
-					docfields.push(df);
-				}
-			});
-
-			// add data
-			$.each(me.frm.doc[me.df.fieldname] || [], function (i, d) {
-				let row = [];
-				$.each(data[4], function (i, fieldname) {
-					let value = d[fieldname];
-
-					// format date
-					if (docfields[i].fieldtype === "Date" && value) {
-						value = frappe.datetime.str_to_user(value);
-					}
-
-					row.push(value || "");
 				});
-				data.push(row);
-			});
 
-			frappe.tools.downloadify(data, null, title);
-			return false;
-		});
+				// add data
+				$.each(this.frm.doc[this.df.fieldname] || [], (i, d) => {
+					let row = [];
+					$.each(data[4], (i, fieldname) => {
+						let value = d[fieldname];
+
+						// format date
+						if (docfields[i].fieldtype === "Date" && value) {
+							value = frappe.datetime.str_to_user(value);
+						}
+
+						row.push(value || "");
+					});
+					data.push(row);
+				});
+
+				frappe.tools.downloadify(data, null, title);
+				return false;
+			});
 	}
 
 	add_custom_button(label, click, position = "bottom") {

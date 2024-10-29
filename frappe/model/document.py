@@ -1178,7 +1178,7 @@ class Document(BaseDocument):
 	def clear_cache(self):
 		frappe.clear_document_cache(self.doctype, self.name)
 		if self.meta.get('issingle'):
-			frappe.clear_document_cache(self.doctype, None)
+			frappe.clear_document_cache(self.doctype, "")
 
 	def reset_seen(self):
 		"""Clear _seen property and set current user as seen"""
@@ -1776,4 +1776,3 @@ def unlock_document(doctype: str | None = None, name: str | None = None, args=No
 		name = str(args["name"])
 	frappe.get_doc(doctype, name).unlock()
 	frappe.msgprint(frappe._("Document Unlocked"), alert=True)
-

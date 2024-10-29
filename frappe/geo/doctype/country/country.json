@@ -32,6 +32,7 @@
    "label": "Date Format"
   },
   {
+   "default": "12 Hour",
    "fieldname": "time_format",
    "fieldtype": "Data",
    "in_list_view": 1,
