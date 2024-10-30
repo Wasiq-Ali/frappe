@@ -249,7 +249,7 @@ def get_heatmap_chart_config(chart, filters, heatmap_year):
 			parent_doctype,
 			fields=[
 				timestamp_field,
-				f"{aggregate_function}({value_field})",
+				f"{aggregate_function}(`tab{doctype}`.{value_field})",
 			],
 			filters=filters,
 			group_by=f"date(`tab{doctype}`.{datefield})",
@@ -277,7 +277,7 @@ def get_group_by_chart_config(chart, filters) -> dict | None:
 		parent_doctype,
 		fields=[
 			f"`tab{doctype}`.{group_by_field} as name",
-			f"{aggregate_function}({value_field}) as count"
+			f"{aggregate_function}(`tab{doctype}`.{value_field}) as count"
 		],
 		filters=filters,
 		group_by=group_by_field,

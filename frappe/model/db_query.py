@@ -458,7 +458,7 @@ class DatabaseQuery:
 		# add tables from fields
 		if self.fields:
 			for field in self.fields:
-				if not ("tab" in field and "." in field) or any(x for x in sql_functions if x in field):
+				if not ("tab" in field and "." in field) or any(x for x in sql_functions if x in field.lower()):
 					continue
 
 				table_name = field.split(".", 1)[0]
@@ -471,6 +471,9 @@ class DatabaseQuery:
 
 				if table_name.lower().startswith("group_concat("):
 					table_name = table_name[13:]
+				elif table_name.lower().startswith("unix_timestamp("):
+					table_name = table_name[15:]
+
 				if table_name.lower().startswith("distinct"):
 					table_name = table_name[8:].strip()
 				if table_name[0] != "`":
