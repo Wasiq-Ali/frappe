@@ -2,7 +2,7 @@ frappe.listview_settings["Recorder"] = {
 	hide_name_column: true,
 
 	onload(listview) {
-		listview.page.sidebar.remove();
+		listview.page.toggle_sidebar(false);
 		if (!has_common(frappe.user_roles, ["Administrator", "System Manager"])) return;
 
 		if (listview.list_view_settings) {
