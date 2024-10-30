@@ -194,12 +194,16 @@ def get_chart_config(chart, filters, timespan, timegrain, from_date, to_date):
 	parent_doctype = chart.parent_document_type or chart.document_type
 
 	datefield = chart.based_on
-	value_field = chart.value_based_on or "1"
 	from_date = from_date.strftime("%Y-%m-%d")
 	to_date = to_date
 
 	filters.append([doctype, datefield, ">=", from_date, False])
 	filters.append([doctype, datefield, "<=", to_date, False])
+
+	if chart.value_based_on:
+		value_field = f"`tab{doctype}`.{chart.value_based_on}"
+	else:
+		value_field = "1"
 
 	data = frappe.get_list(
 		parent_doctype,
@@ -208,7 +212,6 @@ def get_chart_config(chart, filters, timespan, timegrain, from_date, to_date):
 		group_by=datefield,
 		order_by=datefield,
 		as_list=True,
-		parent_doctype=chart.parent_document_type,
 	)
 
 	result = get_result(data, timegrain, from_date, to_date, chart.chart_type)
@@ -226,7 +229,6 @@ def get_chart_config(chart, filters, timespan, timegrain, from_date, to_date):
 
 def get_heatmap_chart_config(chart, filters, heatmap_year):
 	aggregate_function = get_aggregate_function(chart.chart_type)
-	value_field = chart.value_based_on or "1"
 
 	doctype = chart.document_type
 	parent_doctype = chart.parent_document_type or chart.document_type
@@ -244,12 +246,17 @@ def get_heatmap_chart_config(chart, filters, heatmap_year):
 	else:
 		timestamp_field = f"extract(epoch from timestamp {datefield})"
 
+	if chart.value_based_on:
+		value_field = f"`tab{doctype}`.{chart.value_based_on}"
+	else:
+		value_field = "1"
+
 	data = dict(
 		frappe.get_all(
 			parent_doctype,
 			fields=[
 				timestamp_field,
-				f"{aggregate_function}(`tab{doctype}`.{value_field})",
+				f"{aggregate_function}({value_field})",
 			],
 			filters=filters,
 			group_by=f"date(`tab{doctype}`.{datefield})",
@@ -267,17 +274,21 @@ def get_heatmap_chart_config(chart, filters, heatmap_year):
 
 def get_group_by_chart_config(chart, filters) -> dict | None:
 	aggregate_function = get_aggregate_function(chart.group_by_type)
-	value_field = chart.aggregate_function_based_on or "1"
 	group_by_field = chart.group_by_based_on
 
 	doctype = chart.document_type
 	parent_doctype = chart.parent_document_type or chart.document_type
 
+	if chart.aggregate_function_based_on:
+		value_field = f"`tab{doctype}`.{chart.aggregate_function_based_on}"
+	else:
+		value_field = "1"
+
 	data = frappe.get_list(
 		parent_doctype,
 		fields=[
 			f"`tab{doctype}`.{group_by_field} as name",
-			f"{aggregate_function}(`tab{doctype}`.{value_field}) as count"
+			f"{aggregate_function}({value_field}) as count"
 		],
 		filters=filters,
 		group_by=group_by_field,
