@@ -230,7 +230,7 @@ frappe.patches.v14_0.drop_unused_indexes
 frappe.patches.v14_0.set_homepage_from_desk_to_app
 frappe.patches.v15_0.drop_modified_index
 frappe.patches.v14_0.update_attachment_comment
-frappe.patches.v15_0.set_contact_full_name
+# frappe.patches.v15_0.set_contact_full_name
 execute:frappe.delete_doc("Page", "activity", force=1)
 frappe.patches.v14_0.disable_email_accounts_with_oauth
 execute:frappe.delete_doc("Page", "translation-tool", force=1)
@@ -249,6 +249,6 @@ frappe.patches.v15_0.validate_newsletter_recipients
 frappe.patches.v15_0.sanitize_workspace_titles
 frappe.custom.doctype.property_setter.patches.remove_invalid_fetch_from_expressions
 frappe.integrations.doctype.oauth_client.patches.set_default_allowed_role_in_oauth_client
-frappe.patches.v16_0.add_app_launcher_in_navbar_settings
+# frappe.patches.v16_0.add_app_launcher_in_navbar_settings
 frappe.patches.v15_0.remove_workspace_settings_navbar_items
 frappe.patches.v16_0.move_role_desk_settings_to_user
