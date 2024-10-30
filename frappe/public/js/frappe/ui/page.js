@@ -197,16 +197,52 @@ frappe.ui.Page = class Page {
 				delay: { show: 600, hide: 100 },
 				trigger: "hover",
 			});
-			sidebar_toggle.click(() => {
-				if (frappe.utils.is_xs() || frappe.utils.is_sm()) {
-					this.setup_overlay_sidebar();
-				} else {
-					sidebar_wrapper.toggle();
-				}
-				$(document.body).trigger("toggleSidebar");
-				this.update_sidebar_icon();
-			});
+			sidebar_toggle.click(() => this.toggle_sidebar());
+			this.update_sidebar_icon();
 		}
+	}
+
+	toggle_sidebar(display) {
+		let sidebar_wrapper = this.wrapper.find(".layout-side-section");
+		if (this.disable_sidebar_toggle || !sidebar_wrapper.length) {
+			return;
+		}
+
+		let current_display = false;
+
+		if (frappe.utils.is_xs() || frappe.utils.is_sm()) {
+			let overlay_sidebar = this.sidebar.find(".overlay-sidebar");
+			if (overlay_sidebar.hasClass("opened")) {
+				current_display = true;
+			}
+
+			if (display == null) {
+				// toggle
+				if (current_display) {
+					sidebar_wrapper.toggle(false);
+					this.close_overlay_sidebar();
+				} else {
+					sidebar_wrapper.toggle(true);
+					this.setup_overlay_sidebar();
+				}
+			} else {
+				// show or hide
+				sidebar_wrapper.toggle(display);
+				if (display && !current_display) {
+					this.setup_overlay_sidebar();
+				} else if (!display && current_display) {
+					this.setup_overlay_sidebar();
+				}
+			}
+		} else {
+			if (display == null) {
+				sidebar_wrapper.toggle();
+			} else {
+				sidebar_wrapper.toggle(display);
+			}
+		}
+		$(document.body).trigger("toggleSidebar");
+		this.update_sidebar_icon();
 	}
 
 	setup_overlay_sidebar() {
@@ -215,18 +251,21 @@ frappe.ui.Page = class Page {
 		$('<div class="close-sidebar">').hide().appendTo(this.sidebar).fadeIn();
 		let scroll_container = $("html").css("overflow-y", "hidden");
 
-		this.sidebar.find(".close-sidebar").on("click", (e) => this.close_sidebar(e));
-		this.sidebar.on("click", "button:not(.dropdown-toggle)", (e) => this.close_sidebar(e));
+		this.sidebar.find(".close-sidebar").on("click", (e) => this.close_overlay_sidebar(e));
+		this.sidebar.on("click", "button:not(.dropdown-toggle)", (e) => this.close_overlay_sidebar(e));
+	}
 
-		this.close_sidebar = () => {
-			scroll_container.css("overflow-y", "");
-			this.sidebar.find("div.close-sidebar").fadeOut(() => {
-				overlay_sidebar
-					.removeClass("opened")
-					.find(".dropdown-toggle")
-					.removeClass("text-muted");
-			});
-		};
+	close_overlay_sidebar() {
+		let overlay_sidebar = this.sidebar.find(".overlay-sidebar");
+		let scroll_container = $("html").css("overflow-y", "");
+
+		this.sidebar.find("div.close-sidebar").fadeOut(() => {
+			overlay_sidebar
+				.removeClass("opened")
+				.find(".dropdown-toggle")
+				.removeClass("text-muted");
+			this.update_sidebar_icon();
+		});
 	}
 
 	update_sidebar_icon() {
