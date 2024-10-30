@@ -311,6 +311,9 @@ def export_query():
 	from frappe.desk.utils import get_csv_bytes, pop_csv_params, provide_binary_file
 
 	form_params = frappe._dict(frappe.local.form_dict)
+
+	report_data = frappe.parse_json(form_params.data) or []
+
 	csv_params = pop_csv_params(form_params)
 	clean_params(form_params)
 	parse_json(form_params)
@@ -336,7 +339,6 @@ def export_query():
 		)
 		return
 
-	report_data = frappe.parse_json(form_params.data)
 	format_duration_fields(report_data, columns)
 
 	xlsx_data, column_widths, column_formats = build_xlsx_data(
@@ -353,10 +355,18 @@ def export_query():
 	elif file_format_type == "Excel":
 		from frappe.utils.xlsxutils import make_xlsx
 		file_extension = "xlsx"
-		content = make_xlsx(xlsx_data, "Query Report",
-			column_widths=column_widths, column_formats=column_formats, freeze="A2")
+		content = make_xlsx(
+			xlsx_data,
+			"Query Report",
+			column_widths=column_widths,
+			column_formats=column_formats,
+			freeze="A2"
+		).getvalue()
+	else:
+		frappe.throw(_("Invalid File Extension"))
 
 	provide_binary_file(report_name, file_extension, content)
+
 
 def format_duration_fields(data: list, columns: list) -> None:
 	for i, col in enumerate(columns):

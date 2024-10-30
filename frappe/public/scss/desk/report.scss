@@ -248,7 +248,7 @@
 .report-footer {
 	border-top: 1px solid var(--border-color);
 	@include get_textstyle("sm", "regular");
-	padding: var(--padding-sm) 0;
+	padding: var(--padding-sm);
 
 	.report-footer-items {
 		display: flex;
