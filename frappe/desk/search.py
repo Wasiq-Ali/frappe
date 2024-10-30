@@ -177,11 +177,12 @@ def search_widget(
 	if not meta.translated_doctype:
 		_txt = frappe.db.escape((txt or "").replace("%", "").replace("@", ""))
 		# locate returns 0 if string is not found, convert 0 to null and then sort null to end in order by
-		_relevance = f"(1 / nullif(locate({_txt}, `tab{doctype}`.`name`), 0))"
+		# _relevance = f"(1 / nullif(locate({_txt}, `tab{doctype}`.`name`), 0))"
+		_relevance = f"locate({_txt}, `tab{doctype}`.`name`)"
 		formatted_fields.append(f"""{_relevance} as `_relevance`""")
 		# Since we are sorting by alias postgres needs to know number of column we are sorting
 		if frappe.db.db_type == "mariadb":
-			order_by = f"ifnull(_relevance, -9999) desc, {order_by}"
+			order_by = f"if(_relevance, _relevance, 99999), {order_by}"
 		elif frappe.db.db_type == "postgres":
 			# Since we are sorting by alias postgres needs to know number of column we are sorting
 			order_by = f"{len(formatted_fields)} desc nulls last, {order_by}"
@@ -310,7 +311,7 @@ def scrub_custom_query(query, key, txt):
 
 def relevance_sorter(key, query, as_dict):
 	value = _(key.name if as_dict else key[0])
-	return (cstr(value).casefold().startswith(query.casefold()) is not True, value)
+	return cstr(value).casefold().startswith(query.casefold()) is not True
 
 
 @frappe.whitelist()
