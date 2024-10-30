@@ -7,7 +7,7 @@ frappe.ui.form.ControlInt = class ControlInt extends frappe.ui.form.ControlData 
 		super.make_input();
 		this.$input.on("focus", () => {
 			if (!document || !document.activeElement || !document.activeElement.select) return;
-			document.activeElement.value = me.validate(document.activeElement.value);
+			document.activeElement.value = this.validate(document.activeElement.value);
 			document.activeElement.select();
 			return false;
 		});
