@@ -201,7 +201,7 @@ class PushNotification:
 		# Generate new credentials
 		token = frappe.generate_hash(length=48)
 		# store the token in the redis cache
-		frappe.cache().set_value(
+		frappe.cache.set_value(
 			f"{self._site_name}:push_relay_registration_token", token, expires_in_sec=600
 		)
 		body = {
@@ -267,7 +267,7 @@ class PushNotification:
 @frappe.whitelist(allow_guest=True, methods=["GET"])
 def auth_webhook():
 	url = urlparse(frappe.utils.get_url()).hostname
-	token = frappe.cache().get_value(f"{url}:push_relay_registration_token")
+	token = frappe.cache.get_value(f"{url}:push_relay_registration_token")
 	response = Response()
 	response.mimetype = "text/plain; charset=UTF-8"
 

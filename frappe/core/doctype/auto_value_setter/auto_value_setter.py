@@ -14,10 +14,10 @@ class AutoValueSetter(Document):
 	def validate(self):
 		self.validate_doctype()
 		self.validate_conditions()
-		frappe.cache().hdel('auto_value_setters', self.document_type)
+		frappe.cache.hdel('auto_value_setters', self.document_type)
 
 	def on_change(self):
-		frappe.cache().hdel('auto_value_setters', self.document_type)
+		frappe.cache.hdel('auto_value_setters', self.document_type)
 
 	def validate_doctype(self):
 		prohibited_doctypes = [self.doctype, 'DocType', 'DocField']
@@ -45,10 +45,10 @@ class AutoValueSetter(Document):
 
 
 def apply_auto_value_setters(doc, parent=None):
-	names = frappe.cache().hget('auto_value_setters', doc.doctype)
+	names = frappe.cache.hget('auto_value_setters', doc.doctype)
 	if names is None:
 		names = [d.name for d in frappe.get_all('Auto Value Setter', filters={'enabled': 1, 'document_type': doc.doctype})]
-		frappe.cache().hset('auto_value_setters', doc.doctype, names)
+		frappe.cache.hset('auto_value_setters', doc.doctype, names)
 
 	is_submitted = doc.meta.is_submittable and doc.docstatus == 1 and not doc.get("__islocal")
 	context = get_context(doc, parent)
