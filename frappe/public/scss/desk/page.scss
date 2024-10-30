@@ -91,8 +91,8 @@
 .layout-main-section.frappe-card {
 	// overflow: hidden;
 	@include card($padding: 0px);
-	box-shadow: none;
 	border: 1px solid var(--border-color);
+	overflow: hidden;
 }
 
 .page-head {

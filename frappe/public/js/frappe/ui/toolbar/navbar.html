@@ -2,11 +2,16 @@
 	<header class="navbar navbar-expand" role="navigation">
 		<div class="container">
 			<a class="navbar-brand navbar-home" href="/app">
-				<img
-					class="app-logo"
-					src="{{ frappe.boot.app_logo_url }}"
-					alt="{{ __("App Logo") }}"
-				>
+				{% if (navbar_settings.app_name) { %}
+					{%= navbar_settings.app_name %}
+				{% } else { %}
+					<img
+						class="app-logo"
+						style="width: {{ navbar_settings.logo_width || 24 }}px"
+						src="{{ frappe.boot.app_logo_url }}"
+						alt="{{ __("App Logo") }}"
+					>
+				{% } %}
 			</a>
 			<ul class="nav navbar-nav d-none d-sm-flex" id="navbar-breadcrumbs"></ul>
 			<div class="collapse navbar-collapse justify-content-end">

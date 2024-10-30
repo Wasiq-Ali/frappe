@@ -87,7 +87,7 @@ body {
 
 			.field-icon {
 				left: 9px;
-				top: 5px;
+				top: 6px;
 				position: absolute;
 				z-index: 2;
 			}
@@ -112,8 +112,8 @@ body {
 
 			.btn-login-option {
 				@include get_textstyle("base", "medium");
-				color: var(--text-gray-700);
-				background: var(--gray-100);
+				color: var(--text-gray-800);
+				background: var(--gray-200);
 				box-shadow: none;
 				border: none;
 				display: flex;

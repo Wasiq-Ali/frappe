@@ -37,13 +37,18 @@
 				<div class="standard-actions flex">
 					<span class="page-icon-group hide hidden-xs hidden-sm"></span>
 					<div class="menu-btn-group hide">
-						<button type="button" class="btn btn-default icon-btn" data-toggle="dropdown" aria-expanded="false" aria-label="{{ __("Menu") }}">
+						<button type="button" class="btn btn-default" data-toggle="dropdown" aria-expanded="false" aria-label="{{ __("Menu") }}">
 							<span>
 								<span class="menu-btn-group-label">
-									<svg class="icon icon-sm">
+									<svg class="icon icon-sm hidden-xs" style="margin-left: -4px;">
+										<use href="#icon-dot-vertical">
+										</use>
+									</svg>
+									<svg class="icon icon-sm visible-xs">
 										<use href="#icon-dot-horizontal">
 										</use>
 									</svg>
+									<span class="hidden-xs actions-btn-group-label" style="margin-left: -2px;">{%= __("Menu") %}</span>
 								</span>
 							</span>
 						</button>
