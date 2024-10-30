@@ -1212,7 +1212,7 @@ def set_value(doctype, docname, fieldname, value=None):
 	return frappe.client.set_value(doctype, docname, fieldname, value)
 
 
-def get_cached_doc(*args, **kwargs) -> "Document":
+def get_cached_doc(*args, **kwargs):
 	if (key := can_cache_doc(args)) and (doc := cache.get_value(key)):
 		return doc
 
@@ -1272,7 +1272,7 @@ def clear_document_cache(doctype: str, name: str | None = None) -> None:
 		delattr(local, "website_settings")
 
 
-def get_cached_value(doctype: str, name: str, fieldname: str = "name", as_dict: bool = False) -> Any:
+def get_cached_value(doctype: str, name: str, fieldname: str | list | tuple = "name", as_dict: bool | int = False) -> Any:
 	try:
 		doc = get_cached_doc(doctype, name)
 	except DoesNotExistError:
@@ -1295,7 +1295,7 @@ _NewDocument: TypeAlias = "Document"
 
 
 @overload
-def get_doc(document: "Document", /) -> "Document":
+def get_doc(document: "Document", /):
 	pass
 
 
@@ -1306,7 +1306,7 @@ def get_doc(doctype: str, /) -> _SingleDocument:
 
 
 @overload
-def get_doc(doctype: str, name: str, /, *, for_update: bool | None = None) -> "Document":
+def get_doc(doctype: str, name: str, /, *, for_update: bool | None = None):
 	"""Retrieve DocType from DB, doctype and name must be positional argument."""
 	pass
 

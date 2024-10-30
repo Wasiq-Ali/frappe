@@ -466,7 +466,7 @@ def validate_link(doctype: str, docname: str, fields=None):
 	return values
 
 
-def insert_doc(doc) -> "Document":
+def insert_doc(doc):
 	"""Inserts document and returns parent document object with appended child document
 	if `doc` is child document else returns the inserted document object
 

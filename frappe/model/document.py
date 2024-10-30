@@ -248,7 +248,7 @@ class Document(BaseDocument):
 		ignore_mandatory=None,
 		set_name=None,
 		set_child_names=True,
-	) -> "Document":
+	):
 		"""Insert the document in the database (as a new document).
 		This will check for user permissions and execute `before_insert`,
 		`validate`, `on_update`, `after_insert` methods if they are written.
@@ -337,7 +337,7 @@ class Document(BaseDocument):
 		"""Wrapper for _save"""
 		return self._save(*args, **kwargs)
 
-	def _save(self, ignore_permissions=None, ignore_version=None) -> "Document":
+	def _save(self, ignore_permissions=None, ignore_version=None):
 		"""Save the current document in the database in the **DocType**'s table or
 		`tabSingles` (for single types).
 
@@ -462,7 +462,7 @@ class Document(BaseDocument):
 			d: Document
 			d.db_update()
 
-	def get_doc_before_save(self) -> "Document":
+	def get_doc_before_save(self):
 		return getattr(self, "_doc_before_save", None)
 
 	def has_value_changed(self, fieldname):
