@@ -158,8 +158,12 @@ frappe.ui.FilterGroup = class {
 		});
 
 		this.wrapper.find(".clear-filters").on("click", () => {
+			if (this.base_list?.filter_area) {
+				this.base_list.filter_area.clear();
+			} else {
+				this.clear_filters();
+			}
 			this.toggle_empty_filters(true);
-			this.clear_filters();
 			this.on_change();
 			this.hide_popover();
 		});

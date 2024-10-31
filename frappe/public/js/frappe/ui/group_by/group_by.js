@@ -228,7 +228,7 @@ frappe.ui.GroupBy = class {
 	make_group_by_button() {
 		this.page.wrapper.find(".sort-selector").before(
 			$(`<div class="group-by-selector">
-				<button class="btn btn-default btn-sm group-by-button ellipsis">
+				<button class="btn btn-default btn-xs group-by-button ellipsis">
 					<span class="group-by-icon">
 						${frappe.utils.icon("es-line-folder-alt")}
 					</span>

@@ -85,6 +85,7 @@
 }
 
 .layout-main-section-wrapper {
+	margin-bottom: var(--page-bottom-margin);
 	min-width: 0;
 }
 
@@ -92,7 +93,6 @@
 	// overflow: hidden;
 	@include card($padding: 0px);
 	border: 1px solid var(--border-color);
-	overflow: hidden;
 }
 
 .page-head {
@@ -100,11 +100,16 @@
 	position: sticky;
 	top: var(--navbar-height);
 	background: var(--bg-color);
-	margin-bottom: 5px;
+	//margin-bottom: 5px;
 	transition: 0.5s top;
 	.page-head-content {
 		height: var(--page-head-height);
 		padding: 8px 0px;
+	}
+	&.drop-shadow {
+		box-shadow: var(--shadow-sm);
+		border-bottom: 1px solid var(--border-color);
+		background-color: var(--fg-color) !important;
 	}
 }
 
@@ -113,7 +118,7 @@
 	padding: var(--padding-xs);
 	display: flex;
 	flex-wrap: wrap;
-	background-color: var(--card-bg);
+	//background-color: var(--card-bg);
 	border-bottom: 1px solid var(--border-color);
 
 	.form-group {
@@ -167,12 +172,12 @@
 
 	.frappe-list,
 	.report-wrapper {
-		padding: 0 var(--padding-xs);
+		//padding: 0 var(--padding-xs);
 
 		.result,
 		.no-result,
 		.freeze {
-			min-height: #{"calc(100vh - 284px)"};
+			min-height: #{"calc(100vh - 350px)"};
 		}
 	}
 

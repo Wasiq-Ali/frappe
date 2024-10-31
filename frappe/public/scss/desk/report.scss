@@ -2,6 +2,12 @@
 #page-query-report {
 	.page-head {
 		position: unset;
+
+		&.drop-shadow {
+			box-shadow: unset;
+			border-bottom: unset;
+			background-color: unset;
+		}
 	}
 
 	//.page-form {
@@ -85,8 +91,12 @@
 }
 
 .report-wrapper {
-	padding: 0 var(--padding-xs);
+	//padding: 0 var(--padding-xs);
 	overflow: auto;
+
+	.datatable {
+		width: 100%;
+	}
 }
 
 .report-view {
@@ -99,9 +109,6 @@
 	}
 }
 
-.group-by-button {
-	margin: 5px;
-}
 .group-by-icon.active {
 	--icon-stroke: var(--primary);
 }

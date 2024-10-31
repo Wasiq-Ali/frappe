@@ -754,6 +754,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 							this.chart_options && this.render_chart(this.chart_options);
 						}
 					}
+					this.hide_loading_screen();
 					this.render_datatable();
 					this.add_chart_buttons_to_toolbar(true);
 					this.add_card_button_to_toolbar();

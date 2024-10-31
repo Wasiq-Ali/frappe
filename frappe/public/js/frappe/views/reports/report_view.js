@@ -104,7 +104,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 
 	setup_sort_selector() {
 		this.sort_selector = new frappe.ui.SortSelector({
-			parent: this.filter_area.$filter_list_wrapper,
+			parent: this.$filter_section.find(".tag-filters-area"),
 			doctype: this.doctype,
 			args: this.order_by,
 			onchange: this.on_sort_change.bind(this),

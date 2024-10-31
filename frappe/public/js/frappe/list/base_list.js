@@ -334,7 +334,7 @@ frappe.views.BaseList = class BaseList {
 	setup_sort_selector() {
 		if (this.hide_sort_selector) return;
 		this.sort_selector = new frappe.ui.SortSelector({
-			parent: this.$filter_section,
+			parent: this.$filter_section.find(".tag-filters-area"),
 			doctype: this.doctype,
 			args: {
 				sort_by: this.sort_by,
@@ -608,8 +608,8 @@ class FilterArea {
 			? this.list_view.page.custom_actions
 			: this.list_view.page.page_form;
 
-		this.list_view.$filter_section = $('<div class="filter-section flex">').appendTo(
-			filter_area
+		this.list_view.$filter_section = $('<div class="filter-list">').appendTo(
+			this.list_view.$frappe_list
 		);
 
 		this.$filter_list_wrapper = this.list_view.$filter_section;
@@ -933,23 +933,23 @@ class FilterArea {
 	}
 
 	make_filter_list() {
-		$(`<div class="filter-selector">
-			<div class="btn-group">
-				<button class="btn btn-default btn-sm filter-button">
-					<span class="filter-icon">
-						${frappe.utils.icon("es-line-filter")}
-					</span>
-					<span class="button-label hidden-xs">
-					${__("Filter")}
-					<span>
-				</button>
-				<button class="btn btn-default btn-sm filter-x-button" title="${__("Clear all filters")}">
-					<span class="filter-icon">
-						${frappe.utils.icon("es-small-close")}
-					</span>
-				</button>
-			</div>
-		</div>`).appendTo(this.$filter_list_wrapper);
+		// $(`<div class="filter-selector">
+		// 	<div class="btn-group">
+		// 		<button class="btn btn-default btn-sm filter-button">
+		// 			<span class="filter-icon">
+		// 				${frappe.utils.icon("es-line-filter")}
+		// 			</span>
+		// 			<span class="button-label hidden-xs">
+		// 			${__("Filter")}
+		// 			<span>
+		// 		</button>
+		// 		<button class="btn btn-default btn-sm filter-x-button" title="${__("Clear all filters")}">
+		// 			<span class="filter-icon">
+		// 				${frappe.utils.icon("es-small-close")}
+		// 			</span>
+		// 		</button>
+		// 	</div>
+		// </div>`).appendTo(this.$filter_list_wrapper);
 
 		this.filter_button = this.$filter_list_wrapper.find(".filter-button");
 		this.filter_x_button = this.$filter_list_wrapper.find(".filter-x-button");
@@ -957,7 +957,7 @@ class FilterArea {
 			base_list: this.list_view,
 			parent: this.$filter_list_wrapper,
 			doctype: this.list_view.doctype,
-			filter_button: this.filter_button,
+			// filter_button: this.filter_button,
 			filter_x_button: this.filter_x_button,
 			default_filters: [],
 			on_change: () => this.debounced_refresh_list_view(),
