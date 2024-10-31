@@ -210,9 +210,8 @@ body {
 
 	// Overrides for each widgets
 	&.dashboard-widget-box {
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--shadow-xs);
 		min-height: 240px;
-		border: 1px solid var(--border-color);
 
 		.frappe-chart {
 			overflow: inherit;
@@ -567,13 +566,13 @@ body {
 			}
 		}
 
-		.widget-title {
+		.widget-head .widget-title {
 			cursor: pointer !important;
-			@include get_textstyle("base", "medium");
+			@include get_textstyle("sm", "medium");
 		}
 
 		.indicator-pill {
-			font-weight: 500;
+			@include get_textstyle("xs", "medium");
 			@extend .ellipsis;
 		}
 	}
@@ -996,7 +995,7 @@ body {
 		}
 
 		.page-head {
-			box-shadow: var(--shadow-sm);
+			box-shadow: var(--shadow-xs);
 		}
 	}
 
@@ -1374,7 +1373,7 @@ body {
 						}
 
 						&.spacer {
-							height: 18px !important;
+							height: 14px !important;
 						}
 
 						&.ce-paragraph {

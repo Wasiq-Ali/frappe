@@ -118,7 +118,7 @@
 	cursor: pointer;
 	transition: color 0.2s;
 	-webkit-transition: color 0.2s;
-	@include get_textstyle("base", "regular");
+	@include get_textstyle("sm", "regular");
 	border-radius: var(--border-radius-md);
 
 	&:hover:not(.list-row-head) {
@@ -214,6 +214,7 @@
 	height: 30px;
 	margin: 0.5rem var(--padding-xs);
 	border-radius: var(--border-radius-md);
+	color: var(--text-color);
 
 	.list-check-all {
 		margin-left: 11px;
@@ -350,7 +351,7 @@ input.list-check-all {
 	height: 40px;
 	padding-left: 15px;
 
-	@include get_textstyle("base", "regular");
+	@include get_textstyle("sm", "regular");
 
 	&:hover {
 		background-color: var(--highlight-color);

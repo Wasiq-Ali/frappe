@@ -61,10 +61,10 @@ $disabled-input-height: 22px;
 	--text-on-green: var(--dark-green-800);
 	--indicator-dot-green: var(--green-600);
 
-	--text-on-yellow: var(--yellow-600);
+	--text-on-yellow: var(--yellow-700);
 	--indicator-dot-yellow: var(--yellow-200);
 
-	--text-on-orange: var(--orange-600);
+	--text-on-orange: var(--orange-700);
 	--indicator-dot-orange: var(--orange-400);
 
 	--text-on-red: var(--red-600);
@@ -131,17 +131,17 @@ $disabled-input-height: 22px;
 	--error-border: var(--red-400);
 
 	// Button Colors
-	--btn-default-bg: var(--gray-100);
-	--btn-default-hover-bg: var(--gray-300);
-	--btn-default-active-bg: var(--gray-200);
+	--btn-default-bg: var(--neutral);
+	--btn-default-hover-bg: var(--gray-50);
+	--btn-default-active-bg: var(--gray-100);
 
-	--btn-secondary-bg: var(--gray-200);
+	--btn-secondary-bg: var(--gray-100);
 	--btn-secondary-hover-bg: var(--gray-300);
-	--btn-secondary-active-bg: var(--gray-400);
+	--btn-secondary-active-bg: var(--gray-200);
 
 	--btn-primary: var(--gray-900);
-	--btn-primary-hover-bg: #{$btn-primary-hover-bg};
-	--btn-primary-active-bg: #{$btn-primary-active-bg};
+	--btn-primary-hover-bg: var(--gray-850);
+	--btn-primary-active-bg: var(--invert-neutral);
 
 	// badge color
 	--badge-bg: var(--gray-200);

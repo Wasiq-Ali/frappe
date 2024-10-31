@@ -101,14 +101,13 @@
 	top: var(--navbar-height);
 	background: var(--bg-color);
 	//margin-bottom: 5px;
-	transition: 0.5s top;
+	transition: 0.5s top, 0.1s box-shadow, 0.1s background-color;
 	.page-head-content {
 		height: var(--page-head-height);
 		padding: 8px 0px;
 	}
 	&.drop-shadow {
-		box-shadow: var(--shadow-sm);
-		border-bottom: 1px solid var(--border-color);
+		box-shadow: var(--shadow-xs);
 		background-color: var(--fg-color) !important;
 	}
 }

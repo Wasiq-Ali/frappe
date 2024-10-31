@@ -10,13 +10,13 @@
 		padding: 4px 8px;
 	}
 	border-radius: var(--border-radius);
-	box-shadow: none;
+	box-shadow: var(--btn-shadow);
 	@include get_textstyle("base", "regular");
 
 	&:active {
 		// override #dadada that comes from bootstrap (probably) to support dark theme.
-		color: var(--text-color) !important;
-		background-color: var(--control-bg) !important;
+		color: var(--text-color);
+		background-color: var(--control-bg);
 		box-shadow: var(--focus-default) !important;
 	}
 
@@ -107,7 +107,10 @@
 	--icon-stroke: currentColor;
 	--icon-fill-bg: var(--btn-primary);
 
-	&:active {
+	&:hover {
+		background: var(--btn-primary-hover-bg);
+	}
+	&:not(:disabled):not(.disabled):active {
 		color: var(--gray-100) !important;
 		background-color: var(--invert-neutral) !important;
 	}
@@ -116,6 +119,10 @@
 .btn.btn-danger {
 	background-color: var(--danger);
 	color: $white;
+
+	&:hover {
+		background: var(--red-600);
+	}
 }
 
 [data-theme="dark"] {

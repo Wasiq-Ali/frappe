@@ -67,11 +67,11 @@ body {
 		position: absolute;
 		pointer-events: none;
 		top: 3px;
-		right: 12px;
+		right: 7px;
 
 		&.xs {
 			top: 3px;
-			right: 10px;
+			//right: 10px;
 		}
 
 		.icon {
@@ -87,7 +87,7 @@ body {
 		position: absolute;
 		pointer-events: none;
 		top: 3px;
-		left: 12px;
+		left: 9px;
 		max-width: 80%;
 
 		&.xs {

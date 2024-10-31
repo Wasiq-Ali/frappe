@@ -282,14 +282,14 @@ h2 {
 	@include get_textstyle("base", "regular");
 }
 
-.btn-group {
-	.btn {
-		box-shadow: none;
-		&:nth-child(2) {
-			border-left: 1px solid var(--btn-group-border-color);
-		}
-	}
-}
+//.btn-group {
+//	.btn {
+//		box-shadow: none;
+//		&:nth-child(2) {
+//			border-left: 1px solid var(--btn-group-border-color);
+//		}
+//	}
+//}
 
 .select-group-btn {
 	.dropdown-toggle-split {
@@ -497,8 +497,11 @@ kbd {
 
 	.standard-sidebar-section .standard-sidebar-label {
 		margin-bottom: var(--margin-md);
-		margin-top: var(--margin-sm);
 		width: 100%;
+
+		&:not(:first-child) {
+			margin-top: var(--margin-sm);
+		}
 
 		&:focus-visible {
 			text-decoration: underline;

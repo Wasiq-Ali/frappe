@@ -62,7 +62,7 @@ frappe.ui.form.LinkedWith = class LinkedWith {
 
 	make_doc_head(heading) {
 		return `
-			<header class="level list-row list-row-head text-muted small">
+			<header class="level list-row list-row-head small">
 				<div>${__(heading)}</div>
 			</header>
 		`;
