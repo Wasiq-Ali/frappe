@@ -245,7 +245,7 @@ body {
 		.widget-subtitle {
 			font-size: $font-size-sm;
 			color: $text-muted;
-			margin-top: var(--margin-xs);
+			margin-top: 2px;
 		}
 
 		.widget-head {
@@ -968,9 +968,9 @@ body {
 				}
 			}
 
-			.layout-side-section {
-				padding-right: 15px;
-			}
+			//.layout-side-section {
+			//	padding-right: 15px;
+			//}
 
 			.layout-main-section {
 				border: 1px solid var(--border-color);

@@ -182,7 +182,7 @@ body[data-route^="Module"] .main-menu {
 
 .layout-side-section {
 	@include get_textstyle("sm", "regular");
-	padding-right: 30px;
+	//padding-right: 30px;
 
 	&.hide-sidebar {
 		display: none;
@@ -381,9 +381,9 @@ body[data-route^="Module"] .main-menu {
 			display: none;
 		}
 
-		input:not([data-fieldtype="Check"]) {
-			background: var(--control-bg-on-gray);
-		}
+		//input:not([data-fieldtype="Check"]) {
+		//	background: var(--control-bg-on-gray);
+		//}
 
 		.filter-pill {
 			display: flex;
