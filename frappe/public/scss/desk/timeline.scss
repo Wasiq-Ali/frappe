@@ -20,7 +20,7 @@ $threshold: 34;
 
 .new-timeline {
 	position: relative;
-	padding-top: var(--padding-lg);
+	padding-top: var(--padding-sm);
 
 	@include media-breakpoint-down(xs) {
 		padding-left: calc(var(--padding-sm) + var(--timeline-item-icon-size) / 2);

@@ -398,7 +398,7 @@ export default class GridRow {
 		if (this.doc && !this.grid.df.in_place_edit) {
 			// remove row
 			if (!this.open_form_button) {
-				this.open_form_button = $('<div class="col"></div>').appendTo(this.row);
+				this.open_form_button = $('<div class="row-edit col"></div>').appendTo(this.row);
 
 				if (!this.configure_columns) {
 					const edit_msg = __("Edit", "", "Edit grid row");
@@ -429,7 +429,7 @@ export default class GridRow {
 
 		if (this.configure_columns && this.frm) {
 			this.configure_columns_button = $(`
-				<div class="col grid-static-col d-flex justify-content-center" style="cursor: pointer;">
+				<div class="row-edit col grid-static-col d-flex justify-content-center" style="cursor: pointer;">
 					<a>${frappe.utils.icon("setting-gear", "sm", "", "filter: opacity(0.5)")}</a>
 				</div>
 			`)
@@ -439,7 +439,7 @@ export default class GridRow {
 				});
 		} else if (this.configure_columns && !this.frm) {
 			this.configure_columns_button = $(`
-				<div class="col grid-static-col"></div>
+				<div class="row-edit col grid-static-col"></div>
 			`).appendTo(this.row);
 		}
 	}

@@ -2,7 +2,7 @@
 	border: 1px solid var(--table-border-color);
 	border-radius: var(--border-radius-md);
 	color: var(--text-color);
-	margin-bottom: var(--margin-sm);
+	margin-bottom: var(--margin-xs);
 }
 
 .form-grid.error {
@@ -11,7 +11,7 @@
 
 .grid-heading-row {
 	border-bottom: 1px solid var(--table-border-color);
-	color: var(--gray-600);
+	color: var(--text-muted);
 	background-color: var(--subtle-fg);
 	@include get_textstyle("sm", "regular");
 	height: 32px;
@@ -56,7 +56,7 @@
 }
 
 .data-row textarea {
-	height: 38px;
+	height: 34px;
 }
 
 .form-grid .data-row {
@@ -101,8 +101,12 @@
 //}
 
 .grid-body .data-row {
-	@include get_textstyle("sm", "regular");
+	@include get_textstyle("xs", "regular");
 	color: var(--text-muted);
+
+	.form-control {
+		font-size: var(--text-xs);
+	}
 }
 
 .list-loading {
@@ -129,7 +133,7 @@
 
 .grid-static-col,
 .row-index {
-	height: 38px;
+	height: 34px;
 	max-height: 200px;
 
 	&.search {
@@ -143,7 +147,7 @@
 }
 
 .row-check {
-	height: 38px;
+	height: 34px;
 	text-align: center;
 
 	input {
@@ -207,6 +211,13 @@
 	text-align: center;
 }
 
+//.row-index,
+//.row-check,
+//.row-edit {
+//	flex: 0 0 50px;
+//    max-width: 50px;
+//}
+
 .grid-row > .row {
 	.col:last-child {
 		border-right: none;
@@ -264,13 +275,12 @@
 		.ql-editor {
 			border-radius: 0px;
 			border: 0px;
-			padding-top: 10px;
-			padding-bottom: 10px;
-			height: 38px;
+			padding: var(--grid-padding);
+			height: 34px;
 		}
 
 		.link-btn {
-			top: 5px;
+			top: 4px;
 			background-color: var(--bg-color);
 		}
 
@@ -497,7 +507,7 @@
 	padding: 0;
 }
 .grid-footer {
-	margin-top: var(--margin-sm);
+	//margin-top: var(--margin-sm);
 }
 .grid-footer,
 .grid-custom-buttons {
