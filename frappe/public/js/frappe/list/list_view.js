@@ -426,19 +426,19 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 		this.columns = this.columns.slice(0, this.list_view_settings.total_fields || total_fields);
 
-		if (
-			!this.settings.hide_name_column &&
-			this.meta.title_field &&
-			this.meta.title_field !== "name"
-		) {
-			this.columns.push({
-				type: "Field",
-				df: {
-					label: __("ID"),
-					fieldname: "name",
-				},
-			});
-		}
+		// if (
+		// 	!this.settings.hide_name_column &&
+		// 	this.meta.title_field &&
+		// 	this.meta.title_field !== "name"
+		// ) {
+		// 	this.columns.push({
+		// 		type: "Field",
+		// 		df: {
+		// 			label: __("ID"),
+		// 			fieldname: "name",
+		// 		},
+		// 	});
+		// }
 	}
 
 	reorder_listview_fields() {
@@ -686,6 +686,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 					"list-row-col ellipsis",
 					col.type == "Subject" ? "list-subject level" : "hidden-xs",
 					col.type == "Tag" ? "tag-col hide" : "",
+					col.type == "Status" ? "list-row-status" : "",
 					frappe.model.is_numeric_field(col.df) ? "text-right" : "",
 				].join(" ");
 
@@ -769,7 +770,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		if (col.type === "Status" || col.df?.options == "Workflow State") {
 			let show_workflow_state = col.df?.options == "Workflow State";
 			return `
-				<div class="list-row-col hidden-xs ellipsis">
+				<div class="list-row-col ${col.type === "Status" ? "list-row-status" : ""} hidden-xs ellipsis">
 					${this.get_indicator_html(doc, show_workflow_state)}
 				</div>
 			`;
@@ -927,6 +928,20 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	get_meta_html(doc) {
 		let html = "";
 
+		if (!this.settings.hide_name_column
+			&& this.meta.title_field
+			&& this.meta.title_field !== "name"
+			&& doc[this.meta.title_field || ""] !== doc.name
+		) {
+			html += `
+				<div class="level-item list-row-id hidden-xs hidden-sm ellipsis mr-2">
+					<a class="ellipsis" href="${this.get_form_link(doc)}">
+						${doc.name}
+					</a>
+				</div>
+			`;
+		}
+
 		let settings_button = null;
 		if (!this.hide_row_button && this.settings.button && this.settings.button.show(doc)) {
 			settings_button = `
@@ -964,9 +979,9 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				<div class="hidden-md hidden-xs">
 					${settings_button || assigned_to}
 				</div>
-				<span class="modified">${modified}</span>
+				<span class="modified text-right">${modified}</span>
 				${comment_count || ""}
-				${comment_count ? '<span class="mx-2">·</span>' : ""}
+				${comment_count ? '<span class="mx-1">·</span>' : ""}
 				<span class="list-row-like hidden-xs" style="margin-bottom: 1px;">
 					${this.get_like_html(doc)}
 				</span>
