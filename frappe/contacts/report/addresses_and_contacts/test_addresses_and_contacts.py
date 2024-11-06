@@ -104,7 +104,7 @@ class TestAddressesAndContacts(FrappeTestCase):
 				0,
 				"_Test First Name",
 				"_Test Last Name",
-				"_Test Address-Billing",
+				d,
 				"+91 0000000000",
 				"",
 				"test_contact@example.com",

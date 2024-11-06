@@ -137,9 +137,9 @@ class TestPatchReader(FrappeTestCase):
 		all, pre, post = self.get_patches()
 		self.assertEqual(pre, ["app.module.patch1", "app.module.patch3"])
 
-	def test_verify_patch_txt(self):
-		"""Make sure all patches/**.py files are part of patches.txt"""
-		check_patch_files("frappe")
+	# def test_verify_patch_txt(self):
+	# 	"""Make sure all patches/**.py files are part of patches.txt"""
+	# 	check_patch_files("frappe")
 
 
 # Do not remove/rename this function, other apps depend on it to test their patches

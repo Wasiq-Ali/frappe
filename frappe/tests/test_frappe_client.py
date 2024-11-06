@@ -128,7 +128,7 @@ class TestFrappeClient(FrappeTestCase):
 		frappe.db.commit()
 
 		# create multiple contacts
-		server.insert_many(
+		george, shakespear = server.insert_many(
 			[
 				{"doctype": "Contact", "first_name": "George", "last_name": "Steevens"},
 				{"doctype": "Contact", "first_name": "William", "last_name": "Shakespeare"},
@@ -141,7 +141,7 @@ class TestFrappeClient(FrappeTestCase):
 				"doctype": "Event",
 				"subject": "Sing a song of sixpence",
 				"event_participants": [
-					{"reference_doctype": "Contact", "reference_docname": "George Steevens"}
+					{"reference_doctype": "Contact", "reference_docname": george}
 				],
 			}
 		)
@@ -151,13 +151,13 @@ class TestFrappeClient(FrappeTestCase):
 			{
 				"doctype": "Event Participants",
 				"name": event.get("event_participants")[0].get("name"),
-				"reference_docname": "William Shakespeare",
+				"reference_docname": shakespear,
 			}
 		)
 
 		# the change should run the parent document's validations and
 		# create a Communication record with the new contact
-		self.assertTrue(frappe.db.exists("Communication Link", {"link_name": "William Shakespeare"}))
+		self.assertTrue(frappe.db.exists("Communication Link", {"link_name": shakespear}))
 
 	def test_delete_doc(self):
 		server = FrappeClient(get_url(), "Administrator", self.PASSWORD, verify=False)

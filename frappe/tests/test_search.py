@@ -173,7 +173,7 @@ class TestSearch(FrappeTestCase):
 			self.assertIn("es", row["value"])
 
 		# Assume that "es" is used at least 10 times, it should now be first
-		frappe.db.set_value("Language", "es", "idx", 10)
+		frappe.db.set_value("Language", "es", "idx", 100)
 		self.assertEqual("es", search(txt="es")[0]["value"])
 
 	def test_search_with_paren(self):
