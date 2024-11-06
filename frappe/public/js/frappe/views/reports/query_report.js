@@ -102,16 +102,11 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	set_default_secondary_action() {
-		this.refresh_button && this.refresh_button.remove();
-		this.refresh_button = this.page.add_action_icon(
-			"es-line-reload",
-			() => {
-				this.setup_progress_bar();
-				this.refresh();
-			},
-			"",
-			__("Reload Report")
-		);
+		// this.refresh_button && this.refresh_button.remove();
+		this.refresh_button = this.page.set_secondary_action(__("Reload"), () => {
+			this.setup_progress_bar();
+			this.refresh();
+		}, "es-line-reload");
 	}
 
 	get_no_result_message() {

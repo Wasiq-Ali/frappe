@@ -313,10 +313,10 @@ frappe.ui.Page = class Page {
 
 	get_icon_label(icon, label) {
 		let icon_name = icon;
-		let size = "xs";
+		let size = "sm";
 		if (typeof icon === "object") {
 			icon_name = icon.icon;
-			size = icon.size || "xs";
+			size = icon.size || "sm";
 		}
 		return `${icon ? frappe.utils.icon(icon_name, size) : ""} <span class="hidden-xs"> ${__(
 			label
