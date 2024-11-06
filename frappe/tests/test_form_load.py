@@ -109,6 +109,7 @@ class TestFormLoad(FrappeTestCase):
 		contact.first_name = "_Test Contact 1"
 		contact.append("phone_nos", {"phone": "123456"})
 		contact.insert()
+		contact_id = contact.name
 
 		user = frappe.get_doc("User", "test@example.com")
 
@@ -123,7 +124,7 @@ class TestFormLoad(FrappeTestCase):
 
 		frappe.set_user(user.name)
 
-		contact = frappe.get_doc("Contact", "_Test Contact 1")
+		contact = frappe.get_doc("Contact", contact_id)
 
 		contact.phone_nos[0].phone = "654321"
 		contact.save()
@@ -137,7 +138,7 @@ class TestFormLoad(FrappeTestCase):
 		contact.phone_nos[0].phone = "654321"
 		contact.save()
 
-		contact = frappe.get_doc("Contact", "_Test Contact 1")
+		contact = frappe.get_doc("Contact", contact_id)
 		self.assertEqual(contact.phone_nos[0].phone, "654321")
 
 		frappe.set_user("Administrator")

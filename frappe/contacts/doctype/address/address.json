@@ -179,7 +179,7 @@
  "icon": "fa fa-map-marker",
  "idx": 5,
  "links": [],
- "modified": "2023-11-21 18:48:20.492184",
+ "modified": "2024-11-06 12:45:02.358969",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Address",
@@ -262,7 +262,7 @@
   }
  ],
  "quick_entry": 1,
- "search_fields": "address_line1, address_line2, city, country",
+ "search_fields": "address_title, address_line1, address_line2, city, country",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],

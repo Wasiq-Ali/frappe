@@ -259,7 +259,7 @@ class TestWebsite(FrappeTestCase):
 		frappe.db.value_cache[("DocType", "Language", "name")] = (("Language",),)
 		frappe.set_user("Administrator")
 		content = get_response_content("/Language/ru")
-		self.assertIn('<div class="print-format">', content)
+		self.assertIn('<div class="print-format"', content)
 		self.assertIn("<div>Language</div>", content)
 
 	def test_custom_base_template_path(self):

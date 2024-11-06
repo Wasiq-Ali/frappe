@@ -135,6 +135,7 @@ class TestReport(FrappeTestCase):
 				"name": "Administrator",
 				"user_type": "System User",
 				"email": "admin@example.com",
+				"role_profile": None,
 			},
 			admin_dict,
 		)
@@ -162,7 +163,7 @@ class TestReport(FrappeTestCase):
 		result = response.get("result")
 		columns = response.get("columns")
 		self.assertListEqual(
-			["name", "email", "user_type"],
+			["name", "email", "role_profile", "user_type"],
 			[column.get("fieldname") for column in columns],
 		)
 		admin_dict = frappe.core.utils.find(result, lambda d: d["name"] == "Administrator")
@@ -171,6 +172,7 @@ class TestReport(FrappeTestCase):
 				"name": "Administrator",
 				"user_type": "System User",
 				"email": "admin@example.com",
+				"role_profile": None,
 			},
 			admin_dict,
 		)

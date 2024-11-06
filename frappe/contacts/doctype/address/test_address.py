@@ -39,6 +39,7 @@ class TestAddress(FrappeTestCase):
 
 		frappe.get_doc(
 			{
+				"address_title": "Administrator",
 				"address_type": "Billing",
 				"address_line1": "1",
 				"city": "Mumbai",

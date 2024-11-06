@@ -27,12 +27,12 @@ class TestQueryReport(FrappeTestCase):
 		visible_idx = [0, 2, 3]
 
 		# Build the result
-		xlsx_data, column_widths = build_xlsx_data(data, visible_idx, include_indentation=0)
+		xlsx_data, column_widths, column_formats = build_xlsx_data(data, visible_idx, include_indentation=0)
 
 		self.assertEqual(type(xlsx_data), list)
 		self.assertEqual(len(xlsx_data), 4)  # columns + data
 		# column widths are divided by 10 to match the scale that is supported by openpyxl
-		self.assertListEqual(column_widths, [0, 10, 15])
+		self.assertListEqual(column_widths, [0, 12.5, 18.75])
 
 		for row in xlsx_data:
 			self.assertIsInstance(row, list)
@@ -53,7 +53,7 @@ class TestQueryReport(FrappeTestCase):
 		visible_idx = [0, 2, 3]
 
 		# Build the result
-		xlsx_data, column_widths = build_xlsx_data(
+		xlsx_data, column_widths, column_formats = build_xlsx_data(
 			data, visible_idx, include_indentation=False, include_filters=True
 		)
 
@@ -80,7 +80,7 @@ class TestQueryReport(FrappeTestCase):
 		visible_idx = [0, 1]
 
 		# Build the result
-		xlsx_data, column_widths = build_xlsx_data(data, visible_idx, include_indentation=0)
+		xlsx_data, column_widths, column_formats = build_xlsx_data(data, visible_idx, include_indentation=0)
 		# Export to excel
 		make_xlsx(xlsx_data, "Query Report", column_widths=column_widths)
 
@@ -105,6 +105,8 @@ class TestQueryReport(FrappeTestCase):
 			report.is_standard = "No"
 			report.save()
 
+		report_data = run(REPORT_NAME)
+
 		for delimiter in (",", ";", "\t", "|"):
 			for quoting in (QUOTE_ALL, QUOTE_MINIMAL, QUOTE_NONE, QUOTE_NONNUMERIC):
 				frappe.local.form_dict = frappe._dict(
@@ -115,6 +117,8 @@ class TestQueryReport(FrappeTestCase):
 						"csv_delimiter": delimiter,
 						"include_indentation": 0,
 						"visible_idx": [0, 1, 2],
+						"data": report_data["result"],
+						"columns": report_data["columns"],
 					}
 				)
 				export_query()

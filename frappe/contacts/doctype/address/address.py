@@ -26,20 +26,7 @@ class Address(Document):
 		address_line1: DF.Data
 		address_line2: DF.Data | None
 		address_title: DF.Data | None
-		address_type: DF.Literal[
-			"Billing",
-			"Shipping",
-			"Office",
-			"Personal",
-			"Plant",
-			"Postal",
-			"Shop",
-			"Subsidiary",
-			"Warehouse",
-			"Current",
-			"Permanent",
-			"Other",
-		]
+		address_type: DF.Literal["Billing", "Shipping", "Office", "Personal", "Plant", "Postal", "Shop", "Subsidiary", "Warehouse", "Current", "Permanent", "Other"]
 		city: DF.Data
 		country: DF.Link
 		county: DF.Data | None
@@ -52,7 +39,6 @@ class Address(Document):
 		phone: DF.Data | None
 		pincode: DF.Data | None
 		state: DF.Data | None
-
 	# end: auto-generated types
 	def __setup__(self):
 		self.flags.linked = False
