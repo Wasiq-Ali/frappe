@@ -2,14 +2,12 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "Prompt",
- "creation": "2013-02-18 13:36:19",
+ "creation": "2024-10-30 16:08:59.779835",
  "description": "DocType is a Table / Form in the application.",
  "doctype": "DocType",
  "document_type": "Document",
  "engine": "InnoDB",
  "field_order": [
-  "form_builder_tab",
-  "form_builder",
   "settings_tab",
   "sb0",
   "module",
@@ -92,9 +90,10 @@
   "advanced",
   "engine",
   "migration_hash",
-  "fields_section",
+  "fields_tab",
   "fields",
-  "connections_tab"
+  "form_builder_tab",
+  "form_builder"
  ],
  "fields": [
   {
@@ -657,7 +656,8 @@
   {
    "fieldname": "settings_tab",
    "fieldtype": "Tab Break",
-   "label": "Settings"
+   "label": "Settings",
+   "show_dashboard": 1
   },
   {
    "depends_on": "eval:!doc.__islocal",
@@ -671,22 +671,16 @@
    "label": "Form Builder"
   },
   {
-   "collapsible": 1,
-   "fieldname": "fields_section",
-   "fieldtype": "Section Break",
-   "label": "Fields"
-  },
-  {
-   "fieldname": "connections_tab",
-   "fieldtype": "Tab Break",
-   "label": "Connections",
-   "show_dashboard": 1
-  },
-  {
    "depends_on": "email_append_to",
    "fieldname": "sender_name_field",
    "fieldtype": "Data",
    "label": "Sender Name Field"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "fields_tab",
+   "fieldtype": "Tab Break",
+   "label": "Fields"
   }
  ],
  "icon": "fa fa-bolt",
@@ -774,7 +768,7 @@
    "link_fieldname": "reference_doctype"
   }
  ],
- "modified": "2023-12-01 18:37:16.799471",
+ "modified": "2024-11-06 00:24:57.673777",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocType",

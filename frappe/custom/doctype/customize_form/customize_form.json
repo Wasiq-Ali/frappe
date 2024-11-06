@@ -59,7 +59,7 @@
   "links",
   "document_states_section",
   "states",
-  "fields_section_break",
+  "fields_tab",
   "fields",
   "form_tab",
   "form_builder"
@@ -177,13 +177,6 @@
    "fieldtype": "Select",
    "label": "Sort Order",
    "options": "ASC\nDESC"
-  },
-  {
-   "collapsible": 1,
-   "depends_on": "doc_type",
-   "fieldname": "fields_section_break",
-   "fieldtype": "Section Break",
-   "label": "Fields"
   },
   {
    "allow_bulk_edit": 1,
@@ -406,6 +399,13 @@
    "fieldname": "sender_name_field",
    "fieldtype": "Data",
    "label": "Sender Name Field"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "doc_type",
+   "fieldname": "fields_tab",
+   "fieldtype": "Tab Break",
+   "label": "Fields"
   }
  ],
  "hide_toolbar": 1,
@@ -414,7 +414,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-12-01 18:18:23.086134",
+ "modified": "2024-11-06 00:41:46.168467",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Customize Form",
