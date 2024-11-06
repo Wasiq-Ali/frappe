@@ -3,9 +3,9 @@
 
 name: Create weekly release pull requests
 on:
-  schedule:
-    # 9:30 UTC => 3 PM IST Tuesday
-    - cron: "30 9 * * 2"
+#  schedule:
+#    # 9:30 UTC => 3 PM IST Tuesday
+#    - cron: "30 9 * * 2"
   workflow_dispatch:
 
 jobs:
