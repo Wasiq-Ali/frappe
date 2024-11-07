@@ -6,9 +6,6 @@ on:
 #  schedule:
 #    # Run everday at midnight UTC / 5:30 IST
 #    - cron: "0 0 * * *"
-  push:
-    branches:
-      - version-15
 
 concurrency:
   group: server-develop-${{ github.event_name }}-${{ github.event.number }}
