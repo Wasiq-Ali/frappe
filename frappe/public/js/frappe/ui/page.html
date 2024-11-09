@@ -1,7 +1,7 @@
 <div class="page-head flex">
 	<div class="container">
 		<div class="row flex align-center page-head-content justify-between">
-			<div class="col-md-4 col-sm-6 col-xs-7 page-title">
+			<div class="col page-title">
 				<!-- <div class="title-image hide hidden-md hidden-lg"></div> -->
 				<!-- title -->
 				<button class="btn-reset sidebar-toggle-btn">
@@ -17,7 +17,7 @@
 				</button>
 				<div class="flex fill-width title-area">
 					<div>
-						<div class="flex">
+						<div class="flex align-items-center">
 							<h3 class="ellipsis title-text"></h3>
 							<span class="indicator-pill whitespace-nowrap"></span>
 						</div>
@@ -39,17 +39,17 @@
 					<div class="menu-btn-group hide">
 						<button type="button" class="btn btn-default" data-toggle="dropdown" aria-expanded="false" aria-label="{{ __("Menu") }}">
 							<span>
-								<span class="menu-btn-group-label">
-									<svg class="icon icon-sm hidden-xs" style="margin-left: -4px;">
-										<use href="#icon-dot-vertical">
-										</use>
-									</svg>
-									<svg class="icon icon-sm visible-xs">
-										<use href="#icon-dot-horizontal">
-										</use>
-									</svg>
-									<span class="hidden-xs actions-btn-group-label" style="margin-left: -2px;">{%= __("Menu") %}</span>
-								</span>
+								<svg class="icon icon-sm hidden-xs" style="margin-left: -4px;">
+									<use href="#icon-dot-vertical">
+									</use>
+								</svg>
+								<svg class="icon icon-sm visible-xs">
+									<use href="#icon-dot-horizontal">
+									</use>
+								</svg>
+							</span>
+							<span class="menu-btn-group-label">
+								<span class="hidden-xs actions-btn-group-label" style="margin-left: -2px;">{%= __("Menu") %}</span>
 							</span>
 						</button>
 						<ul class="dropdown-menu dropdown-menu-right" role="menu"></ul>
