@@ -532,7 +532,7 @@ $.extend(frappe.model, {
 		docname,
 		fieldname,
 		value,
-		fieldtype,
+		fieldtype = "",
 		skip_dirty_trigger = false
 	) {
 		/* help: Set a value locally (if changed) and execute triggers */
