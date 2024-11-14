@@ -114,7 +114,7 @@ cur_frm.add_fetch("customer",  "local_tax_no',  'local_tax_no');
 
 // additional validation on dates
 frappe.ui.form.on('Task',  'validate',  function(frm) {
-    if (frm.doc.from_date &lt; get_today()) {
+    if (frm.doc.from_date &lt; frappe.datetime.get_today()) {
         msgprint('You can not select past date in From Date');
         validated = false;
     }
