@@ -27,7 +27,7 @@ INCLUDE_DIRECTIVE_PATTERN = re.compile(r"""{% include\s['"](.*)['"]\s%}""")
 def set_default(doc, key):
 	"""Set is_default property of given doc and unset all others filtered by given key."""
 	if not doc.is_default:
-		frappe.db.set(doc, "is_default", 1)
+		doc.db_set("is_default", 1)
 
 	frappe.db.sql(
 		"""update `tab{}` set `is_default`=0
