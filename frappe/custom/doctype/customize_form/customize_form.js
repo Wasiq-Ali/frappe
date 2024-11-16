@@ -160,7 +160,6 @@ frappe.ui.form.on("Customize Form", {
 				);
 
 				render_form_builder(frm);
-				frm.get_field("form_builder").tab.set_active();
 			});
 		}
 
