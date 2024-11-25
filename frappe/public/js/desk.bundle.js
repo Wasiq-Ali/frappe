@@ -24,7 +24,7 @@ import "./frappe/roles_editor.js";
 import "./frappe/module_editor.js";
 import "./frappe/microtemplate.js";
 
-import "../../regional/pakistan.js"
+import "../../regional/regional.js"
 
 import "./frappe/ui/page.html";
 import "./frappe/ui/page.js";

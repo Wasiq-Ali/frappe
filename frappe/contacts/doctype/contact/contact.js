@@ -186,7 +186,7 @@ frappe.ui.form.on("Contact", {
 
 		$.each(frm.doc.phone_nos || [], function (i, d) {
 			if (d.is_primary_mobile_no) {
-				d.phone = frappe.regional.pakistan.get_formatted_mobile_no(d.phone);
+				d.phone = frappe.regional.get_formatted_mobile_nos(d.phone)
 				refresh_field('phone', d.name, 'phone_nos');
 			}
 		});
