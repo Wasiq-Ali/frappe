@@ -12,7 +12,7 @@ Object.assign(frappe.regional, {
 			return frappe.regional.uae.get_formatted_uae_mobile_no(value);
 		}
 		else {
-			return Boolean(value)
+			return value
 		}
 
 	}
