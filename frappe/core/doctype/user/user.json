@@ -107,8 +107,7 @@
   "generate_keys",
   "column_break_65",
   "api_secret",
-  "onboarding_status",
-  "connections_tab"
+  "onboarding_status"
  ],
  "fields": [
   {
@@ -702,12 +701,6 @@
    "label": "Settings"
   },
   {
-   "fieldname": "connections_tab",
-   "fieldtype": "Tab Break",
-   "label": "Connections",
-   "show_dashboard": 1
-  },
-  {
    "collapsible": 1,
    "fieldname": "desk_settings_section",
    "fieldtype": "Section Break",
@@ -743,8 +736,7 @@
    "description": "Redirect to the selected app after login",
    "fieldname": "default_app",
    "fieldtype": "Select",
-   "label": "Default App",
-   "options": ""
+   "label": "Default App"
   },
   {
    "collapsible": 1,
@@ -883,7 +875,7 @@
    "link_fieldname": "user"
   }
  ],
- "modified": "2024-09-27 11:41:13.336662",
+ "modified": "2024-11-29 23:45:06.305303",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
