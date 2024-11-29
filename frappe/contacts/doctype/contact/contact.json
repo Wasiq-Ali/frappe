@@ -291,7 +291,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-12-08 15:52:37.525003",
+ "modified": "2024-11-29 17:18:28.976725",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
@@ -349,6 +349,16 @@
    "read": 1,
    "report": 1,
    "role": "Sales User (Read Only)"
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CR User",
+   "share": 1,
+   "write": 1
   },
   {
    "create": 1,

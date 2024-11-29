@@ -179,7 +179,7 @@
  "icon": "fa fa-map-marker",
  "idx": 5,
  "links": [],
- "modified": "2024-11-06 12:45:02.358969",
+ "modified": "2024-11-29 22:54:20.453263",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Address",
@@ -239,6 +239,13 @@
    "read": 1,
    "report": 1,
    "role": "Sales User (Read Only)"
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "CR User"
   },
   {
    "create": 1,

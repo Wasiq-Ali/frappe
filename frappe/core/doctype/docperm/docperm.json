@@ -38,6 +38,7 @@
    "label": "Role and Level"
   },
   {
+   "columns": 1,
    "fieldname": "role",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -62,6 +63,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "columns": 1,
    "default": "0",
    "fieldname": "permlevel",
    "fieldtype": "Int",
@@ -147,6 +149,7 @@
    "default": "0",
    "fieldname": "amend",
    "fieldtype": "Check",
+   "in_list_view": 1,
    "label": "Amend",
    "oldfieldname": "amend",
    "oldfieldtype": "Check",
@@ -211,7 +214,7 @@
  "idx": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-11-18 00:44:14.278170",
+ "modified": "2024-11-29 16:21:20.048551",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocPerm",

@@ -37,15 +37,16 @@ class Contact(Document):
 		links: DF.Table[DynamicLink]
 		middle_name: DF.Data | None
 		mobile_no: DF.Data | None
+		mobile_no_2: DF.Data | None
 		phone: DF.Data | None
 		phone_nos: DF.Table[ContactPhone]
 		pulled_from_google_contacts: DF.Check
 		salutation: DF.Link | None
 		status: DF.Literal["Passive", "Open", "Replied"]
 		sync_with_google_contacts: DF.Check
+		tax_cnic: DF.Data | None
 		unsubscribed: DF.Check
 		user: DF.Link | None
-
 	# end: auto-generated types
 	def validate(self):
 		self.clean_contact_name()
