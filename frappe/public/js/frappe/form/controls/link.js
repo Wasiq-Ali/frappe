@@ -703,11 +703,15 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 					if (!this.docname || !columns_to_fetch.length) {
 						return response.name;
 					}
-					update_dependant_fields(response);
+					setTimeout(() => {
+						update_dependant_fields(response);
+					}, 0);
 					return response.name;
 				});
 		} else {
-			update_dependant_fields({});
+			setTimeout(() => {
+				update_dependant_fields({});
+			}, 0);
 			return value;
 		}
 	}
