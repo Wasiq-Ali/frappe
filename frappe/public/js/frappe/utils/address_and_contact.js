@@ -190,7 +190,7 @@ $.extend(frappe.contacts, {
 					onchange: () => {
 						if (number_type == "is_primary_mobile_no") {
 							var value = dialog.get_value('phone');
-							value = frappe.regional.pakistan.get_formatted_mobile_no(value);
+							value = frappe.regional.get_formatted_mobile_no(value);
 							dialog.fields_dict.phone.value = value;
 							dialog.fields_dict.phone.refresh();
 						}
@@ -202,7 +202,7 @@ $.extend(frappe.contacts, {
 		dialog.set_primary_action(__("Add"), function () {
 			var values = dialog.get_values();
 			if (number_type == "is_primary_mobile_no") {
-				values.phone = frappe.regional.pakistan.get_formatted_mobile_no(values.phone);
+				values.phone = frappe.regional.get_formatted_mobile_no(values.phone);
 			}
 			return frappe.call({
 				method: "frappe.contacts.doctype.contact.contact.add_phone_no_to_contact",

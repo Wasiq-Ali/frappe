@@ -164,8 +164,8 @@ frappe.ui.form.on("Contact", {
 	validate: function (frm) {
 		frm.events.format_mobile_nos(frm);
 		frappe.regional.pakistan.format_cnic(frm, "tax_cnic");
-		frappe.regional.pakistan.format_mobile_no(frm, "mobile_no");
-		frappe.regional.pakistan.format_mobile_no(frm, "mobile_no_2");
+		frappe.regional.format_mobile_no(frm, "mobile_no");
+		frappe.regional.format_mobile_no(frm, "mobile_no_2");
 	},
 
 	tax_cnic: function (frm) {
@@ -173,20 +173,20 @@ frappe.ui.form.on("Contact", {
 	},
 
 	mobile_no: function (frm) {
-		frappe.regional.pakistan.format_mobile_no(frm, "mobile_no");
+		frappe.regional.format_mobile_no(frm, "mobile_no");
 	},
 	mobile_no_2: function (frm) {
-		frappe.regional.pakistan.format_mobile_no(frm, "mobile_no_2");
+		frappe.regional.format_mobile_no(frm, "mobile_no_2");
 	},
 
-	format_mobile_nos: function (frm) {
+	format_mobile_no: function (frm) {
 		if (frappe.sys_defaults.country != "Pakistan") {
 			return;
 		}
 
 		$.each(frm.doc.phone_nos || [], function (i, d) {
 			if (d.is_primary_mobile_no) {
-				d.phone = frappe.regional.pakistan.get_formatted_mobile_no(d.phone);
+				d.phone = frappe.regional.get_formatted_mobile_no(d.phone)
 				refresh_field('phone', d.name, 'phone_nos');
 			}
 		});
@@ -195,9 +195,9 @@ frappe.ui.form.on("Contact", {
 
 frappe.ui.form.on("Contact Phone", {
 	phone: function(frm) {
-		frm.events.format_mobile_nos(frm);
+		frm.events.format_mobile_no(frm);
 	},
 	is_primary_mobile_no: function(frm) {
-		frm.events.format_mobile_nos(frm);
+		frm.events.format_mobile_no(frm);
 	}
 });

@@ -30,14 +30,14 @@ frappe.ui.form.ContactQuickEntryForm = class ContactQuickEntryForm extends frapp
 
 		this.dialog.fields_dict["mobile_no"].df.onchange = () => {
 			var value = this.dialog.get_value('mobile_no');
-			value = frappe.regional.pakistan.get_formatted_mobile_no(value);
+			value = frappe.regional.get_formatted_mobile_no(value);
 			this.dialog.doc.mobile_no = value;
 			this.dialog.get_field('mobile_no').refresh();
 		};
 
 		this.dialog.fields_dict["mobile_no_2"].df.onchange = () => {
 			var value = this.dialog.get_value('mobile_no_2');
-			value = frappe.regional.pakistan.get_formatted_mobile_no(value);
+			value = frappe.regional.get_formatted_mobile_no(value);
 			this.dialog.doc.mobile_no_2 = value;
 			this.dialog.get_field('mobile_no_2').refresh();
 		};
