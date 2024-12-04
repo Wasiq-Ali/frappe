@@ -163,13 +163,13 @@ frappe.ui.form.on("Dynamic Link", {
 frappe.ui.form.on("Contact", {
 	validate: function (frm) {
 		frm.events.format_mobile_nos(frm);
-		frappe.regional.pakistan.format_cnic(frm, "tax_cnic");
+		frappe.regional.format_cnic(frm, "tax_cnic");
 		frappe.regional.format_mobile_no(frm, "mobile_no");
 		frappe.regional.format_mobile_no(frm, "mobile_no_2");
 	},
 
 	tax_cnic: function (frm) {
-		frappe.regional.pakistan.format_cnic(frm, "tax_cnic");
+		frappe.regional.format_cnic(frm, "tax_cnic");
 	},
 
 	mobile_no: function (frm) {

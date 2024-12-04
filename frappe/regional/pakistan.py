@@ -9,22 +9,16 @@ strn_regex = re.compile(r'^..-..-....-...-..$')
 mobile_regex = re.compile(r'^03\d\d-\d\d\d\d\d\d\d$')
 
 
-def validate_ntn_cnic_strn(ntn=None, cnic=None, strn=None):
-	if frappe.db.get_default("country") != 'Pakistan':
-		return
-
-	if ntn and not ntn_regex.match(ntn):
-		frappe.throw(_("Invalid NTN. NTN must be in the format #######-#"))
-	if cnic and not cnic_regex.match(cnic):
-		frappe.throw(_("Invalid CNIC. CNIC must be in the format #####-#######-#"))
-	if strn and not strn_regex.match(strn):
-		frappe.throw(_("Invalid STRN. STRN must be in the format ##-##-####-###-##"))
+def validate_tax_ids_pakistan(tax_id=None, tax_cnic=None, tax_strn=None):
+	if tax_id and not ntn_regex.match(tax_id):
+		frappe.throw(_("Invalid NTN {0}. NTN must be in the format #######-#").format(tax_id))
+	if tax_cnic and not cnic_regex.match(tax_cnic):
+		frappe.throw(_("Invalid CNIC {0}. CNIC must be in the format #####-#######-#").format(tax_cnic))
+	if tax_strn and not strn_regex.match(tax_strn):
+		frappe.throw(_("Invalid STRN {0}. STRN must be in the format ##-##-####-###-##").format(tax_strn))
 
 
 def validate_mobile_pakistan(mobile_no, throw=True):
-	if frappe.db.get_default("country") != 'Pakistan':
-		return True
-
 	if not mobile_no:
 		return False
 
@@ -39,5 +33,3 @@ def validate_mobile_pakistan(mobile_no, throw=True):
 		return False
 
 	return True
-
-

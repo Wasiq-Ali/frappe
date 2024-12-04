@@ -142,11 +142,10 @@ class Contact(Document):
 		# 			.format(d.idx, frappe.bold(d.phone)))
 
 	def validate_regional(self):
-		from frappe.regional.pakistan import validate_ntn_cnic_strn
-		from frappe.regional.regional import validate_mobile_no
+		from frappe.regional.regional import validate_mobile_no, validate_tax_ids
 
 		if self.get('tax_cnic'):
-			validate_ntn_cnic_strn(cnic=self.tax_cnic)
+			validate_tax_ids(tax_cnic=self.tax_cnic)
 
 		if self.get('mobile_no'):
 			validate_mobile_no(self.mobile_no)

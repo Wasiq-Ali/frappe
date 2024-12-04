@@ -2,10 +2,6 @@ frappe.provide("frappe.regional.pakistan");
 
 Object.assign(frappe.regional.pakistan, {
 	get_formatted_ntn: function (value) {
-		if (frappe.sys_defaults.country != "Pakistan") {
-			return value;
-		}
-
 		value = cstr(value).toUpperCase();
 		value = value.replace(/[^a-zA-Z0-9]+/g, "");
 
@@ -17,24 +13,7 @@ Object.assign(frappe.regional.pakistan, {
 		return value;
 	},
 
-	format_ntn: function(frm, fieldname) {
-		if (frappe.sys_defaults.country != "Pakistan") {
-			return;
-		}
-
-		let value = frm.doc[fieldname];
-		if (value) {
-			value = frappe.regional.pakistan.get_formatted_ntn(value);
-			frm.doc[fieldname] = value;
-			frm.refresh_field(fieldname);
-		}
-	},
-
 	get_formatted_cnic: function (value) {
-		if (frappe.sys_defaults.country != "Pakistan") {
-			return value;
-		}
-
 		value = cstr(value).toUpperCase();
 		value = value.replace(/[^0-9]+/g, "");
 
@@ -49,24 +28,7 @@ Object.assign(frappe.regional.pakistan, {
 		return value;
 	},
 
-	format_cnic: function(frm, fieldname) {
-		if (frappe.sys_defaults.country != "Pakistan") {
-			return;
-		}
-
-		let value = frm.doc[fieldname];
-		if (value) {
-			value = frappe.regional.pakistan.get_formatted_cnic(value);
-			frm.doc[fieldname] = value;
-			frm.refresh_field(fieldname);
-		}
-	},
-
 	get_formatted_strn: function (value) {
-		if (frappe.sys_defaults.country != "Pakistan") {
-			return value;
-		}
-
 		value = cstr(value).toUpperCase();
 		value = value.replace(/[^a-zA-Z0-9]+/g, "");
 
@@ -87,24 +49,7 @@ Object.assign(frappe.regional.pakistan, {
 		return value;
 	},
 
-	format_strn: function(frm, fieldname) {
-		if (frappe.sys_defaults.country != "Pakistan") {
-			return;
-		}
-
-		let value = frm.doc[fieldname];
-		if (value) {
-			value = frappe.regional.pakistan.get_formatted_strn(value);
-			frm.doc[fieldname] = value;
-			frm.refresh_field(fieldname);
-		}
-	},
-
 	get_formatted_mobile_no: function (value) {
-		if (frappe.sys_defaults.country != "Pakistan") {
-			return value;
-		}
-
 		value = value.replace(/[^0-9+]+/g, "");
 
 		// do not format international numbers
