@@ -100,7 +100,7 @@ Object.assign(frappe.regional.pakistan, {
 		}
 	},
 
-	get_formatted_pak_mobile_no: function (value) {
+	get_formatted_mobile_no: function (value) {
 		if (frappe.sys_defaults.country != "Pakistan") {
 			return value;
 		}
@@ -119,20 +119,5 @@ Object.assign(frappe.regional.pakistan, {
 		}
 
 		return value;
-	},
-
-	validate_duplicate_tax_id: function (doc, fieldname) {
-		let value = doc[fieldname];
-		if (value) {
-			return frappe.call({
-				method: "frappe.regional.pakistan.validate_duplicate_tax_id",
-				args: {
-					doctype: doc.doctype,
-					fieldname: fieldname,
-					value: value,
-					exclude: doc.__islocal ? null : doc.name
-				}
-			});
-		}
 	},
 });

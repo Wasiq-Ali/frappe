@@ -179,7 +179,7 @@ frappe.ui.form.on("Contact", {
 		frappe.regional.format_mobile_no(frm, "mobile_no_2");
 	},
 
-	format_mobile_no: function (frm) {
+	format_mobile_nos: function (frm) {
 		if (frappe.sys_defaults.country != "Pakistan") {
 			return;
 		}
@@ -195,9 +195,9 @@ frappe.ui.form.on("Contact", {
 
 frappe.ui.form.on("Contact Phone", {
 	phone: function(frm) {
-		frm.events.format_mobile_no(frm);
+		frm.events.format_mobile_nos(frm);
 	},
 	is_primary_mobile_no: function(frm) {
-		frm.events.format_mobile_no(frm);
+		frm.events.format_mobile_nos(frm);
 	}
 });

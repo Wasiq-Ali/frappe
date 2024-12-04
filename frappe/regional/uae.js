@@ -1,7 +1,7 @@
 frappe.provide("frappe.regional.uae");
 
 Object.assign(frappe.regional.uae, {
-	get_formatted_uae_mobile_no: function (value) {
+	get_formatted_mobile_no: function (value) {
 		if (frappe.sys_defaults.country != "United Arab Emirates") {
 			return value;
 		}
