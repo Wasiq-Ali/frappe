@@ -145,7 +145,6 @@ class Contact(Document):
 		from frappe.regional.pakistan import validate_ntn_cnic_strn
 		from frappe.regional.regional import validate_mobile_no
 
-
 		if self.get('tax_cnic'):
 			validate_ntn_cnic_strn(cnic=self.tax_cnic)
 
