@@ -193,11 +193,11 @@ frappe.ui.form.PrintView = class {
 			</a>
 			`);
 		} else {
-			this.page.add_inner_message(`
-			<a style="line-height: 2.4" href="https://frappecloud.com/marketplace/apps/print_designer?utm_source=framework-desk&utm_medium=print-view&utm_campaign=try-link">
-				${__("Try the new Print Designer")}
-			</a>
-			`);
+			// this.page.add_inner_message(`
+			// <a style="line-height: 2.4" href="https://frappecloud.com/marketplace/apps/print_designer?utm_source=framework-desk&utm_medium=print-view&utm_campaign=try-link">
+			// 	${__("Try the new Print Designer")}
+			// </a>
+			// `);
 		}
 		let tasks = [
 			this.set_default_print_format,
