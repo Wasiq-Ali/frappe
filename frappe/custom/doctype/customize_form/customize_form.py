@@ -582,7 +582,7 @@ class CustomizeForm(Document):
 			else:
 				self.flags.update_db = True
 
-		else:
+		elif not frappe.conf.get("developer_mode"):
 			frappe.throw(
 				_("Fieldtype cannot be changed from {0} to {1} in row {2}").format(
 					old_value, new_value, df.idx

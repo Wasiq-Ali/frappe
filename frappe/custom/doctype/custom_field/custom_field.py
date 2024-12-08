@@ -355,7 +355,7 @@ def rename_fieldname(custom_field: str, fieldname: str):
 	field.set_fieldname()
 	new_fieldname = field.fieldname
 
-	if field.is_system_generated:
+	if field.is_system_generated and not frappe.conf.get("developer_mode"):
 		frappe.throw(_("System Generated Fields can not be renamed"))
 	if frappe.db.has_column(parent_doctype, fieldname):
 		frappe.throw(_("Can not rename as column {0} is already present on DocType.").format(fieldname))
