@@ -1300,7 +1300,7 @@ def get_doc(document: "Document", /):
 
 
 @overload
-def get_doc(doctype: str, /) -> _SingleDocument:
+def get_doc(doctype: str, /):
 	"""Retrieve Single DocType from DB, doctype must be positional argument."""
 	pass
 
@@ -1312,14 +1312,14 @@ def get_doc(doctype: str, name: str, /, *, for_update: bool | None = None):
 
 
 @overload
-def get_doc(**kwargs: dict) -> "_NewDocument":
+def get_doc(**kwargs: dict):
 	"""Initialize document from kwargs.
 	Not recommended. Use `frappe.new_doc` instead."""
 	pass
 
 
 @overload
-def get_doc(documentdict: dict) -> "_NewDocument":
+def get_doc(documentdict: dict):
 	"""Create document from dict.
 	Not recommended. Use `frappe.new_doc` instead."""
 	pass
