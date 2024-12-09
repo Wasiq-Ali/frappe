@@ -156,7 +156,8 @@ frappe.ui.FieldGroup = class FieldGroup extends frappe.ui.form.Layout {
 			let f = this.fields_dict[key];
 			if (f) {
 				f.set_value(val).then(() => {
-					f.set_input?.(val);
+					// f.set_input?.(val);
+					f.refresh?.();
 					this.refresh_dependency();
 					resolve();
 				});
