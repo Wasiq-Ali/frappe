@@ -638,6 +638,10 @@ details > summary:focus {
 	color: var(--gray-500) !important;
 }
 
+.text-light {
+	color: var(--text-light) !important;
+}
+
 .grayscale {
 	-webkit-filter: grayscale(100%);
 	filter: grayscale(100%);
