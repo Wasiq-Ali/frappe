@@ -10,6 +10,7 @@ from urllib.parse import parse_qs, urlparse
 
 import cssutils
 import pdfkit
+import re
 from bs4 import BeautifulSoup
 from packaging.version import Version
 from pypdf import PdfReader, PdfWriter
@@ -207,7 +208,7 @@ def read_options_from_html(html):
 
 	toggle_visible_pdf(soup)
 
-	valid_styles = get_print_format_styles(soup)
+	# valid_styles = get_print_format_styles(soup)
 
 	attrs = (
 		"margin-top",
@@ -221,7 +222,15 @@ def read_options_from_html(html):
 		"page-width",
 		"page-height",
 	)
-	options |= {style.name: style.value for style in valid_styles if style.name in attrs}
+	for attr in attrs:
+		try:
+			pattern = re.compile(r"(\.print-format)([\S|\s][^}]*?)(" + str(attr) + r":)(.+)(mm;)")
+			match = pattern.findall(html)
+			if match:
+				options[attr] = str(match[-1][3]).strip()
+		except Exception:
+			pass
+
 	return str(soup), options
 
 
