@@ -141,10 +141,10 @@ class RealTimeClient {
 		this.emit("doctype_unsubscribe", doctype);
 	}
 	doc_subscribe(doctype, docname) {
-		if (frappe.flags.doc_subscribe) {
-			console.log("throttled");
-			return;
-		}
+		// if (frappe.flags.doc_subscribe) {
+		// 	console.log("throttled");
+		// 	return;
+		// }
 		if (this.open_docs.has(`${doctype}:${docname}`)) {
 			return;
 		}
