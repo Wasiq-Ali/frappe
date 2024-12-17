@@ -1351,7 +1351,7 @@ class Document(BaseDocument):
 		val2 = doc.cast(val2, df)
 
 		if not compare(val1, condition, val2):
-			label = doc.meta.get_label(fieldname)
+			label = _(doc.meta.get_label(fieldname))
 			if doc.get("parentfield"):
 				msg = _("Incorrect value in Row {0}: ").format(doc.idx)
 			else:
