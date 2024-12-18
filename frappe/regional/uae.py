@@ -28,6 +28,10 @@ def validate_mobile_uae(mobile_no, throw=True):
 
 def validate_tax_ids_uae(tax_id=None, tax_cnic=None):
 	if tax_id and not trn_regex.match(tax_id):
-		frappe.throw(_("Invalid TRN No {0}. TRN No must contain only 15 digits").format(tax_id))
+		frappe.throw(_("Invalid TRN No {0}. TRN No must contain only 15 digits").format(
+			frappe.bold(tax_id)
+		))
 	if tax_cnic and not emirates_id_regex.match(tax_cnic):
-		frappe.throw(_("Invalid Emirates ID {0}. Emirates ID must be in the format ###-####-#######-#").format(tax_cnic))
+		frappe.throw(_("Invalid Emirates ID {0}. Emirates ID must be in the format ###-####-#######-#").format(
+			frappe.bold(tax_cnic)
+		))
