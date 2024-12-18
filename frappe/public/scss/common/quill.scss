@@ -25,6 +25,7 @@
 	}
 	.ql-direction-rtl {
 		direction: rtl;
+		padding-right: 1px;
 		+ .table {
 			direction: ltr;
 		}
