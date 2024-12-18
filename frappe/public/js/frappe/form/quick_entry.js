@@ -131,6 +131,7 @@ frappe.ui.form.QuickEntryForm = class QuickEntryForm {
 			size: "large",
 			static: 1,
 			doc: this.doc,
+			doctype: this.doctype,
 		});
 
 		this.register_primary_action();
