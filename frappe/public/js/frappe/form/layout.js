@@ -584,7 +584,7 @@ frappe.ui.form.Layout = class Layout {
 					break;
 				}
 			}
-			if(this.is_visible(field) && !in_list(frappe.model.no_value_type, field.df.fieldtype))
+			if(this.is_field_visible(field) && !in_list(frappe.model.no_value_type, field.df.fieldtype))
 				prev = fields[i];
 		}
 
@@ -617,7 +617,7 @@ frappe.ui.form.Layout = class Layout {
 		// loop to find next eligible fields
 		for (let i = start_idx + 1, len = fields.length; i < len; i++) {
 			let field = fields[i];
-			if (this.is_visible(field)) {
+			if (this.is_field_visible(field)) {
 				if (
 					in_list(["Table", "Table MultiSelect"], field.df.fieldtype)
 					|| !in_list(frappe.model.no_value_type, field.df.fieldtype)
@@ -630,6 +630,10 @@ frappe.ui.form.Layout = class Layout {
 	}
 
 	is_visible(field) {
+		return this.is_field_visible(field);
+	}
+
+	is_field_visible(field) {
 		return (
 			field.disp_status === "Write" && field.df && "hidden" in field.df && !field.df.hidden
 		);
