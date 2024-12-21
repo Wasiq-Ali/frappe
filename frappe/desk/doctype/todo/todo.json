@@ -149,6 +149,7 @@
    "read_only": 1
   },
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "title",
    "fieldtype": "Data",
    "in_standard_filter": 1,
@@ -168,7 +169,7 @@
  "idx": 2,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2023-10-05 07:44:38.476400",
+ "modified": "2024-12-21 15:25:34.185164",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "ToDo",
