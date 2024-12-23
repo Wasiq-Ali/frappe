@@ -537,8 +537,8 @@ frappe.format = function (value, df, options, doc, standard) {
 	var formatter = standard_formatter;
 
 	if (!standard) {
-		var customer_formatter = frappe.form.formatters._get_custom_formatter(df);
-		formatter = df.formatter || customer_formatter || standard_formatter;
+		var custom_formatter = frappe.form.formatters._get_custom_formatter(df);
+		formatter = df.formatter || custom_formatter || standard_formatter;
 	}
 
 	var formatted = formatter(value, df, options, doc);
