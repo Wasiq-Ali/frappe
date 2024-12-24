@@ -1071,7 +1071,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 							fieldtype: options.fieldtype,
 							options: options.options,
 						},
-						options.options,
+						{only_value: 1},
 						options
 					),
 			};
