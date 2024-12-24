@@ -74,6 +74,7 @@ def search_widget(
 	format_values=True,
 ):
 	start = cint(start)
+	format_values = cint(format_values)
 
 	if isinstance(filters, str):
 		filters = json.loads(filters)
