@@ -10,7 +10,7 @@ frappe.form.global_formatters = [];
 
 frappe.form.formatters = {
 	_style: function(value, df, options, doc, right_align) {
-		if (options && (options.inline || options.only_value)) {
+		if (options?.only_value) {
 			return value;
 		} else {
 			let out = value;
@@ -20,25 +20,23 @@ frappe.form.formatters = {
 			let css_class = frappe.form.formatters._get_css_class(options);
 			let css_style = frappe.form.formatters._get_css_style(options);
 
-			if (options) {
-				if (options.link_href) {
-					let link_title = frappe.form.formatters._get_link_title(options);
-					let link_target = frappe.form.formatters._get_link_target(options);
+			if (options?.link_href) {
+				let link_title = frappe.form.formatters._get_link_title(options);
+				let link_target = frappe.form.formatters._get_link_target(options);
 
-					out = `<a href="${options.link_href}"
-						${link_title}${link_target}${css_class}${css_style}>
-						${value}</a>`;
+				out = `<a href="${options.link_href}"
+					${link_title}${link_target}${css_class}${css_style}>
+					${value}</a>`;
 
-					css_style = "";
-					css_class = "";
-				}
+				css_style = "";
+				css_class = "";
 			}
 
 			if (css_style || css_class) {
 				out = `<div${css_style}${css_class}>${out}</div>`;
 			}
 
-			if (right_align) {
+			if (right_align && !options?.inline) {
 				out = `<div style="text-align: right;">${out}</div>`;
 			}
 
