@@ -198,7 +198,7 @@ frappe.ui.SortSelector = class SortSelector {
 		var sql = '`tab' + this.doctype + '`.`' + this.sort_by + '` ' +  this.sort_order
 
 		if (this.sort_by !== 'name') {
-			sql += ', `tab' + this.doctype + '`.`name` ' +  this.sort_order
+			sql += ', `tab' + this.doctype + '`.`creation` ' +  this.sort_order
 		}
 
 		return sql;
