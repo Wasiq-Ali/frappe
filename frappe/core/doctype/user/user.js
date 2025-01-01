@@ -286,9 +286,9 @@ frappe.ui.form.on("User", {
 	},
 	enabled: function (frm) {
 		var doc = frm.doc;
+		frm.set_df_property("enabled", "read_only", cint(frm.is_new() || !has_access_to_edit_user()));
 		if (!frm.is_new() && has_access_to_edit_user()) {
 			frm.toggle_display(["sb1", "sb3", "modules_access"], doc.enabled);
-			frm.set_df_property("enabled", "read_only", 0);
 		}
 
 		if (frm.doc.name !== "Administrator") {

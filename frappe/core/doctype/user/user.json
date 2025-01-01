@@ -116,8 +116,7 @@
    "fieldtype": "Check",
    "label": "Enabled",
    "oldfieldname": "enabled",
-   "oldfieldtype": "Check",
-   "read_only": 1
+   "oldfieldtype": "Check"
   },
   {
    "depends_on": "enabled",
@@ -875,7 +874,7 @@
    "link_fieldname": "user"
   }
  ],
- "modified": "2024-11-29 23:45:06.305303",
+ "modified": "2025-01-01 10:46:28.776015",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
