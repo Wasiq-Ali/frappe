@@ -243,7 +243,7 @@ class DocumentNamingSettings(Document):
 			return ""
 		try:
 			doc = self._fetch_last_doc_if_available()
-			return "\n".join(NamingSeries(series).get_preview(doc=doc))
+			return "\n".join(NamingSeries(series).get_preview(doc=doc or {}))
 		except Exception as e:
 			frappe.clear_last_message()
 			return _("Failed to generate names from the series") + f"\n{e!s}"
