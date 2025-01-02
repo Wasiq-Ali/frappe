@@ -355,7 +355,7 @@ def parse_naming_series(
 			e = e.replace("{", "").replace("}", "")
 			part = doc.get(e)
 		elif method := has_custom_parser(e):
-			part = frappe.get_attr(method[0])(doc, e)
+			part = frappe.get_attr(method[0])(doc or frappe._dict(), e)
 		else:
 			part = e
 

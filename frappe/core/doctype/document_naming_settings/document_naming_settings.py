@@ -97,7 +97,7 @@ class DocumentNamingSettings(Document):
 				evalauted_prefix.add(prefix)
 			except Exception:
 				frappe.clear_last_message()
-				frappe.log_error(f"Invalid naming series {series_template}")
+				# frappe.log_error(f"Invalid naming series {series_template}")
 
 		return sorted(evalauted_prefix)
 
@@ -243,7 +243,7 @@ class DocumentNamingSettings(Document):
 			return ""
 		try:
 			doc = self._fetch_last_doc_if_available()
-			return "\n".join(NamingSeries(series).get_preview(doc=doc or {}))
+			return "\n".join(NamingSeries(series).get_preview(doc=doc or frappe._dict()))
 		except Exception as e:
 			frappe.clear_last_message()
 			return _("Failed to generate names from the series") + f"\n{e!s}"
