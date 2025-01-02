@@ -124,9 +124,20 @@ def get_letter_heads():
 
 	if not frappe.has_permission("Letter Head"):
 		return letter_heads
+
 	for letter_head in frappe.get_list("Letter Head", fields=["name", "content", "footer"]):
+		try:
+			content = frappe.render_template(letter_head.content, {"doc": {}})
+		except Exception:
+			content = letter_head.content
+
+		try:
+			footer = frappe.render_template(letter_head.footer, {"doc": {}})
+		except Exception:
+			footer = letter_head.footer
+
 		letter_heads.setdefault(
-			letter_head.name, {"header": letter_head.content, "footer": letter_head.footer}
+			letter_head.name, {"header": content, "footer": footer}
 		)
 
 	return letter_heads
