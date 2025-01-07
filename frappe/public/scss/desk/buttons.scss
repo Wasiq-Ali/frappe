@@ -111,8 +111,8 @@
 		background: var(--btn-primary-hover-bg);
 	}
 	&:not(:disabled):not(.disabled):active {
-		color: var(--gray-100) !important;
-		background-color: var(--invert-neutral) !important;
+		color: var(--gray-100);
+		background-color: var(--invert-neutral);
 	}
 }
 
@@ -130,8 +130,12 @@
 		background-color: var(--bg-dark-gray);
 		box-shadow: none;
 	}
-	.btn-primary:active {
-		color: var(--gray-900) !important;
-		background-color: var(--invert-neutral) !important;
+	.btn.btn-primary {
+		&:hover {
+			color: $white;
+		}
+		&:not(:disabled):not(.disabled):active {
+			color: var(--gray-900);
+		}
 	}
 }
