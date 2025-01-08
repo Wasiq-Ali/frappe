@@ -5,6 +5,7 @@ $check-icon-dark: url("data:image/svg+xml, <svg viewBox='0 0 8 7' fill='none' xm
 	// TODO: Update Pallete for dark mode.
 	--gray-700: #383838;
 	--gray-800: #232323;
+	--gray-500: #575e66;
 
 	// Type Colors
 	--text-neutral: var(--gray-50);
@@ -43,6 +44,8 @@ $check-icon-dark: url("data:image/svg+xml, <svg viewBox='0 0 8 7' fill='none' xm
 	// Button Colors
 	--btn-default-bg: var(--gray-800);
 	--btn-default-hover-bg: var(--gray-700);
+	--btn-default-active-bg: var(--gray-600);
+
 	--btn-primary: var(--gray-300);
 
 	--btn-secondary-bg: var(--gray-600);
@@ -59,7 +62,7 @@ $check-icon-dark: url("data:image/svg+xml, <svg viewBox='0 0 8 7' fill='none' xm
 	--bg-blue: var(--blue-600);
 	--bg-light-blue: var(--blue-600);
 	--bg-dark-blue: var(--blue-900);
-	--bg-green: var(--green-900);
+	--bg-green: var(--green-800);
 	--bg-yellow: var(--yellow-700);
 	--bg-orange: var(--orange-700);
 	--bg-red: var(--red-600);
@@ -108,7 +111,7 @@ $check-icon-dark: url("data:image/svg+xml, <svg viewBox='0 0 8 7' fill='none' xm
 	--timeline-badge-bg: var(--gray-900);
 
 	--shadow-inset: var(--fg-color);
-	--border-color: var(--gray-800);
+	--border-color: var(--gray-700);
 	--dark-border-color: var(--gray-600);
 	--table-border-color: var(--border-color);
 	--highlight-color: var(--gray-700);

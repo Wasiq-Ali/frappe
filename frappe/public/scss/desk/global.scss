@@ -758,3 +758,29 @@ details > summary:focus {
 	direction: ltr;
 }
 */
+
+.card {
+	background-color: var(--fg-color);
+	border-color: var(--border-color);
+}
+
+[data-theme="dark"] {
+	.card-header {
+		background-color: rgba(255, 255, 255, 0.05);
+		border-color: var(--border-color);
+	}
+}
+
+// hr line
+hr {
+	border-color: var(--border-color);
+}
+
+//progress bar
+.progress {
+	background-color: var(--bg-gray);
+}
+
+.progress-bar-success {
+    background-color: var(--green-500);
+}
