@@ -47,13 +47,14 @@ $check-icon-dark: url("data:image/svg+xml, <svg viewBox='0 0 8 7' fill='none' xm
 	--btn-default-active-bg: var(--gray-600);
 
 	--btn-primary: var(--gray-300);
+	--btn-primary-hover-bg: var(--gray-200);
 
-	--btn-secondary-bg: var(--gray-600);
-	--btn-secondary-hover-bg: var(--gray-500);
-	--btn-secondary-active-bg: var(--gray-400);
+	--btn-secondary-bg: var(--gray-700);
+	--btn-secondary-hover-bg: var(--gray-600);
+	--btn-secondary-active-bg: var(--gray-500);
 
 	// badge bg
-	--badge-bg: var(--gray-600);
+	--badge-bg: var(--gray-700);
 
 	// Border Colors
 	--border-primary: var(--gray-200);
