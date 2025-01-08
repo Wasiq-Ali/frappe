@@ -132,7 +132,7 @@
 	}
 	.btn.btn-primary {
 		&:hover {
-			color: $white;
+			color: var(--invert-neutral);
 		}
 		&:not(:disabled):not(.disabled):active {
 			color: var(--gray-900);
