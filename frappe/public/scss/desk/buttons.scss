@@ -112,7 +112,7 @@
 	}
 	&:not(:disabled):not(.disabled):active {
 		color: var(--gray-100);
-		background-color: var(--invert-neutral);
+		background: var(--btn-primary-active-bg);
 	}
 }
 
@@ -131,9 +131,6 @@
 		box-shadow: none;
 	}
 	.btn.btn-primary {
-		&:hover {
-			background-color: var(--gray-200);
-		}
 		&:not(:disabled):not(.disabled):active {
 			color: var(--gray-900);
 		}
