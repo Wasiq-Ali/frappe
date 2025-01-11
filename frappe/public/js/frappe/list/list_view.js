@@ -1114,7 +1114,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			return `<span class="indicator-pill ${
 				indicator[1]
 			} filterable no-indicator-dot ellipsis"
-				data-filter='${indicator[2]}' title='${title}'>
+				data-filter='${indicator[2] || ""}' title='${title}'>
 				<span class="ellipsis"> ${__(indicator[0])}</span>
 			</span>`;
 		}
