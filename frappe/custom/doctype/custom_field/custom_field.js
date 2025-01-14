@@ -77,8 +77,8 @@ frappe.ui.form.on("Custom Field", {
 			},
 		});
 	},
-	label: function (frm) {
-		if (frm.doc.label && frappe.utils.has_special_chars(frm.doc.label)) {
+	fieldname: function (frm) {
+		if (frm.doc.fieldname && frappe.utils.has_special_chars(frm.doc.fieldname)) {
 			frm.fields_dict["label_help"].disp_area.innerHTML =
 				'<font color = "red">' + __("Special Characters are not allowed") + "</font>";
 			frm.set_value("label", "");
