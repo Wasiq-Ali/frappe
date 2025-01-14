@@ -10,11 +10,6 @@ class OverAllowanceError(frappe.ValidationError):
 
 class StatusUpdater(Document):
 	def set_status(self, update=False, status=None, update_modified=True):
-		if self.is_new():
-			if self.get('amended_from'):
-				self.status = 'Draft'
-			return
-
 		if self.get('status_map'):
 			previous_status = self.status
 			if status:
