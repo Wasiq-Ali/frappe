@@ -499,7 +499,7 @@ frappe.ui.Page = class Page {
 		}
 
 		let $link = this.is_in_group_button_dropdown(parent, "li > a.grey-link > span", label);
-		if ($link) return $link;
+		if ($link) return $link.parent();
 
 		let $li;
 		let $icon = ``;
