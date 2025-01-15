@@ -920,6 +920,7 @@ class DocType(Document):
 				"read_only": 1,
 				"hidden": 1,
 				"no_copy": 1,
+				"print_hide": 1,
 			},
 		)
 
@@ -932,13 +933,24 @@ class DocType(Document):
 				"read_only": 1,
 				"hidden": 1,
 				"no_copy": 1,
+				"print_hide": 1,
 			},
 		)
 
 		self.append("fields", {"label": "Is Group", "fieldtype": "Check", "fieldname": "is_group"})
+
 		self.append(
 			"fields",
-			{"label": "Old Parent", "fieldtype": "Link", "options": self.name, "fieldname": "old_parent"},
+			{
+				"label": "Old Parent",
+				"fieldtype": "Link",
+				"options": self.name,
+				"fieldname": "old_parent",
+				"read_only": 1,
+				"hidden": 1,
+				"no_copy": 1,
+				"print_hide": 1,
+			},
 		)
 
 		parent_field_label = f"Parent {self.name}"

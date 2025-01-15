@@ -368,7 +368,7 @@ frappe.views.TreeView = class TreeView {
 			var v = d.get_values();
 			if (!v) return;
 
-			v.parent = node.label;
+			// v.parent = node.label;
 			v.doctype = me.doctype;
 
 			if (node.is_root) {
