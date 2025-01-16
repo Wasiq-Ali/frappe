@@ -1,7 +1,7 @@
 {
  "actions": [],
  "autoname": "hash",
- "creation": "2024-03-21 16:06:20.263553",
+ "creation": "2025-01-16 12:37:18.282760",
  "doctype": "DocType",
  "document_type": "Setup",
  "editable_grid": 1,
@@ -518,7 +518,7 @@
   },
   {
    "default": "0",
-   "depends_on": "eval:in_list([\"Int\", \"Float\", \"Currency\"], doc.fieldtype)",
+   "depends_on": "eval:in_list([\"Int\", \"Float\", \"Currency\", \"Percent\"], doc.fieldtype)",
    "fieldname": "non_negative",
    "fieldtype": "Check",
    "label": "Non Negative"
@@ -618,7 +618,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-01 07:26:16.380090",
+ "modified": "2025-01-16 14:47:43.323203",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocField",
