@@ -1,10 +1,6 @@
 frappe.provide('frappe.ui.form');
 
 frappe.ui.form.ContactQuickEntryForm = class ContactQuickEntryForm extends frappe.ui.form.QuickEntryForm {
-	init(doctype, after_insert) {
-		this._super(doctype, after_insert);
-	}
-
 	render_dialog() {
 		super.render_dialog();
 

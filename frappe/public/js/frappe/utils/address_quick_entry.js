@@ -1,10 +1,6 @@
 frappe.provide('frappe.ui.form');
 
 frappe.ui.form.AddressQuickEntryForm = class AddressQuickEntryForm extends frappe.ui.form.QuickEntryForm {
-	init(doctype, after_insert) {
-		super.init(doctype, after_insert);
-	}
-
 	render_dialog() {
 		super.render_dialog();
 		const last_doc = frappe.contacts.get_last_doc(this.doc);
