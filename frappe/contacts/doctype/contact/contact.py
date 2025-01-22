@@ -325,7 +325,9 @@ def get_contact_details(contact, get_contact_no_list=False, link_doctype=None, l
 
 	out = frappe._dict({
 		"contact_person": contact.get("name"),
-		"contact_display": contact.get("full_name"),
+		"contact_display": " ".join(
+			filter(None, [contact.get("salutation"), contact.get("full_name")])
+		),
 		"contact_email": contact.get("email_id"),
 		"contact_mobile": contact.get("mobile_no"),
 		"contact_mobile_2": contact.get("mobile_no_2"),
