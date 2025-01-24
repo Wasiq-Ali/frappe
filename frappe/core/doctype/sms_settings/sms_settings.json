@@ -82,7 +82,8 @@
    "fieldname": "error_message",
    "fieldtype": "Code",
    "label": "Error Message Expression",
-   "max_height": "100px"
+   "max_height": "100px",
+   "options": "Python"
   },
   {
    "fieldname": "column_break_w0ufm",
@@ -97,14 +98,15 @@
    "fieldname": "number_formatter",
    "fieldtype": "Code",
    "label": "Number Formatting Expression",
-   "max_height": "100px"
+   "max_height": "100px",
+   "options": "Python"
   }
  ],
  "icon": "fa fa-cog",
  "idx": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-26 16:04:02.709899",
+ "modified": "2025-01-24 16:42:38.743280",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "SMS Settings",

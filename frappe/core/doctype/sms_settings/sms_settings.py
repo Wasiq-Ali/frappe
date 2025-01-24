@@ -21,9 +21,12 @@ class SMSSettings(Document):
 		from frappe.core.doctype.sms_parameter.sms_parameter import SMSParameter
 		from frappe.types import DF
 
+		error_message: DF.Code | None
 		message_parameter: DF.Data
+		number_formatter: DF.Code | None
 		parameters: DF.Table[SMSParameter]
 		receiver_parameter: DF.Data
+		response_validation: DF.Code | None
 		sms_gateway_url: DF.SmallText
 		use_post: DF.Check
 	# end: auto-generated types
