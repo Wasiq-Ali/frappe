@@ -312,7 +312,14 @@ def scrub_custom_query(query, key, txt):
 
 def relevance_sorter(key, query, as_dict):
 	value = _(key.name if as_dict else key[0])
-	return cstr(value).casefold().startswith(query.casefold()) is not True
+	value = cstr(value).casefold()
+
+	query = cstr(query).casefold()
+
+	return (
+		value != query,
+		not value.startswith(query)
+	)
 
 
 @frappe.whitelist()
