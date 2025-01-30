@@ -161,7 +161,7 @@ def get_default_address(doctype: str, name: str | None, sort_key: str = "is_prim
 			["disabled", "=", 0],
 		],
 		pluck="name",
-		order_by=f"{sort_key} DESC",
+		order_by=f"{sort_key} DESC, `tabAddress`.creation ASC",
 		limit=1,
 	)
 
