@@ -124,7 +124,10 @@ def apply_workflow(doc, action):
 
 	# update any additional field
 	if next_state.update_field:
-		doc.set(next_state.update_field, next_state.update_value)
+		if next_state.update_value == "__user":
+			doc.set(next_state.update_field, frappe.session.user)
+		else:
+			doc.set(next_state.update_field, next_state.update_value)
 
 	new_docstatus = cint(next_state.doc_status)
 	if doc.docstatus.is_draft() and new_docstatus == DocStatus.draft():
