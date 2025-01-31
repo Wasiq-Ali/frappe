@@ -2,6 +2,9 @@ import frappe
 from frappe import _
 import re
 
+mobile_international_prefix = "971"
+mobile_local_prefix = "0"
+
 mobile_regex = re.compile(r'^(?:\+971|00971|0)(?:50|52|53|54|55|56|57|58)[0-9]{7}$')
 trn_regex = re.compile(r'^\d{15}$')
 emirates_id_regex = re.compile(r'^\d{3}-\d{4}-\d{7}-\d$')

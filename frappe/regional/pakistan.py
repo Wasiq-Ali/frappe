@@ -2,6 +2,9 @@ import frappe
 from frappe import _
 import re
 
+mobile_international_prefix = "92"
+mobile_local_prefix = "0"
+
 cnic_regex = re.compile(r'^.....-.......-.$')
 ntn_regex = re.compile(r'^.......-.$')
 strn_regex = re.compile(r'^..-..-....-...-..$')
