@@ -1458,7 +1458,7 @@ export default class GridRow {
 		frappe.dom.unfreeze();
 		this.row.toggle(true);
 		if (!frappe.dom.is_element_in_modal(this.row)) {
-			frappe.utils.scroll_to(this.row, true, 15);
+			frappe.utils.scroll_to(this.row, true, 50);
 		}
 		this.refresh();
 		if (cur_frm) cur_frm.cur_grid = null;
