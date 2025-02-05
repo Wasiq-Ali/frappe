@@ -174,8 +174,8 @@ frappe.breadcrumbs = {
 		} else {
 			let route;
 			const doctype_route = frappe.router.slug(frappe.router.doctype_layout || doctype);
-			if (doctype_meta?.is_tree) {
-				let view = frappe.model.user_settings[doctype].last_view || "Tree";
+			if (doctype_meta?.default_view || frappe.model.user_settings[doctype]?.last_view) {
+				let view = doctype_meta?.default_view || frappe.model.user_settings[doctype].last_view;
 				route = `${doctype_route}/view/${view}`;
 			} else {
 				route = doctype_route;
