@@ -84,7 +84,7 @@ frappe.ui.SortSelector = class SortSelector {
 		}
 
 		this.sort_by = this.args.sort_by;
-		this.sort_order = this.args.sort_order = this.args.sort_order.toLowerCase();
+		this.sort_order = this.args.sort_order = this.args.sort_order?.toLowerCase();
 
 		this.setup_from_doctype();
 
