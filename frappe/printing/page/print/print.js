@@ -64,7 +64,8 @@ frappe.ui.form.PrintView = class {
 	setup_toolbar() {
 		this.page.add_button(__("Back"), () => this.go_to_form_view(), { icon: "left" });
 
-		this.page.add_button(__("Print"), () => this.printit(), { icon: "printer" });
+		this.print_button = this.page.add_button(__("Print"), () => this.printit(), { icon: "printer" });
+		this.print_button.toggle(false);
 
 		this.page.add_button(__("Full Page"), () => this.render_page("/printview?"), {
 			icon: "full-page",
@@ -203,6 +204,7 @@ frappe.ui.form.PrintView = class {
 			this.set_default_print_format,
 			this.set_default_print_language,
 			this.set_default_letterhead,
+			this.toggle_raw_printing,
 			this.preview,
 		].map((fn) => fn.bind(this));
 
@@ -378,6 +380,7 @@ frappe.ui.form.PrintView = class {
 		const is_raw_printing = this.is_raw_printing();
 		this.wrapper.find(".btn-print-preview").toggle(!is_raw_printing);
 		this.wrapper.find(".btn-download-pdf").toggle(!is_raw_printing);
+		this.print_button?.toggle(Boolean(cint(this.print_settings.enable_print_server) || this.is_raw_printing()));
 	}
 
 	preview() {
