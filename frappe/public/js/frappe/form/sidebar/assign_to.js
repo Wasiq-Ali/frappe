@@ -64,6 +64,7 @@ frappe.ui.form.AssignTo = class AssignTo {
 			});
 		}
 		me.assign_to.dialog.clear();
+		me.assign_to.set_description_from_doc();
 		me.assign_to.dialog.show();
 	}
 	remove(owner) {
@@ -189,18 +190,12 @@ frappe.ui.form.AssignToDialog = class AssignToDialog {
 				label: __("Title")
 			},
 			{
-				label: __("Assign to me"),
-				fieldtype: "Check",
-				fieldname: "assign_to_me",
-				default: 0,
-				onchange: () => me.assign_to_me(),
-			},
-			{
 				label: __("Assign To User Group"),
 				fieldtype: "Link",
 				fieldname: "assign_to_user_group",
 				options: "User Group",
 				onchange: () => me.user_group_list(),
+				hidden: 1,
 			},
 			{
 				fieldtype: "MultiSelectPills",
@@ -213,6 +208,21 @@ frappe.ui.form.AssignToDialog = class AssignToDialog {
 						enabled: 1,
 					});
 				},
+			},
+			{
+				label: __("Assign to me"),
+				fieldtype: "Check",
+				fieldname: "assign_to_me",
+				default: 0,
+				onchange: () => me.assign_to_me(),
+			},
+			{
+				fieldtype: "Section Break",
+			},
+			{
+				label: __("Comment"),
+				fieldtype: "Small Text",
+				fieldname: "description",
 			},
 			{
 				fieldtype: "Section Break",
@@ -247,14 +257,6 @@ frappe.ui.form.AssignToDialog = class AssignToDialog {
 				default: ["Low", "Medium", "High"].includes(
 					me.frm && me.frm.doc.priority ? me.frm.doc.priority : "Medium"
 				),
-			},
-			{
-				fieldtype: "Section Break",
-			},
-			{
-				label: __("Comment"),
-				fieldtype: "Small Text",
-				fieldname: "description",
 			},
 		];
 	}
