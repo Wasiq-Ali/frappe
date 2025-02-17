@@ -104,7 +104,8 @@
    "no_copy": 1,
    "oldfieldname": "fieldname",
    "oldfieldtype": "Data",
-   "read_only": 1
+   "read_only": 1,
+   "read_only_depends_on": "eval:!doc.__islocal"
   },
   {
    "description": "Select the label after which you want to insert new field.",
@@ -469,7 +470,7 @@
  "idx": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-28 20:19:35.935720",
+ "modified": "2025-02-17 14:16:17.182673",
  "modified_by": "Administrator",
  "module": "Custom",
  "name": "Custom Field",
