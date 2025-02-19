@@ -19,6 +19,7 @@ class FileUploader {
 		disable_file_browser,
 		dialog_title,
 		attach_doc_image,
+		show_upload_button,
 		frm,
 		make_attachments_public,
 	} = {}) {
@@ -28,6 +29,10 @@ class FileUploader {
 			this.make_dialog(dialog_title);
 		} else {
 			this.wrapper = wrapper.get ? wrapper.get(0) : wrapper;
+		}
+
+		if(show_upload_button == null) {
+			show_upload_button = !Boolean(this.dialog);
 		}
 
 		if (restrictions && !restrictions.allowed_file_types) {
@@ -41,7 +46,7 @@ class FileUploader {
 		}
 
 		let app = createApp(FileUploaderComponent, {
-			show_upload_button: !Boolean(this.dialog),
+			show_upload_button,
 			doctype,
 			docname,
 			fieldname,
