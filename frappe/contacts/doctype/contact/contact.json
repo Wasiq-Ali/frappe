@@ -130,6 +130,7 @@
    "fieldtype": "Attach Image",
    "hidden": 1,
    "label": "Image",
+   "no_copy": 1,
    "print_hide": 1
   },
   {
@@ -291,7 +292,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-29 17:18:28.976725",
+ "modified": "2025-02-23 22:47:21.019625",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
