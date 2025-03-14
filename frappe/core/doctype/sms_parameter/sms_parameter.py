@@ -18,6 +18,7 @@ class SMSParameter(Document):
 		parent: DF.Data
 		parentfield: DF.Data
 		parenttype: DF.Data
-		value: DF.Data
+		promotional: DF.Check
+		value: DF.Text
 	# end: auto-generated types
 	pass
