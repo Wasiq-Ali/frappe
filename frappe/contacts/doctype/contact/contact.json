@@ -213,7 +213,8 @@
    "fieldname": "mobile_no",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Mobile No (Primary)"
+   "label": "Mobile No (Primary)",
+   "options": "Phone"
   },
   {
    "default": "0",
@@ -267,7 +268,8 @@
    "fieldname": "mobile_no_2",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Mobile No (Secondary)"
+   "label": "Mobile No (Secondary)",
+   "options": "Phone"
   },
   {
    "allow_in_quick_entry": 1,
@@ -292,7 +294,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-23 22:47:21.019625",
+ "modified": "2025-03-17 20:12:34.036369",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
