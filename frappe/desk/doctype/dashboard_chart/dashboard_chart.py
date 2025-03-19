@@ -291,7 +291,7 @@ def get_group_by_chart_config(chart, filters) -> dict | None:
 			f"{aggregate_function}({value_field}) as count"
 		],
 		filters=filters,
-		group_by=group_by_field,
+		group_by=f"`tab{doctype}`.{group_by_field}",
 		order_by="count desc",
 		ignore_ifnull=True,
 		limit=chart.number_of_groups or None,
