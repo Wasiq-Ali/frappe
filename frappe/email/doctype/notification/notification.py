@@ -8,17 +8,21 @@ from collections import namedtuple
 import frappe
 from frappe import _
 from frappe.core.doctype.role.role import get_info_based_on_role, get_user_info
-from frappe.core.doctype.sms_settings.sms_settings import send_sms
+from frappe.core.doctype.sms_settings.sms_settings import send_sms, clean_receiver_nos
 from frappe.desk.doctype.notification_log.notification_log import enqueue_create_notification
 from frappe.integrations.doctype.slack_webhook_url.slack_webhook_url import send_slack_message
 from frappe.model.document import Document
 from frappe.modules.utils import export_module_json, get_doc_module
-from frappe.utils import add_to_date, cast, nowdate, validate_email_address
+from frappe.utils import add_to_date, cast, nowdate, validate_email_address, cstr, cint
 from frappe.utils.jinja import validate_template
 from frappe.utils.safe_exec import get_safe_globals
+from frappe.core.doctype.notification_count.notification_count import (
+	get_notification_count, set_notification_last_scheduled
+)
+from frappe.model.base_document import get_controller
 
 FORMATS = {"HTML": ".html", "Markdown": ".md", "Plain Text": ".txt"}
-FORBIDDEN_DOCUMENT_TYPES = frozenset(("Email Queue",))
+FORBIDDEN_DOCUMENT_TYPES = frozenset(("Email Queue", "SMS Queue",))
 DATE_BASED_EVENTS = frozenset(("Days Before", "Days After"))
 
 
@@ -39,26 +43,17 @@ class Notification(Document):
 		days_in_advance: DF.Int
 		document_type: DF.Link
 		enabled: DF.Check
-		event: DF.Literal[
-			"",
-			"New",
-			"Save",
-			"Submit",
-			"Cancel",
-			"Days After",
-			"Days Before",
-			"Value Change",
-			"Method",
-			"Custom",
-		]
+		event: DF.Literal["", "New", "Save", "Submit", "Cancel", "Days After", "Days Before", "Value Change", "Method", "Custom"]
 		is_standard: DF.Check
 		message: DF.Code | None
 		message_type: DF.Literal["Markdown", "HTML", "Plain Text"]
 		method: DF.Data | None
 		module: DF.Link | None
+		notification_type: DF.Data | None
 		print_format: DF.Link | None
 		property_value: DF.Data | None
 		recipients: DF.Table[NotificationRecipient]
+		send_only_once: DF.Check
 		send_system_notification: DF.Check
 		send_to_all_assignees: DF.Check
 		sender: DF.Link | None
@@ -66,6 +61,7 @@ class Notification(Document):
 		set_property_after_alert: DF.Literal[None]
 		slack_webhook_url: DF.Link | None
 		subject: DF.Data | None
+		timeline_field: DF.Data | None
 		value_changed: DF.Literal[None]
 	# end: auto-generated types
 
@@ -172,11 +168,14 @@ def get_context(context):
 
 		return docs
 
-	def send(self, doc):
+	def send(self, doc, context=None):
 		"""Build recipients and send Notification"""
 
-		context = get_context(doc)
-		context = {"doc": doc, "alert": self, "comments": None}
+		# context = get_context(doc)
+		if not context:
+			context = {}
+
+		context.update({"doc": doc, "alert": self, "comments": None})
 		if doc.get("_comments"):
 			context["comments"] = json.loads(doc.get("_comments"))
 
@@ -273,6 +272,8 @@ def get_context(context):
 		# Add mail notification to communication list
 		# No need to add if it is already a communication.
 		if doc.doctype != "Communication":
+			timeline_doctype, timeline_name = self.get_timeline_doctype_and_name(doc)
+
 			communication = make_communication(
 				doctype=get_reference_doctype(doc),
 				name=get_reference_name(doc),
@@ -286,7 +287,12 @@ def get_context(context):
 				cc=cc,
 				bcc=bcc,
 				communication_type="Automated Message",
+				timeline_doctype=timeline_doctype,
+				timeline_name=timeline_name,
 			).get("name")
+
+		notification_type = self.get_notification_type()
+		set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "Email")
 
 		frappe.sendmail(
 			recipients=recipients,
@@ -301,6 +307,7 @@ def get_context(context):
 			expose_recipients="header",
 			print_letterhead=((attachments and attachments[0].get("print_letterhead")) or False),
 			communication=communication,
+			notification_type=notification_type,
 		)
 
 	def send_a_slack_msg(self, doc, context):
@@ -312,9 +319,21 @@ def get_context(context):
 		)
 
 	def send_sms(self, doc, context):
+		timeline_doctype, timeline_name = self.get_timeline_doctype_and_name(doc)
+		notification_type = self.get_notification_type()
+
+		set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS")
+
 		send_sms(
 			receiver_list=self.get_receiver_list(doc, context),
-			msg=frappe.render_template(self.message, context),
+			message=frappe.render_template(self.message, context),
+			reference_doctype=get_reference_doctype(doc),
+			reference_name=get_reference_name(doc),
+			notification_type=notification_type,
+			party_doctype=timeline_doctype,
+			party=timeline_name,
+			queue=True,
+			automated=True,
 		)
 
 	def get_list_of_recipients(self, doc, context):
@@ -325,6 +344,9 @@ def get_context(context):
 			if recipient.condition:
 				if not frappe.safe_eval(recipient.condition, None, context):
 					continue
+
+			recipients.extend(get_emails_from_template(recipient.recipient, context))
+
 			if recipient.receiver_by_document_field:
 				fields = recipient.receiver_by_document_field.split(",")
 				# fields from child table
@@ -363,6 +385,8 @@ def get_context(context):
 				if not frappe.safe_eval(recipient.condition, None, context):
 					continue
 
+			receiver_list.extend(get_emails_from_template(recipient.recipient, context))
+
 			# For sending messages to the owner's mobile phone number
 			if recipient.receiver_by_document_field == "owner":
 				receiver_list += get_user_info([dict(user_name=doc.get("owner"))], "mobile_no")
@@ -376,7 +400,21 @@ def get_context(context):
 					recipient.receiver_by_role, "mobile_no", ignore_permissions=True
 				)
 
+		receiver_list = clean_receiver_nos(receiver_list)
+
 		return receiver_list
+
+	def get_timeline_doctype_and_name(self, doc):
+		if self.timeline_field:
+			timeline_name = doc.get(self.timeline_field)
+			df = doc.meta.get_field(self.timeline_field)
+			if timeline_name and df:
+				if df.fieldtype == "Link":
+					return df.options, timeline_name
+				elif df.fieldtype == "Dynamic Link" and doc.get(df.options):
+					return doc.get(df.options), timeline_name
+
+		return None, None
 
 	def get_attachment(self, doc):
 		"""check print settings are attach the pdf"""
@@ -444,6 +482,9 @@ def get_context(context):
 	def on_trash(self):
 		frappe.cache.hdel("notifications", self.document_type)
 
+	def get_notification_type(self):
+		return self.get("notification_type") or self.name
+
 
 @frappe.whitelist()
 def get_documents_for_today(notification):
@@ -473,18 +514,32 @@ def trigger_notifications(doc, method=None):
 				frappe.db.commit()
 
 
-def evaluate_alert(doc: Document, alert, event):
+def evaluate_alert(doc: Document, alert, event, context=None):
 	from jinja2 import TemplateError
 
 	try:
 		if isinstance(alert, str):
 			alert = frappe.get_doc("Notification", alert)
 
-		context = get_context(doc)
+		if not context:
+			context = {}
+
+		condition_context = context.copy()
+		condition_context.update(get_context(doc))
 
 		if alert.condition:
-			if not frappe.safe_eval(alert.condition, None, context):
+			if not frappe.safe_eval(alert.condition, None, condition_context):
 				return
+
+		notification_type = alert.get_notification_type()
+		validation = run_validate_notification(doc, notification_type, throw=False)
+		if not validation:
+			return
+
+		if alert.send_only_once:
+			notification_count = get_notification_count(doc.doctype, doc.name, notification_type, alert.channel)
+			if notification_count:
+				return False
 
 		if event == "Value Change" and not doc.is_new():
 			if not frappe.db.has_column(doc.doctype, alert.value_changed):
@@ -504,7 +559,7 @@ def evaluate_alert(doc: Document, alert, event):
 			# reload the doc for the latest values & comments,
 			# except for validate type event.
 			doc.reload()
-		alert.send(doc)
+		alert.send(doc, context=context)
 	except TemplateError:
 		message = _("Error while evaluating Notification {0}. Please fix your template.").format(
 			frappe.utils.get_link_to_form("Notification", alert.name)
@@ -516,6 +571,45 @@ def evaluate_alert(doc: Document, alert, event):
 		frappe.log_error(title=title, message=message)
 		msg = f"<details><summary>{title}</summary>{message}</details>"
 		frappe.throw(msg, title=_("Error in Notification"))
+
+
+def get_doc_for_notification_triggers(reference_doctype, reference_name):
+	if not reference_doctype or not reference_name:
+		return
+
+	try:
+		controller = get_controller(reference_doctype)
+		has_validate_notification = hasattr(controller, "validate_notification")
+		if has_validate_notification:
+			doc = frappe.get_doc(reference_doctype, reference_name)
+			return doc
+	except ImportError:
+		pass
+
+
+def run_validate_notification(doc, notification_type=None, child_doctype=None, child_name=None, throw=True):
+	notification_type = cstr(notification_type)
+	validation = doc.run_method("validate_notification",
+		notification_type=notification_type, child_doctype=child_doctype, child_name=child_name, throw=throw)
+
+	if validation is None:
+		return True
+	else:
+		return cint(validation)
+
+
+def has_notification(reference_doctype, notification_type=None):
+	notification_type = cstr(notification_type)
+
+	template = frappe.db.sql_list("""
+		select name
+		from `tabNotification`
+		where document_type = %s and ifnull(notification_type, '') = %s
+			and enabled = 1
+		limit 1
+	""", [reference_doctype, notification_type])
+
+	return len(template)
 
 
 def get_context(doc):

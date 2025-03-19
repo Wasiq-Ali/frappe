@@ -63,7 +63,7 @@ def get_all_notification_count(reference_doctype, reference_name, child_doctype=
 			"child_name": child_name,
 		})
 
-	return frappe.get_all("Notification Count", filters=filters, fields=fields)
+	return frappe.get_all("Notification Count", filters=filters, fields=fields, order_by="creation")
 
 
 def get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=None, child_name=None):

@@ -5,9 +5,7 @@ import frappe
 from frappe import _
 from frappe.utils import nowdate, cint, cstr
 from frappe.model.document import Document
-from frappe.core.doctype.notification_count.notification_count import add_notification_count, get_notification_count,\
-	set_notification_last_scheduled
-from frappe.model.base_document import get_controller
+from frappe.core.doctype.notification_count.notification_count import add_notification_count
 import json
 
 
@@ -49,6 +47,7 @@ def send_sms(
 	queue=False,
 	queue_separately=False,
 	send_after=None,
+	automated=False,
 	priority=1,
 ):
 	notification_type = cstr(notification_type)
@@ -76,7 +75,7 @@ def send_sms(
 		args['send_after'] = send_after
 		queue = True
 
-	create_communication(args)
+	create_communication(args, automated=automated)
 
 	if queue:
 		from frappe.core.doctype.sms_queue.sms_queue import queue_sms
@@ -92,158 +91,9 @@ def send_sms(
 		process_and_send(args)
 
 
-def enqueue_template_sms(
-	doc,
-	notification_type=None,
-	context=None,
-	allow_if_already_sent=False,
-	child_doctype=None,
-	child_name=None,
-	send_after=None,
-	priority=1,
-):
-	from frappe.core.doctype.sms_queue.sms_queue import queue_sms
-
-	notification_type = cstr(notification_type)
-
-	if not is_sms_enabled():
-		return False
-
-	if not is_automated_sms_enabled():
-		return False
-
-	validation = run_validate_notification(doc, notification_type, child_doctype=child_doctype, child_name=child_name, throw=False)
-	if not validation:
-		return False
-
-	if not allow_if_already_sent:
-		notification_count = get_notification_count(doc.doctype, doc.name, notification_type, "SMS", child_doctype=child_doctype, child_name=child_name)
-		if notification_count:
-			return False
-
-	args = get_template_sms_args(notification_type, doc=doc, context=context, child_doctype=child_doctype, child_name=child_name, throw=False)
-	if not args:
-		return False
-
-	if not args.get('receiver_list'):
-		return False
-
-	if send_after:
-		args['send_after'] = send_after
-
-	if priority is not None:
-		args['priority'] = cint(priority)
-
-	set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS", child_doctype=child_doctype, child_name=child_name)
-	create_communication(args, automated=True)
-	queue_sms(args)
-
-	return True
-
-
-def send_template_sms(
-	notification_type,
-	reference_doctype=None,
-	reference_name=None,
-	child_doctype=None,
-	child_name=None,
-	doc=None,
-	context=None,
-	receiver_list=None
-):
-	args = get_template_sms_args(notification_type, reference_doctype=reference_doctype, reference_name=reference_name,
-		child_doctype=child_doctype, child_name=child_name, doc=doc, context=context, get_doc=True, throw=True)
-
-	if receiver_list:
-		args['receiver_list'] = clean_receiver_nos(receiver_list)
-
-	create_communication(args)
-	process_and_send(args)
-
-
-def get_template_sms_args(
-	notification_type,
-	reference_doctype=None,
-	reference_name=None,
-	child_doctype=None,
-	child_name=None,
-	doc=None,
-	get_doc=False,
-	context=None,
-	is_automated_sms=True,
-	throw=True
-):
-	from frappe.core.doctype.sms_template.sms_template import get_sms_template
-
-	if not doc and reference_doctype and reference_name:
-		doc = frappe.get_doc(reference_doctype, reference_name)
-
-	if not doc:
-		if throw:
-			frappe.throw(_("Template SMS could not be generated because reference document not provided"))
-		else:
-			return None
-
-	notification_type = cstr(notification_type)
-	for_notification_type_str = " for Notification Type {0}".format(notification_type) if notification_type else ""
-
-	args = get_sms_args_from_controller(notification_type, doc, child_doctype=child_doctype, child_name=child_name)
-	if not args:
-		if throw:
-			frappe.throw(_("Template SMS not supported for {0}{1}")
-				.format(args.reference_doctype, for_notification_type_str))
-		else:
-			return None
-
-	args['receiver_list'] = clean_receiver_nos(args.get('receiver_list'))
-
-	sms_template = get_sms_template(args.reference_doctype, notification_type)
-	if not sms_template:
-		if throw:
-			frappe.throw(_("SMS Template not available for {0}{1}")
-				.format(args.reference_doctype, for_notification_type_str))
-		else:
-			return None
-
-	if is_automated_sms and not sms_template.allow_automated_sms:
-		if throw:
-			frappe.throw(_("{0} SMS Template not allowed for automated SMS").format(notification_type))
-		else:
-			return None
-
-	message = sms_template.get_rendered_message(doc=doc, context=context)
-	if not message:
-		if throw:
-			frappe.throw(_("SMS Message empty for {0} {1}{2}")
-				.format(args.reference_doctype, args.reference_name, for_notification_type_str))
-		else:
-			return None
-
-	args.update({
-		'message': message,
-		'notification_type': notification_type,
-		'success_msg': args.get('success_msg') or True
-	})
-
-	if get_doc:
-		args['doc'] = doc
-
-	return args
-
-
-def get_sms_args_from_controller(notification_type, doc, child_doctype=None, child_name=None):
-	notification_type = cstr(notification_type)
-	args = frappe._dict(doc.run_method("get_sms_args", notification_type=notification_type, child_doctype=child_doctype, child_name=child_name))
-	if args:
-		args.reference_doctype = doc.doctype
-		args.reference_name = doc.name
-		args.child_doctype = child_doctype
-		args.child_name = child_name
-
-	return args
-
-
 def process_and_send(args):
+	from frappe.email.doctype.notification.notification import get_doc_for_notification_triggers
+
 	if not frappe.get_cached_value('SMS Settings', None, 'sms_gateway_url'):
 		frappe.throw(_("Please Update SMS Settings"))
 
@@ -259,7 +109,7 @@ def process_and_send(args):
 	args['message'] = frappe.safe_decode(args.get('message')).encode('utf-8')
 
 	if not args.get('doc'):
-		args['doc'] = get_doc_for_triggers(args.get('reference_doctype'), args.get('reference_name'))
+		args['doc'] = get_doc_for_notification_triggers(args.get('reference_doctype'), args.get('reference_name'))
 
 	run_before_send_methods(args)
 	send_via_gateway(args)
@@ -278,7 +128,7 @@ def create_communication(args, automated=False):
 		comm = frappe.get_doc({
 			"doctype": "Communication",
 			"communication_medium": "SMS",
-			"communication_type": "Automated Message" if automated else "Communication",
+			"communication_type": "Automated Message" if cint(automated) else "Communication",
 			"subject": subject or 'SMS',
 			"content": args.get('message'),
 			"sent_or_received": "Sent",
@@ -300,23 +150,17 @@ def create_communication(args, automated=False):
 
 
 def run_before_send_methods(args):
+	from frappe.email.doctype.notification.notification import run_validate_notification
+
 	doc = args.get('doc')
 	notification_type = cstr(args.get('notification_type'))
 
-	if doc:
-		validation = run_validate_notification(doc, notification_type, child_doctype=args.get("child_doctype"), child_name=args.get("child_name"), throw=True)
+	if doc and notification_type:
+		validation = run_validate_notification(
+			doc, notification_type, child_doctype=args.get("child_doctype"), child_name=args.get("child_name"), throw=True
+		)
 		if not validation:
 			frappe.throw(_("{0} Notification Validation Failed").format(notification_type))
-
-
-def run_validate_notification(doc, notification_type, child_doctype=None, child_name=None, throw=True):
-	notification_type = cstr(notification_type)
-	validation = doc.run_method("validate_notification", notification_type=notification_type, child_doctype=child_doctype, child_name=child_name, throw=throw)
-
-	if validation is None:
-		return True
-	else:
-		return cint(validation)
 
 
 def run_after_send_methods(args):
@@ -324,28 +168,6 @@ def run_after_send_methods(args):
 	if args.get("reference_doctype") and args.get("reference_name") and notification_type:
 		add_notification_count(args.get("reference_doctype"), args.get("reference_name"), notification_type, 'SMS',
 			child_doctype=args.get("child_doctype"), child_name=args.get("child_name"))
-
-	doc = args.get('doc')
-
-	if doc:
-		doc.run_method("after_send_notification", notification_medium="SMS", notification_type=notification_type,
-			child_doctype=args.get("child_doctype"), child_name=args.get("child_name"))
-		doc.notify_update()
-
-
-def get_doc_for_triggers(reference_doctype, reference_name):
-	if not reference_doctype or not reference_name:
-		return
-
-	try:
-		controller = get_controller(reference_doctype)
-		has_validate_notification = hasattr(controller, "validate_notification")
-		has_after_send_notification = hasattr(controller, "after_send_notification")
-		if has_validate_notification or has_after_send_notification:
-			doc = frappe.get_doc(reference_doctype, reference_name)
-			return doc
-	except ImportError:
-		pass
 
 
 def send_via_gateway(args):

@@ -987,7 +987,7 @@ class Document(BaseDocument):
 		fn.__name__ = str(method)
 		out = Document.hook(fn)(self, *args, **kwargs)
 
-		self.run_notifications(method)
+		self.run_notifications(method, context=kwargs.get("context"))
 		run_webhooks(self, method)
 		run_server_script_for_doc_event(self, method)
 
@@ -996,7 +996,7 @@ class Document(BaseDocument):
 	def run_trigger(self, method, *args, **kwargs):
 		return self.run_method(method, *args, **kwargs)
 
-	def run_notifications(self, method):
+	def run_notifications(self, method, context=None):
 		"""Run notifications for this method"""
 		if (
 			(frappe.flags.in_import and frappe.flags.mute_emails)
@@ -1030,7 +1030,7 @@ class Document(BaseDocument):
 			if alert.name in self.flags.notifications_executed:
 				return
 
-			evaluate_alert(self, alert.name, alert.event)
+			evaluate_alert(self, alert.name, alert.event, context=context)
 			self.flags.notifications_executed.append(alert.name)
 
 		event_map = {

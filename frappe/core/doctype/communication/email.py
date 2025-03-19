@@ -134,6 +134,8 @@ def _make(
 	send_after=None,
 	print_language=None,
 	now=False,
+	timeline_doctype=None,
+	timeline_name=None,
 ) -> dict[str, str]:
 	"""Internal method to make a new communication that ignores Permission checks."""
 
@@ -164,6 +166,13 @@ def _make(
 			"send_after": send_after,
 		}
 	)
+
+	if timeline_doctype and timeline_name:
+		comm.append("timeline_links", {
+			"link_doctype": timeline_doctype,
+			"link_name": timeline_name,
+		})
+
 	comm.flags.skip_add_signature = not add_signature
 	comm.insert(ignore_permissions=True)
 

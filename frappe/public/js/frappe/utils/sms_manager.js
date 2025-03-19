@@ -105,7 +105,7 @@ frappe.SMSManager = function SMSManager(doc, options) {
 				});
 			}
 		};
-		
+
 		$(d.fields_dict.send.input).addClass('btn-primary');
 
 		me.dialog = d;
@@ -114,13 +114,25 @@ frappe.SMSManager = function SMSManager(doc, options) {
 	this.show();
 }
 
+frappe.get_notification_count_str = function (frm, notification_type) {
+	let counts = (frm.doc.__onload?.notification_count || []).filter(d => {
+		return d.notification_type == notification_type && cint(d.notification_count)
+	}).map(d => `${cint(d.notification_count)} ${d.notification_medium}`);
+
+	let counts_str = "Not Sent";
+	if (counts.length) {
+		counts_str = counts.join(", ");
+	}
+	return counts_str;
+}
+
 frappe.get_notification_count = function (frm, notification_type, notification_medium) {
-	let row = frm.doc.__onload && (frm.doc.__onload.notification_count || []).find(d => {
-		return d.notification_type == notification_type && d.notification_medium == notification_medium
+	let rows = (frm.doc.__onload?.notification_count || []).filter(d => {
+		return d.notification_type == notification_type && (!notification_medium || d.notification_medium == notification_medium)
 	});
 
-	if (row) {
-		return cint(row.notification_count);
+	if (rows.length) {
+		return frappe.utils.sum(rows.map(d => cint(d.notification_count)));
 	} else {
 		return 0;
 	}

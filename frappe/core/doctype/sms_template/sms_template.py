@@ -9,6 +9,19 @@ from frappe.utils import cstr
 
 
 class SMSTemplate(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		enabled: DF.Check
+		message: DF.Text
+		notification_type: DF.Data | None
+		reference_doctype: DF.Link
+	# end: auto-generated types
 	def autoname(self):
 		self.name = self.reference_doctype
 		if self.notification_type:
@@ -62,20 +75,6 @@ def get_sms_template(reference_doctype, notification_type=None):
 		return template_doc
 	else:
 		return None
-
-
-def has_automated_sms_template(reference_doctype, notification_type=None):
-	notification_type = cstr(notification_type)
-
-	template = frappe.db.sql_list("""
-		select name
-		from `tabSMS Template`
-		where reference_doctype = %s and ifnull(notification_type, '') = %s
-			and enabled = 1 and allow_automated_sms = 1
-		limit 1
-	""", [reference_doctype, notification_type])
-
-	return len(template)
 
 
 def get_context(context=None, doc=None):

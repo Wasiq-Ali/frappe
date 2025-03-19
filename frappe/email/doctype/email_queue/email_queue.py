@@ -53,6 +53,7 @@ class EmailQueue(Document):
 		expose_recipients: DF.Data | None
 		message: DF.Code | None
 		message_id: DF.SmallText | None
+		notification_type: DF.Data | None
 		priority: DF.Int
 		recipients: DF.Table[EmailQueueRecipient]
 		reference_doctype: DF.Link | None
@@ -114,6 +115,11 @@ class EmailQueue(Document):
 			frappe.db.commit()
 
 	def update_status(self, status, commit=False, **kwargs):
+		if status == "Sent":
+			from frappe.core.doctype.notification_count.notification_count import add_notification_count
+			if self.reference_doctype and self.reference_name and self.notification_type:
+				add_notification_count(self.reference_doctype, self.reference_name, self.notification_type, "Email")
+
 		self.update_db(status=status, commit=commit, **kwargs)
 		if self.communication:
 			communication_doc = frappe.get_doc("Communication", self.communication)
@@ -158,6 +164,12 @@ class EmailQueue(Document):
 			return
 
 		with SendMailContext(self, smtp_server_instance) as ctx:
+			if self.reference_doctype and self.reference_name and self.notification_type:
+				from frappe.email.doctype.notification.notification import get_doc_for_notification_triggers, run_validate_notification
+				doc = get_doc_for_notification_triggers(self.reference_doctype, self.reference_name)
+				if doc:
+					run_validate_notification(doc, self.notification_type, throw=True)
+
 			ctx.fetch_smtp_server()
 			message = None
 			for recipient in self.recipients:
@@ -498,6 +510,7 @@ class QueueBuilder:
 		print_letterhead=False,
 		with_container=False,
 		email_read_tracker_url=None,
+		notification_type=None,
 	):
 		"""Add email to sending queue (Email Queue)
 
@@ -558,6 +571,7 @@ class QueueBuilder:
 		self.inline_images = inline_images
 		self.print_letterhead = print_letterhead
 		self.email_read_tracker_url = email_read_tracker_url
+		self.notification_type = notification_type
 
 	@property
 	def unsubscribe_method(self):
@@ -800,6 +814,7 @@ class QueueBuilder:
 			"show_as_bcc": ",".join(self.bcc),
 			"email_account": email_account_name or None,
 			"email_read_tracker_url": self.email_read_tracker_url,
+			"notification_type": self.notification_type,
 		}
 
 		if include_recipients:

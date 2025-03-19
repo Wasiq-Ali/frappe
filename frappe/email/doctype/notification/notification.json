@@ -7,17 +7,19 @@
  "document_type": "System",
  "engine": "InnoDB",
  "field_order": [
+  "document_type",
   "enabled",
   "is_standard",
   "module",
   "column_break_2",
   "channel",
   "slack_webhook_url",
+  "send_only_once",
   "filters",
   "subject",
-  "event",
-  "document_type",
+  "notification_type",
   "col_break_1",
+  "event",
   "method",
   "date_changed",
   "days_in_advance",
@@ -31,6 +33,7 @@
   "html_7",
   "property_section",
   "set_property_after_alert",
+  "column_break_d5m8",
   "property_value",
   "column_break_5",
   "send_to_all_assignees",
@@ -42,7 +45,9 @@
   "view_properties",
   "column_break_25",
   "attach_print",
-  "print_format"
+  "print_format",
+  "column_break_ie5e",
+  "timeline_field"
  ],
  "fields": [
   {
@@ -62,8 +67,7 @@
    "fieldtype": "Select",
    "label": "Channel",
    "options": "Email\nSlack\nSystem Notification\nSMS",
-   "reqd": 1,
-   "set_only_once": 1
+   "reqd": 1
   },
   {
    "depends_on": "eval:doc.channel=='Slack'",
@@ -180,7 +184,8 @@
    "fieldtype": "Code",
    "ignore_xss_filter": 1,
    "in_list_view": 1,
-   "label": "Condition"
+   "label": "Condition",
+   "max_height": "150px"
   },
   {
    "fieldname": "column_break_6",
@@ -245,11 +250,10 @@
    "label": "View Properties (via Customize Form)"
   },
   {
-   "collapsible": 1,
    "collapsible_depends_on": "attach_print",
    "fieldname": "column_break_25",
    "fieldtype": "Section Break",
-   "label": "Print Settings"
+   "label": "Additional Settings"
   },
   {
    "default": "0",
@@ -286,12 +290,36 @@
    "fieldtype": "Select",
    "label": "Message Type",
    "options": "Markdown\nHTML\nPlain Text"
+  },
+  {
+   "fieldname": "notification_type",
+   "fieldtype": "Data",
+   "label": "Notification Type"
+  },
+  {
+   "fieldname": "column_break_d5m8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_ie5e",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "timeline_field",
+   "fieldtype": "Data",
+   "label": "Timeline Field"
+  },
+  {
+   "default": "0",
+   "fieldname": "send_only_once",
+   "fieldtype": "Check",
+   "label": "Send Only Once"
   }
  ],
  "icon": "fa fa-envelope",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-04 05:53:40.595130",
+ "modified": "2025-03-18 00:56:50.709393",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Notification",
@@ -312,6 +340,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "subject",
  "track_changes": 1
 }
