@@ -184,6 +184,9 @@ class StatusUpdater(Document):
 		completed_qty = sum([flt(row.get(f)) for f in completed_field])
 		completed_qty = flt(completed_qty, row.precision(reference_field))
 
+		if callable(allowance_type):
+			allowance_type = allowance_type(row)
+
 		if not allowance_type:
 			difference = completed_qty - reference_qty
 			excess_qty = difference
