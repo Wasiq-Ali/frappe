@@ -122,7 +122,7 @@ def get_context(context):
 		temp_doc = frappe.new_doc(self.document_type)
 		if self.condition:
 			try:
-				frappe.safe_eval(self.condition, None, get_context(temp_doc.as_dict()))
+				frappe.safe_eval(self.condition, get_safe_globals(), get_context(temp_doc.as_dict()))
 			except Exception:
 				frappe.throw(_("The Condition '{0}' is invalid").format(self.condition))
 
@@ -158,10 +158,11 @@ def get_context(context):
 			],
 		)
 
+		eval_globals = get_safe_globals()
 		for d in doc_list:
 			doc = frappe.get_doc(self.document_type, d.name)
 
-			if self.condition and not frappe.safe_eval(self.condition, None, get_context(doc)):
+			if self.condition and not frappe.safe_eval(self.condition, eval_globals, get_context(doc)):
 				continue
 
 			docs.append(doc)
@@ -322,10 +323,14 @@ def get_context(context):
 		timeline_doctype, timeline_name = self.get_timeline_doctype_and_name(doc)
 		notification_type = self.get_notification_type()
 
+		receiver_list = self.get_receiver_list(doc, context)
+		if not receiver_list:
+			return
+
 		set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS")
 
 		send_sms(
-			receiver_list=self.get_receiver_list(doc, context),
+			receiver_list=receiver_list,
 			message=frappe.render_template(self.message, context),
 			reference_doctype=get_reference_doctype(doc),
 			reference_name=get_reference_name(doc),
@@ -340,9 +345,12 @@ def get_context(context):
 		recipients = []
 		cc = []
 		bcc = []
+
+		eval_globals = get_safe_globals()
+
 		for recipient in self.recipients:
 			if recipient.condition:
-				if not frappe.safe_eval(recipient.condition, None, context):
+				if not frappe.safe_eval(recipient.condition, eval_globals, context):
 					continue
 
 			recipients.extend(get_emails_from_template(recipient.recipient, context))
@@ -380,9 +388,12 @@ def get_context(context):
 	def get_receiver_list(self, doc, context):
 		"""return receiver list based on the doc field and role specified"""
 		receiver_list = []
+
+		eval_globals = get_safe_globals()
+
 		for recipient in self.recipients:
 			if recipient.condition:
-				if not frappe.safe_eval(recipient.condition, None, context):
+				if not frappe.safe_eval(recipient.condition, eval_globals, context):
 					continue
 
 			receiver_list.extend(get_emails_from_template(recipient.recipient, context))
@@ -528,7 +539,7 @@ def evaluate_alert(doc: Document, alert, event, context=None):
 		condition_context.update(get_context(doc))
 
 		if alert.condition:
-			if not frappe.safe_eval(alert.condition, None, condition_context):
+			if not frappe.safe_eval(alert.condition, get_safe_globals(), condition_context):
 				return
 
 		notification_type = alert.get_notification_type()
@@ -613,11 +624,9 @@ def has_notification(reference_doctype, notification_type=None):
 
 
 def get_context(doc):
-	Frappe = namedtuple("frappe", ["utils"])
 	return {
 		"doc": doc,
 		"nowdate": nowdate,
-		"frappe": Frappe(utils=get_safe_globals().get("frappe").get("utils")),
 	}
 
 
