@@ -187,6 +187,9 @@ def send_via_gateway(args):
 
 		request_params[d.parameter] = d.value
 
+	frappe.utils.call_hook_method("update_sms_request_params",
+		params=request_params, headers=headers, args=args)
+
 	success_list = []
 	fail_list = []
 	for d in args.get('receiver_list'):
