@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Union
 import frappe
 from frappe import _
 from frappe.model.docstatus import DocStatus
-from frappe.utils import cint
+from frappe.utils import cint, cstr
 
 if TYPE_CHECKING:
 	from frappe.model.document import Document
@@ -89,7 +89,7 @@ def get_workflow_safe_globals():
 
 
 def is_transition_condition_satisfied(transition, doc) -> bool:
-	if not transition.condition:
+	if not cstr(transition.condition).strip():
 		return True
 	else:
 		return frappe.safe_eval(transition.condition, get_workflow_safe_globals(), dict(doc=doc.as_dict()))
