@@ -6,10 +6,7 @@ def get_print_settings_to_show(doctype, docname):
 	doc = frappe.get_doc(doctype, docname)
 	print_settings = frappe.get_single("Print Settings")
 
-	if hasattr(doc, "get_print_settings"):
-		fields = doc.get_print_settings() or []
-	else:
-		return []
+	fields = doc.run_method("get_print_settings") or []
 
 	print_settings_fields = []
 	for fieldname in fields:
