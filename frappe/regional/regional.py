@@ -47,7 +47,7 @@ def validate_duplicate_mobile_no(doctype, fieldname, value, exclude=None, throw=
 	international_prefix = mobile_international_prefix()
 	local_prefix = mobile_local_prefix()
 
-	# Internatinoal to Local
+	# International to Local
 	is_international_number = False
 	if international_prefix and local_prefix is not None:
 		if value.startswith(f"00{international_prefix}"):
@@ -72,6 +72,32 @@ def validate_duplicate_mobile_no(doctype, fieldname, value, exclude=None, throw=
 			values.append(f"00{international_prefix}{base_number}")
 
 	validate_duplicate_value(doctype, fieldname, values, exclude, throw)
+
+
+def local_to_international_mobile_no(mobile_no):
+	international_prefix = mobile_international_prefix()
+	local_prefix = mobile_local_prefix()
+
+	# International to Local
+	if international_prefix and local_prefix is not None:
+		if mobile_no.startswith(f"00{international_prefix}"):
+			base_number = mobile_no[len(international_prefix) + 2:]
+			return f"+{base_number}"
+		elif mobile_no.startswith(f"+{international_prefix}"):
+			return mobile_no
+
+	if international_prefix:
+		if local_prefix:
+			if mobile_no.startswith(local_prefix):
+				base_number = mobile_no[len(local_prefix):]
+				return f"+{international_prefix}{base_number}"
+			else:
+				return f"+{mobile_no}"
+		else:
+			base_number = mobile_no
+			return f"+{international_prefix}{base_number}"
+
+	return mobile_no
 
 
 def validate_duplicate_value(doctype, fieldname, value, exclude=None, throw=False):
