@@ -52,7 +52,7 @@ def send_sms(
 ):
 	notification_type = cstr(notification_type)
 
-	receiver_list = clean_receiver_nos(receiver_list)
+	receiver_list = clean_receiver_nos(receiver_list, format_sms=True)
 
 	args = frappe._dict({
 		'receiver_list': receiver_list,
@@ -99,7 +99,7 @@ def process_and_send(args):
 
 	args = frappe._dict(args)
 
-	args['receiver_list'] = clean_receiver_nos(args.get('receiver_list'))
+	args['receiver_list'] = clean_receiver_nos(args.get('receiver_list'), format_sms=True)
 	if not args.get('receiver_list'):
 		frappe.throw(_("No valid Mobile Number provided"))
 
@@ -310,7 +310,7 @@ def create_sms_log(args, sent_to):
 		frappe.get_doc('Communication', args.get('communication')).set_delivery_status(commit=False)
 
 
-def clean_receiver_nos(receiver_list):
+def clean_receiver_nos(receiver_list, format_sms=False):
 	if isinstance(receiver_list, str):
 		receiver_list = json.loads(receiver_list)
 		if not isinstance(receiver_list, list):
@@ -321,23 +321,24 @@ def clean_receiver_nos(receiver_list):
 		return cleaned_receiver_list
 
 	for number in receiver_list:
-		number = clean_receiver_number(number)
+		number = clean_receiver_number(number, format_sms=format_sms)
 		if number:
 			cleaned_receiver_list.append(number)
 
 	return cleaned_receiver_list
 
 
-def clean_receiver_number(number):
+def clean_receiver_number(number, format_sms=False):
 	invalid_characters = (' ', '\t', '-', '(', ')', '\xa0')
 	for char in invalid_characters:
 		number = cstr(number).replace(char, '')
 
-	sms_settings = frappe.get_cached_doc("SMS Settings", None)
-	if sms_settings.number_formatter:
-		formatted_number = frappe.safe_eval(sms_settings.number_formatter, eval_locals={'number': number})
-		if formatted_number:
-			number = formatted_number
+	if format_sms:
+		sms_settings = frappe.get_cached_doc("SMS Settings", None)
+		if sms_settings.number_formatter:
+			formatted_number = frappe.safe_eval(sms_settings.number_formatter, eval_locals={'number': number})
+			if formatted_number:
+				number = formatted_number
 
 	return number
 

@@ -323,7 +323,7 @@ def get_context(context):
 		timeline_doctype, timeline_name = self.get_timeline_doctype_and_name(doc)
 		notification_type = self.get_notification_type()
 
-		receiver_list = self.get_receiver_list(doc, context)
+		receiver_list = self.get_receiver_list(doc, context, format_sms=True)
 		if not receiver_list:
 			return
 
@@ -385,7 +385,7 @@ def get_context(context):
 
 		return list(set(recipients)), list(set(cc)), list(set(bcc))
 
-	def get_receiver_list(self, doc, context):
+	def get_receiver_list(self, doc, context, format_sms=False):
 		"""return receiver list based on the doc field and role specified"""
 		receiver_list = []
 
@@ -411,7 +411,7 @@ def get_context(context):
 					recipient.receiver_by_role, "mobile_no", ignore_permissions=True
 				)
 
-		receiver_list = clean_receiver_nos(receiver_list)
+		receiver_list = clean_receiver_nos(receiver_list, format_sms=format_sms)
 
 		return receiver_list
 
