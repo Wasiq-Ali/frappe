@@ -14,28 +14,61 @@ class NotificationCount(Document):
 	pass
 
 
-def add_notification_count(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=None, child_name=None, count=1):
+def add_notification_count(
+	reference_doctype,
+	reference_name,
+	notification_type,
+	notification_medium,
+	child_doctype=None,
+	child_name=None,
+	count=1,
+):
 	count = cint(count) or 1
 
-	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=child_doctype, child_name=child_name)
+	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium,
+		child_doctype=child_doctype, child_name=child_name, for_update=True)
 	doc.notification_count = cint(doc.notification_count) + count
 	doc.last_sent_dt = now_datetime()
 	doc.save(ignore_permissions=True)
 
 
-def get_notification_count(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=None, child_name=None):
-	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=child_doctype, child_name=child_name)
+def get_notification_count(
+	reference_doctype,
+	reference_name,
+	notification_type,
+	notification_medium,
+	child_doctype=None,
+	child_name=None,
+):
+	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium,
+		child_doctype=child_doctype, child_name=child_name)
 	return cint(doc.get('notification_count'))
 
 
-def set_notification_last_scheduled(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=None, child_name=None):
-	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=child_doctype, child_name=child_name)
+def set_notification_last_scheduled(
+	reference_doctype,
+	reference_name,
+	notification_type,
+	notification_medium,
+	child_doctype=None,
+	child_name=None,
+):
+	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium,
+		child_doctype=child_doctype, child_name=child_name, for_update=True)
 	doc.last_scheduled_dt = now_datetime()
 	doc.save(ignore_permissions=True)
 
 
-def get_notification_last_scheduled(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=None, child_name=None):
-	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=child_doctype, child_name=child_name)
+def get_notification_last_scheduled(
+	reference_doctype,
+	reference_name,
+	notification_type,
+	notification_medium,
+	child_doctype=None,
+	child_name=None,
+):
+	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium,
+		child_doctype=child_doctype, child_name=child_name)
 	return get_datetime(doc.get('last_scheduled_dt')) if doc.get('last_scheduled_dt') else None
 
 
@@ -66,7 +99,15 @@ def get_all_notification_count(reference_doctype, reference_name, child_doctype=
 	return frappe.get_all("Notification Count", filters=filters, fields=fields, order_by="creation")
 
 
-def get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium, child_doctype=None, child_name=None):
+def get_notification_count_doc(
+	reference_doctype,
+	reference_name,
+	notification_type,
+	notification_medium,
+	child_doctype=None,
+	child_name=None,
+	for_update=False,
+):
 	filters = {
 		"reference_doctype": reference_doctype,
 		"reference_name": reference_name,
@@ -83,7 +124,7 @@ def get_notification_count_doc(reference_doctype, reference_name, notification_t
 	name = frappe.db.get_value("Notification Count", filters)
 
 	if name:
-		doc = frappe.get_doc("Notification Count", name)
+		doc = frappe.get_doc("Notification Count", name, for_update=for_update)
 	else:
 		doc = frappe.get_doc({"doctype": "Notification Count", **filters})
 

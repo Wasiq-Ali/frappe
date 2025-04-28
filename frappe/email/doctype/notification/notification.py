@@ -293,7 +293,8 @@ def get_context(context):
 			).get("name")
 
 		notification_type = self.get_notification_type()
-		set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "Email")
+		if notification_type:
+			set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "Email")
 
 		frappe.sendmail(
 			recipients=recipients,
@@ -327,7 +328,8 @@ def get_context(context):
 		if not receiver_list:
 			return
 
-		set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS")
+		if notification_type:
+			set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS")
 
 		send_sms(
 			receiver_list=receiver_list,
