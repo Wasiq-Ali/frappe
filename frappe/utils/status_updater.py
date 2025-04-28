@@ -258,7 +258,7 @@ class StatusUpdater(Document):
 		if from_doctype:
 			from_doctype_msg = _("Are you making a duplicate {0} against the same {1}?").format(
 				frappe.bold(from_doctype),
-				frappe.bold(self.doctype),
+				frappe.get_desk_link(self.doctype, self.name),
 			)
 
 		suggestion_msg = self.get_overallowance_error_suggestion_message(allowance_type)
