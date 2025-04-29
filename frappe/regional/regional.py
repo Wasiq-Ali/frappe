@@ -79,12 +79,8 @@ def local_to_international_mobile_no(mobile_no):
 	local_prefix = mobile_local_prefix()
 
 	# International to Local
-	if international_prefix and local_prefix is not None:
-		if mobile_no.startswith(f"00{international_prefix}"):
-			base_number = mobile_no[len(international_prefix) + 2:]
-			return f"+{base_number}"
-		elif mobile_no.startswith(f"+{international_prefix}"):
-			return mobile_no
+	if mobile_no.startswith("00") or mobile_no.startswith("+"):
+		return mobile_no
 
 	if international_prefix:
 		if local_prefix:
@@ -92,7 +88,7 @@ def local_to_international_mobile_no(mobile_no):
 				base_number = mobile_no[len(local_prefix):]
 				return f"+{international_prefix}{base_number}"
 			else:
-				return f"+{mobile_no}"
+				return f"+{international_prefix}{mobile_no}"
 		else:
 			base_number = mobile_no
 			return f"+{international_prefix}{base_number}"
