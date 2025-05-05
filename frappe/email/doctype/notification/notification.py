@@ -321,6 +321,9 @@ def get_context(context):
 		)
 
 	def send_sms(self, doc, context):
+		if frappe.are_sms_muted():
+			return
+
 		timeline_doctype, timeline_name = self.get_timeline_doctype_and_name(doc)
 		notification_type = self.get_notification_type()
 

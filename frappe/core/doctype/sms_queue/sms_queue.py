@@ -13,6 +13,33 @@ from six import text_type
 
 
 class SMSQueue(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.core.doctype.sms_queue_recipient.sms_queue_recipient import SMSQueueRecipient
+		from frappe.types import DF
+
+		child_doctype: DF.Link | None
+		child_name: DF.Data | None
+		communication: DF.Link | None
+		error: DF.SmallText | None
+		is_promotional: DF.Check
+		message: DF.SmallText | None
+		notification_type: DF.Data | None
+		party: DF.DynamicLink | None
+		party_doctype: DF.Link | None
+		priority: DF.Int
+		recipients: DF.Table[SMSQueueRecipient]
+		reference_doctype: DF.Link | None
+		reference_name: DF.Data | None
+		retry: DF.Int
+		send_after: DF.Datetime | None
+		sender: DF.Data | None
+		status: DF.Literal["Not Sent", "Sending", "Partially Sent", "Partially Errored", "Sent", "Error", "Expired"]
+	# end: auto-generated types
 	def on_trash(self):
 		if frappe.session.user != 'Administrator':
 			frappe.throw(_('Only Administrator can delete SMS Queue'))
