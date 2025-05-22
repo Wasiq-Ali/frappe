@@ -189,7 +189,12 @@ def handle_error(e, sms_queue, recipients_list, auto_commit, now):
 		print(frappe.get_traceback())
 		raise e
 	else:
-		frappe.log_error(reference_doctype="SMS Queue", reference_name=sms_queue.name)
+		frappe.log_error(
+			title=_("Failed to send SMS"),
+			message=str(e),
+			reference_doctype="SMS Queue",
+			reference_name=sms_queue.name
+		)
 
 
 def get_queue():
