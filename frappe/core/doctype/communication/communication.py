@@ -330,9 +330,10 @@ class Communication(Document, CommunicationEmailMixin):
 		)
 
 	def notify_change(self, action):
+		key = "automated_messages" if self.communication_type == "Automated Message" else "communications"
 		frappe.publish_realtime(
 			"docinfo_update",
-			{"doc": self.as_dict(), "key": "communications", "action": action},
+			{"doc": self.as_dict(), "key": key, "action": action},
 			doctype=self.reference_doctype,
 			docname=self.reference_name,
 			after_commit=True,
