@@ -7,8 +7,6 @@ from frappe import _
 from frappe.utils import now_datetime
 from frappe.model.document import Document
 from frappe.core.doctype.sms_settings.sms_settings import process_and_send
-from requests.exceptions import ConnectionError, Timeout
-from rq.timeouts import JobTimeoutException
 from six import text_type
 
 
@@ -140,27 +138,8 @@ def send_one(sms_queue, auto_commit=True, now=False, from_test=False):
 		if sms_queue.communication:
 			frappe.get_doc('Communication', sms_queue.communication).set_delivery_status(commit=auto_commit)
 
-	except (ConnectionError, Timeout, JobTimeoutException):
-		# bad connection/timeout, retry later
-		handle_timeout(sms_queue, recipients_list, auto_commit)
-
 	except Exception as e:
 		handle_error(e, sms_queue, recipients_list, auto_commit, now)
-
-
-def handle_timeout(sms_queue, recipients_list, auto_commit):
-	sms_sent_to_any_recipient = any(s.status == "Sent" for s in recipients_list)
-	if sms_sent_to_any_recipient:
-		frappe.db.sql(
-			"""update `tabSMS Queue` set status='Partially Sent', modified=%s where name=%s""",
-			(now_datetime(), sms_queue.name), auto_commit=auto_commit)
-	else:
-		frappe.db.sql("""update `tabSMS Queue` set status='Not Sent', modified=%s where name=%s""",
-			(now_datetime(), sms_queue.name), auto_commit=auto_commit)
-
-	if sms_queue.communication:
-		frappe.get_doc('Communication', sms_queue.communication).set_delivery_status(
-			commit=auto_commit)
 
 
 def handle_error(e, sms_queue, recipients_list, auto_commit, now):
