@@ -27,6 +27,7 @@ from frappe.utils import (
 	validate_email_address,
 )
 from frappe.utils.user import is_system_user
+import json
 
 exclude_from_linked_with = True
 
@@ -331,9 +332,19 @@ class Communication(Document, CommunicationEmailMixin):
 
 	def notify_change(self, action):
 		key = "automated_messages" if self.communication_type == "Automated Message" else "communications"
+
+		doc_dict = self.as_dict()
+		doc_dict.attachments = json.dumps(
+			frappe.get_all(
+				"File",
+				fields=["file_url", "is_private"],
+				filters={"attached_to_doctype": "Communication", "attached_to_name": self.name},
+			)
+		)
+
 		frappe.publish_realtime(
 			"docinfo_update",
-			{"doc": self.as_dict(), "key": key, "action": action},
+			{"doc": doc_dict, "key": key, "action": action},
 			doctype=self.reference_doctype,
 			docname=self.reference_name,
 			after_commit=True,
