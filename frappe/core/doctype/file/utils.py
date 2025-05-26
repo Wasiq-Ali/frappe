@@ -441,3 +441,13 @@ def find_file_by_url(path: str, name: str | None = None) -> Optional["File"]:
 		file: "File" = frappe.get_doc(doctype="File", **file_data)
 		if file.is_downloadable():
 			return file
+
+
+def get_file_local_path(file_url):
+	if file_url.startswith("/private"):
+		file_url_path = (file_url.lstrip("/"),)
+	else:
+		file_url_path = ("public", file_url.lstrip("/"))
+
+	file_path = frappe.get_site_path(*file_url_path)
+	return file_path
