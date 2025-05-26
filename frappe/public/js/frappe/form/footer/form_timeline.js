@@ -395,6 +395,8 @@ class FormTimeline extends BaseTimeline {
 		let info_timeline_contents = [];
 		(this.doc_info.info_logs || []).forEach((info_log) => {
 			info_timeline_contents.push({
+				icon: "primitive-dot",
+				icon_size: "sm",
 				creation: info_log.creation,
 				content: `${get_user_link(info_log.owner)} ${info_log.content}`,
 			});
