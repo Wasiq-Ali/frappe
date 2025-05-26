@@ -20,12 +20,13 @@ frappe.form.formatters = {
 			let css_class = frappe.form.formatters._get_css_class(options);
 			let css_style = frappe.form.formatters._get_css_style(options);
 
-			if (options?.link_href) {
+			if (options?.link_href || options?.link_onclick) {
 				let link_title = frappe.form.formatters._get_link_title(options);
 				let link_target = frappe.form.formatters._get_link_target(options);
+				let link_onclick = options.link_onclick ? ` onclick="${options.link_onclick}"` : ""
 
 				out = `<a href="${options.link_href}"
-					${link_title}${link_target}${css_class}${css_style}>
+					${link_title}${link_target}${css_class}${css_style}${link_onclick}>
 					${value}</a>`;
 
 				css_style = "";
