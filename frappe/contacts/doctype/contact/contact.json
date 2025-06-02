@@ -294,7 +294,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-17 20:12:34.036369",
+ "modified": "2025-06-02 10:31:39.263611",
  "modified_by": "Administrator",
  "module": "Contacts",
  "name": "Contact",
@@ -352,6 +352,13 @@
    "read": 1,
    "report": 1,
    "role": "Sales User (Read Only)"
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Master (Read Only)"
   },
   {
    "create": 1,
