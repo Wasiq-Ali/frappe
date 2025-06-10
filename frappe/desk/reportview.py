@@ -754,6 +754,7 @@ def get_filters_cond(doctype, filters, conditions, ignore_permissions=None, with
 					"not in",
 					"between",
 					"is",
+					"subtree of",
 				):
 					flt.append([doctype, f[0], f[1][0], f[1][1]])
 				else:
