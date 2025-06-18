@@ -1836,7 +1836,7 @@ frappe.ui.form.Form = class FrappeForm {
 		return selected;
 	}
 
-	set_indicator_formatter(fieldname, get_color, get_text) {
+	set_indicator_formatter(fieldname, get_color, get_text, apply_on_all_child_tables) {
 		// get doctype from parent
 		let me = this;
 
@@ -1872,7 +1872,8 @@ frappe.ui.form.Form = class FrappeForm {
 				let has_field = me.get_docfield(table_df.fieldname, fieldname);
 				if (has_field) {
 					me.fields_dict[table_df.fieldname]?.grid?.update_docfield_property(fieldname, "formatter", formatter);
-					return false;
+
+					return !!apply_on_all_child_tables;
 				} else {
 					return true;
 				}
