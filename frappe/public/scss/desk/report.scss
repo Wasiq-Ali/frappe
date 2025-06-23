@@ -196,9 +196,17 @@
 		&.red {
 			color: var(--red-500);
 		}
-		&.orange { color: var(--orange-500); }
+		&.orange {
+			color: var(--orange-500);
+		}
+		&.yellow {
+			color: var(--yellow-500);
+		}
 		&.blue {
 			color: var(--blue-500);
+		}
+		&.purple {
+			color: var(--purple-500);
 		}
 
 		// SIZE & SPACING
@@ -234,8 +242,17 @@
 			&.red {
 				color: var(--red-500);
 			}
+			&.orange {
+				color: var(--orange-500);
+			}
+			&.yellow {
+				color: var(--yellow-500);
+			}
 			&.blue {
 				color: var(--blue-500);
+			}
+			&.purple {
+				color: var(--purple-500);
 			}
 
 			// SIZE & SPACING
