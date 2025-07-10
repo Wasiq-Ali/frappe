@@ -1461,10 +1461,19 @@ Object.assign(frappe.utils, {
 			? summary.color.toLowerCase()
 			: "";
 
-		return $(`<div class="summary-item">
+		let $summary_item = $(`<div class="summary-item">
 			<span class="summary-label">${__(summary.label)}</span>
 			<div class="summary-value ${color}">${value}</div>
 		</div>`);
+
+		if (summary?.title) {
+			$summary_item.tooltip({
+				title: `${__(summary.title)}`,
+				delay: { show: 600, hide: 100 },
+				trigger: "hover",
+			});
+		}
+		return $summary_item;
 	},
 
 	print(doctype, docname, print_format, letterhead, lang_code) {
