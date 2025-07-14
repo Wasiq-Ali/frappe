@@ -216,7 +216,7 @@ frappe.ui.form.ControlMultiSelectList = class ControlMultiSelectList extends (
 				return `<li class="selectable-item ${selected}" data-value="${encoded_value}">
 				<div>
 					<strong>${option.label}</strong>
-					<div class="small">${option.description}</div>
+					<div class="small">${option.description || ""}</div>
 				</div>
 				<div class="multiselect-check">${frappe.utils.icon("tick", "xs")}</div>
 			</li>`;
