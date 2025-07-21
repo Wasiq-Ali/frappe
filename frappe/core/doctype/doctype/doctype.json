@@ -18,6 +18,7 @@
   "is_calendar_and_gantt",
   "editable_grid",
   "quick_entry",
+  "grid_page_length",
   "cb01",
   "track_changes",
   "track_seen",
@@ -74,6 +75,7 @@
   "restrict_to_domain",
   "read_only",
   "in_create",
+  "protect_attached_files",
   "actions_section",
   "actions",
   "links_section",
@@ -92,6 +94,7 @@
   "migration_hash",
   "fields_tab",
   "fields",
+  "row_format",
   "form_builder_tab",
   "form_builder"
  ],
@@ -681,6 +684,29 @@
    "fieldname": "fields_tab",
    "fieldtype": "Tab Break",
    "label": "Fields"
+  },
+  {
+    "default": "50",
+    "depends_on": "istable",
+    "fieldname": "grid_page_length",
+    "fieldtype": "Int",
+    "label": "Grid Page Length",
+    "non_negative": 1
+  },
+  {
+   "default": "Dynamic",
+   "fieldname": "row_format",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Row Format",
+   "options": "Dynamic\nCompressed"
+  },
+  {
+   "default": "0",
+   "description": "Users are only able to delete attached files if the document is either in draft or if the document is canceled and they are also able to delete the document.",
+   "fieldname": "protect_attached_files",
+   "fieldtype": "Check",
+   "label": "Protect Attached Files"
   }
  ],
  "icon": "fa fa-bolt",
@@ -768,7 +794,7 @@
    "link_fieldname": "reference_doctype"
   }
  ],
- "modified": "2024-11-06 00:24:57.673777",
+ "modified": "2025-03-27 18:16:53.286910",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocType",
@@ -798,6 +824,7 @@
   }
  ],
  "route": "doctype",
+ "row_format": "Dynamic",
  "search_fields": "module",
  "show_name_in_global_search": 1,
  "sort_field": "modified",

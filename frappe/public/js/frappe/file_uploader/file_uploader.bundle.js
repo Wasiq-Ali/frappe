@@ -22,6 +22,11 @@ class FileUploader {
 		show_upload_button,
 		frm,
 		make_attachments_public,
+		allow_web_link,
+		allow_take_photo,
+		allow_toggle_private,
+		allow_toggle_optimize,
+		allow_google_drive,
 	} = {}) {
 		frm && frm.attachments.max_reached(true);
 
@@ -60,6 +65,11 @@ class FileUploader {
 			disable_file_browser,
 			attach_doc_image,
 			make_attachments_public,
+			allow_web_link,
+			allow_take_photo,
+			allow_toggle_private,
+			allow_toggle_optimize,
+			allow_google_drive,
 		});
 		SetVueGlobals(app);
 		this.uploader = app.mount(this.wrapper);

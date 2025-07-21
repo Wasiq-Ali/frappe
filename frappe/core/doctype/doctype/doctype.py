@@ -122,6 +122,7 @@ class DocType(Document):
 		engine: DF.Literal["InnoDB", "MyISAM"]
 		fields: DF.Table[DocField]
 		force_re_route_to_default_view: DF.Check
+		grid_page_length: DF.Int
 		has_web_view: DF.Check
 		hide_toolbar: DF.Check
 		icon: DF.Data | None
@@ -143,11 +144,13 @@ class DocType(Document):
 		naming_rule: DF.Literal["", "Set by user", "Autoincrement", "By fieldname", "By \"Naming Series\" field", "Expression", "Expression (old style)", "Random", "By script"]
 		nsm_parent_field: DF.Data | None
 		permissions: DF.Table[DocPerm]
+		protect_attached_files: DF.Check
 		queue_in_background: DF.Check
 		quick_entry: DF.Check
 		read_only: DF.Check
 		restrict_to_domain: DF.Link | None
 		route: DF.Data | None
+		row_format: DF.Literal["Dynamic", "Compressed"]
 		search_fields: DF.Data | None
 		sender_field: DF.Data | None
 		sender_name_field: DF.Data | None

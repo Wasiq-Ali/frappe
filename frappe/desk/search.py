@@ -103,6 +103,7 @@ def search_widget(
 				filters,
 				as_dict=as_dict,
 				reference_doctype=reference_doctype,
+				ignore_user_permissions=ignore_user_permissions,
 			)
 			if format_values:
 				values = format_response_values(values, as_dict)

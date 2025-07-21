@@ -6,6 +6,7 @@ import json
 import frappe
 from frappe.model import no_value_fields, table_fields
 from frappe.model.document import Document
+from frappe.utils import cstr
 
 FIELDTYPES_TO_IGNORE = frozenset(fieldtype for fieldtype in no_value_fields if fieldtype not in table_fields)
 
@@ -38,6 +39,9 @@ class Version(Document):
 			return
 		if impersonator := frappe.session.data.get("impersonated_by"):
 			data["impersonated_by"] = impersonator
+
+		if audit_user := frappe.session.data.get("audit_user"):
+			data["audit_user"] = audit_user
 
 	def set_diff(self, old: Document, new: Document) -> bool:
 		"""Set the data property with the diff of the docs if present"""

@@ -6,7 +6,7 @@ from contextlib import suppress
 import frappe
 from frappe import _, unscrub
 from frappe.rate_limiter import rate_limit
-from frappe.utils import validate_email_address, cint
+from frappe.utils import escape_html, validate_email_address, cint
 import json
 
 sitemap = 1
@@ -26,6 +26,8 @@ def send_message(sender, message, subject="Website Query", args=None, create_com
 		frappe.throw(_("Please enter your email address"))
 
 	sender = validate_email_address(sender, throw=True)
+
+	message = escape_html(message)
 
 	if not args:
 		args = {}
