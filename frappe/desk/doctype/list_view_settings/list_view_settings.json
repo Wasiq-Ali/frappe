@@ -73,9 +73,9 @@
    "label": "Disable Automatic Recency Filters"
   }
  ],
- "grid_page_length": 50,
+ "grid_page_length": 500,
  "links": [],
- "modified": "2025-03-12 16:28:46.073808",
+ "modified": "2025-03-12 16:28:46.073809",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "List View Settings",

@@ -686,12 +686,12 @@
    "label": "Fields"
   },
   {
-    "default": "50",
-    "depends_on": "istable",
-    "fieldname": "grid_page_length",
-    "fieldtype": "Int",
-    "label": "Grid Page Length",
-    "non_negative": 1
+   "default": "500",
+   "depends_on": "istable",
+   "fieldname": "grid_page_length",
+   "fieldtype": "Int",
+   "label": "Grid Page Length",
+   "non_negative": 1
   },
   {
    "default": "Dynamic",
@@ -794,7 +794,7 @@
    "link_fieldname": "reference_doctype"
   }
  ],
- "modified": "2025-03-27 18:16:53.286910",
+ "modified": "2025-07-29 12:46:42.212786",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "DocType",

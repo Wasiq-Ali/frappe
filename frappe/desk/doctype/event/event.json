@@ -293,12 +293,12 @@
    "read_only": 1
   }
  ],
- "grid_page_length": 50,
+ "grid_page_length": 500,
  "icon": "fa fa-calendar",
  "idx": 1,
  "is_calendar_and_gantt": 1,
  "links": [],
- "modified": "2025-06-17 15:31:01.945146",
+ "modified": "2025-06-17 15:31:01.945147",
  "modified_by": "Administrator",
  "module": "Desk",
  "name": "Event",

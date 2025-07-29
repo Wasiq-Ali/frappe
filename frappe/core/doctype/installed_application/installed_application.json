@@ -53,10 +53,10 @@
    "label": "Is Setup Complete?"
   }
  ],
- "grid_page_length": 50,
+ "grid_page_length": 500,
  "istable": 1,
  "links": [],
- "modified": "2025-05-27 12:26:49.523690",
+ "modified": "2025-05-27 12:26:49.523691",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Installed Application",
