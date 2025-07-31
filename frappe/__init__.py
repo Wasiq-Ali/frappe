@@ -2335,13 +2335,15 @@ def get_desk_link(doctype, name, show_title_with_name=False):
 	from frappe.utils import get_url_to_form
 	url = get_url_to_form(doctype, name)
 
-	meta = get_meta(doctype)
-	title = get_value(doctype, name, meta.get_title_field())
+	title = name
+	if show_title_with_name:
+		meta = get_meta(doctype)
+		title = get_value(doctype, name, meta.get_title_field())
 
-	if show_title_with_name and name != title:
+	if name != title:
 		html = '<a href="{url}" style="font-weight: bold;">{doctype_local} {name}: {title_local}</a>'
 	else:
-		html = '<a href="{url}" style="font-weight: bold;">{doctype_local} {title_local}</a>'
+		html = '<a href="{url}" style="font-weight: bold;">{doctype_local} {name}</a>'
 
 	return html.format(doctype=doctype, name=name, doctype_local=_(doctype), title_local=_(title), url=url)
 
