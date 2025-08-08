@@ -46,7 +46,7 @@ def log_error(title=None, message=None, reference_doctype=None, reference_name=N
 
 	traceback = None
 	if message:
-		if "\n" in title:  # traceback sent as title
+		if title and "\n" in title:  # traceback sent as title
 			traceback, title = title, message
 		else:
 			traceback = message
