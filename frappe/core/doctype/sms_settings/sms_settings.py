@@ -291,7 +291,10 @@ def is_automated_sms_enabled():
 # Create SMS Log
 # =========================================================
 def create_sms_log(args, sent_to):
-	message = args['message'].decode('utf-8')
+	if args.get("sms_log_message"):
+		message = args.get("sms_log_message")
+	else:
+		message = args['message'].decode('utf-8')
 
 	sl = frappe.new_doc('SMS Log')
 	sl.sent_on = frappe.utils.now_datetime()
