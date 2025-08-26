@@ -564,7 +564,7 @@ default_log_clearing_doctypes = {
 	"Webhook Request Log": 30,
 	"Unhandled Email": 30,
 	"Reminder": 30,
-	"Integration Request": 90,
+	"Integration Request": 180,
 	"Activity Log": 90,
 	"Route History": 90,
 }
