@@ -63,3 +63,7 @@ class IntegrationRequest(Document):
 			response = json.loads(response)
 		self.db_set("status", "Failed")
 		self.db_set("error", json.dumps(response, default=json_handler))
+
+
+def on_doctype_update():
+	frappe.db.add_index("Integration Request", ["url(500)"])
