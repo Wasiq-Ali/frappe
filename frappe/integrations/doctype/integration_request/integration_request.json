@@ -70,6 +70,8 @@
   {
    "fieldname": "reference_docname",
    "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Reference Document Name",
    "options": "reference_doctype",
    "read_only": 1
@@ -137,7 +139,7 @@
  "grid_page_length": 500,
  "in_create": 1,
  "links": [],
- "modified": "2025-08-29 12:58:23.657273",
+ "modified": "2025-09-04 17:24:56.571196",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Integration Request",
