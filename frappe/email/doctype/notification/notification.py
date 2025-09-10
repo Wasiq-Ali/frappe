@@ -442,6 +442,10 @@ def get_context(context):
 		if not self.attach_print:
 			return None
 
+		hooked_attachment = doc.run_method("get_notification_attachment", self.get_notification_type())
+		if hooked_attachment:
+			return hooked_attachment
+
 		print_settings = frappe.get_doc("Print Settings", "Print Settings")
 		if (doc.docstatus == 0 and not print_settings.allow_print_for_draft) or (
 			doc.docstatus == 2 and not print_settings.allow_print_for_cancelled
