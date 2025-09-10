@@ -443,7 +443,7 @@ def get_context(context):
 			return None
 
 		hooked_attachment = doc.run_method("get_notification_attachment", self.get_notification_type())
-		if hooked_attachment:
+		if hooked_attachment is not None:
 			return hooked_attachment
 
 		print_settings = frappe.get_doc("Print Settings", "Print Settings")
