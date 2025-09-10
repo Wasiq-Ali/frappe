@@ -248,7 +248,12 @@ def get_context(context):
 			"email_content": frappe.render_template(self.message, context),
 			"attached_file": attachments and json.dumps(attachments[0]),
 		}
-		enqueue_create_notification(users, notification_doc)
+
+		notification_type = self.get_notification_type()
+		if notification_type:
+			set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "System Notification")
+
+		enqueue_create_notification(users, notification_doc, notification_type=notification_type)
 
 	def send_an_email(self, doc, context):
 		from email.utils import formataddr

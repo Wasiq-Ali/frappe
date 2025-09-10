@@ -7,6 +7,7 @@ from frappe.desk.doctype.notification_settings.notification_settings import (
 	is_email_notifications_enabled_for_type,
 	is_notifications_enabled,
 )
+from frappe.core.doctype.notification_count.notification_count import add_notification_count
 from frappe.model.document import Document
 
 
@@ -70,7 +71,7 @@ def get_title_html(title):
 	return f'<b class="subject-title">{title}</b>'
 
 
-def enqueue_create_notification(users: list[str] | str, doc: dict):
+def enqueue_create_notification(users: list[str] | str, doc: dict, notification_type=None):
 	"""Send notification to users.
 
 	users: list of user emails or string of users with comma separated emails
@@ -93,11 +94,12 @@ def enqueue_create_notification(users: list[str] | str, doc: dict):
 		"frappe.desk.doctype.notification_log.notification_log.make_notification_logs",
 		doc=doc,
 		users=users,
+		notification_type=notification_type,
 		now=frappe.flags.in_test,
 	)
 
 
-def make_notification_logs(doc, users):
+def make_notification_logs(doc, users, notification_type=None):
 	for user in _get_user_ids(users):
 		notification = frappe.new_doc("Notification Log")
 		notification.update(doc)
@@ -108,6 +110,9 @@ def make_notification_logs(doc, users):
 			or doc.type == "Alert"
 		):
 			notification.insert(ignore_permissions=True)
+
+			if notification_type and doc.get("document_type") and doc.get("document_name"):
+				add_notification_count(doc.get("document_type"), doc.get("document_name"), notification_type, "System Notification")
 
 
 def make_notification_logs_for_role(notification_doc, role):
