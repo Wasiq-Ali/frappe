@@ -176,6 +176,7 @@ class User(Document):
 		if self.name not in STANDARD_USERS:
 			self.email = self.name
 			self.validate_email_type(self.name)
+			self.validate_mobile_no()
 
 		self.populate_role_profile_roles()
 		self.check_roles_added()
@@ -570,6 +571,11 @@ class User(Document):
 		from frappe.utils import validate_email_address
 
 		validate_email_address(email.strip(), True)
+
+	def validate_mobile_no(self):
+		from frappe.regional.regional import validate_mobile_no
+		if self.mobile_no:
+			validate_mobile_no(self.mobile_no, throw=True)
 
 	def after_rename(self, old_name, new_name, merge=False):
 		tables = frappe.db.get_tables()
@@ -1246,7 +1252,7 @@ def create_contact(user, ignore_links=False, ignore_mandatory=False):
 	# 		contact.first_name = user.first_name
 	# 		contact.last_name = user.last_name
 	#		contact.gender = user.gender
-	# 
+	#
 	# 		# Add mobile number if phone does not exists in contact
 	# 		if user.phone and not any(new_contact.phone == user.phone for new_contact in contact.phone_nos):
 	# 			# Set primary phone if there is no primary phone number
@@ -1256,7 +1262,7 @@ def create_contact(user, ignore_links=False, ignore_mandatory=False):
 	# 					new_contact.is_primary_phone == 1 for new_contact in contact.phone_nos
 	# 				),
 	# 			)
-	# 
+	#
 	# 		# Add mobile number if mobile does not exists in contact
 	# 		if user.mobile_no and not any(
 	# 			new_contact.phone == user.mobile_no for new_contact in contact.phone_nos
@@ -1268,7 +1274,7 @@ def create_contact(user, ignore_links=False, ignore_mandatory=False):
 	# 					new_contact.is_primary_mobile_no == 1 for new_contact in contact.phone_nos
 	# 				),
 	# 			)
-	# 
+	#
 	# 		contact.save(ignore_permissions=True)
 	# 	except frappe.TimestampMismatchError:
 	# 		raise frappe.RetryBackgroundJobError
