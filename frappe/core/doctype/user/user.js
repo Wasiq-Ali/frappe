@@ -288,6 +288,7 @@ frappe.ui.form.on("User", {
 		if (frm.roles_editor) {
 			frm.roles_editor.set_roles_in_table();
 		}
+		frappe.regional.format_mobile_no(frm, "mobile_no");
 	},
 	enabled: function (frm) {
 		var doc = frm.doc;
@@ -402,6 +403,9 @@ frappe.ui.form.on("User", {
 			});
 		}
 	},
+	mobile_no: function (frm) {
+		frappe.regional.format_mobile_no(frm, "mobile_no");
+	}
 });
 
 frappe.ui.form.on("User Email", {
