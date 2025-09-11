@@ -376,7 +376,10 @@ var continue_sms = function (setup, prompt) {
 	} else {
 		direction = $('<div>').attr('id', 'qr_info').html(prompt || {{ _("SMS was not sent. Please contact Administrator.") | tojson }});
 		sms_div.append(direction);
-		$('#otp_div').prepend(sms_div)
+		$('#otp_div').prepend(sms_div);
+
+		$('#login_token, #verify_token').hide();
+		$('#twofactor_div .indicator').removeClass("blue").addClass("red");
 	}
 }
 
@@ -391,6 +394,9 @@ var continue_email = function (setup, prompt) {
 		var direction = $('<div>').attr('id', 'qr_info').html(prompt || {{ _("Verification code email not sent. Please contact Administrator.") | tojson }});
 		email_div.append(direction);
 		$('#otp_div').prepend(email_div);
+
+		$('#login_token, #verify_token').hide();
+		$('#twofactor_div .indicator').removeClass("blue").addClass("red");
 	}
 }
 
