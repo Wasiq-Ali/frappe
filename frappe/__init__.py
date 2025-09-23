@@ -1607,7 +1607,7 @@ def _load_app_hooks(app_name: str | None = None):
 
 def get_hooks(
 	hook: str | None = None, default: Any | None = "_KEEP_DEFAULT_LIST", app_name: str | None = None
-) -> _dict:
+) -> _dict | list:
 	"""Get hooks via `app/hooks.py`
 
 	:param hook: Name of the hook. Will gather all hooks for this name and return as a list.
