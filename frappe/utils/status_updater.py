@@ -1,5 +1,5 @@
 import frappe
-from frappe import _
+from frappe import _, unscrub
 from frappe.utils import flt, cint, nowdate, getdate
 from frappe.model.document import Document
 
@@ -237,7 +237,7 @@ class StatusUpdater(Document):
 
 		completed_field_label = []
 		for f in completed_field:
-			completed_field_label.append(row.meta.get_label(f))
+			completed_field_label.append(row.meta.get_label(f, default=unscrub(f)))
 		completed_field_label = " + ".join(completed_field_label)
 
 		over_limit_msg = _("{0} for Item {1} is over limit by {2}.").format(

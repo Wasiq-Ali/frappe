@@ -249,7 +249,7 @@ class Meta(Document):
 
 		return fieldname in self._fields
 
-	def get_label(self, fieldname):
+	def get_label(self, fieldname, default=None):
 		"""Get label of the given fieldname"""
 		if df := self.get_field(fieldname):
 			return df.get("label")
@@ -257,7 +257,7 @@ class Meta(Document):
 		if fieldname in DEFAULT_FIELD_LABELS:
 			return str(DEFAULT_FIELD_LABELS[fieldname])
 
-		return "No Label"
+		return default or "No Label"
 
 	def get_options(self, fieldname):
 		return self.get_field(fieldname).options
