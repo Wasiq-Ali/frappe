@@ -30,7 +30,13 @@ frappe.ui.form.Controller = class FormController {
 		$.each(me.frm.doc.__onload.disallow_on_submit, function (i, d) {
 			let fieldname = d[0];
 			let parentfield = d[1];
-			me.frm.set_df_property(fieldname, 'allow_on_submit', 0, parentfield ? cdn : null, parentfield);
+			me.frm.set_df_property(
+				parentfield ? parentfield : fieldname,
+				'allow_on_submit',
+				0,
+				parentfield ? cdn : null,
+				parentfield ? fieldname : null,
+			);
 		});
 	}
 };
