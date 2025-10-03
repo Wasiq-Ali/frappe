@@ -1476,10 +1476,14 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 						case "Timespan":
 							return __("{0} is within {1}", [__(label), __(value)]);
 						case "in":
+							let in_value = value;
+							if (typeof in_value == "string") {
+								in_value = in_value.split(",");
+							}
 							return __("{0} is one of {1}", [
 								__(label),
 								frappe.utils.comma_or(
-									value.map((v) => frappe.format(v, docfield))
+									in_value.map((v) => frappe.format(v, docfield))
 								),
 							]);
 						case "not in":
