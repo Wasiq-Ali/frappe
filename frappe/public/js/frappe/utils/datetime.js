@@ -221,6 +221,60 @@ $.extend(frappe.datetime, {
 		return frappe.datetime.str_to_obj(frappe.datetime.user_to_str(d));
 	},
 
+	guess_to_str: function (val) {
+		if (!val) {
+			return null;
+		}
+
+		let date_format = frappe.datetime.get_user_date_fmt();
+		let user_first_component;
+		let user_second_component;
+		let encountered_separator;
+		let first_separator_index = -1;
+
+		if (date_format.startsWith("dd")) {
+			user_first_component = "dd";
+			user_second_component = "mm";
+		} else if (date_format.startsWith("mm")) {
+			user_first_component = "mm";
+			user_second_component = "dd";
+		}
+
+		if (val && val.includes("/")) {
+			encountered_separator = "/";
+		} else if (val && val.includes(".")) {
+			encountered_separator = ".";
+		} else if (val && val.includes("-")) {
+			encountered_separator = "-";
+		}
+
+		if (encountered_separator) {
+			first_separator_index = val.indexOf(encountered_separator);
+		}
+
+		// if YYYY first
+		if (first_separator_index == 4) {
+			if (encountered_separator != "-") {
+				val = val.replaceAll(encountered_separator, "-");
+			}
+			return val;
+		// if DD or MM first
+		} else if (
+			encountered_separator
+			&& user_first_component
+			&& user_second_component
+			&& first_separator_index != -1
+		) {
+			let format = user_first_component + encountered_separator + user_second_component + encountered_separator + "yyyy";
+			format = format.toUpperCase();
+			return moment(val, [format.replace("YYYY", "YY"), format])
+				.locale("en")
+				.format(frappe.defaultDateFormat);
+		} else {
+			return val;
+		}
+	},
+
 	global_date_format: function (d) {
 		var m = moment(d);
 		if (m._f && m._f.indexOf("HH") !== -1) {

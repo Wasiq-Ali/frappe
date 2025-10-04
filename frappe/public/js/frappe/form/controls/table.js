@@ -90,6 +90,8 @@ frappe.ui.form.ControlTable = class ControlTable extends frappe.ui.form.Control 
 								parsed_value = cint(value);
 							} else if (frappe.model.numeric_fieldtypes.includes(fieldtype)) {
 								parsed_value = flt(value);
+							} else if (fieldtype == "Date") {
+								parsed_value = frappe.datetime.guess_to_str(value);
 							}
 
 							if (dialog) {
