@@ -1059,7 +1059,9 @@ def cstr(s, encoding="utf-8"):
 
 
 def clean_whitespace(s):
-	s = cstr(s).strip()
+	s = cstr(s)
+	s = s.replace("\xa0", " ")
+	s = s.strip()
 	s = re.sub(r'\n\s*\n', '\n', s)
 	s = re.sub(r' +', ' ', s)
 	return s
