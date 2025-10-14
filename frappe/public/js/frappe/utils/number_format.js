@@ -292,10 +292,17 @@ function remainder(numerator, denominator, precision) {
 	return flt(_remainder, precision);
 }
 
-function round_based_on_smallest_currency_fraction(value, currency, precision) {
-	var smallest_currency_fraction_value = flt(
-		frappe.model.get_value(":Currency", currency, "smallest_currency_fraction_value")
-	);
+function round_based_on_smallest_currency_fraction(
+	value,
+	currency,
+	precision,
+	smallest_currency_fraction_value,
+) {
+	if (smallest_currency_fraction_value == null) {
+		smallest_currency_fraction_value = flt(
+			frappe.model.get_value(":Currency", currency, "smallest_currency_fraction_value")
+		);
+	}
 
 	if (smallest_currency_fraction_value) {
 		var remainder_val = remainder(value, smallest_currency_fraction_value, precision);
@@ -307,7 +314,7 @@ function round_based_on_smallest_currency_fraction(value, currency, precision) {
 	} else {
 		value = _round(value);
 	}
-	return value;
+	return flt(value, precision);
 }
 
 function fmt_money(v, format) {

@@ -1233,10 +1233,16 @@ def safe_div(numerator: NumericType, denominator: NumericType, precision: int = 
 	return flt(_res, precision)
 
 
-def round_based_on_smallest_currency_fraction(value, currency, precision=2):
-	smallest_currency_fraction_value = flt(
-		frappe.db.get_value("Currency", currency, "smallest_currency_fraction_value", cache=True)
-	)
+def round_based_on_smallest_currency_fraction(
+	value,
+	currency,
+	precision=2,
+	smallest_currency_fraction_value=None,
+):
+	if smallest_currency_fraction_value is None:
+		smallest_currency_fraction_value = flt(
+			frappe.db.get_value("Currency", currency, "smallest_currency_fraction_value", cache=True)
+		)
 
 	if smallest_currency_fraction_value:
 		remainder_val = remainder(value, smallest_currency_fraction_value, precision)
