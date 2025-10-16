@@ -14,7 +14,8 @@
   "disabled",
   "is_custom",
   "desk_access",
-  "two_factor_auth"
+  "two_factor_auth",
+  "bypass_two_factor_auth"
  ],
  "fields": [
   {
@@ -68,13 +69,20 @@
    "fieldtype": "Check",
    "in_list_view": 1,
    "label": "Is Custom"
+  },
+  {
+   "default": "0",
+   "fieldname": "bypass_two_factor_auth",
+   "fieldtype": "Check",
+   "label": "Bypass Two Factor Authentication"
   }
  ],
+ "grid_page_length": 500,
  "icon": "fa fa-bookmark",
  "idx": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-09-19 17:07:08.672124",
+ "modified": "2025-10-16 17:55:54.281218",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Role",
@@ -94,6 +102,7 @@
   }
  ],
  "quick_entry": 1,
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
