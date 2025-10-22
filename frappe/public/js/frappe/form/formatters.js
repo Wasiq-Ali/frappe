@@ -37,7 +37,7 @@ frappe.form.formatters = {
 				out = `<div${css_style}${css_class}>${out}</div>`;
 			}
 
-			if (right_align && !options?.inline) {
+			if ((right_align || options?.right_align) && !options?.inline) {
 				out = `<div style="text-align: right;">${out}</div>`;
 			}
 
