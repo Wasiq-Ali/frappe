@@ -3,7 +3,7 @@
 # For license information, please see license.txt
 
 import frappe
-from frappe.utils import cint, now_datetime, get_datetime
+from frappe.utils import cint, now_datetime, get_datetime, cstr
 from frappe.model.document import Document
 
 
@@ -11,6 +11,24 @@ exclude_from_linked_with = True
 
 
 class NotificationCount(Document):
+	# begin: auto-generated types
+	# This code is auto-generated. Do not modify anything in this block.
+
+	from typing import TYPE_CHECKING
+
+	if TYPE_CHECKING:
+		from frappe.types import DF
+
+		child_doctype: DF.Link | None
+		child_name: DF.Data | None
+		last_scheduled_dt: DF.Datetime | None
+		last_sent_dt: DF.Datetime | None
+		notification_count: DF.Int
+		notification_medium: DF.Data | None
+		notification_type: DF.Data
+		reference_doctype: DF.Link
+		reference_name: DF.DynamicLink | None
+	# end: auto-generated types
 	pass
 
 
@@ -52,10 +70,11 @@ def set_notification_last_scheduled(
 	notification_medium,
 	child_doctype=None,
 	child_name=None,
+	now_dt=None,
 ):
 	doc = get_notification_count_doc(reference_doctype, reference_name, notification_type, notification_medium,
 		child_doctype=child_doctype, child_name=child_name, for_update=True)
-	doc.last_scheduled_dt = now_datetime()
+	doc.last_scheduled_dt = get_datetime(now_dt)
 	doc.save(ignore_permissions=True)
 
 
@@ -73,6 +92,8 @@ def get_notification_last_scheduled(
 
 
 def clear_notification_count(reference_doctype, reference_name, child_doctype=None, child_name=None):
+	reference_name = cstr(reference_name)
+
 	delete_query = "delete from `tabNotification Count` where reference_doctype = %s and reference_name = %s"
 	arg_list = [reference_doctype, reference_name]
 
@@ -84,8 +105,10 @@ def clear_notification_count(reference_doctype, reference_name, child_doctype=No
 
 
 def get_all_notification_count(reference_doctype, reference_name, child_doctype=None, child_name=None):
-	if not reference_doctype or not reference_name:
+	if not reference_doctype:
 		return []
+
+	reference_name = cstr(reference_name)
 
 	filters = {"reference_doctype": reference_doctype, "reference_name": reference_name}
 	fields = ["notification_type", "notification_medium", "notification_count"]
@@ -108,6 +131,9 @@ def get_notification_count_doc(
 	child_name=None,
 	for_update=False,
 ):
+	reference_name = cstr(reference_name)
+	notification_medium = cstr(notification_medium)
+
 	filters = {
 		"reference_doctype": reference_doctype,
 		"reference_name": reference_name,
