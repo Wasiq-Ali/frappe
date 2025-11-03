@@ -15,6 +15,7 @@
   "channel",
   "slack_webhook_url",
   "send_only_once",
+  "with_container",
   "filters",
   "subject",
   "notification_type",
@@ -332,13 +333,20 @@
    "label": "Email Template",
    "mandatory_depends_on": "eval:doc.channel == \"Email\" && doc.use_email_template",
    "options": "Email Template"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.channel == \"Email\"",
+   "fieldname": "with_container",
+   "fieldtype": "Check",
+   "label": "With Container"
   }
  ],
  "grid_page_length": 500,
  "icon": "fa fa-envelope",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-04 00:03:25.504853",
+ "modified": "2025-11-04 00:43:36.716231",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Notification",

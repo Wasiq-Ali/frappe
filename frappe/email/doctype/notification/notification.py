@@ -330,6 +330,7 @@ def get_context(context):
 			print_letterhead=((attachments and attachments[0].get("print_letterhead")) or False),
 			communication=communication,
 			notification_type=notification_type,
+			with_container=self.with_container,
 		)
 
 	def send_a_slack_msg(self, doc, context):
