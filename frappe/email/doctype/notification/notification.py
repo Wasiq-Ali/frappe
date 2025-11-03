@@ -226,9 +226,15 @@ def get_context(context):
 				self.log_error("Document update failed")
 
 	def create_system_notification(self, doc, context):
-		subject = self.subject
-		if "{" in subject:
-			subject = frappe.render_template(self.subject, context)
+		if self.flags.message:
+			subject = self.flags.subject
+			message = self.flags.message
+		else:
+			subject = self.subject
+			if "{" in subject:
+				subject = frappe.render_template(self.subject, context)
+
+			message = frappe.render_template(self.message, context)
 
 		attachments = self.get_attachment(doc)
 
@@ -245,7 +251,7 @@ def get_context(context):
 			"document_name": get_reference_name(doc),
 			"subject": subject,
 			"from_user": doc.modified_by or doc.owner,
-			"email_content": frappe.render_template(self.message, context),
+			"email_content": message,
 			"attached_file": attachments and json.dumps(attachments[0]),
 		}
 
@@ -260,9 +266,19 @@ def get_context(context):
 
 		from frappe.core.doctype.communication.email import _make as make_communication
 
-		subject = self.subject
-		if "{" in subject:
-			subject = frappe.render_template(self.subject, context)
+		if self.use_email_template and self.email_template:
+			email_template = frappe.get_cached_doc("Email Template", self.email_template)
+			subject = email_template.get_formatted_subject(context)
+			message = email_template.get_formatted_response(context)
+		else:
+			subject = self.subject
+			if "{" in subject:
+				subject = frappe.render_template(self.subject, context)
+
+			message = frappe.render_template(self.message, context)
+
+		self.flags.subject = subject
+		self.flags.message = message
 
 		attachments = self.get_attachment(doc)
 		recipients, cc, bcc = self.get_list_of_recipients(doc, context)
@@ -270,7 +286,6 @@ def get_context(context):
 			return
 
 		sender = None
-		message = frappe.render_template(self.message, context)
 		if self.sender and self.sender_email:
 			sender = formataddr((self.sender, self.sender_email))
 
@@ -318,9 +333,12 @@ def get_context(context):
 		)
 
 	def send_a_slack_msg(self, doc, context):
+		message = frappe.render_template(self.message, context)
+		self.flags.message = message
+
 		send_slack_message(
 			webhook_url=self.slack_webhook_url,
-			message=frappe.render_template(self.message, context),
+			message=message,
 			reference_doctype=get_reference_doctype(doc),
 			reference_name=get_reference_name(doc),
 		)
@@ -328,6 +346,9 @@ def get_context(context):
 	def send_sms(self, doc, context):
 		if frappe.are_sms_muted():
 			return
+
+		message = frappe.render_template(self.message, context)
+		self.flags.message = message
 
 		timeline_doctype, timeline_name = self.get_timeline_doctype_and_name(doc)
 		notification_type = self.get_notification_type()
@@ -341,7 +362,7 @@ def get_context(context):
 
 		send_sms(
 			receiver_list=receiver_list,
-			message=frappe.render_template(self.message, context),
+			message=message,
 			reference_doctype=get_reference_doctype(doc),
 			reference_name=get_reference_name(doc),
 			notification_type=notification_type,

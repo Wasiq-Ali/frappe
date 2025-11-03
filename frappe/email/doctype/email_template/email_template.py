@@ -18,10 +18,9 @@ class EmailTemplate(Document):
 		from frappe.types import DF
 
 		response: DF.TextEditor | None
-		response_html: DF.Code | None
+		response_html: DF.HTMLEditor | None
 		subject: DF.Data
 		use_html: DF.Check
-
 	# end: auto-generated types
 
 	@property

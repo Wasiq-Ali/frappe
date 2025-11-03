@@ -18,6 +18,8 @@
   "filters",
   "subject",
   "notification_type",
+  "email_template",
+  "use_email_template",
   "col_break_1",
   "event",
   "method",
@@ -84,14 +86,14 @@
    "label": "Filters"
   },
   {
-   "depends_on": "eval: in_list(['Email', 'Slack', 'System Notification'], doc.channel)",
+   "depends_on": "eval: in_list(['Email', 'System Notification'], doc.channel) && !(doc.channel == \"Email\" && doc.use_email_template)",
    "description": "To add dynamic subject, use jinja tags like\n\n<div><pre><code>{{ doc.name }} Delivered</code></pre></div>",
    "fieldname": "subject",
    "fieldtype": "Data",
    "ignore_xss_filter": 1,
    "in_list_view": 1,
    "label": "Subject",
-   "mandatory_depends_on": "eval: in_list(['Email', 'Slack', 'System Notification'], doc.channel)"
+   "mandatory_depends_on": "eval: in_list(['Email', 'System Notification'], doc.channel) && !(doc.channel == \"Email\" && doc.use_email_template)"
   },
   {
    "fieldname": "document_type",
@@ -226,6 +228,7 @@
    "options": "Notification Recipient"
   },
   {
+   "depends_on": "eval:doc.channel != \"Email\" || !doc.use_email_template",
    "fieldname": "message_sb",
    "fieldtype": "Section Break",
    "label": "Message"
@@ -314,12 +317,28 @@
    "fieldname": "send_only_once",
    "fieldtype": "Check",
    "label": "Send Only Once"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.channel == \"Email\"",
+   "fieldname": "use_email_template",
+   "fieldtype": "Check",
+   "label": "Use Email Template"
+  },
+  {
+   "depends_on": "eval:doc.channel == \"Email\" && doc.use_email_template",
+   "fieldname": "email_template",
+   "fieldtype": "Link",
+   "label": "Email Template",
+   "mandatory_depends_on": "eval:doc.channel == \"Email\" && doc.use_email_template",
+   "options": "Email Template"
   }
  ],
+ "grid_page_length": 500,
  "icon": "fa fa-envelope",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-18 00:56:50.709393",
+ "modified": "2025-11-04 00:03:25.504853",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Notification",
@@ -337,6 +356,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
