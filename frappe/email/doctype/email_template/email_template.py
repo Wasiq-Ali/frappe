@@ -51,5 +51,12 @@ class EmailTemplate(Document):
 def get_email_template(template_name, doc):
 	"""Returns the processed HTML of a email template with the given doc"""
 
+	context = doc
+
+	if isinstance(doc, str):
+		doc = json.loads(doc)
+		context = {"doc": frappe.get_doc(doc)}
+		context.update(doc)
+
 	email_template = frappe.get_doc("Email Template", template_name)
-	return email_template.get_formatted_email(doc)
+	return email_template.get_formatted_email(context)
