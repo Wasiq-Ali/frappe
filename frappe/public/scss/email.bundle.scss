@@ -124,7 +124,7 @@ hr {
 	background-color: $gray-100;
 	color: $text-color;
 	.body-content {
-		padding: 60px 40px;
+		padding: 40px 40px;
 	}
 	.email-container {
 		max-width: 600px;
@@ -151,7 +151,7 @@ hr {
 @media only screen and (max-width: 700px) {
 	.body-table.with-container {
 		.body-content {
-			padding: 30px 20px;
+			padding: 25px 20px;
 		}
 		.email-container {
 			padding: 20px;
