@@ -105,11 +105,13 @@ def get_default_path(apps=None):
 		app = next((app for app in apps if app.get("name") == user_default_app), None)
 		return app.get("route") if app else None
 
-	if len(_apps) == 1:
-		return _apps[0].get("route") or "/apps"
-	elif is_desk_apps(_apps):
-		return "/app"
-	return "/apps"
+	# if len(_apps) == 1:
+	# 	return _apps[0].get("route") or "/apps"
+	# elif is_desk_apps(_apps):
+	# 	return "/app"
+	# return "/apps"
+
+	return "/app"
 
 
 @frappe.whitelist()
