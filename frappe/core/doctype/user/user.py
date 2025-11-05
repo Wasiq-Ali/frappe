@@ -203,8 +203,7 @@ class User(Document):
 	def populate_role_profile_roles(self):
 		if self.role_profile_name:
 			role_profile = frappe.get_doc("Role Profile", self.role_profile_name)
-			self.set("roles", [])
-			self.append_roles(*[role.role for role in role_profile.roles])
+			self.set_role_list(*[role.role for role in role_profile.roles])
 
 	@deprecated
 	def validate_roles(self):
@@ -213,9 +212,16 @@ class User(Document):
 	def validate_allowed_modules(self):
 		if self.module_profile:
 			module_profile = frappe.get_doc("Module Profile", self.module_profile)
-			self.set("block_modules", [])
-			for d in module_profile.get("block_modules"):
-				self.append("block_modules", {"module": d.module})
+			self.set_block_module_list(*[d.module for d in module_profile.get("block_modules")])
+
+	def set_block_module_list(self, *block_module_list):
+		to_remove = [m for m in self.block_modules if m.module not in block_module_list]
+		for m in to_remove:
+			self.remove(m)
+
+		for module in block_module_list:
+			if module not in [m.module for m in self.block_modules]:
+				self.append("block_modules", {"module": module})
 
 	def validate_user_image(self):
 		if self.user_image and len(self.user_image) > 2000:
@@ -599,11 +605,17 @@ class User(Document):
 		clear_sessions(user=old_name, force=True)
 		clear_sessions(user=new_name, force=True)
 
+	def set_role_list(self, *role_list):
+		roles_to_remove = [r for r in self.roles if r.role not in role_list]
+		for r in roles_to_remove:
+			self.remove(r)
+
+		self.append_roles(*role_list)
+
 	def append_roles(self, *roles):
 		"""Add roles to user"""
-		current_roles = [d.role for d in self.get("roles")]
 		for role in roles:
-			if role in current_roles:
+			if role in [d.role for d in self.get("roles")]:
 				continue
 			self.append("roles", {"role": role})
 

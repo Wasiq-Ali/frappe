@@ -54,5 +54,5 @@ class RoleProfile(Document):
 		for user, roles in user_roles.items():
 			if roles != role_profile_roles:
 				user = frappe.get_doc("User", user)
-				user.roles = []
-				user.add_roles(*role_profile_roles)
+				user.set_role_list(*role_profile_roles)
+				user.save()
