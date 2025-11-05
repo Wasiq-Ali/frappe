@@ -578,4 +578,6 @@ persistent_cache_keys = [
 	"monitor-transactions",
 	"rate-limit-counter-*",
 	"rl:*",
+	"one_time_login_key:*",
+	"login_token:*",
 ]
