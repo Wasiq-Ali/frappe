@@ -4,6 +4,7 @@
 			{% if (doc.communication_type && doc.communication_type == "Automated Message") { %}
 				<span>
 					<!-- Display maximum of 3 users-->
+                    {{ doc.communication_medium }}
 					{{ __("Notification sent to") }}
 					{% var recipients = (doc.recipients && doc.recipients.split(",")) || [] %}
 					{% var cc = (doc.cc && doc.cc.split(",")) || [] %}
@@ -25,6 +26,10 @@
 					<div class="text-muted">
 						{{ comment_when(doc.communication_date || doc.creation) }}
 					</div>
+
+                    {% if (doc.subject && doc.communication_medium == "Email") { %}
+						<div class="text-muted my-1">{{doc.subject}}</div>
+					{% } %}
 				</span>
 			{% } else if (doc.comment_type && doc.comment_type == "Comment") { %}
 				<span>
