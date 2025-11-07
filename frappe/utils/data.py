@@ -1696,6 +1696,7 @@ def get_url(
 
 	if (
 		not (frappe.conf.restart_supervisor_on_update or frappe.conf.restart_systemd_on_update)
+		and not (frappe.local.conf.host_name or frappe.local.conf.hostname)
 		and host_name
 		and not url_contains_port(host_name)
 		and port
