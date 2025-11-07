@@ -3,6 +3,12 @@
 
 frappe.ui.form.on("Email Queue", {
 	refresh: function (frm) {
+		if (frm.doc.reference_doctype && frm.doc.reference_name) {
+			frm.add_custom_button(__(frm.doc.reference_name), () => {
+				frappe.set_route("Form", frm.doc.reference_doctype, frm.doc.reference_name);
+			});
+		}
+
 		if (["Not Sent", "Partially Sent"].includes(frm.doc.status)) {
 			let button = frm.add_custom_button("Send Now", function () {
 				frappe.call({
