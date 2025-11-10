@@ -369,7 +369,11 @@ frappe.ui.form.on("User", {
 		}
 	},
 	setup_impersonation: function (frm) {
-		if (frappe.session.user === "Administrator" && frm.doc.name != "Administrator") {
+		if (
+			(frappe.session.user === "Administrator" || frappe.user.has_role("Impersonation User"))
+			&& !["Administrator", "Guest"].includes(frm.doc.name)
+			&& frm.doc.name != frappe.session.user
+		) {
 			frm.add_custom_button(__("Impersonate"), () => {
 				if (frm.doc.restrict_ip) {
 					frappe.msgprint({

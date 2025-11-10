@@ -1337,9 +1337,14 @@ def get_enabled_users():
 def impersonate(user: str, reason: str):
 	# Note: For now we only allow admins, we MIGHT allow system manager in future.
 	# All the impersonation code doesn't assume anything about user.
-	frappe.only_for("Administrator")
+	frappe.only_for(("Administrator", "Impersonation User"))
 
 	impersonator = frappe.session.user
+	if impersonator == user:
+		frappe.throw(_("Cannot impersonate yourself"))
+	if user in ("Administrator", "Guest"):
+		frappe.throw(_("Cannot impersonate {0}").format(user))
+
 	frappe.get_doc(
 		{
 			"doctype": "Activity Log",

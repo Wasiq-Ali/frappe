@@ -929,7 +929,7 @@ def write_only():
 	return innfn
 
 
-def only_for(roles: list[str] | tuple[str] | str, message=False):
+def only_for(roles: list[str] | tuple[str, ...] | str, message=False):
 	"""
 	Raises `frappe.PermissionError` if the user does not have any of the permitted roles.
 
