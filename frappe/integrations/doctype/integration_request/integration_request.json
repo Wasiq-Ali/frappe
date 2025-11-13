@@ -10,6 +10,7 @@
   "is_remote_request",
   "column_break_5",
   "request_description",
+  "ip_address",
   "status",
   "section_break_8",
   "url",
@@ -134,12 +135,18 @@
    "fieldtype": "Code",
    "label": "Request Headers",
    "read_only": 1
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address",
+   "read_only": 1
   }
  ],
  "grid_page_length": 500,
  "in_create": 1,
  "links": [],
- "modified": "2025-09-04 17:24:56.571196",
+ "modified": "2025-11-13 09:53:49.353452",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Integration Request",

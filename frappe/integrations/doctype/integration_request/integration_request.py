@@ -20,6 +20,7 @@ class IntegrationRequest(Document):
 		data: DF.Code | None
 		error: DF.Code | None
 		integration_request_service: DF.Data | None
+		ip_address: DF.Data | None
 		is_remote_request: DF.Check
 		output: DF.Code | None
 		reference_docname: DF.DynamicLink | None

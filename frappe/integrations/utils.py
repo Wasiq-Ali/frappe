@@ -97,6 +97,9 @@ def create_request_log(
 		}
 	)
 
+	if integration_request.get("is_remote_request") and not integration_request.get("ip_address"):
+		integration_request.ip_address = frappe.local.request_ip
+
 	if name:
 		integration_request.flags._name = name
 
