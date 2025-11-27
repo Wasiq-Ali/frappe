@@ -713,6 +713,8 @@ def sendmail(
 	x_priority: Literal[1, 3, 5] = 3,
 	email_headers=None,
 	notification_type=None,
+	child_doctype=None,
+	child_name=None,
 ) -> Optional["EmailQueue"]:
 	"""Send email using user's default **Email Account** or global default **Email Account**.
 
@@ -800,6 +802,8 @@ def sendmail(
 		x_priority=x_priority,
 		email_headers=email_headers,
 		notification_type=notification_type,
+		child_doctype=child_doctype,
+		child_name=child_name,
 	)
 
 	# build email queue and send the email if send_now is True.

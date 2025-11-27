@@ -257,9 +257,22 @@ def get_context(context):
 
 		notification_type = self.get_notification_type()
 		if notification_type:
-			set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "System Notification")
+			set_notification_last_scheduled(
+				doc.doctype,
+				doc.name,
+				notification_type,
+				"System Notification",
+				child_doctype=context.get("child_doctype"),
+				child_name=context.get("child_name"),
+			)
 
-		enqueue_create_notification(users, notification_doc, notification_type=notification_type)
+		enqueue_create_notification(
+			users,
+			notification_doc,
+			notification_type=notification_type,
+			child_doctype=context.get("child_doctype"),
+			child_name=context.get("child_name"),
+		)
 
 	def send_an_email(self, doc, context):
 		from email.utils import formataddr
@@ -314,7 +327,14 @@ def get_context(context):
 
 		notification_type = self.get_notification_type()
 		if notification_type:
-			set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "Email")
+			set_notification_last_scheduled(
+				doc.doctype,
+				doc.name,
+				notification_type,
+				"Email",
+				child_doctype=context.get("child_doctype"),
+				child_name=context.get("child_name"),
+			)
 
 		frappe.sendmail(
 			recipients=recipients,
@@ -325,6 +345,8 @@ def get_context(context):
 			message=message,
 			reference_doctype=get_reference_doctype(doc),
 			reference_name=get_reference_name(doc),
+			child_doctype=context.get("child_doctype"),
+			child_name=context.get("child_name"),
 			attachments=attachments,
 			expose_recipients="header",
 			print_letterhead=((attachments and attachments[0].get("print_letterhead")) or False),
@@ -359,13 +381,22 @@ def get_context(context):
 			return
 
 		if notification_type:
-			set_notification_last_scheduled(doc.doctype, doc.name, notification_type, "SMS")
+			set_notification_last_scheduled(
+				doc.doctype,
+				doc.name,
+				notification_type,
+				"SMS",
+				child_doctype=context.get("child_doctype"),
+				child_name=context.get("child_name"),
+			)
 
 		send_sms(
 			receiver_list=receiver_list,
 			message=message,
 			reference_doctype=get_reference_doctype(doc),
 			reference_name=get_reference_name(doc),
+			child_doctype=context.get("child_doctype"),
+			child_name=context.get("child_name"),
 			notification_type=notification_type,
 			party_doctype=timeline_doctype,
 			party=timeline_name,
@@ -579,12 +610,25 @@ def evaluate_alert(doc: Document, alert, event, context=None):
 				return
 
 		notification_type = alert.get_notification_type()
-		validation = run_validate_notification(doc, notification_type, throw=False)
+		validation = run_validate_notification(
+			doc,
+			notification_type,
+			child_doctype=context.get("child_doctype"),
+			child_name=context.get("child_name"),
+			throw=False,
+		)
 		if not validation:
 			return
 
 		if alert.send_only_once:
-			notification_count = get_notification_count(doc.doctype, doc.name, notification_type, alert.channel)
+			notification_count = get_notification_count(
+				doc.doctype,
+				doc.name,
+				notification_type,
+				alert.channel,
+				child_doctype=context.get("child_doctype"),
+				child_name=context.get("child_name"),
+			)
 			if notification_count:
 				return False
 

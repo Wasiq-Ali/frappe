@@ -53,6 +53,8 @@ class EmailQueue(Document):
 
 		add_unsubscribe_link: DF.Check
 		attachments: DF.Code | None
+		child_doctype: DF.Link | None
+		child_name: DF.Data | None
 		communication: DF.Link | None
 		email_account: DF.Link | None
 		error: DF.Code | None
@@ -124,7 +126,14 @@ class EmailQueue(Document):
 		if status == "Sent":
 			from frappe.core.doctype.notification_count.notification_count import add_notification_count
 			if self.reference_doctype and self.reference_name and self.notification_type:
-				add_notification_count(self.reference_doctype, self.reference_name, self.notification_type, "Email")
+				add_notification_count(
+					self.reference_doctype,
+					self.reference_name,
+					self.notification_type,
+					"Email",
+					child_doctype=self.child_doctype,
+					child_name=self.child_name,
+				)
 
 		self.update_db(status=status, commit=commit, **kwargs)
 		if self.communication:
@@ -174,7 +183,13 @@ class EmailQueue(Document):
 				from frappe.email.doctype.notification.notification import get_doc_for_notification_triggers, run_validate_notification
 				doc = get_doc_for_notification_triggers(self.reference_doctype, self.reference_name)
 				if doc:
-					run_validate_notification(doc, self.notification_type, throw=True)
+					run_validate_notification(
+						doc,
+						self.notification_type,
+						child_doctype=self.child_doctype,
+						child_name=self.child_name,
+						throw=True,
+					)
 
 			ctx.fetch_smtp_server()
 			message = None
@@ -519,6 +534,8 @@ class QueueBuilder:
 		x_priority: Literal[1, 3, 5] = 3,
 		email_headers=None,
 		notification_type=None,
+		child_doctype=None,
+		child_name=None,
 	):
 		"""Add email to sending queue (Email Queue)
 
@@ -584,6 +601,8 @@ class QueueBuilder:
 		self.email_read_tracker_url = email_read_tracker_url
 		self.email_headers = email_headers
 		self.notification_type = notification_type
+		self.child_doctype = child_doctype
+		self.child_name = child_name
 
 	@property
 	def unsubscribe_method(self):
@@ -836,6 +855,8 @@ class QueueBuilder:
 			"email_account": email_account_name or None,
 			"email_read_tracker_url": self.email_read_tracker_url,
 			"notification_type": self.notification_type,
+			"child_doctype": self.child_doctype,
+			"child_name": self.child_name,
 		}
 
 		if include_recipients:

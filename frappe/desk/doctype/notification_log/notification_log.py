@@ -71,7 +71,13 @@ def get_title_html(title):
 	return f'<b class="subject-title">{title}</b>'
 
 
-def enqueue_create_notification(users: list[str] | str, doc: dict, notification_type=None):
+def enqueue_create_notification(
+	users: list[str] | str,
+	doc: dict,
+	notification_type=None,
+	child_doctype=None,
+	child_name=None,
+):
 	"""Send notification to users.
 
 	users: list of user emails or string of users with comma separated emails
@@ -95,11 +101,19 @@ def enqueue_create_notification(users: list[str] | str, doc: dict, notification_
 		doc=doc,
 		users=users,
 		notification_type=notification_type,
+		child_doctype=child_doctype,
+		child_name=child_name,
 		now=frappe.flags.in_test,
 	)
 
 
-def make_notification_logs(doc, users, notification_type=None):
+def make_notification_logs(
+	doc,
+	users,
+	notification_type=None,
+	child_doctype=None,
+	child_name=None,
+):
 	for user in _get_user_ids(users):
 		notification = frappe.new_doc("Notification Log")
 		notification.update(doc)
@@ -112,7 +126,14 @@ def make_notification_logs(doc, users, notification_type=None):
 			notification.insert(ignore_permissions=True)
 
 			if notification_type and doc.get("document_type") and doc.get("document_name"):
-				add_notification_count(doc.get("document_type"), doc.get("document_name"), notification_type, "System Notification")
+				add_notification_count(
+					doc.get("document_type"),
+					doc.get("document_name"),
+					notification_type,
+					"System Notification",
+					child_doctype=child_doctype,
+					child_name=child_name,
+				)
 
 
 def make_notification_logs_for_role(notification_doc, role):

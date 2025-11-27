@@ -17,6 +17,8 @@
   "message_id",
   "reference_doctype",
   "reference_name",
+  "child_doctype",
+  "child_name",
   "communication",
   "send_after",
   "priority",
@@ -157,13 +159,27 @@
    "in_standard_filter": 1,
    "label": "Notification Type",
    "read_only": 1
+  },
+  {
+   "fieldname": "child_doctype",
+   "fieldtype": "Link",
+   "label": "Child DocType",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "child_name",
+   "fieldtype": "Data",
+   "label": "Child Name",
+   "read_only": 1
   }
  ],
+ "grid_page_length": 500,
  "icon": "fa fa-envelope",
  "idx": 1,
  "in_create": 1,
  "links": [],
- "modified": "2025-02-20 19:21:09.652451",
+ "modified": "2025-11-27 10:23:25.692735",
  "modified_by": "Administrator",
  "module": "Email",
  "name": "Email Queue",
@@ -179,7 +195,7 @@
    "role": "System Manager"
   }
  ],
- "row_format": "Compressed",
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
