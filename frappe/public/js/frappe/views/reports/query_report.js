@@ -2036,18 +2036,33 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 		}
 	}
 
+	flatten_rows(rows) {
+		let result = [];
+		rows.forEach(row => {
+			result.push(row);
+			if (row.rows && Array.isArray(row.rows)) {
+				result = result.concat(this.flatten_rows(row.rows));
+			}
+		});
+		return result;
+	}
+
 	add_custom_column(custom_column, custom_data, new_column_data, insert_after_index) {
 		const column = this.prepare_columns(custom_column);
 		const column_field = new_column_data.field;
 
 		this.columns.splice(insert_after_index + 1, 0, column[0]);
 
-		this.data.forEach((row) => {
+		this.flatten_rows(this.data).forEach((row) => {
 			if (column[0].fieldname.includes("-")) {
 				row[column_field + "-" + frappe.scrub(new_column_data.doctype)] =
 					custom_data[row[new_column_data.fieldname]];
 			} else {
 				row[column_field] = custom_data[row[new_column_data.fieldname]];
+
+				if (row.totals && row.totals[new_column_data.fieldname]) {
+					row.totals[column_field] = custom_data[row.totals[new_column_data.fieldname]];
+				}
 			}
 		});
 
@@ -2074,7 +2089,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			}
 		});
 
-		this.data.forEach((row) => {
+		this.flatten_rows(this.data).forEach((row) => {
 			dynamic_links.forEach((field) => {
 				if (row[field.link_name]) {
 					dynamic_doctypes.add(row[field.link_name] + ":" + field.fieldname);
@@ -2096,7 +2111,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			this.doctype_field_map[doc.doctype] = { fieldname: doc.fieldname, names: new Set() };
 		});
 
-		this.data.forEach((row) => {
+		this.flatten_rows(this.data).forEach((row) => {
 			doctypes.forEach((doc) => {
 				this.doctype_field_map[doc.doctype].names.add(row[doc.fieldname]);
 			});
