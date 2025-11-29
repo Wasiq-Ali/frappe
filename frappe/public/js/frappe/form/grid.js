@@ -1078,7 +1078,7 @@ export default class Grid {
 		if (user_settings && user_settings[this.doctype] && user_settings[this.doctype].length) {
 			this.user_defined_columns = user_settings[this.doctype]
 				.map((row) => {
-					let column = frappe.meta.get_docfield(this.doctype, row.fieldname);
+					let column = frappe.meta.get_docfield(this.doctype, row.fieldname, this.frm.docname);
 
 					if (column) {
 						column.in_list_view = 1;
