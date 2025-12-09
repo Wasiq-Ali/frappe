@@ -15,7 +15,7 @@ $gray-800: #383838;
 $gray-850: #282828;
 $gray-900: #171717;
 
-$primary: $gray-900;
+$primary: $gray-900 !default;
 $primary-light: lighten($primary, 80%) !default;
 
 $danger: #e03636;
