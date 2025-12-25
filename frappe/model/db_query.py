@@ -109,6 +109,7 @@ class DatabaseQuery:
 		ignore_ddl=False,
 		*,
 		parent_doctype=None,
+		additional_conditions=None,
 	) -> list:
 		if not ignore_permissions:
 			self.check_read_permission(self.doctype, parent_doctype=parent_doctype)
@@ -137,6 +138,7 @@ class DatabaseQuery:
 
 		self.filters = filters or []
 		self.or_filters = or_filters or []
+		self.additional_conditions = additional_conditions or []
 		self.docstatus = docstatus or []
 		self.group_by = group_by
 		self.order_by = order_by
@@ -584,6 +586,12 @@ from {tables}
 		self.grouped_or_conditions = []
 		self.build_filter_conditions(self.filters, self.conditions)
 		self.build_filter_conditions(self.or_filters, self.grouped_or_conditions)
+
+		# additional conditions
+		if self.additional_conditions and isinstance(self.additional_conditions, str):
+			self.additional_conditions = [self.additional_conditions]
+
+		self.conditions += self.additional_conditions
 
 		# match conditions
 		if not self.flags.ignore_permissions:
